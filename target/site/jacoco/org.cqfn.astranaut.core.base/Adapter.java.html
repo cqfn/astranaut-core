@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Adapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">astranaut-core</a> &gt; <a href="index.source.html" class="el_package">org.cqfn.astranaut.core.base</a> &gt; <span class="el_source">Adapter.java</span></div><h1>Adapter.java</h1><pre class="source lang-java linenums">/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2022 Ivan Kniazkov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package org.cqfn.astranaut.core.base;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Tree converter built on a set of rules described in DSL.
+ *
+ * @since 0.1
+ */
+public class Adapter {
+    /**
+     * The list of node converters.
+     */
+    private final List&lt;Converter&gt; converters;
+
+    /**
+     * The node factory.
+     */
+    private final Factory factory;
+
+    /**
+     * Constructor.
+     * @param converters The list of node converters
+     * @param factory The node factory
+     */
+<span class="fc" id="L50">    public Adapter(final List&lt;Converter&gt; converters, final Factory factory) {</span>
+<span class="fc" id="L51">        this.converters = converters;</span>
+<span class="fc" id="L52">        this.factory = factory;</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Converts the [sub]tree to another, based on DSL rules.
+     * @param root The root node of the subtree.
+     * @return A converted tree or empty tree if the conversion is impossible
+     */
+    public Node convert(final Node root) {
+<span class="fc" id="L61">        final ConvertibleNode convertible = new ConvertibleNode(root);</span>
+<span class="fc" id="L62">        Node result = convertible;</span>
+<span class="fc" id="L63">        final List&lt;ConvertibleNode&gt; nodes = new ArrayList&lt;&gt;(0);</span>
+<span class="fc" id="L64">        Adapter.buildNodeList(convertible, nodes);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (final ConvertibleNode original : nodes) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            for (final Converter converter : this.converters) {</span>
+<span class="fc" id="L67">                final Node transformed = converter.convert(original, this.factory);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                if (!(transformed instanceof EmptyTree)) {</span>
+<span class="fc" id="L69">                    final ConvertibleNode parent = original.getParent();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                    if (parent == null) {</span>
+<span class="fc" id="L71">                        result = transformed;</span>
+                    } else {
+<span class="fc" id="L73">                        parent.replaceChild(original, transformed);</span>
+                    }
+<span class="fc" id="L75">                    break;</span>
+                }
+<span class="fc" id="L77">            }</span>
+<span class="fc" id="L78">        }</span>
+<span class="fc" id="L79">        return result;</span>
+    }
+
+    /**
+     * Expands the tree to the node list.
+     * @param root Root node
+     * @param nodes Resulting list of nodes
+     */
+    private static void buildNodeList(final ConvertibleNode root,
+        final List&lt;ConvertibleNode&gt; nodes) {
+<span class="fc" id="L89">        final int count = root.getChildCount();</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        for (int index = 0; index &lt; count; index = index + 1) {</span>
+<span class="fc" id="L91">            Adapter.buildNodeList(root.getConvertibleChild(index), nodes);</span>
+        }
+<span class="fc" id="L93">        nodes.add(root);</span>
+<span class="fc" id="L94">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

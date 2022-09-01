@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChildrenMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">astranaut-core</a> &gt; <a href="index.source.html" class="el_package">org.cqfn.astranaut.core.base</a> &gt; <span class="el_source">ChildrenMapper.java</span></div><h1>ChildrenMapper.java</h1><pre class="source lang-java linenums">/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2022 Ivan Kniazkov
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the &quot;Software&quot;), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+package org.cqfn.astranaut.core.base;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * Mapping of the list of nodes by positions based on node types.
+ *
+ * @since 0.1
+ */
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">public class ChildrenMapper {</span>
+    /**
+     * The list of child descriptors.
+     */
+    private final List&lt;ChildDescriptor&gt; descriptors;
+
+    /**
+     * Required positions (must be filled in).
+     */
+    private PositionSet required;
+
+    /**
+     * All possible positions.
+     */
+    private PositionSet possible;
+
+    /**
+     * Number of unused cells of each type.
+     */
+    private Map&lt;String, Integer&gt; unused;
+
+    /**
+     * The appropriate types from the descriptors for each node.
+     */
+    private Map&lt;Node, String&gt; suitable;
+
+    /**
+     * Constructor.
+     * @param descriptors The list of child descriptors.
+     */
+<span class="fc" id="L67">    public ChildrenMapper(final List&lt;ChildDescriptor&gt; descriptors) {</span>
+<span class="fc" id="L68">        this.descriptors = descriptors;</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Maps the list of nodes by positions.
+     * The algorithm fills an array in which each node is placed at a suitable position for it.
+     * @param destination The array in which each node is placed at a suitable position
+     * @param source The source list of nodes
+     * @return Mapping result, {@code true} if such a mapping is possible (array was filled)
+     */
+    public boolean map(final Node[] destination, final List&lt;Node&gt; source) {
+<span class="fc" id="L79">        boolean result = false;</span>
+<span class="fc" id="L80">        final int capacity = this.descriptors.size();</span>
+<span class="fc" id="L81">        final int count = source.size();</span>
+<span class="pc bpc" id="L82" title="3 of 4 branches missed.">        if (capacity == 0 &amp;&amp; count == 0) {</span>
+<span class="nc" id="L83">            result = true;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        } else if (capacity &gt;= count) {</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">            assert destination.length == capacity;</span>
+<span class="fc" id="L86">            this.required = new PositionSet(false);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            if (count &gt;= this.required.getCount()) {</span>
+<span class="fc" id="L88">                result = this.fullMapping(destination, source);</span>
+            }
+        }
+<span class="fc" id="L91">        return result;</span>
+    }
+
+    /**
+     * Full mapper that performs matching in two passes.
+     * @param destination The array in which each node is placed at a suitable position
+     * @param source The source list of nodes
+     * @return Mapping result, {@code true} if such a mapping is possible (array was filled)
+     */
+    private boolean fullMapping(final Node[] destination, final List&lt;Node&gt; source) {
+        boolean result;
+        do {
+<span class="fc" id="L103">            result = this.calculate(source);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (!result) {</span>
+<span class="fc" id="L105">                break;</span>
+            }
+<span class="fc" id="L107">            final Node[] array = new Node[source.size()];</span>
+<span class="fc" id="L108">            source.toArray(array);</span>
+<span class="fc" id="L109">            final int unprocessed = this.bindAllUniqueNodes(destination, array);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if (unprocessed &lt; 0) {</span>
+<span class="fc" id="L111">                result = false;</span>
+<span class="fc" id="L112">                break;</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            } else if (unprocessed == 0) {</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                result = this.required.getCount() == 0;</span>
+<span class="fc" id="L115">                break;</span>
+            }
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">            result = this.bindAllNodes(destination, array) &amp;&amp; this.required.getCount() == 0;</span>
+        } while (false);
+<span class="fc" id="L119">        return result;</span>
+    }
+
+    /**
+     * Counts the number of nodes of each type and calculates the suitable type names.
+     * @param nodes The list of nodes
+     * @return Calculation result, {@code true} if structures have been filled
+     */
+    private boolean calculate(final List&lt;Node&gt; nodes) {
+<span class="fc" id="L128">        boolean result = true;</span>
+<span class="fc" id="L129">        this.possible = new PositionSet(true);</span>
+<span class="fc" id="L130">        this.unused = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L131">        this.suitable = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for (final Node node : nodes) {</span>
+<span class="fc" id="L133">            final String type = this.possible.findSuitableBaseType(node);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            if (type.isEmpty()) {</span>
+<span class="fc" id="L135">                result = false;</span>
+<span class="fc" id="L136">                break;</span>
+            }
+<span class="fc" id="L138">            final Integer count = this.unused.computeIfAbsent(type, x -&gt; 0);</span>
+<span class="fc" id="L139">            this.unused.put(type, count + 1);</span>
+<span class="fc" id="L140">            this.suitable.put(node, type);</span>
+<span class="fc" id="L141">        }</span>
+<span class="fc" id="L142">        return result;</span>
+    }
+
+    /**
+     * Binds all nodes, the type of which occurs once.
+     * @param destination Array in which each node is placed at a suitable position
+     * @param source Array of source nodes
+     * @return Number of unprocessed nodes, or -1 if binding failed
+     */
+    private int bindAllUniqueNodes(final Node[] destination, final Node... source) {
+<span class="fc" id="L152">        int count = source.length;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for (int index = 0; index &lt; source.length; index = index + 1) {</span>
+<span class="fc" id="L154">            final Node node = source[index];</span>
+<span class="fc" id="L155">            final String type = this.suitable.get(node);</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            if (this.unused.get(type) == 1) {</span>
+<span class="fc" id="L157">                count = count - 1;</span>
+<span class="fc" id="L158">                List&lt;Integer&gt; positions = this.required.getPositionsByType(type);</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">                if (positions == null) {</span>
+<span class="fc" id="L160">                    positions = this.possible.getPositionsByType(type);</span>
+                }
+<span class="fc bfc" id="L162" title="All 2 branches covered.">                if (positions.size() &gt; 1) {</span>
+<span class="fc" id="L163">                    count = -1;</span>
+<span class="fc" id="L164">                    break;</span>
+                }
+<span class="fc" id="L166">                final Integer position = positions.get(0);</span>
+<span class="fc" id="L167">                destination[position] = node;</span>
+<span class="fc" id="L168">                source[index] = EmptyTree.INSTANCE;</span>
+<span class="fc" id="L169">                this.required.removePosition(type, position);</span>
+<span class="fc" id="L170">                this.possible.removePosition(type, position);</span>
+<span class="fc" id="L171">                this.unused.put(type, 0);</span>
+            }
+        }
+<span class="fc" id="L174">        return count;</span>
+    }
+
+    /**
+     * Binds all nodes (given their order).
+     * @param destination Array in which each node is placed at a suitable position
+     * @param source Array of source nodes
+     * @return Binding result, {@code true} if all nodes were bind
+     */
+    private boolean bindAllNodes(final Node[] destination, final Node... source) {
+<span class="fc" id="L184">        boolean result = true;</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        for (final Node node : source) {</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">            if (!(node instanceof EmptyTree)) {</span>
+<span class="fc" id="L187">                final String type = this.suitable.get(node);</span>
+<span class="fc" id="L188">                final List&lt;Integer&gt; allowed = this.possible.getPositionsByType(type);</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                if (allowed == null) {</span>
+<span class="fc" id="L190">                    result = false;</span>
+<span class="fc" id="L191">                    break;</span>
+                }
+<span class="fc" id="L193">                final int unprocessed = this.unused.get(type);</span>
+<span class="fc" id="L194">                final List&lt;Integer&gt; obligatory = this.required.getPositionsByType(type);</span>
+                final Integer position;
+<span class="fc bfc" id="L196" title="All 4 branches covered.">                if (obligatory == null &amp;&amp; allowed.size() &gt; 1) {</span>
+<span class="fc" id="L197">                    result = false;</span>
+<span class="fc" id="L198">                    break;</span>
+<span class="fc bfc" id="L199" title="All 4 branches covered.">                } else if (obligatory == null || unprocessed &gt; obligatory.size()) {</span>
+<span class="fc" id="L200">                    position = allowed.get(0);</span>
+                } else  {
+<span class="fc" id="L202">                    position = obligatory.get(0);</span>
+                }
+<span class="fc" id="L204">                destination[position] = node;</span>
+<span class="fc" id="L205">                this.required.removePosition(type, position);</span>
+<span class="fc" id="L206">                this.possible.removePosition(type, position);</span>
+<span class="fc" id="L207">                this.unused.put(type, unprocessed - 1);</span>
+            }
+        }
+<span class="fc" id="L210">        return result;</span>
+    }
+
+    /**
+     * The set of types with a relationship of possible position for a node of each such type.
+     * @since 0.1
+     */
+    private final class PositionSet {
+        /**
+         * Also consider optional items.
+         */
+        private final boolean optional;
+
+        /**
+         * The set of positions arranged by type name.
+         */
+        private Map&lt;String, List&lt;Integer&gt;&gt; positions;
+
+        /**
+         * The number of positions.
+         */
+        private int count;
+
+        /**
+         * Constructor.
+         * @param optional Also consider optional items
+         */
+<span class="fc" id="L237">        private PositionSet(final boolean optional) {</span>
+<span class="fc" id="L238">            this.optional = optional;</span>
+<span class="fc" id="L239">        }</span>
+
+        /**
+         * Returns the number of positions.
+         * @return The number of positions
+         */
+        public int getCount() {
+<span class="fc" id="L246">            return this.count;</span>
+        }
+
+        /**
+         * Returns list of positions by type name.
+         * @param type The type name
+         * @return The list of positions
+         */
+        public List&lt;Integer&gt; getPositionsByType(final String type) {
+<span class="fc" id="L255">            this.init();</span>
+<span class="fc" id="L256">            return this.positions.get(type);</span>
+        }
+
+        /**
+         * Looks for suitable base type that can be mapped.
+         * @param node The node
+         * @return Base type or an empty string if node can't be mapped
+         */
+        public String findSuitableBaseType(final Node node) {
+<span class="fc" id="L265">            this.init();</span>
+<span class="fc" id="L266">            String result = &quot;&quot;;</span>
+<span class="fc" id="L267">            final Type type = node.getType();</span>
+<span class="fc" id="L268">            final String name = type.getName();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">            if (this.positions.containsKey(name)) {</span>
+<span class="fc" id="L270">                result = name;</span>
+            } else {
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                for (final String group : this.positions.keySet()) {</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">                    if (type.belongsToGroup(group)) {</span>
+<span class="fc" id="L274">                        result = group;</span>
+<span class="fc" id="L275">                        break;</span>
+                    }
+<span class="fc" id="L277">                }</span>
+            }
+<span class="fc" id="L279">            return result;</span>
+        }
+
+        /**
+         * Removes position from the set.
+         * @param type The type name
+         * @param index The position index
+         */
+        public void removePosition(final String type, final Integer index) {
+<span class="fc" id="L288">            this.init();</span>
+<span class="fc" id="L289">            final List&lt;Integer&gt; list = this.positions.get(type);</span>
+<span class="fc bfc" id="L290" title="All 4 branches covered.">            if (list != null &amp;&amp; list.remove(index)) {</span>
+<span class="fc" id="L291">                this.count = this.count - 1;</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">                if (list.isEmpty()) {</span>
+<span class="fc" id="L293">                    this.positions.remove(type);</span>
+                }
+            }
+<span class="fc" id="L296">        }</span>
+
+        /**
+         * Initializes the set of positions.
+         */
+        private void init() {
+<span class="fc bfc" id="L302" title="All 2 branches covered.">            if (this.positions == null) {</span>
+<span class="fc" id="L303">                this.positions = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L304">                this.count = 0;</span>
+<span class="fc" id="L305">                int index = 0;</span>
+<span class="fc bfc" id="L306" title="All 2 branches covered.">                for (final ChildDescriptor descriptor : ChildrenMapper.this.descriptors) {</span>
+<span class="fc" id="L307">                    boolean allowed = true;</span>
+<span class="fc bfc" id="L308" title="All 4 branches covered.">                    if (!this.optional &amp;&amp; descriptor.isOptional()) {</span>
+<span class="fc" id="L309">                        allowed = false;</span>
+                    }
+<span class="fc bfc" id="L311" title="All 2 branches covered.">                    if (allowed) {</span>
+<span class="fc" id="L312">                        final String type = descriptor.getType();</span>
+<span class="fc" id="L313">                        final List&lt;Integer&gt; indexes = this.positions.computeIfAbsent(</span>
+<span class="fc" id="L314">                            type, x -&gt; new ArrayList&lt;&gt;(2)</span>
+                        );
+<span class="fc" id="L316">                        indexes.add(index);</span>
+<span class="fc" id="L317">                        this.count = this.count + 1;</span>
+                    }
+<span class="fc" id="L319">                    index = index + 1;</span>
+<span class="fc" id="L320">                }</span>
+            }
+<span class="fc" id="L322">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

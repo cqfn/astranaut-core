@@ -1,0 +1,7 @@
+Build Number: null
+Project Version: 1.0-SNAPSHOT
+Build Date: 2022-09-01T16:13:47
+
+org-cqfn-astranaut-core-jar.txt: 163
+package-info.class: 135
+Pair.class: 924

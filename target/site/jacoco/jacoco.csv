@@ -1,0 +1,21 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+astranaut-core,org.cqfn.astranaut.core.base,NodeReplacer,0,90,0,10,0,19,0,7,0,2
+astranaut-core,org.cqfn.astranaut.core.base,EmptyFragment.new Source() {...},2,3,0,0,1,1,1,1,1,1
+astranaut-core,org.cqfn.astranaut.core.base,DraftNode.TypeImpl,4,23,0,0,2,8,2,4,2,4
+astranaut-core,org.cqfn.astranaut.core.base,EmptyFragment.new Position() {...},2,3,0,0,1,1,1,1,1,1
+astranaut-core,org.cqfn.astranaut.core.base,ChildrenMapper.PositionSet,0,158,0,22,0,42,0,18,0,7
+astranaut-core,org.cqfn.astranaut.core.base,EmptyTree.TypeImpl,10,0,0,0,5,0,5,0,5,0
+astranaut-core,org.cqfn.astranaut.core.base,EmptyTree,12,15,0,0,5,3,5,1,5,1
+astranaut-core,org.cqfn.astranaut.core.base,ListUtils,60,0,10,0,14,0,9,0,4,0
+astranaut-core,org.cqfn.astranaut.core.base,ChildrenMapper,11,362,8,44,1,82,7,27,0,8
+astranaut-core,org.cqfn.astranaut.core.base,ChildDescriptor,21,20,2,0,8,8,2,4,1,4
+astranaut-core,org.cqfn.astranaut.core.base,ConvertibleNode,19,105,2,4,4,27,4,11,2,10
+astranaut-core,org.cqfn.astranaut.core.base,EmptyTree.BuilderImpl,9,0,0,0,5,0,5,0,5,0
+astranaut-core,org.cqfn.astranaut.core.base,Node,25,9,2,0,5,2,2,2,1,2
+astranaut-core,org.cqfn.astranaut.core.base,Factory,9,23,1,1,3,8,1,2,0,2
+astranaut-core,org.cqfn.astranaut.core.base,Adapter,0,95,0,10,0,25,0,8,0,3
+astranaut-core,org.cqfn.astranaut.core.base,DraftNode.Constructor,16,81,2,2,5,21,4,6,2,6
+astranaut-core,org.cqfn.astranaut.core.base,DraftNode,3,16,0,0,1,4,1,4,1,4
+astranaut-core,org.cqfn.astranaut.core.base,Type,0,5,0,0,0,1,0,1,0,1
+astranaut-core,org.cqfn.astranaut.core.base,EmptyFragment,6,13,0,0,3,3,3,1,3,1
+astranaut-core,org.cqfn.astranaut.core.utils,Pair,0,15,0,0,0,6,0,3,0,3

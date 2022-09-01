@@ -1,0 +1,34 @@
+Build Number: null
+Project Version: 1.0-SNAPSHOT
+Build Date: 2022-09-01T16:13:47
+
+Adapter.class: 2880
+Builder.class: 445
+ChildDescriptor.class: 1133
+ChildrenMapper$1.class: 248
+ChildrenMapper$PositionSet.class: 4438
+ChildrenMapper.class: 6165
+Converter.class: 259
+ConvertibleNode.class: 2887
+DraftNode$1.class: 233
+DraftNode$Constructor.class: 3259
+DraftNode$TypeImpl.class: 1530
+DraftNode.class: 2438
+EmptyFragment$1.class: 740
+EmptyFragment$2.class: 553
+EmptyFragment.class: 1120
+EmptyTree$1.class: 233
+EmptyTree$BuilderImpl.class: 1561
+EmptyTree$TypeImpl.class: 1484
+EmptyTree.class: 1629
+Factory.class: 1546
+Fragment.class: 268
+ListUtils.class: 1845
+Matcher.class: 415
+Node.class: 1244
+NodeReplacer.class: 2492
+org-cqfn-astranaut-core-jar.txt: 834
+package-info.class: 134
+Position.class: 151
+Source.class: 253
+Type.class: 809

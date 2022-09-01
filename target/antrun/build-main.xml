@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
+  <property environment="env"/>
+  <available file="xcop" filepath="C:\Program Files\Common Files\Oracle\Java\javapath;C:\Windows;C:\Windows\system32;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows;C:\Windows\system32;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\apache-maven-3.6.3\bin;C:\Program Files\Java\jdk1.8.0_241\bin;C:\Program Files\Git\cmd;C:\Users\pWX802992\AppData\Local\Programs\MiKTeX\miktex\bin\x64\;C:\Program Files\Java\jdk-17.0.2\bin;C:\Program Files\Java\jdk1.8.0_241\include;C:\Program Files\Java\jdk1.8.0_241\include\win32;;C:\Program Files\VSCode-huawei\bin;C:\Ruby31-x64\bin;C:\Users\p00642382\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\p00642382\AppData\Local\Programs\Python\Python39\;C:\Users\p00642382\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.3\bin;;C:\Users\p00642382\AppData\Local\Programs\MiKTeX\miktex\bin\x64\;C:\Program Files\JetBrains\IntelliJ IDEA 2021.1.3\bin;" property="xcop.present"/>
+  <if>
+    <equals arg2="true" arg1="${xcop.present}"/>
+    <then>
+      <patternset id="xcop.main">
+        <include name="**/*.xml"/>
+        <include name="**/*.xsl"/>
+        <include name="**/*.xsd"/>
+        <exclude name="**/target/**/*"/>
+        <exclude name=".idea/**/*"/>
+      </patternset>
+      <condition property="xcop.excludes.defined">
+        <isreference refid="xcop.excludes"/>
+      </condition>
+      <if>
+        <equals arg2="true" arg1="${xcop.excludes.defined}"/>
+        <then>
+          <fileset id="files" dir=".">
+            <patternset refid="xcop.main"/>
+            <patternset refid="xcop.excludes"/>
+          </fileset>
+          <pathconvert property="converted" pathsep=" " refid="files"/>
+        </then>
+        <else>
+          <fileset id="files" dir=".">
+            <patternset refid="xcop.main"/>
+          </fileset>
+          <pathconvert property="converted" pathsep=" " refid="files"/>
+        </else>
+      </if>
+      <condition property="os.windows">
+        <os family="windows"/>
+      </condition>
+      <if>
+        <equals arg2="true" arg1="${os.windows}"/>
+        <then>
+          <exec failonerror="true" executable="cmd">
+            <arg line="/c xcop"/>
+            <arg value="--license"/>
+            <arg value="LICENSE.txt"/>
+            <arg line="${converted}"/>
+          </exec>
+        </then>
+        <else>
+          <exec failonerror="true" executable="xcop">
+            <arg value="--license"/>
+            <arg value="LICENSE.txt"/>
+            <arg line="${converted}"/>
+          </exec>
+        </else>
+      </if>
+    </then>
+    <else>
+      <echo message="XCOP is not available in PATH"/>
+    </else>
+  </if>
+</target>
+</project>
