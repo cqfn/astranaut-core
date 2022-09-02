@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Checks if the node matches some structure, and extracts the data or (and) children if so.
+ * Checks if the node matches some structure and extracts the data or (and) children
+ * if the latter are used in the target [sub]tree.
  *
  * @since 1.0
  */

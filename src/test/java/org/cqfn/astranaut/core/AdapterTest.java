@@ -330,7 +330,7 @@ public class AdapterTest {
     }
 
     /**
-     * Converter variables to unified format.
+     * Converter variables to a new format.
      * @since 1.0
      */
     private static class VariableConverter implements Converter {
@@ -375,7 +375,7 @@ public class AdapterTest {
     }
 
     /**
-     * Converter numeric literals to unified format.
+     * Converter numeric literals to a new format.
      * @since 1.0
      */
     private static class NumericConverter implements Converter {
@@ -434,7 +434,7 @@ public class AdapterTest {
     }
 
     /**
-     * Converter addition operators to unified format.
+     * Converter addition operators to a new format.
      * @since 1.0
      */
     private static class AdditionConverter implements Converter {

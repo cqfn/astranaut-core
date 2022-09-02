@@ -25,17 +25,17 @@ package org.cqfn.astranaut.core;
 
 /**
  * Interface for converters that checks one rule described in DSL
- * and convert the specified AST built by a third-party parser to the unified format.
+ * and convert the initial AST built to the specified target format.
  *
  * @since 1.0
  */
 public interface Converter {
     /**
-     * Converts an AST built by a third-party parser to the unified format.
+     * Converts an initial AST to the target format.
      *
      * @param node The root of the AST to be converted
      * @param factory The node factory
-     * @return A new [unified] node
+     * @return A new node
      */
     Node convert(Node node, Factory factory);
 }
