@@ -21,44 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
-
-import java.util.Map;
+package org.cqfn.astranaut.core;
 
 /**
- * The node factory.
+ * Interface for converters that checks one rule described in DSL
+ * and convert the specified AST built by a third-party parser to the unified format.
  *
- * @since 0.1
+ * @since 1.0
  */
-public class Factory {
+public interface Converter {
     /**
-     * The set of types arranged by name.
+     * Converts an AST built by a third-party parser to the unified format.
+     *
+     * @param node The root of the AST to be converted
+     * @param factory The node factory
+     * @return A new [unified] node
      */
-    private final Map<String, Type> types;
-
-    /**
-     * Constructor.
-     * @param types The set of types arranged by name
-     */
-    public Factory(final Map<String, Type> types) {
-        this.types = types;
-    }
-
-    /**
-     * Creates node builder by type name.
-     * @param name The type name
-     * @return A node builder
-     */
-    public final Builder createBuilder(final String name) {
-        final Builder result;
-        if (this.types.containsKey(name)) {
-            final Type type = this.types.get(name);
-            result = type.createBuilder();
-        } else {
-            final DraftNode.Constructor draft = new DraftNode.Constructor();
-            draft.setName(name);
-            result = draft;
-        }
-        return result;
-    }
+    Node convert(Node node, Factory factory);
 }

@@ -25,13 +25,13 @@ package org.cqfn.astranaut.core.example.javascript.rules;
 
 import java.util.List;
 import java.util.Map;
-import org.cqfn.astranaut.core.base.Matcher;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.Matcher;
+import org.cqfn.astranaut.core.Node;
 
 /**
  * Matcher for the subtree returned by the 'js' language parser.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class Matcher1 implements Matcher {
     /**

@@ -26,13 +26,13 @@ package org.cqfn.astranaut.core.example.green;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.ChildDescriptor;
-import org.cqfn.astranaut.core.base.ChildrenMapper;
-import org.cqfn.astranaut.core.base.EmptyFragment;
-import org.cqfn.astranaut.core.base.Fragment;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.ChildDescriptor;
+import org.cqfn.astranaut.core.ChildrenMapper;
+import org.cqfn.astranaut.core.EmptyFragment;
+import org.cqfn.astranaut.core.Fragment;
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Type;
 
 /**
  * Node that describes the 'Addition' type.
@@ -41,7 +41,7 @@ import org.cqfn.astranaut.core.base.Type;
  * ->
  * left@Expression, right@Expression
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class Addition implements BinaryExpression {
     /**
@@ -113,7 +113,7 @@ public final class Addition implements BinaryExpression {
     /**
      * Type descriptor of the 'Addition' node.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         /**
@@ -183,7 +183,7 @@ public final class Addition implements BinaryExpression {
     /**
      * Class for 'Addition' node construction.
      *
-     * @since 0.1
+     * @since 1.0
      */
     public static final class Constructor implements Builder {
         /**

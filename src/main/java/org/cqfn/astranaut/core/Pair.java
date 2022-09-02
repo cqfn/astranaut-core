@@ -21,29 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 /**
- * Describes a fragment of source code.
+ * Simple pair in case someone needs to use (key, val) objects without creating a map.
  *
- * @since 0.1
+ * @param <K> The key type
+ * @param <V> The value type
+ *
+ * @since 1.0
  */
-public interface Fragment {
+public final class Pair<K, V> {
     /**
-     * Returns the source of the fragment.
-     * @return Source instance
+     * The key.
      */
-    Source getSource();
+    private final K key;
 
     /**
-     * Returns the first position of the fragment.
-     * @return The first position.
+     * The value.
      */
-    Position getBegin();
+    private final V val;
 
     /**
-     * Returns the last position of the fragment.
-     * @return The last position.
+     * Constructor.
+     * @param key The key
+     * @param val The value
      */
-    Position getEnd();
+    public Pair(final K key, final V val) {
+        this.key = key;
+        this.val = val;
+    }
+
+    /**
+     * Returns the key.
+     * @return The key
+     */
+    public K getKey() {
+        return this.key;
+    }
+
+    /**
+     * Returns the value.
+     * @return The value
+     */
+    public V getValue() {
+        return this.val;
+    }
 }

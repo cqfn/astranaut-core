@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 /**
- * This package contains helper classes.
+ * This package contains tests for core classes.
  *
- * @since 0.1
+ * @since 1.0
  */
-package org.cqfn.astranaut.core.utils;
+package org.cqfn.astranaut.core;

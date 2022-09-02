@@ -26,17 +26,17 @@ package org.cqfn.astranaut.core.example.green;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.ChildDescriptor;
-import org.cqfn.astranaut.core.base.EmptyFragment;
-import org.cqfn.astranaut.core.base.Fragment;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.ChildDescriptor;
+import org.cqfn.astranaut.core.EmptyFragment;
+import org.cqfn.astranaut.core.Fragment;
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Type;
 
 /**
  * Node that describes the 'IntegerLiteral' type.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class IntegerLiteral implements Expression {
     /**
@@ -88,7 +88,7 @@ public final class IntegerLiteral implements Expression {
     /**
      * Type descriptor of the 'Addition' node.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         /**
@@ -141,7 +141,7 @@ public final class IntegerLiteral implements Expression {
     /**
      * Class for 'IntegerLiteral' node construction.
      *
-     * @since 0.1
+     * @since 1.0
      */
     public static final class Constructor implements Builder {
         /**

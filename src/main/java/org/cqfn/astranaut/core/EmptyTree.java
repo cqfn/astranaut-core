@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * The empty syntax tree.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class EmptyTree implements Node {
     /**
@@ -81,7 +81,7 @@ public final class EmptyTree implements Node {
     /**
      * The fake builder that only returns static reference.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static final class BuilderImpl implements Builder {
         @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
@@ -113,7 +113,7 @@ public final class EmptyTree implements Node {
     /**
      * The type of empty tree.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         @Override

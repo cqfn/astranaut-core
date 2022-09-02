@@ -21,21 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * Interface for converters that checks one rule described in DSL
- * and convert the specified AST built by a third-party parser to the unified format.
+ * Checks if the node matches some structure, and extracts the data or (and) children if so.
  *
- * @since 0.1
+ * @since 1.0
  */
-public interface Converter {
+public interface Matcher {
     /**
-     * Converts an AST built by a third-party parser to the unified format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new [unified] node
+     * Matches the node.
+     * @param node The node
+     * @param children Where to save children when matched
+     * @param data Where to save data when matched
+     * @return The result of matching, {@code true} if node matches and data was extracted
      */
-    Node convert(Node node, Factory factory);
+    boolean match(Node node, Map<Integer, List<Node>> children, Map<Integer, String> data);
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import java.util.List;
  * Helper class for building lists.
  *
  * @param <T> Item type
- * @since 0.1
+ * @since 1.0
  */
 public class ListUtils<T> {
     /**

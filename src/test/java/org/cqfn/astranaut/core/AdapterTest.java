@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test for {@link Adapter} class.
  *
- * @since 0.1
+ * @since 1.0
  */
 public class AdapterTest {
     /**
@@ -331,7 +331,7 @@ public class AdapterTest {
 
     /**
      * Converter variables to unified format.
-     * @since 0.1
+     * @since 1.0
      */
     private static class VariableConverter implements Converter {
         @Override
@@ -376,7 +376,7 @@ public class AdapterTest {
 
     /**
      * Converter numeric literals to unified format.
-     * @since 0.1
+     * @since 1.0
      */
     private static class NumericConverter implements Converter {
         @Override
@@ -435,7 +435,7 @@ public class AdapterTest {
 
     /**
      * Converter addition operators to unified format.
-     * @since 0.1
+     * @since 1.0
      */
     private static class AdditionConverter implements Converter {
         /**

@@ -21,57 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
+
+import java.util.List;
 
 /**
- * The empty fragment.
+ * Object that creates nodes.
  *
- * @since 0.1
+ * @since 1.0
  */
-public final class EmptyFragment implements Fragment {
+public interface Builder {
     /**
-     * The instance.
+     * Associate a new fragment with the node.
+     * @param fragment A new fragment
      */
-    public static final Fragment INSTANCE = new EmptyFragment();
-
-    /**
-     * The source.
-     */
-    private static final Source SOURCE = new Source() {
-        @Override
-        public String getFragmentAsString(final Position start, final Position end) {
-            return "";
-        }
-    };
+    void setFragment(Fragment fragment);
 
     /**
-     * The position.
+     * Associate a new data with the node (in a textual format).
+     * @param str Data as a string
+     * @return Result of operation, {@code true} if the new data is suitable for this type of node
      */
-    private static final Position POSITION = new Position() {
-        @Override
-        public int getIndex() {
-            return 0;
-        }
-    };
+    boolean setData(String str);
 
     /**
-     * Constructor.
+     * Sets a new list of children.
+     * @param list A list of children
+     * @return Result of operation, {@code true} if the new children list is suitable
+     *  for this type of node
      */
-    private EmptyFragment() {
-    }
+    boolean setChildrenList(List<Node> list);
 
-    @Override
-    public Source getSource() {
-        return EmptyFragment.SOURCE;
-    }
+    /**
+     * Checks if the Creator is in a valid state,
+     * that is, whether it can create a new node based on its internal data.
+     * @return Checking result
+     */
+    boolean isValid();
 
-    @Override
-    public Position getBegin() {
-        return EmptyFragment.POSITION;
-    }
-
-    @Override
-    public Position getEnd() {
-        return EmptyFragment.POSITION;
-    }
+    /**
+     * Creates a specific node.
+     * @return A node
+     */
+    Node createNode();
 }

@@ -21,75 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * An abstract syntax tree node.
+ * A type of abstract syntax tree node.
  *
- * @since 0.1
+ * @since 1.0
  */
-public interface Node {
+public interface Type {
     /**
-     * Returns the fragment associated with the node.
-     * @return The fragment
+     * Returns the type name.
+     * @return The type name
      */
-    Fragment getFragment();
+    String getName();
 
     /**
-     * Returns the type of the node.
-     * @return The type
+     * Returns the list of child types.
+     * @return The list of descriptors
      */
-    Type getType();
+    List<ChildDescriptor> getChildTypes();
 
     /**
-     * Returns data associated with the node (in a textual format).
-     * @return Node data or empty string
+     * The hierarchy of names of groups the node type belongs to.
+     * @return The list of type names
      */
-    String getData();
+    List<String> getHierarchy();
 
     /**
-     * Returns the number of children.
-     * @return Child node count
+     * Returns the value of some property (depends on implementation).
+     * @param name The name of property
+     * @return Property value (if the property is not defined, returns an empty string)
      */
-    int getChildCount();
+    String getProperty(String name);
 
     /**
-     * Returns a child by its index.
-     * @param index Child index
-     * @return A node
+     * Creates a new builder who builds a node of this type.
+     * @return A builder.
      */
-    Node getChild(int index);
+    Builder createBuilder();
 
     /**
-     * Returns the name of the type.
-     * @return The name
-     */
-    default String getTypeName() {
-        return this.getType().getName();
-    }
-
-    /**
-     * Checks whether the node type belongs to group.
+     * Checks whether the type belongs to group.
      * @param type The type name
      * @return Checking result, {@code true} if the type belongs to the group
      */
     default boolean belongsToGroup(final String type) {
-        return this.getType().belongsToGroup(type);
-    }
-
-    /**
-     * Returns the list of child nodes.
-     * @return The node list
-     */
-    default List<Node> getChildrenList() {
-        final int count = this.getChildCount();
-        final Node[] result = new Node[count];
-        for (int index = 0; index < count; index = index + 1) {
-            result[index] = this.getChild(index);
-        }
-        return Arrays.asList(result);
+        return this.getHierarchy().contains(type);
     }
 }

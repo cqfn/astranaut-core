@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Testing {@link ChildrenMapper} class.
  *
- * @since 0.1
+ * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class ChildrenMapperTest {
@@ -443,7 +443,7 @@ public class ChildrenMapperTest {
     /**
      * Node descriptor for testing.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static final class NodeDescriptor {
         /**

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.TreeMap;
 /**
  * Mapping of the list of nodes by positions based on node types.
  *
- * @since 0.1
+ * @since 1.0
  */
 public class ChildrenMapper {
     /**
@@ -212,7 +212,7 @@ public class ChildrenMapper {
 
     /**
      * The set of types with a relationship of possible position for a node of each such type.
-     * @since 0.1
+     * @since 1.0
      */
     private final class PositionSet {
         /**

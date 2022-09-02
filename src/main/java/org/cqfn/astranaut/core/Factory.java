@@ -21,10 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core;
+
+import java.util.Map;
 
 /**
- * This package contains base classes that define the syntax tree structure.
+ * The node factory.
  *
- * @since 0.1
+ * @since 1.0
  */
-package org.cqfn.astranaut.core.base;
+public class Factory {
+    /**
+     * The set of types arranged by name.
+     */
+    private final Map<String, Type> types;
+
+    /**
+     * Constructor.
+     * @param types The set of types arranged by name
+     */
+    public Factory(final Map<String, Type> types) {
+        this.types = types;
+    }
+
+    /**
+     * Creates node builder by type name.
+     * @param name The type name
+     * @return A node builder
+     */
+    public final Builder createBuilder(final String name) {
+        final Builder result;
+        if (this.types.containsKey(name)) {
+            final Type type = this.types.get(name);
+            result = type.createBuilder();
+        } else {
+            final DraftNode.Constructor draft = new DraftNode.Constructor();
+            draft.setName(name);
+            result = draft;
+        }
+        return result;
+    }
+}

@@ -21,23 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
-
-import java.util.List;
-import java.util.Map;
+package org.cqfn.astranaut.core;
 
 /**
- * Checks if the node matches some structure, and extracts the data or (and) children if so.
+ * Represents a position in source code file.
  *
- * @since 0.1
+ * @since 1.0
  */
-public interface Matcher {
+public interface Position {
     /**
-     * Matches the node.
-     * @param node The node
-     * @param children Where to save children when matched
-     * @param data Where to save data when matched
-     * @return The result of matching, {@code true} if node matches and data was extracted
+     * Returns absolute position (character index).
+     * @return The index
      */
-    boolean match(Node node, Map<Integer, List<Node>> children, Map<Integer, String> data);
+    int getIndex();
 }

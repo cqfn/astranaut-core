@@ -23,12 +23,12 @@
  */
 package org.cqfn.astranaut.core.example.green;
 
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.Node;
 
 /**
  * Node that describes the 'Expression' type.
  *
- * @since 0.1
+ * @since 1.0
  */
 public interface Expression extends Node {
 }

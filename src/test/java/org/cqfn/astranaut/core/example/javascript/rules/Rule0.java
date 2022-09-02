@@ -26,16 +26,16 @@ package org.cqfn.astranaut.core.example.javascript.rules;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.Converter;
-import org.cqfn.astranaut.core.base.EmptyTree;
-import org.cqfn.astranaut.core.base.Factory;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.Converter;
+import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Factory;
+import org.cqfn.astranaut.core.Node;
 
 /**
  * Converter describing DSL conversion rule.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class Rule0 implements Converter {
     /**

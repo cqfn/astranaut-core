@@ -21,47 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
-
-import java.util.List;
+package org.cqfn.astranaut.core;
 
 /**
- * Object that creates nodes.
+ * Describes a fragment of source code.
  *
- * @since 0.1
+ * @since 1.0
  */
-public interface Builder {
+public interface Fragment {
     /**
-     * Associate a new fragment with the node.
-     * @param fragment A new fragment
+     * Returns the source of the fragment.
+     * @return Source instance
      */
-    void setFragment(Fragment fragment);
+    Source getSource();
 
     /**
-     * Associate a new data with the node (in a textual format).
-     * @param str Data as a string
-     * @return Result of operation, {@code true} if the new data is suitable for this type of node
+     * Returns the first position of the fragment.
+     * @return The first position.
      */
-    boolean setData(String str);
+    Position getBegin();
 
     /**
-     * Sets a new list of children.
-     * @param list A list of children
-     * @return Result of operation, {@code true} if the new children list is suitable
-     *  for this type of node
+     * Returns the last position of the fragment.
+     * @return The last position.
      */
-    boolean setChildrenList(List<Node> list);
-
-    /**
-     * Checks if the Creator is in a valid state,
-     * that is, whether it can create a new node based on its internal data.
-     * @return Checking result
-     */
-    boolean isValid();
-
-    /**
-     * Creates a specific node.
-     * @return A node
-     */
-    Node createNode();
+    Position getEnd();
 }

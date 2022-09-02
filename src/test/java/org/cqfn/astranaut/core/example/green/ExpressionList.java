@@ -27,17 +27,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.ChildDescriptor;
-import org.cqfn.astranaut.core.base.EmptyFragment;
-import org.cqfn.astranaut.core.base.Fragment;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.ChildDescriptor;
+import org.cqfn.astranaut.core.EmptyFragment;
+import org.cqfn.astranaut.core.Fragment;
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Type;
 
 /**
  * Node that describes the 'ExpressionList' type.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class ExpressionList implements Node {
     /**
@@ -98,7 +98,7 @@ public final class ExpressionList implements Node {
     /**
      * Type descriptor of the 'ExpressionList' node.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         /**
@@ -158,7 +158,7 @@ public final class ExpressionList implements Node {
     /**
      * Class for 'Addition' node construction.
      *
-     * @since 0.1
+     * @since 1.0
      */
     public static final class Constructor implements Builder {
         /**

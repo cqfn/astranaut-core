@@ -21,17 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
-import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link NodeReplacer} class.
  *
- * @since 0.1
+ * @since 1.0
  */
 public class NodeReplacerTest {
     /**

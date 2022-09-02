@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Mutable node whose children can be replaced during syntactic tree customization.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class ConvertibleNode implements Node {
     /**

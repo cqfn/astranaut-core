@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import java.util.Objects;
  * Draft node for wrapping the results of third-party parsers
  * in the {@link Node} interface.
  *
- * @since 0.1
+ * @since 1.0
  */
 public final class DraftNode implements Node {
     /**
@@ -90,7 +90,7 @@ public final class DraftNode implements Node {
     /**
      * Type implementation for the draft node.
      *
-     * @since 0.1
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         /**
@@ -136,7 +136,7 @@ public final class DraftNode implements Node {
 
     /**
      * The constructor class for draft node.
-     * @since 0.1
+     * @since 1.0
      */
     public static final class Constructor implements Builder {
         /**
