@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0.2
  */
-public class JsonDeserializerTest {
+class JsonDeserializerTest {
     /**
      * The "Addition" type.
      */
@@ -59,7 +59,7 @@ public class JsonDeserializerTest {
      * Test for a tree deserialization from a JSON string.
      */
     @Test
-    public void testDeserialization() {
+    void testDeserialization() {
         final String source = this.getFileContent("test_deserialization.json");
         final Map<String, Type> types = new TreeMap<>();
         types.put(JsonDeserializerTest.ADD, Addition.TYPE);
@@ -87,7 +87,7 @@ public class JsonDeserializerTest {
      * to some language.
      */
     @Test
-    public void loadIntoDraftNode() {
+    void loadIntoDraftNode() {
         final String source = "{ \"root\": { \"type\": \"Example\" } }";
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,

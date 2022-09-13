@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0.2
  */
-public class ListUtilsTest {
+class ListUtilsTest {
     /**
      * The number "3".
      */
@@ -50,7 +50,7 @@ public class ListUtilsTest {
      * creating an unmodifiable list from it.
      */
     @Test
-    public void testAddingItems() {
+    void testAddingItems() {
         final ListUtils<Integer> list = new ListUtils<>();
         list.add(1, null, 2, null);
         final List<Integer> result = list.make();
@@ -66,7 +66,7 @@ public class ListUtilsTest {
     }
 
     @Test
-    public void testMergingLists() {
+    void testMergingLists() {
         final ListUtils<Integer> list = new ListUtils<>();
         list.add(1, 2);
         final List<Integer> second = Collections.unmodifiableList(

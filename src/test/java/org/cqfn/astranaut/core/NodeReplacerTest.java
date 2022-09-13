@@ -33,12 +33,12 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0
  */
-public class NodeReplacerTest {
+class NodeReplacerTest {
     /**
      * Testing tree recreation when a root is the node to be replaced.
      */
     @Test
-    public void testReplacementOfRoot() {
+    void testReplacementOfRoot() {
         final Node root =
             this.createNode(
                 "1",
@@ -79,7 +79,7 @@ public class NodeReplacerTest {
      * Testing tree recreation when a root child is the node to be replaced.
      */
     @Test
-    public void testReplacementOfRootChild() {
+    void testReplacementOfRootChild() {
         final Node source =
             this.createNode(
                 "130",
@@ -122,7 +122,7 @@ public class NodeReplacerTest {
      * Testing tree recreation when a child of a root child is the node to be replaced.
      */
     @Test
-    public void testReplacementOfRootGrandChild() {
+    void testReplacementOfRootGrandChild() {
         final Node source = this.createNode("2300", "");
         final Node left =
             this.createNode(
@@ -165,7 +165,7 @@ public class NodeReplacerTest {
      * Testing tree recreation when a source subtree to be replaced is not found.
      */
     @Test
-    public void testReplacementWithoutMatch() {
+    void testReplacementWithoutMatch() {
         final Node root =
             this.createNode(
                 "111",

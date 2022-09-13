@@ -39,13 +39,13 @@ import org.junit.jupiter.api.io.TempDir;
  *
  * @since 1.0.2
  */
-public class TreeVisualizerTest {
+class TreeVisualizerTest {
     /**
      * Test for a single node visualization.
      * @param temp A temporary directory
      */
     @Test
-    public void testSingleNodeVisualization(@TempDir final Path temp) {
+    void testSingleNodeVisualization(@TempDir final Path temp) {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("TestNode");
         ctor.setData("value");
@@ -66,7 +66,7 @@ public class TreeVisualizerTest {
      * @param temp A temporary directory
      */
     @Test
-    public void testNullNodeVisualization(@TempDir final Path temp) {
+    void testNullNodeVisualization(@TempDir final Path temp) {
         final Node root = EmptyTree.INSTANCE;
         final TreeVisualizer visualizer = new TreeVisualizer(root);
         final Path img = temp.resolve("null.png");
@@ -84,7 +84,7 @@ public class TreeVisualizerTest {
      * @param temp A temporary directory
      */
     @Test
-    public void testNodeVisualizationWithEncoding(@TempDir final Path temp) {
+    void testNodeVisualizationWithEncoding(@TempDir final Path temp) {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("DataNode");
         ctor.setData("<va\'l&u\"e>");
@@ -105,7 +105,7 @@ public class TreeVisualizerTest {
      * @param temp A temporary directory
      */
     @Test
-    public void testTreeVisualization(@TempDir final Path temp) {
+    void testTreeVisualization(@TempDir final Path temp) {
         final DraftNode.Constructor addition = new DraftNode.Constructor();
         addition.setName("Addition");
         final DraftNode.Constructor left = new DraftNode.Constructor();
@@ -132,7 +132,7 @@ public class TreeVisualizerTest {
      * @param temp A temporary directory
      */
     @Test
-    public void testWrongExtension(@TempDir final Path temp) {
+    void testWrongExtension(@TempDir final Path temp) {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("Exception");
         final Node root = ctor.createNode();

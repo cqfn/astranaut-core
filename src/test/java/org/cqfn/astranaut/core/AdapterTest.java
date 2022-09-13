@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0
  */
-public class AdapterTest {
+class AdapterTest {
     /**
      * The 'literal' string constant.
      */
@@ -80,7 +80,7 @@ public class AdapterTest {
      * Testing tree converter.
      */
     @Test
-    public void testTreeConverter() {
+    void testTreeConverter() {
         final Node original = this.createNode(
             AdapterTest.STR_SINGLE_EXPR,
             "",
@@ -134,7 +134,7 @@ public class AdapterTest {
      * Testing tree converter (complex case).
      */
     @Test
-    public void testTreeConverterComplexCase() {
+    void testTreeConverterComplexCase() {
         final Node subtree = this.createNode(
             AdapterTest.STR_SINGLE_EXPR,
             "",
@@ -200,7 +200,7 @@ public class AdapterTest {
      * Test covering the variable converter.
      */
     @Test
-    public void variableConverterTest() {
+    void variableConverterTest() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new VariableConverter();
         final Node original = this.createNode(
@@ -241,7 +241,7 @@ public class AdapterTest {
      * Test covering the variable converter created as an example for generation.
      */
     @Test
-    public void exampleVariableConverterTest() {
+    void exampleVariableConverterTest() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = Rule0.INSTANCE;
         final Node original = this.createNode(
@@ -267,7 +267,7 @@ public class AdapterTest {
      * Test covering the numeric literal converter.
      */
     @Test
-    public void numericConverterTest() {
+    void numericConverterTest() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new NumericConverter();
         final Node original = this.createNode(
@@ -294,7 +294,7 @@ public class AdapterTest {
      * Test covering the addition operators converter.
      */
     @Test
-    public void additionConverterTest() {
+    void additionConverterTest() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new AdditionConverter();
         final Builder left = factory.createBuilder(AdapterTest.STR_VARIABLE);
