@@ -21,21 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * Base exception thrown by the project.
  *
- * @since 1.0
+ * @since 1.0.2
  */
-public interface Converter {
+public abstract class BaseException extends Exception {
+    private static final long serialVersionUID = -636126348743667929L;
+
     /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * Returns initiator name, i.e. module that thrown the exception.
+     * @return A name
      */
-    Node convert(Node node, Factory factory);
+    public abstract String getInitiator();
+
+    /**
+     * Returns error message.
+     * @return A message
+     */
+    public abstract String getErrorMessage();
 }

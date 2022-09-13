@@ -24,18 +24,16 @@
 package org.cqfn.astranaut.core;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * Interface for factories selection that selects a suitable factory
+ * for the specified programming language.
  *
- * @since 1.0
+ * @since 1.0.2
  */
-public interface Converter {
+public interface FactorySelector {
     /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * Selects a suitable factory for the specified programming language.
+     * @param language The language name
+     * @return A suitable factory
      */
-    Node convert(Node node, Factory factory);
+    Factory select(String language);
 }

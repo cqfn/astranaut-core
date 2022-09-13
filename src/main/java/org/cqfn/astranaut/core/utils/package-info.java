@@ -21,21 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * This package contains helper classes.
  *
- * @since 1.0
+ * @since 1.0.2
  */
-public interface Converter {
-    /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
-     */
-    Node convert(Node node, Factory factory);
-}
+package org.cqfn.astranaut.core.utils;
