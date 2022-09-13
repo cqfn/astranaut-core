@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0.2
  */
-public class DotRenderTest {
+class DotRenderTest {
     /**
      * Directory with test resources.
      */
@@ -49,7 +49,7 @@ public class DotRenderTest {
      * @throws IOException If input stream cannot be read from a DOT file
      */
     @Test
-    public void testSingleNode() throws IOException {
+    void testSingleNode() throws IOException {
         final Node root = this.createNode("SingleNode");
         final String expected = new FilesReader(DIR.concat("testSingleNode.dot")).readAsString();
         final String result = this.renderDot(root);
@@ -62,7 +62,7 @@ public class DotRenderTest {
      * @throws IOException If input stream cannot be read from a DOT file
      */
     @Test
-    public void testSingleNodeWithData() throws IOException {
+    void testSingleNodeWithData() throws IOException {
         final Node root = this.createNode("Node", "data");
         final String expected = new FilesReader(
             DotRenderTest.DIR.concat("testSingleNodeWithData.dot")
@@ -78,7 +78,7 @@ public class DotRenderTest {
      * @throws IOException If input stream cannot be read from a DOT file
      */
     @Test
-    public void testNodeWithChildren() throws IOException {
+    void testNodeWithChildren() throws IOException {
         final List<Node> children = new LinkedList<>();
         children.add(this.createNode("ChildNode0"));
         children.add(this.createNode("ChildNode1", "value"));
@@ -98,7 +98,7 @@ public class DotRenderTest {
      * @throws IOException If input stream cannot be read from a DOT file
      */
     @Test
-    public void testNodeWithNestedChildren() throws IOException {
+    void testNodeWithNestedChildren() throws IOException {
         final List<Node> thirdl = new LinkedList<>();
         thirdl.add(this.createNode("Child4"));
         final Node secondch = this.createNode("Child2", thirdl);
@@ -123,7 +123,7 @@ public class DotRenderTest {
      * @throws IOException If input stream cannot be read from a DOT file
      */
     @Test
-    public void testNodeWithNullChild() throws IOException {
+    void testNodeWithNullChild() throws IOException {
         final List<Node> children = new LinkedList<>();
         children.add(this.createNode("Child"));
         children.add(EmptyTree.INSTANCE);
