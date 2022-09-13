@@ -31,6 +31,7 @@ import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Type;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
