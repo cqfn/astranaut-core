@@ -21,50 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
+
+import java.io.File;
+import java.io.IOException;
+import org.cqfn.astranaut.core.Node;
 
 /**
- * Simple pair in case someone needs to use (key, val) objects without creating a map.
+ * Visualizer of trees.
  *
- * @param <K> The key type
- * @param <V> The value type
- *
- * @since 1.0
+ * @since 1.0.2
  */
-public final class Pair<K, V> {
+public class TreeVisualizer {
     /**
-     * The key.
+     * The tree to be visualized.
      */
-    private final K key;
-
-    /**
-     * The value.
-     */
-    private final V val;
+    private final Node tree;
 
     /**
      * Constructor.
-     * @param key The key
-     * @param val The value
+     * @param tree The tree to be visualized
      */
-    public Pair(final K key, final V val) {
-        this.key = key;
-        this.val = val;
+    public TreeVisualizer(final Node tree) {
+        this.tree = tree;
     }
 
     /**
-     * Returns the key.
-     * @return The key
+     * Renders a DOT text of the tree, renders an image from it and
+     * saves it to the specified file.
+     * @param file A file of the AST visualization
+     * @throws IOException If an error during input or output actions occurs
+     * @throws WrongFileExtension If an error during visualization occurs
      */
-    public K getKey() {
-        return this.key;
-    }
-
-    /**
-     * Returns the value.
-     * @return The value
-     */
-    public V getValue() {
-        return this.val;
+    public void visualize(final File file) throws IOException, WrongFileExtension {
+        final DotRender render = new DotRender(this.tree);
+        final String dot = render.render();
+        final ImageRender image = new ImageRender(dot);
+        image.render(file);
     }
 }

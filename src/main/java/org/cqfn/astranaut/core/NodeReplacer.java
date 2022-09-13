@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Creator of a new tree with a modified subtree.

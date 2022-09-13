@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
+import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,0 +1,16 @@
+{
+  "language": "java",
+  "root": {
+    "type": "Addition",
+    "children": [
+      {
+        "type": "IntegerLiteral",
+        "data": "2"
+      },
+      {
+        "type": "IntegerLiteral",
+        "data": "3"
+      }
+    ]
+  }
+}

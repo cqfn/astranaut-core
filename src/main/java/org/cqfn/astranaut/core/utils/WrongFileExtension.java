@@ -21,21 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * Exception "The file extension must be .png or .svg".
  *
- * @since 1.0
+ * @since 1.0.2
  */
-public interface Converter {
+final class WrongFileExtension extends BaseException {
     /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * The instance.
      */
-    Node convert(Node node, Factory factory);
+    public static final WrongFileExtension INSTANCE = new WrongFileExtension();
+
+    private static final long serialVersionUID = -1780936046129839285L;
+
+    @Override
+    public String getInitiator() {
+        return "Visualizer";
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return "The file extension must be .png or .svg";
+    }
 }
