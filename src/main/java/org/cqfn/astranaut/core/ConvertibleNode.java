@@ -138,6 +138,32 @@ public final class ConvertibleNode implements Node {
     }
 
     /**
+     * Builds a non-convertible subtree from this node.
+     * @return The root of a non-convertible subtree
+     */
+    public Node rebuild() {
+        final Builder builder = this.prototype.getType().createBuilder();
+        builder.setFragment(this.prototype.getFragment());
+        builder.setData(this.prototype.getData());
+        final List<Node> list = new ArrayList<>(this.children.size());
+        for (final Node child : this.children) {
+            if (child instanceof ConvertibleNode) {
+                list.add(((ConvertibleNode) child).rebuild());
+            } else {
+                list.add(child);
+            }
+        }
+        builder.setChildrenList(list);
+        final Node result;
+        if (builder.isValid()) {
+            result = builder.createNode();
+        } else {
+            result = EmptyTree.INSTANCE;
+        }
+        return result;
+    }
+
+    /**
      * Transforms children nodes to convertible ones.
      * @return Array of convertible nodes
      */
