@@ -63,12 +63,17 @@ public class Adapter {
         final List<ConvertibleNode> nodes = new ArrayList<>(0);
         NodeListBuilder.buildNodeList(convertible, nodes);
         for (final ConvertibleNode original : nodes) {
+            boolean converted = false;
             for (final Converter converter : this.converters) {
                 final Node transformed = converter.convert(original, this.factory);
                 if (!(transformed instanceof EmptyTree)) {
                     result = Adapter.replace(original, result, transformed);
+                    converted = true;
                     break;
                 }
+            }
+            if (!converted) {
+                result = Adapter.replace(original, result, original.rebuild());
             }
         }
         return result;
