@@ -34,12 +34,12 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0
  */
-public class ConvertibleNodeTest {
+class ConvertibleNodeTest {
     /**
      * Testing the transformation from 'typical' node to convertible.
      */
     @Test
-    public void transformation() {
+    void transformation() {
         IntegerLiteral.Constructor icr = new IntegerLiteral.Constructor();
         icr.setData("7");
         final Node left = icr.createNode();

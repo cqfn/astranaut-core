@@ -21,21 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
+
+import java.io.File;
+import java.io.IOException;
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * Visualizer of trees.
  *
- * @since 1.0
+ * @since 1.0.2
  */
-public interface Converter {
+public class TreeVisualizer {
     /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * The tree to be visualized.
      */
-    Node convert(Node node, Factory factory);
+    private final Node tree;
+
+    /**
+     * Constructor.
+     * @param tree The tree to be visualized
+     */
+    public TreeVisualizer(final Node tree) {
+        this.tree = tree;
+    }
+
+    /**
+     * Renders a DOT text of the tree, renders an image from it and
+     * saves it to the specified file.
+     * @param file A file of the AST visualization
+     * @throws IOException If an error during input or output actions occurs
+     * @throws WrongFileExtension If an error during visualization occurs
+     */
+    public void visualize(final File file) throws IOException, WrongFileExtension {
+        final DotRender render = new DotRender(this.tree);
+        final String dot = render.render();
+        final ImageRender image = new ImageRender(dot);
+        image.render(file);
+    }
 }

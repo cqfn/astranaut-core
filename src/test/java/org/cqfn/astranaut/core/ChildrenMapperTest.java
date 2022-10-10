@@ -37,12 +37,12 @@ import org.junit.jupiter.api.Test;
  * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class ChildrenMapperTest {
+class ChildrenMapperTest {
     /**
      * Testing mapping with all obligatory children.
      */
     @Test
-    public void testAllNonOptionalChildrenMapping() {
+    void testAllNonOptionalChildrenMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A"),
@@ -61,7 +61,7 @@ public class ChildrenMapperTest {
      * Testing the mapper with a list of nodes in which the order is mixed up.
      */
     @Test
-    public void testIncorrectOrderChildren() {
+    void testIncorrectOrderChildren() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -83,7 +83,7 @@ public class ChildrenMapperTest {
      * Testing the mapper with one node that should be not mapped.
      */
     @Test
-    public void testOneNodeNotMapped() {
+    void testOneNodeNotMapped() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A")
@@ -101,7 +101,7 @@ public class ChildrenMapperTest {
      * where some children are obligatory, some - not.
      */
     @Test
-    public void testAllVariousChildrenMapping() {
+    void testAllVariousChildrenMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -125,7 +125,7 @@ public class ChildrenMapperTest {
      * of them is optional, but the list of nodes contains only one child of this type.
      */
     @Test
-    public void testOnlyNonOptionalFromVariousChildrenMapping() {
+    void testOnlyNonOptionalFromVariousChildrenMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -148,7 +148,7 @@ public class ChildrenMapperTest {
      * Another complex test case.
      */
     @Test
-    public void testNonOptionalAndOptionalFromVariousChildrenMapping() {
+    void testNonOptionalAndOptionalFromVariousChildrenMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -174,7 +174,7 @@ public class ChildrenMapperTest {
      * Therefore, these nodes must be distributed to the correct cells.
      */
     @Test
-    public void testNonOptionalAndOptionalOfSameTypeMapping() {
+    void testNonOptionalAndOptionalOfSameTypeMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -197,7 +197,7 @@ public class ChildrenMapperTest {
      * and one optional node of each type.
      */
     @Test
-    public void testNonOptionalOfSameTypeAsOptionalMapping() {
+    void testNonOptionalOfSameTypeAsOptionalMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", true),
@@ -220,7 +220,7 @@ public class ChildrenMapperTest {
      * Testing the case where missed a non-optional child.
      */
     @Test
-    public void testMissingNonOptionalChildMapping() {
+    void testMissingNonOptionalChildMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", true),
@@ -241,7 +241,7 @@ public class ChildrenMapperTest {
      * Testing the case where the node list has one extra child.
      */
     @Test
-    public void testExtraChildMapping() {
+    void testExtraChildMapping() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", true),
@@ -263,7 +263,7 @@ public class ChildrenMapperTest {
      * that does not match with descriptors list.
      */
     @Test
-    public void testOneNotMatchedNode() {
+    void testOneNotMatchedNode() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -287,7 +287,7 @@ public class ChildrenMapperTest {
      * accordingly the mapper cannot make the right choice.
      */
     @Test
-    public void testSideBySideControversialOptionalNodes() {
+    void testSideBySideControversialOptionalNodes() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -310,7 +310,7 @@ public class ChildrenMapperTest {
      * accordingly the mapper cannot make the right choice.
      */
     @Test
-    public void testThreeControversialOptionalNodes() {
+    void testThreeControversialOptionalNodes() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -335,7 +335,7 @@ public class ChildrenMapperTest {
      * accordingly the mapper cannot make the right choice.
      */
     @Test
-    public void testSeparatedControversialOptionalNodes() {
+    void testSeparatedControversialOptionalNodes() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -360,7 +360,7 @@ public class ChildrenMapperTest {
      * Testing the case when the node list has more records than the descriptors list.
      */
     @Test
-    public void testIncorrectNumberOfChildren() {
+    void testIncorrectNumberOfChildren() {
         final boolean result = this.testMapping(
             Arrays.asList(
                 new ChildDescriptor("A", false),
@@ -381,7 +381,7 @@ public class ChildrenMapperTest {
      * from the type specified in the descriptor.
      */
     @Test
-    public void testMappingWithInheritance() {
+    void testMappingWithInheritance() {
         final String type = "Expression";
         final List<ChildDescriptor> descriptors = Arrays.asList(
             new ChildDescriptor(type),

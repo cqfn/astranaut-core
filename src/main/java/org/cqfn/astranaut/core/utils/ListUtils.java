@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

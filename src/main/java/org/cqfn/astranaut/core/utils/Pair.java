@@ -21,21 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils;
 
 /**
- * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
+ * Simple pair in case someone needs to use (key, val) objects without creating a map.
+ *
+ * @param <K> The key type
+ * @param <V> The value type
  *
  * @since 1.0
  */
-public interface Converter {
+public final class Pair<K, V> {
     /**
-     * Converts an initial AST to the target format.
-     *
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * The key.
      */
-    Node convert(Node node, Factory factory);
+    private final K key;
+
+    /**
+     * The value.
+     */
+    private final V val;
+
+    /**
+     * Constructor.
+     * @param key The key
+     * @param val The value
+     */
+    public Pair(final K key, final V val) {
+        this.key = key;
+        this.val = val;
+    }
+
+    /**
+     * Returns the key.
+     * @return The key
+     */
+    public K getKey() {
+        return this.key;
+    }
+
+    /**
+     * Returns the value.
+     * @return The value
+     */
+    public V getValue() {
+        return this.val;
+    }
 }

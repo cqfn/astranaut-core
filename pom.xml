@@ -79,9 +79,12 @@ SOFTWARE.
       <plugin>
         <groupId>com.qulice</groupId>
         <artifactId>qulice-maven-plugin</artifactId>
-        <version>0.19.1</version>
+        <version>0.22.0</version>
         <configuration>
           <license>file:${qulice.license}</license>
+          <excludes>
+            <exclude>dependencies:ch.qos.logback:logback-classic</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -127,6 +130,21 @@ SOFTWARE.
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>guru.nidi</groupId>
+      <artifactId>graphviz-java</artifactId>
+      <version>0.18.1</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.11</version>
     </dependency>
   </dependencies>
 </project>
