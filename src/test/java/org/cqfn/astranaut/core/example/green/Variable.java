@@ -38,7 +38,7 @@ import org.cqfn.astranaut.core.Type;
  *
  * @since 1.0
  */
-public final class Variable implements Expression {
+public final class Variable implements AssignableExpression {
     /**
      * The type.
      */
@@ -97,6 +97,11 @@ public final class Variable implements Expression {
         private static final String NAME = "Variable";
 
         /**
+         * The 'AssignableExpression' string.
+         */
+        private static final String ASSIGN_EXPR = "AssignableExpression";
+
+        /**
          * The 'Expression' string.
          */
         private static final String EXPRESSION = "Expression";
@@ -108,6 +113,7 @@ public final class Variable implements Expression {
             Collections.unmodifiableList(
                 Arrays.asList(
                     TypeImpl.NAME,
+                    TypeImpl.ASSIGN_EXPR,
                     TypeImpl.EXPRESSION
                 )
             );
