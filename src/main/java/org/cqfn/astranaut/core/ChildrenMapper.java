@@ -84,6 +84,7 @@ public class ChildrenMapper {
         } else if (capacity >= count) {
             assert destination.length == capacity;
             this.required = new PositionSet(false);
+            this.required.init();
             if (count >= this.required.getCount()) {
                 result = this.fullMapping(destination, source);
             }
@@ -104,6 +105,8 @@ public class ChildrenMapper {
             if (!result) {
                 break;
             }
+            this.possible = new PositionSet(true);
+            this.possible.init();
             final Node[] array = new Node[source.size()];
             source.toArray(array);
             final int unprocessed = this.bindAllUniqueNodes(destination, array);
@@ -126,11 +129,12 @@ public class ChildrenMapper {
      */
     private boolean calculate(final List<Node> nodes) {
         boolean result = true;
-        this.possible = new PositionSet(true);
         this.unused = new TreeMap<>();
         this.suitable = new HashMap<>();
+        final PositionSet set = new PositionSet(true);
+        set.init();
         for (final Node node : nodes) {
-            final String type = this.possible.findSuitableBaseType(node);
+            final String type = set.findSuitableBaseType(node);
             if (type.isEmpty()) {
                 result = false;
                 break;
@@ -262,7 +266,6 @@ public class ChildrenMapper {
          * @return Base type or an empty string if node can't be mapped
          */
         public String findSuitableBaseType(final Node node) {
-            this.init();
             String result = "";
             final Type type = node.getType();
             final String name = type.getName();
@@ -272,6 +275,7 @@ public class ChildrenMapper {
                 for (final String group : this.positions.keySet()) {
                     if (type.belongsToGroup(group)) {
                         result = group;
+                        this.removeFirstPosition(group);
                         break;
                     }
                 }
@@ -285,7 +289,6 @@ public class ChildrenMapper {
          * @param index The position index
          */
         public void removePosition(final String type, final Integer index) {
-            this.init();
             final List<Integer> list = this.positions.get(type);
             if (list != null && list.remove(index)) {
                 this.count = this.count - 1;
@@ -298,7 +301,7 @@ public class ChildrenMapper {
         /**
          * Initializes the set of positions.
          */
-        private void init() {
+        public void init() {
             if (this.positions == null) {
                 this.positions = new TreeMap<>();
                 this.count = 0;
@@ -318,6 +321,18 @@ public class ChildrenMapper {
                     }
                     index = index + 1;
                 }
+            }
+        }
+
+        /**
+         * Removes first position from the set for the specified type.
+         * @param type The type name
+         */
+        private void removeFirstPosition(final String type) {
+            final List<Integer> list = this.positions.get(type);
+            list.remove(0);
+            if (list.isEmpty()) {
+                this.positions.remove(type);
             }
         }
     }

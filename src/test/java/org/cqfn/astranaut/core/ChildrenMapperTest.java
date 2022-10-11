@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.cqfn.astranaut.core.example.green.Variable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,16 @@ import org.junit.jupiter.api.Test;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 class ChildrenMapperTest {
+    /**
+     * The 'AssignableExpression' string.
+     */
+    private static final String ASSIGN_EXPR = "AssignableExpression";
+
+    /**
+     * The 'Expression' string.
+     */
+    private static final String EXPRESSION = "Expression";
+
     /**
      * Testing mapping with all obligatory children.
      */
@@ -382,10 +393,9 @@ class ChildrenMapperTest {
      */
     @Test
     void testMappingWithInheritance() {
-        final String type = "Expression";
         final List<ChildDescriptor> descriptors = Arrays.asList(
-            new ChildDescriptor(type),
-            new ChildDescriptor(type)
+            new ChildDescriptor(ChildrenMapperTest.EXPRESSION),
+            new ChildDescriptor(ChildrenMapperTest.EXPRESSION)
         );
         final ChildrenMapper mapper = new ChildrenMapper(descriptors);
         IntegerLiteral.Constructor icr = new IntegerLiteral.Constructor();
@@ -405,6 +415,27 @@ class ChildrenMapperTest {
         Assertions.assertTrue(result);
         Assertions.assertEquals(addition, mapping[0]);
         Assertions.assertEquals(third, mapping[1]);
+    }
+
+    /**
+     * Mapper testing when nodes in the list have a type that is inherited
+     * from the type that is inherited from another type specified in the descriptor.
+     */
+    @Test
+    void testMappingWithTwoLevelInheritance() {
+        final List<ChildDescriptor> descriptors = Arrays.asList(
+            new ChildDescriptor(ChildrenMapperTest.ASSIGN_EXPR),
+            new ChildDescriptor(ChildrenMapperTest.EXPRESSION)
+        );
+        final ChildrenMapper mapper = new ChildrenMapper(descriptors);
+        final Variable.Constructor ctor = new Variable.Constructor();
+        ctor.setData("x");
+        final Node left = ctor.createNode();
+        ctor.setData("y");
+        final Node right = ctor.createNode();
+        final Node[] mapping = new Node[2];
+        final boolean result = mapper.map(mapping, Arrays.asList(left, right));
+        Assertions.assertTrue(result);
     }
 
     /**
