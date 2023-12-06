@@ -55,14 +55,20 @@ the child `operator` has the index of `1`, and the `assignment expression` has t
 The base interface in the project is `Node` which represent each node in an AST.
 Every specific node in AST or UAST extends or implements `Node`.
 
-A `Node` has the following methods:
+We have tried to make the node interface as minimal as possible.
+Thus, the implementation should contain at least the following methods:
 
-* `getType()` - returns a `Type` of the node as an object;
-* `getTypeName()` - returns a type of the node as a string;
+* `getFragment()` - returns the `Fragment` associated with the node;
+* `getType()` - returns the `Type` of the node (as an object);
 * `getData()` - returns node`s data if it exists;
-* `getChildCount()` - returns an amount of node`s children;
-* `getChild(int index)` - returns a specific child node by its index;
-* `getChildrenList()` - returns a list of node`s children;
+* `getChildCount()` - returns how many children the node has;
+* `getChild(int index)` - returns a specific child node by its index.
+
+The following methods are default, meaning they use the data that the above methods return.
+They are not needed to be overridden:
+ 
+* `getTypeName()` - returns the type of the node as a string;
+* `getChildrenList()` - returns all children of a node as a list;
 * `belongsToGroup(String type)` - checks if the node type belongs to the specific [hierarchy](#2-type-hierarchy) of nodes.
 
 ### §2. Type hierarchy
