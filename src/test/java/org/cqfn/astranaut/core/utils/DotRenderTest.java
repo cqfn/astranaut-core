@@ -29,6 +29,7 @@ import java.util.List;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.utils.visualizer.DotRender;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

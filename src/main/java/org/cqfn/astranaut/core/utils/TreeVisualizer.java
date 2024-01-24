@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
+import org.cqfn.astranaut.core.utils.visualizer.DotRender;
+import org.cqfn.astranaut.core.utils.visualizer.ImageRender;
 
 /**
  * Visualizer of trees.

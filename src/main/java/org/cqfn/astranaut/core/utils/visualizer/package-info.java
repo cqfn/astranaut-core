@@ -23,8 +23,8 @@
  */
 
 /**
- * This package contains helper classes for the JSON deserializer.
+ * This package contains helper classes for the tree visualizer.
  *
  * @since 1.0.7
  */
-package org.cqfn.astranaut.core.utils.deserializer;
+package org.cqfn.astranaut.core.utils.visualizer;
