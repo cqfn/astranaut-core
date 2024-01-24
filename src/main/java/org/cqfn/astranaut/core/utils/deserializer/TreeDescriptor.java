@@ -21,20 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.utils.deserializer;
+
+import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Factory;
+import org.cqfn.astranaut.core.FactorySelector;
+import org.cqfn.astranaut.core.Node;
 
 /**
- * Interface for factories selection that selects a suitable factory
- * for the specified programming language.
- * In other words, it's a factory of factories.
+ * Tree descriptor represented as it is stored in the JSON file.
  *
- * @since 1.0.2
+ * @since 1.0.7
  */
-public interface FactorySelector {
+public class TreeDescriptor {
     /**
-     * Selects a suitable factory for the specified programming language.
-     * @param language The language name
-     * @return A suitable factory
+     * The root node.
      */
-    Factory select(String language);
+    private NodeDescriptor root;
+
+    /**
+     * The language.
+     */
+    private String language;
+
+    /**
+     * Constructor.
+     */
+    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
+    public TreeDescriptor() {
+    }
+
+    /**
+     * Converts tree into node.
+     * @param selector The node factory selector
+     * @return A root node
+     */
+    public Node convert(final FactorySelector selector) {
+        Node result = EmptyTree.INSTANCE;
+        final Factory factory = selector.select(this.language);
+        if (factory != null) {
+            result = this.root.convert(factory);
+        }
+        return result;
+    }
 }

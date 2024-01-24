@@ -59,7 +59,7 @@ class JsonSerializerTest {
         ctor.setData("value");
         final Node tree = ctor.createNode();
         final JsonSerializer serializer = new JsonSerializer(tree);
-        final String result = serializer.serialize();
+        final String result = serializer.serialize().replace("\r", "");
         boolean oops = false;
         String expected = "";
         try {

@@ -21,53 +21,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.utils;
+package org.cqfn.astranaut.core.utils.deserializer;
 
-import com.kniazkov.json.Json;
-import com.kniazkov.json.JsonException;
+import java.util.ArrayList;
+import java.util.List;
+import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.FactorySelector;
+import org.cqfn.astranaut.core.Factory;
 import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
 /**
- * Converts a string that contains a JSON object to a tree.
+ * Node descriptor represented as it is stored in the JSON file.
  *
- * @since 1.0.2
+ * @since 1.0.7
  */
-public class JsonDeserializer {
+public class NodeDescriptor {
     /**
-     * String contains JSON object.
+     * The node type.
      */
-    private final String source;
+    private String type;
 
     /**
-     * The factory selector.
+     * The node data.
      */
-    private final FactorySelector selector;
+    private String data;
+
+    /**
+     * The list of children.
+     */
+    private List<NodeDescriptor> children;
 
     /**
      * Constructor.
-     * @param source String that contains JSON object
-     * @param selector The factory selector
      */
-    public JsonDeserializer(final String source, final FactorySelector selector) {
-        this.source = source;
-        this.selector = selector;
+    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
+    public NodeDescriptor() {
     }
 
     /**
-     * Converts the source string contains JSON object to a syntax tree.
-     * @return Root node
+     * Converts descriptor into node.
+     * @param factory The node factory
+     * @return A node
      */
-    public Node convert() {
+    public Node convert(final Factory factory) {
         Node result = EmptyTree.INSTANCE;
-        try {
-            final TreeDescriptor tree = Json.parse(this.source, TreeDescriptor.class);
-            if (tree != null) {
-                result = tree.convert(this.selector);
+        final Builder builder = factory.createBuilder(this.type);
+        if (builder != null) {
+            if (this.data != null) {
+                builder.setData(this.data);
             }
-        } catch (final JsonException ignored) {
+            if (this.children != null) {
+                final List<Node> list = new ArrayList<>(this.children.size());
+                for (final NodeDescriptor child : this.children) {
+                    list.add(child.convert(factory));
+                }
+                builder.setChildrenList(list);
+            }
+            if (builder.isValid()) {
+                result = builder.createNode();
+            }
         }
         return result;
     }

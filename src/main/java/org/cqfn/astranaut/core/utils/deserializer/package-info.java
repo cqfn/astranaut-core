@@ -21,20 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
 
 /**
- * Interface for factories selection that selects a suitable factory
- * for the specified programming language.
- * In other words, it's a factory of factories.
+ * This package contains helper classes for the JSON deserializer.
  *
  * @since 1.0.2
  */
-public interface FactorySelector {
-    /**
-     * Selects a suitable factory for the specified programming language.
-     * @param language The language name
-     * @return A suitable factory
-     */
-    Factory select(String language);
-}
+package org.cqfn.astranaut.core.utils.deserializer;
