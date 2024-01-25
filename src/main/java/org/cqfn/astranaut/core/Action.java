@@ -30,4 +30,17 @@ package org.cqfn.astranaut.core;
  * @since 1.0.7
  */
 public interface Action extends Node {
+    /**
+     * Returns the child node as if the action had not been applied,
+     * that is, before the changes.
+     * @return Node or {@code null} if the node does not exist before the changes
+     */
+    Node getBefore();
+
+    /**
+     * Returns the child node as if the action had already been applied,
+     * that is, after the changes.
+     * @return Node or {@code null} if the node does not exist after the changes
+     */
+    Node getAfter();
 }
