@@ -35,7 +35,7 @@ import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
  *
  * @since 1.0.2
  */
-public class JsonDeserializer {
+public final class JsonDeserializer {
     /**
      * String contains JSON object.
      */

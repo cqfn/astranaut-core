@@ -26,6 +26,8 @@ package org.cqfn.astranaut.core.utils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
+import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
@@ -58,20 +60,23 @@ class JsonSerializerTest {
         ctor.setName("TestNode");
         ctor.setData("value");
         final Node tree = ctor.createNode();
-        final JsonSerializer serializer = new JsonSerializer(tree);
-        final String result = serializer.serialize().replace("\r", "");
-        boolean oops = false;
-        String expected = "";
-        try {
-            expected =
-                new FilesReader(
-                    JsonSerializerTest.TESTS_PATH.concat("serialization_to_string_expected.txt")
-                ).readAsString();
-        } catch (final IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
-        Assertions.assertEquals(expected, result);
+        final boolean result = this.serializeAndCompare(
+            tree,
+            "serialization_to_string_expected.txt"
+        );
+        Assertions.assertTrue(result);
+    }
+
+    /**
+     * Test for a tree serialization to a JSON string.
+     */
+    @Test
+    void testSerializationTreeWithActions() {
+        final boolean result = this.serializeAndCompare(
+            this.createSampleTreeWithActions(),
+            "serialization_and_parsing_actions.txt"
+        );
+        Assertions.assertTrue(result);
     }
 
     /**
@@ -126,5 +131,48 @@ class JsonSerializerTest {
         right.setData("3");
         addition.setChildrenList(Arrays.asList(left.createNode(), right.createNode()));
         return addition.createNode();
+    }
+
+    /**
+     * Create a simple tree containing actions for testing.
+     * @return Tree
+     */
+    private Node createSampleTreeWithActions() {
+        final DraftNode.Constructor statements = new DraftNode.Constructor();
+        statements.setName("StatementList");
+        final DraftNode.Constructor left = new DraftNode.Constructor();
+        left.setName("FunctionCall");
+        left.setData("print");
+        final DraftNode.Constructor ret = new DraftNode.Constructor();
+        ret.setName("Return");
+        final DraftNode.Constructor literal = new DraftNode.Constructor();
+        literal.setName(JsonSerializerTest.INT_LITERAL);
+        literal.setData("0");
+        ret.setChildrenList(Collections.singletonList(literal.createNode()));
+        final Delete delete = new Delete(ret.createNode());
+        statements.setChildrenList(Arrays.asList(left.createNode(), delete));
+        return statements.createNode();
+    }
+
+    /**
+     * Serializes syntax tree and compares the result to some sample file.
+     * @param root Root node of the tree
+     * @param filename File name
+     * @return Checking result, {@code true} if the result is obtained and matches the sample
+     */
+    private boolean serializeAndCompare(final Node root, final String filename) {
+        final JsonSerializer serializer = new JsonSerializer(root);
+        final String result = serializer.serialize().replace("\r", "");
+        boolean oops = false;
+        String expected = "";
+        try {
+            expected =
+                new FilesReader(
+                    JsonSerializerTest.TESTS_PATH.concat(filename)
+                ).readAsString().replace("\r", "");
+        } catch (final IOException exception) {
+            oops = true;
+        }
+        return !oops && expected.equals(result);
     }
 }

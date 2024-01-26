@@ -34,7 +34,7 @@ import java.nio.file.Paths;
  *
  * @since 1.0.2
  */
-public class FilesReader {
+public final class FilesReader {
     /**
      * The file path.
      */

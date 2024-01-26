@@ -35,7 +35,7 @@ import org.cqfn.astranaut.core.utils.visualizer.ImageRender;
  *
  * @since 1.0.2
  */
-public class TreeVisualizer {
+public final class TreeVisualizer {
     /**
      * The tree to be visualized.
      */

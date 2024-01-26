@@ -35,7 +35,7 @@ import java.nio.file.Paths;
  *
  * @since 1.0.2
  */
-public class FilesWriter {
+public final class FilesWriter {
     /**
      * The file path.
      */

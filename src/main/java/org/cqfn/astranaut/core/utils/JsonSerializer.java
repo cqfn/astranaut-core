@@ -62,6 +62,11 @@ public final class JsonSerializer {
     private static final String STR_CHILDREN = "children";
 
     /**
+     * The 'action' string.
+     */
+    private static final String STR_ACTION = "action";
+
+    /**
      * The 'common' string.
      */
     private static final String STR_COMMON = "common";
@@ -142,6 +147,10 @@ public final class JsonSerializer {
             if (!JsonSerializer.STR_COMMON.equals(property)) {
                 this.language = property;
             }
+        }
+        final String action = type.getProperty(JsonSerializer.STR_ACTION);
+        if (!action.isEmpty()) {
+            result.addString(JsonSerializer.STR_ACTION, action);
         }
     }
 }
