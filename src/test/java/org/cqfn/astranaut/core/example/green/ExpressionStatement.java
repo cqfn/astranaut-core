@@ -24,7 +24,6 @@
 
 package org.cqfn.astranaut.core.example.green;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,21 +32,28 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.ChildDescriptor;
+import org.cqfn.astranaut.core.ChildrenMapper;
 import org.cqfn.astranaut.core.EmptyFragment;
 import org.cqfn.astranaut.core.Fragment;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
- * Node that describes the 'StatementBlock' type.
+ * Node that describes the 'ExpressionStatement' type.
  *
  * @since 1.0.7
  */
-public final class StatementBlock implements Statement {
+public final class ExpressionStatement implements Statement {
     /**
      * The type.
      */
     public static final Type TYPE = new TypeImpl();
+
+    /**
+     * The number of children.
+     */
+    private static final int CHILD_COUNT = 1;
 
     /**
      * The fragment associated with the node.
@@ -57,17 +63,22 @@ public final class StatementBlock implements Statement {
     /**
      * List of child nodes.
      */
-    private List<Statement> children;
+    private List<Node> children;
+
+    /**
+     * Child with the 'expression' tag.
+     */
+    private Expression expression;
 
     /**
      * Constructor.
      */
-    private StatementBlock() {
+    private ExpressionStatement() {
     }
 
     @Override
     public Type getType() {
-        return StatementBlock.TYPE;
+        return ExpressionStatement.TYPE;
     }
 
     @Override
@@ -82,16 +93,7 @@ public final class StatementBlock implements Statement {
 
     @Override
     public int getChildCount() {
-        return this.children.size();
-    }
-
-    /**
-     * Return a child node with 'Statement' type by its index.
-     * @param index Child index
-     * @return A node
-     */
-    public Statement getStatement(final int index) {
-        return this.children.get(index);
+        return ExpressionStatement.CHILD_COUNT;
     }
 
     @Override
@@ -100,31 +102,46 @@ public final class StatementBlock implements Statement {
     }
 
     /**
-     * Type descriptor of the 'StatementBlock' node.
+     * Returns the child with the 'expression' tag.
+     * @return The node
+     */
+    public Expression getExpression() {
+        return this.expression;
+    }
+
+    /**
+     * Type descriptor of the 'ExpressionStatement' node.
      *
-     * @since 1.0.7
+     * @since 1.0
      */
     private static class TypeImpl implements Type {
         /**
-         * The 'StatementBlock' string.
+         * The 'ExpressionStatement' string.
          */
-        private static final String STATEMENT_BLOCK = "StatementBlock";
+        private static final String EXPRESSION_STATE = "ExpressionStatement";
 
         /**
-         * The 'Statement' string.
+         * The 'Expression' string.
          */
-        private static final String STATEMENT = "Statement";
+        private static final String EXPRESSION = "Expression";
 
         /**
          * The list of child types.
          */
         private static final List<ChildDescriptor> CHILDREN =
-            Collections.singletonList(
-                new ChildDescriptor(
-                    TypeImpl.STATEMENT,
-                    false
+            Collections.unmodifiableList(
+                Arrays.asList(
+                    new ChildDescriptor(
+                        TypeImpl.EXPRESSION,
+                        false
+                    )
                 )
             );
+
+        /**
+         * The 'Statement' string.
+         */
+        private static final String STATEMENT = "Statement";
 
         /**
          * The 'ProgramItem' string.
@@ -137,7 +154,7 @@ public final class StatementBlock implements Statement {
         private static final List<String> HIERARCHY =
             Collections.unmodifiableList(
                 Arrays.asList(
-                    TypeImpl.STATEMENT_BLOCK,
+                    TypeImpl.EXPRESSION_STATE,
                     TypeImpl.STATEMENT,
                     TypeImpl.PROGRAM_ITEM
                 )
@@ -154,7 +171,7 @@ public final class StatementBlock implements Statement {
 
         @Override
         public String getName() {
-            return TypeImpl.STATEMENT_BLOCK;
+            return TypeImpl.EXPRESSION_STATE;
         }
 
         @Override
@@ -179,20 +196,30 @@ public final class StatementBlock implements Statement {
     }
 
     /**
-     * Class for 'StatementBlock' node construction.
+     * Class for 'ExpressionStatement' node construction.
      *
-     * @since 1.0.7
+     * @since 1.0
      */
     public static final class Constructor implements Builder {
+        /**
+         * The maximum number of nodes.
+         */
+        private static final int MAX_NODE_COUNT = 1;
+
+        /**
+         * The position of the 'expression' field.
+         */
+        private static final int EXPRESSION_POS = 0;
+
         /**
          * The fragment associated with the node.
          */
         private Fragment fragment = EmptyFragment.INSTANCE;
 
         /**
-         * List of child nodes.
+         * Node with the 'expression' tag.
          */
-        private List<Statement> children = Collections.emptyList();
+        private Expression expression;
 
         @Override
         public void setFragment(final Fragment obj) {
@@ -204,34 +231,44 @@ public final class StatementBlock implements Statement {
             return str.isEmpty();
         }
 
+        /**
+         * Sets the node with the 'expression' tag.
+         * @param node The node
+         */
+        public void setExpression(final Expression node) {
+            this.expression = node;
+        }
+
         @Override
         public boolean setChildrenList(final List<Node> list) {
-            boolean result = true;
-            final List<Statement> clarified = new ArrayList<>(list.size());
-            for (final Node node : list) {
-                if (node instanceof Statement) {
-                    clarified.add((Statement) node);
-                } else {
-                    result = false;
-                    break;
-                }
-            }
+            final Node[] mapping = new Node[Constructor.MAX_NODE_COUNT];
+            final ChildrenMapper mapper =
+                new ChildrenMapper(ExpressionStatement.TYPE.getChildTypes());
+            final boolean result = mapper.map(mapping, list);
             if (result) {
-                this.children = Collections.unmodifiableList(clarified);
+                this.expression = (Expression) mapping[Constructor.EXPRESSION_POS];
             }
             return result;
         }
 
         @Override
         public boolean isValid() {
-            return true;
+            return this.expression != null;
         }
 
         @Override
-        public StatementBlock createNode() {
-            final StatementBlock node = new StatementBlock();
+        public ExpressionStatement createNode() {
+            if (!this.isValid()) {
+                throw new IllegalStateException();
+            }
+            final ExpressionStatement node = new ExpressionStatement();
             node.fragment = this.fragment;
-            node.children = this.children;
+            node.children = new ListUtils<Node>()
+                .add(
+                    this.expression
+                )
+                .make();
+            node.expression = this.expression;
             return node;
         }
     }
