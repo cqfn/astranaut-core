@@ -23,47 +23,12 @@
  */
 package org.cqfn.astranaut.core.example.green;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.Node;
 
 /**
- * Factory that creates 'green' nodes.
+ * Node that describes the 'Statement' type.
  *
- * @since 1.0
+ * @since 1.0.7
  */
-public final class GreenFactory extends Factory {
-    /**
-     * The instance.
-     */
-    public static final Factory INSTANCE = new GreenFactory();
-
-    /**
-     * Private constructor.
-     */
-    private GreenFactory() {
-        super(Collections.unmodifiableMap(GreenFactory.init()));
-    }
-
-    /**
-     * Initialises the set of types arranged by name.
-     * @return The map of types by name
-     */
-    private static Map<String, Type> init() {
-        final List<Type> types = Arrays.asList(
-            Addition.TYPE,
-            IntegerLiteral.TYPE,
-            StatementBlock.TYPE,
-            Variable.TYPE
-        );
-        final Map<String, Type> map = new TreeMap<>();
-        for (final Type type : types) {
-            map.put(type.getName(), type);
-        }
-        return map;
-    }
+public interface Statement extends Node {
 }
