@@ -31,6 +31,7 @@ import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -71,9 +72,9 @@ class JsonSerializerTest {
      * Test for a tree serialization to a JSON string.
      */
     @Test
-    void testSerializationTreeWithActions() {
+    void testSerializationTreeWithAction() {
         final boolean result = this.serializeAndCompare(
-            this.createSampleTreeWithActions(),
+            LittleTrees.createTreeWithDeleteAction(),
             "serialization_and_parsing_actions.txt"
         );
         Assertions.assertTrue(result);
@@ -131,27 +132,6 @@ class JsonSerializerTest {
         right.setData("3");
         addition.setChildrenList(Arrays.asList(left.createNode(), right.createNode()));
         return addition.createNode();
-    }
-
-    /**
-     * Create a simple tree containing actions for testing.
-     * @return Tree
-     */
-    private Node createSampleTreeWithActions() {
-        final DraftNode.Constructor statements = new DraftNode.Constructor();
-        statements.setName("StatementList");
-        final DraftNode.Constructor left = new DraftNode.Constructor();
-        left.setName("FunctionCall");
-        left.setData("print");
-        final DraftNode.Constructor ret = new DraftNode.Constructor();
-        ret.setName("Return");
-        final DraftNode.Constructor literal = new DraftNode.Constructor();
-        literal.setName(JsonSerializerTest.INT_LITERAL);
-        literal.setData("0");
-        ret.setChildrenList(Collections.singletonList(literal.createNode()));
-        final Delete delete = new Delete(ret.createNode());
-        statements.setChildrenList(Arrays.asList(left.createNode(), delete));
-        return statements.createNode();
     }
 
     /**

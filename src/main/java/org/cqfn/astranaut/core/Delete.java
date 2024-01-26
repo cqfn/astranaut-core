@@ -129,7 +129,7 @@ public final class Delete implements Action {
 
         @Override
         public List<String> getHierarchy() {
-            return Collections.emptyList();
+            return this.base.getHierarchy();
         }
 
         @Override

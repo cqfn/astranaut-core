@@ -1,25 +1,57 @@
 {
   "root": {
-    "type": "StatementList",
+    "type": "StatementBlock",
     "children": [
       {
-        "type": "FunctionCall",
-        "data": "print"
-      },
-      {
-        "type": "Return",
+        "type": "ExpressionStatement",
         "children": [
           {
-            "type": "Return",
+            "type": "SimpleAssignment",
             "children": [
               {
+                "type": "Variable",
+                "data": "x"
+              },
+              {
                 "type": "IntegerLiteral",
-                "data": "0"
+                "data": "1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ExpressionStatement",
+        "children": [
+          {
+            "type": "ExpressionStatement",
+            "children": [
+              {
+                "type": "SimpleAssignment",
+                "children": [
+                  {
+                    "type": "Variable",
+                    "data": "y"
+                  },
+                  {
+                    "type": "IntegerLiteral",
+                    "data": "2"
+                  }
+                ]
               }
             ]
           }
         ],
         "action": "delete"
+      },
+      {
+        "type": "Return",
+        "children": [
+          {
+            "type": "Variable",
+            "data": "x"
+          }
+        ]
       }
     ]
   }
