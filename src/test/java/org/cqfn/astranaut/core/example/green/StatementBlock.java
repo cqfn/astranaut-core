@@ -57,7 +57,7 @@ public final class StatementBlock implements Statement {
     /**
      * List of child nodes.
      */
-    private List<Node> children;
+    private List<Statement> children;
 
     /**
      * Constructor.
@@ -83,6 +83,15 @@ public final class StatementBlock implements Statement {
     @Override
     public int getChildCount() {
         return this.children.size();
+    }
+
+    /**
+     * Return a child node with 'Statement' type by its index.
+     * @param index Child index
+     * @return A node
+     */
+    public Statement getStatement(final int index) {
+        return this.children.get(index);
     }
 
     @Override
@@ -183,7 +192,7 @@ public final class StatementBlock implements Statement {
         /**
          * List of child nodes.
          */
-        private List<Node> children = Collections.emptyList();
+        private List<Statement> children = Collections.emptyList();
 
         @Override
         public void setFragment(final Fragment obj) {
@@ -198,10 +207,10 @@ public final class StatementBlock implements Statement {
         @Override
         public boolean setChildrenList(final List<Node> list) {
             boolean result = true;
-            final List<Node> clarified = new ArrayList<>(list.size());
+            final List<Statement> clarified = new ArrayList<>(list.size());
             for (final Node node : list) {
-                if (node.belongsToGroup(TypeImpl.STATEMENT)) {
-                    clarified.add(node);
+                if (node instanceof Statement) {
+                    clarified.add((Statement) node);
                 } else {
                     result = false;
                     break;
