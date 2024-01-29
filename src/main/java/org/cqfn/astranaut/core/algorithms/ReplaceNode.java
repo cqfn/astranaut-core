@@ -21,10 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 
 /**
@@ -32,7 +35,7 @@ import org.cqfn.astranaut.core.utils.Pair;
  *
  * @since 1.0
  */
-public class NodeReplacer {
+public class ReplaceNode {
     /**
      * Replaces a subtree of the initial tree with the newly created subtree.
      * @param tree The initial tree
