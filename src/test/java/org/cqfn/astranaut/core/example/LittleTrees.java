@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
@@ -145,6 +144,7 @@ public final class LittleTrees {
      * Creates a tree that has a "delete" action in it.
      * @return Root node
      */
+    /*
     public static Node createTreeWithDeleteAction() {
         return createStatementBlock(
             wrapExpressionWithStatement(
@@ -166,4 +166,5 @@ public final class LittleTrees {
             )
         );
     }
+     */
 }

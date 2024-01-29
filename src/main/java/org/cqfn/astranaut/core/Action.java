@@ -24,12 +24,11 @@
 package org.cqfn.astranaut.core;
 
 /**
- * An action is a special node that describes actions on the nodes of a syntax tree
- * and thus allows the creation of difference trees.
+ * Action with a syntax tree node.
  *
  * @since 1.0.7
  */
-public interface Action extends Node {
+public interface Action {
     /**
      * Returns the child node as if the action had not been applied,
      * that is, before the changes.

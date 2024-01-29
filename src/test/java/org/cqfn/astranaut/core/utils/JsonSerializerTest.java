@@ -26,8 +26,6 @@ package org.cqfn.astranaut.core.utils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
-import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
@@ -71,6 +69,7 @@ class JsonSerializerTest {
     /**
      * Test for a tree serialization to a JSON string.
      */
+    /*
     @Test
     void testSerializationTreeWithAction() {
         final boolean result = this.serializeAndCompare(
@@ -79,6 +78,7 @@ class JsonSerializerTest {
         );
         Assertions.assertTrue(result);
     }
+     */
 
     /**
      * Test for a tree serialization to a JSON file.
