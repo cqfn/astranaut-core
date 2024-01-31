@@ -30,8 +30,10 @@ import java.util.Arrays;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -146,5 +148,21 @@ class TreeVisualizerTest {
             oops = true;
         }
         Assertions.assertTrue(oops);
+    }
+
+    /**
+     * Test for a tree visualization.
+     */
+    @Test
+    @Disabled
+    void testActions() {
+        final TreeVisualizer visualizer = new TreeVisualizer(LittleTrees.createTreeWithDeleteAction());
+        boolean oops = false;
+        try {
+            visualizer.visualize(new File("X:\\syntax_tree_with_action.png"));
+        } catch (final WrongFileExtension | IOException exception) {
+            oops = true;
+        }
+        Assertions.assertFalse(oops);
     }
 }

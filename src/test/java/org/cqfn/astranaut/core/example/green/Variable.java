@@ -26,6 +26,9 @@ package org.cqfn.astranaut.core.example.green;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.ChildDescriptor;
 import org.cqfn.astranaut.core.EmptyFragment;
@@ -118,6 +121,16 @@ public final class Variable implements AssignableExpression {
                 )
             );
 
+        /**
+         * Properties.
+         */
+        private static final Map<String, String> PROPERTIES = Stream.of(
+            new String[][] {
+                {"color", "green"},
+                {"language", "common"},
+            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+
         @Override
         public String getName() {
             return TypeImpl.NAME;
@@ -135,7 +148,7 @@ public final class Variable implements AssignableExpression {
 
         @Override
         public String getProperty(final String name) {
-            return "";
+            return TypeImpl.PROPERTIES.getOrDefault(name, "");
         }
 
         @Override
