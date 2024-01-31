@@ -42,7 +42,7 @@ import org.cqfn.astranaut.core.utils.ListUtils;
 /**
  * Node that describes the 'SimpleAssignment' type..
  *
- * @since 1.0.7
+ * @since 1.1.0
  */
 public final class SimpleAssignment implements Assignment {
     /**
@@ -119,7 +119,7 @@ public final class SimpleAssignment implements Assignment {
     /**
      * Type descriptor of the 'SimpleAssignment' node.
      *
-     * @since 1.0.7
+     * @since 1.1.0
      */
     private static class TypeImpl implements Type {
         /**
@@ -209,7 +209,7 @@ public final class SimpleAssignment implements Assignment {
     /**
      * Class for 'SimpleAssignment' node construction.
      *
-     * @since 1.0.7
+     * @since 1.1.0
      */
     public static final class Constructor implements Builder {
         /**

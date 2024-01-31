@@ -148,9 +148,5 @@ public final class JsonSerializer {
                 this.language = property;
             }
         }
-        final String action = type.getProperty(JsonSerializer.STR_ACTION);
-        if (!action.isEmpty()) {
-            result.addString(JsonSerializer.STR_ACTION, action);
-        }
     }
 }

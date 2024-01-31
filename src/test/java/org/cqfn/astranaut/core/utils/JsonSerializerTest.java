@@ -69,16 +69,14 @@ class JsonSerializerTest {
     /**
      * Test for a tree serialization to a JSON string.
      */
-    /*
     @Test
     void testSerializationTreeWithAction() {
         final boolean result = this.serializeAndCompare(
             LittleTrees.createTreeWithDeleteAction(),
-            "serialization_and_parsing_actions.txt"
+            "serialization_and_parsing_actions.json"
         );
         Assertions.assertTrue(result);
     }
-     */
 
     /**
      * Test for a tree serialization to a JSON file.

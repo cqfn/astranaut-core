@@ -27,7 +27,7 @@ package org.cqfn.astranaut.core.example.green;
 /**
  * Node that describes the 'Assignment' type.
  *
- * @since 1.0.7
+ * @since 1.1.0
  */
 public interface Assignment extends Expression {
     /**

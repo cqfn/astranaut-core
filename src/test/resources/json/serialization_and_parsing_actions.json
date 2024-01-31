@@ -21,7 +21,7 @@
         ]
       },
       {
-        "type": "ExpressionStatement",
+        "type": "Delete",
         "children": [
           {
             "type": "ExpressionStatement",
@@ -41,8 +41,7 @@
               }
             ]
           }
-        ],
-        "action": "delete"
+        ]
       },
       {
         "type": "Return",

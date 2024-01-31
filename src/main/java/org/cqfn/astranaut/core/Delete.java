@@ -21,58 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core;
 
-package org.cqfn.astranaut.core.example.green;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
 
 /**
- * Node that describes the 'StatementBlock' type.
+ * Action that deletes a child element.
  *
  * @since 1.1.0
  */
-public final class StatementBlock implements Statement {
+public final class Delete implements Action {
     /**
      * The type.
      */
-    public static final Type TYPE = new TypeImpl();
+    public static final Type TYPE = new DeleteType();
 
     /**
-     * The fragment associated with the node.
+     * Child element.
      */
-    private Fragment fragment;
-
-    /**
-     * List of child nodes.
-     */
-    private List<Statement> children;
+    private final Node child;
 
     /**
      * Constructor.
+     * @param child A child element that will be removed.
      */
-    private StatementBlock() {
+    public Delete(final Node child) {
+        this.child = child;
     }
 
     @Override
-    public Type getType() {
-        return StatementBlock.TYPE;
+    public Node getBefore() {
+        return this.child;
+    }
+
+    @Override
+    public Node getAfter() {
+        return null;
     }
 
     @Override
     public Fragment getFragment() {
-        return this.fragment;
+        return this.child.getFragment();
+    }
+
+    @Override
+    public Type getType() {
+        return Delete.TYPE;
     }
 
     @Override
@@ -82,54 +81,51 @@ public final class StatementBlock implements Statement {
 
     @Override
     public int getChildCount() {
-        return this.children.size();
-    }
-
-    /**
-     * Return a child node with 'Statement' type by its index.
-     * @param index Child index
-     * @return A node
-     */
-    public Statement getStatement(final int index) {
-        return this.children.get(index);
+        return 1;
     }
 
     @Override
     public Node getChild(final int index) {
-        return this.children.get(index);
+        final Node node;
+        if (index == 0) {
+            node = this.child;
+        } else {
+            node = null;
+        }
+        return node;
     }
 
     /**
-     * Type descriptor of the 'StatementBlock' node.
+     * Type of 'Delete' action.
      *
      * @since 1.1.0
      */
-    private static class TypeImpl implements Type {
+    private static final class DeleteType implements Type {
         /**
-         * The 'StatementBlock' string.
+         * The 'Node' string.
          */
-        private static final String STATEMENT_BLOCK = "StatementBlock";
+        private static final String NODE = "Node";
 
         /**
-         * The 'Statement' string.
+         * The 'ACTION' string.
          */
-        private static final String STATEMENT = "Statement";
+        private static final String ACTION = "Action";
 
         /**
-         * The list of child types.
+         * The 'DELETE' string.
+         */
+        private static final String DELETE = "Delete";
+
+        /**
+         * The list of child descriptors.
          */
         private static final List<ChildDescriptor> CHILDREN =
             Collections.singletonList(
                 new ChildDescriptor(
-                    TypeImpl.STATEMENT,
+                    DeleteType.NODE,
                     false
                 )
             );
-
-        /**
-         * The 'ProgramItem' string.
-         */
-        private static final String PROGRAM_ITEM = "ProgramItem";
 
         /**
          * Hierarchy.
@@ -137,9 +133,8 @@ public final class StatementBlock implements Statement {
         private static final List<String> HIERARCHY =
             Collections.unmodifiableList(
                 Arrays.asList(
-                    TypeImpl.STATEMENT_BLOCK,
-                    TypeImpl.STATEMENT,
-                    TypeImpl.PROGRAM_ITEM
+                    DeleteType.DELETE,
+                    DeleteType.ACTION
                 )
             );
 
@@ -148,55 +143,49 @@ public final class StatementBlock implements Statement {
          */
         private static final Map<String, String> PROPERTIES = Stream.of(
             new String[][] {
-                {"color", "green"},
-                {"language", "common"},
+                {"color", "blue"}
             }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
         @Override
         public String getName() {
-            return TypeImpl.STATEMENT_BLOCK;
+            return DeleteType.DELETE;
         }
 
         @Override
         public List<ChildDescriptor> getChildTypes() {
-            return TypeImpl.CHILDREN;
+            return DeleteType.CHILDREN;
         }
 
         @Override
         public List<String> getHierarchy() {
-            return TypeImpl.HIERARCHY;
+            return DeleteType.HIERARCHY;
         }
 
         @Override
         public String getProperty(final String name) {
-            return TypeImpl.PROPERTIES.getOrDefault(name, "");
+            return DeleteType.PROPERTIES.getOrDefault(name, "");
         }
 
         @Override
         public Builder createBuilder() {
-            return new Constructor();
+            return null;
         }
     }
 
     /**
-     * Class for 'StatementBlock' node construction.
+     * Class for 'Delete' action construction.
      *
      * @since 1.1.0
      */
     public static final class Constructor implements Builder {
         /**
-         * The fragment associated with the node.
+         * Child node.
          */
-        private Fragment fragment = EmptyFragment.INSTANCE;
-
-        /**
-         * List of child nodes.
-         */
-        private List<Statement> children = Collections.emptyList();
+        Node child;
 
         @Override
-        public void setFragment(final Fragment obj) {
-            this.fragment = obj;
+        public void setFragment(final Fragment fragment) {
+            // do nothing
         }
 
         @Override
@@ -206,32 +195,25 @@ public final class StatementBlock implements Statement {
 
         @Override
         public boolean setChildrenList(final List<Node> list) {
-            boolean result = true;
-            final List<Statement> clarified = new ArrayList<>(list.size());
-            for (final Node node : list) {
-                if (node instanceof Statement) {
-                    clarified.add((Statement) node);
-                } else {
-                    result = false;
-                    break;
-                }
-            }
-            if (result) {
-                this.children = Collections.unmodifiableList(clarified);
+            boolean result = false;
+            if (list.size() == 1) {
+                this.child = list.get(0);
+                result = true;
             }
             return result;
         }
 
         @Override
         public boolean isValid() {
-            return true;
+            return this.child != null;
         }
 
         @Override
-        public StatementBlock createNode() {
-            final StatementBlock node = new StatementBlock();
-            node.fragment = this.fragment;
-            node.children = this.children;
+        public Node createNode() {
+            Node node = EmptyTree.INSTANCE;
+            if (this.isValid()) {
+                node = new Delete(this.child);
+            }
             return node;
         }
     }

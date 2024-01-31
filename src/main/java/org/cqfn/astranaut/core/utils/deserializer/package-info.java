@@ -25,6 +25,6 @@
 /**
  * This package contains helper classes for the JSON deserializer.
  *
- * @since 1.0.7
+ * @since 1.1.0
  */
 package org.cqfn.astranaut.core.utils.deserializer;

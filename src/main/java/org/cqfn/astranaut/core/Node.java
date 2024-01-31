@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An abstract syntax tree node.
@@ -91,5 +92,16 @@ public interface Node {
             result[index] = this.getChild(index);
         }
         return Arrays.asList(result);
+    }
+
+    /**
+     * Performs some action for each child node.
+     * @param action An action
+     */
+    default void forEachChild(Consumer<Node> action) {
+        final int count = this.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            action.accept(this.getChild(index));
+        }
     }
 }

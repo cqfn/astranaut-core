@@ -28,7 +28,7 @@ import org.cqfn.astranaut.core.Node;
 /**
  * Node that describes the 'Statement' type.
  *
- * @since 1.0.7
+ * @since 1.1.0
  */
 public interface Statement extends Node {
 }

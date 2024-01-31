@@ -24,11 +24,12 @@
 package org.cqfn.astranaut.core;
 
 /**
- * Action with a syntax tree node.
+ * A node that represents an action that can be performed on another node.
+ * This type of nodes is necessary for the construction of difference trees.
  *
- * @since 1.0.7
+ * @since 1.1.0
  */
-public interface Action {
+public interface Action extends DifferenceTreeItem {
     /**
      * Returns the child node as if the action had not been applied,
      * that is, before the changes.

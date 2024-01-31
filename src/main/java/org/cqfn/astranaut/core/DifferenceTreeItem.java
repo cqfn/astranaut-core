@@ -21,10 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core;
 
 /**
- * This package contains helper classes for the tree visualizer.
+ * An element of the difference tree.
  *
  * @since 1.1.0
  */
-package org.cqfn.astranaut.core.utils.visualizer;
+public interface DifferenceTreeItem extends Node {
+}
