@@ -23,49 +23,56 @@
  */
 package org.cqfn.astranaut.core.utils.deserializer;
 
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.FactorySelector;
+import java.util.HashSet;
+import java.util.Set;
+import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 
 /**
- * Tree descriptor represented as it is stored in the JSON file.
+ * List of actions to be added to the tree after deserialization to produce a difference tree.
  *
  * @since 1.1.0
  */
-public class TreeDescriptor {
+public class ActionList {
     /**
-     * The root node.
+     * Set of nodes to be deleted.
      */
-    private NodeDescriptor root;
-
-    /**
-     * The language.
-     */
-    private String language;
+    private final Set<Node> delete;
 
     /**
      * Constructor.
      */
-    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
-    public TreeDescriptor() {
+    public ActionList() {
+        this.delete = new HashSet<>();
     }
 
     /**
-     * Converts tree into node.
-     * @param selector The node factory selector
-     * @return A root node
+     * Checks if an action is in any list.
+     * @return Checking result
      */
-    public Node convert(final FactorySelector selector) {
-        Node result = EmptyTree.INSTANCE;
-        final Factory factory = selector.select(this.language);
-        if (factory != null) {
-            final ActionList actions = new ActionList();
-            result = this.root.convert(factory, actions);
-            if (actions.hasActions()) {
-                result = actions.convertTreeToDifferenceTree(result);
-            }
+    public boolean hasActions() {
+        return !this.delete.isEmpty();
+    }
+
+    /**
+     * Adds the node to the list of nodes to be deleted.
+     * @param node The node
+     */
+    public void deleteNode(final Node node) {
+        this.delete.add(node);
+    }
+
+    /**
+     * Converts the tree to a difference tree using the list of actions.
+     * @param root Root node of the tree
+     * @return Root node of a difference tree
+     */
+    public DifferenceNode convertTreeToDifferenceTree(final Node root) {
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(root);
+        for (final Node node : this.delete) {
+            builder.deleteNode(node);
         }
-        return result;
+        return builder.getRoot();
     }
 }

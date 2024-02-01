@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.utils.deserializer;
 import java.util.ArrayList;
 import java.util.List;
 import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Factory;
 import org.cqfn.astranaut.core.Node;
@@ -61,26 +62,47 @@ public class NodeDescriptor {
     /**
      * Converts descriptor into node.
      * @param factory The node factory
+     * @param actions List of actions to be added to the tree after deserialization
+     *  to produce a difference tree
      * @return A node
      */
-    public Node convert(final Factory factory) {
+    public Node convert(final Factory factory, final ActionList actions) {
         Node result = EmptyTree.INSTANCE;
         final Builder builder = factory.createBuilder(this.type);
         if (builder != null) {
             if (this.data != null) {
                 builder.setData(this.data);
             }
+            boolean filled = true;
             if (this.children != null) {
-                final List<Node> list = new ArrayList<>(this.children.size());
-                for (final NodeDescriptor child : this.children) {
-                    list.add(child.convert(factory));
-                }
-                builder.setChildrenList(list);
+                filled = builder.setChildrenList(this.convertChildren(factory, actions));
             }
-            if (builder.isValid()) {
+            if (filled && builder.isValid()) {
                 result = builder.createNode();
             }
         }
         return result;
+    }
+
+    /**
+     * Converts child descriptors to a list of nodes.
+     * @param factory The node factory
+     * @param actions List of actions to be added to the tree after deserialization
+     *  to produce a difference tree
+     * @return List of child nodes
+     */
+    private List<Node> convertChildren(final Factory factory, final ActionList actions) {
+        final List<Node> list = new ArrayList<>(this.children.size());
+        for (final NodeDescriptor child : this.children) {
+            final Node converted = child.convert(factory, actions);
+            if (converted instanceof Delete) {
+                final Node before = ((Delete) converted).getBefore();
+                list.add(before);
+                actions.deleteNode(before);
+            } else {
+                list.add(converted);
+            }
+        }
+        return list;
     }
 }
