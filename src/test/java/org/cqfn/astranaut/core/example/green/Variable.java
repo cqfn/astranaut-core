@@ -130,7 +130,6 @@ public final class Variable implements AssignableExpression {
                 {"language", "common"},
             }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
-
         @Override
         public String getName() {
             return TypeImpl.NAME;

@@ -110,12 +110,12 @@ public final class DifferenceNode implements DifferenceTreeItem {
     /**
      * Adds an action that removes a node.
      * @param index Node index
-     * @return @return {@code true} if action was added
+     * @return Result of operation, @return {@code true} if action was added
      */
     public boolean deleteNode(final int index) {
         boolean result = false;
         if (index > 0 && index < this.children.size()) {
-            DifferenceTreeItem child = this.children.get(index);
+            final DifferenceTreeItem child = this.children.get(index);
             if (child instanceof DifferenceNode) {
                 this.children.set(index, new Delete(((DifferenceNode) child).getPrototype()));
                 result = true;

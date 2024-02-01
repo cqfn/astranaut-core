@@ -62,11 +62,6 @@ public final class JsonSerializer {
     private static final String STR_CHILDREN = "children";
 
     /**
-     * The 'action' string.
-     */
-    private static final String STR_ACTION = "action";
-
-    /**
      * The 'common' string.
      */
     private static final String STR_COMMON = "common";

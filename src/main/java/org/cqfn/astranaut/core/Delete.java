@@ -143,7 +143,7 @@ public final class Delete implements Action {
          */
         private static final Map<String, String> PROPERTIES = Stream.of(
             new String[][] {
-                {"color", "blue"}
+                {"color", "blue"},
             }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
         @Override
@@ -181,7 +181,7 @@ public final class Delete implements Action {
         /**
          * Child node.
          */
-        Node child;
+        private Node child;
 
         @Override
         public void setFragment(final Fragment fragment) {

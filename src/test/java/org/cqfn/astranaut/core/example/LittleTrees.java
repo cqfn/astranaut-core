@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;

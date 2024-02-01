@@ -156,7 +156,8 @@ class TreeVisualizerTest {
     @Test
     @Disabled
     void testActions() {
-        final TreeVisualizer visualizer = new TreeVisualizer(LittleTrees.createTreeWithDeleteAction());
+        final TreeVisualizer visualizer =
+            new TreeVisualizer(LittleTrees.createTreeWithDeleteAction());
         boolean oops = false;
         try {
             visualizer.visualize(new File("X:\\syntax_tree_with_action.png"));
