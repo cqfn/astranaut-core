@@ -107,41 +107,14 @@ public final class DifferenceNode implements DifferenceTreeItem {
         return this.children.get(index);
     }
 
-    /**
-     * Returns the tree before all actions have been applied.
-     * @return Syntax tree obtained from the difference tree without actions applied.
-     */
+    @Override
     public Node getBefore() {
-        Node result = EmptyTree.INSTANCE;
-        final Builder builder = this.prototype.getType().createBuilder();
-        do {
-            if (builder == null) {
-                break;
-            }
-            builder.setFragment(this.getFragment());
-            if (!builder.setData(this.getData())) {
-                break;
-            }
-            final List<Node> list = new ArrayList<>(this.children.size());
-            for (final DifferenceTreeItem child : this.children) {
-                if (child instanceof Action) {
-                    final Node before = ((Action) child).getBefore();
-                    if (before != null) {
-                        list.add(before);
-                    }
-                } else {
-                    list.add(((DifferenceNode) child).getBefore());
-                }
-            }
-            if (!builder.setChildrenList(list)) {
-                break;
-            }
-            if (!builder.isValid()) {
-                break;
-            }
-            result = builder.createNode();
-        } while (false);
-        return result;
+        return this.getBranch(DifferenceTreeItem::getBefore);
+    }
+
+    @Override
+    public Node getAfter() {
+        return this.getBranch(DifferenceTreeItem::getAfter);
     }
 
     /**
@@ -207,5 +180,53 @@ public final class DifferenceNode implements DifferenceTreeItem {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns a branch: before or after the changes.
+     * @param selector Branch selector
+     * @return This node, before of after changes
+     */
+    private Node getBranch(final BranchSelector selector) {
+        Node result = EmptyTree.INSTANCE;
+        final Builder builder = this.prototype.getType().createBuilder();
+        do {
+            if (builder == null) {
+                break;
+            }
+            builder.setFragment(this.getFragment());
+            if (!builder.setData(this.getData())) {
+                break;
+            }
+            final List<Node> list = new ArrayList<>(this.children.size());
+            for (final DifferenceTreeItem child : this.children) {
+                final Node branch = selector.select(child);
+                if (branch != null) {
+                    list.add(branch);
+                }
+            }
+            if (!builder.setChildrenList(list)) {
+                break;
+            }
+            if (!builder.isValid()) {
+                break;
+            }
+            result = builder.createNode();
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Selector that selects some branch from a difference tree item: before or after the changes.
+     *
+     * @since 1.1.0
+     */
+    private interface BranchSelector {
+        /**
+         * Selects a branch from difference tree item.
+         * @param item An item
+         * @return Branch (node before or after changes)
+         */
+        Node select(DifferenceTreeItem item);
     }
 }

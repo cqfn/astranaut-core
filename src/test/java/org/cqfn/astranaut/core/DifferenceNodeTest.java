@@ -42,16 +42,35 @@ class DifferenceNodeTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
+     * File name with tree containing 'Delete' action.
+     */
+    private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
+
+    /**
      * Testing {@link  DifferenceNode#getBefore()} method.
      */
     @Test
     void testDeleteGetBefore() {
-        final Node root = this.loadTree("tree_containing_delete_action.json");
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
         Assertions.assertTrue(root instanceof DifferenceNode);
         final DifferenceNode diff = (DifferenceNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree("before_delete_action.json");
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing {@link  DifferenceNode#getAfter()} method.
+     */
+    @Test
+    void testDeleteGetAfter() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node actual = diff.getAfter();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        final Node expected = this.loadTree("after_delete_action.json");
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
