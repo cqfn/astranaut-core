@@ -108,6 +108,43 @@ public final class DifferenceNode implements DifferenceTreeItem {
     }
 
     /**
+     * Returns the tree before all actions have been applied.
+     * @return Syntax tree obtained from the difference tree without actions applied.
+     */
+    public Node getBefore() {
+        Node result = EmptyTree.INSTANCE;
+        final Builder builder = this.prototype.getType().createBuilder();
+        do {
+            if (builder == null) {
+                break;
+            }
+            builder.setFragment(this.getFragment());
+            if (!builder.setData(this.getData())) {
+                break;
+            }
+            final List<Node> list = new ArrayList<>(this.children.size());
+            for (final DifferenceTreeItem child : this.children) {
+                if (child instanceof Action) {
+                    final Node before = ((Action) child).getBefore();
+                    if (before != null) {
+                        list.add(before);
+                    }
+                } else {
+                    list.add(((DifferenceNode) child).getBefore());
+                }
+            }
+            if (!builder.setChildrenList(list)) {
+                break;
+            }
+            if (!builder.isValid()) {
+                break;
+            }
+            result = builder.createNode();
+        } while (false);
+        return result;
+    }
+
+    /**
      * Adds an action that removes a node by index.
      * @param index Node index
      * @return Result of operation, @return {@code true} if action was added

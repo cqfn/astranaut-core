@@ -73,7 +73,7 @@ class JsonSerializerTest {
     void testSerializationTreeWithAction() {
         final boolean result = this.serializeAndCompare(
             LittleTrees.createTreeWithDeleteAction(),
-            "serialization_and_parsing_actions.json"
+            "tree_containing_delete_action.json"
         );
         Assertions.assertTrue(result);
     }

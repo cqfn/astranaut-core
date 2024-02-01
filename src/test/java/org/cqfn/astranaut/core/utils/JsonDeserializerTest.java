@@ -106,7 +106,7 @@ class JsonDeserializerTest {
      */
     @Test
     void loadTreeWithActions() {
-        final String source = this.getFileContent("serialization_and_parsing_actions.json");
+        final String source = this.getFileContent("tree_containing_delete_action.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
             language -> GreenFactory.INSTANCE
