@@ -72,10 +72,7 @@ public final class DifferenceTreeBuilder {
         boolean result = false;
         final DifferenceNode parent = this.parents.get(node);
         if (parent != null) {
-            final int index = DifferenceTreeBuilder.findChildIndex(node, parent);
-            if (index >= 0) {
-                result = parent.deleteNode(index);
-            }
+            result = parent.deleteNode(node);
         }
         return result;
     }
@@ -108,25 +105,5 @@ public final class DifferenceTreeBuilder {
                 }
             }
         );
-    }
-
-    /**
-     * Searches the index of a child element by its prototype.
-     * @param prototype Prototype of the node whose index is to be found
-     * @param parent Parent node to search in
-     * @return Index or -1 if there is no such node or it has already been deleted or replaced
-     */
-    private static int findChildIndex(final Node prototype, final DifferenceNode parent) {
-        int result = -1;
-        final int count = parent.getChildCount();
-        for (int index = 0; index < count; index = index + 1) {
-            final Node child = parent.getChild(index);
-            if (child instanceof DifferenceNode
-                && prototype == ((DifferenceNode) child).getPrototype()) {
-                result = index;
-                break;
-            }
-        }
-        return result;
     }
 }

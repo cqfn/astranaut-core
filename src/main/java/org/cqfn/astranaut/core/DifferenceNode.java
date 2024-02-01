@@ -108,7 +108,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
     }
 
     /**
-     * Adds an action that removes a node.
+     * Adds an action that removes a node by index.
      * @param index Node index
      * @return Result of operation, @return {@code true} if action was added
      */
@@ -120,6 +120,20 @@ public final class DifferenceNode implements DifferenceTreeItem {
                 this.children.set(index, new Delete(((DifferenceNode) child).getPrototype()));
                 result = true;
             }
+        }
+        return result;
+    }
+
+    /**
+     * Adds an action that removes a node.
+     * @param node A node
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean deleteNode(final Node node) {
+        boolean result = false;
+        final int index = this.findChildIndex(node);
+        if (index >= 0) {
+            result = this.deleteNode(index);
         }
         return result;
     }
@@ -139,4 +153,22 @@ public final class DifferenceNode implements DifferenceTreeItem {
         return result;
     }
 
+    /**
+     * Searches the index of a child element by its prototype.
+     * @param node Prototype of the node whose index is to be found
+     * @return Index or -1 if there is no such node or it has already been deleted or replaced
+     */
+    private int findChildIndex(final Node node) {
+        int result = -1;
+        final int count = this.children.size();
+        for (int index = 0; index < count; index = index + 1) {
+            final DifferenceTreeItem child = this.children.get(index);
+            if (child instanceof DifferenceNode
+                && node == ((DifferenceNode) child).getPrototype()) {
+                result = index;
+                break;
+            }
+        }
+        return result;
+    }
 }
