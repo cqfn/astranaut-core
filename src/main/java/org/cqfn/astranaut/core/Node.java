@@ -104,4 +104,26 @@ public interface Node {
             action.accept(this.getChild(index));
         }
     }
+
+    /**
+     * Performs a deep comparison of a node with another node,
+     * i.e., compares nodes, as well as recursively all children of nodes one-to-one.
+     * @param other Other node
+     * @return Comparison result, {@code true} if the nodes are equal
+     */
+    default boolean deepCompare(Node other) {
+        boolean equals;
+        if (this == other) {
+            equals = true;
+        } else {
+            final int count = this.getChildCount();
+            equals = count == other.getChildCount()
+                && this.getTypeName().equals(other.getTypeName())
+                && this.getData().equals(other.getData());
+            for (int index = 0; equals && index < count; index = index + 1) {
+                equals = this.getChild(index).deepCompare(other.getChild(index));
+            }
+        }
+        return equals;
+    }
 }

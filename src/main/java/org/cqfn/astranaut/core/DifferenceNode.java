@@ -114,7 +114,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
      */
     public boolean deleteNode(final int index) {
         boolean result = false;
-        if (index > 0 && index < this.children.size()) {
+        if (index >= 0 && index < this.children.size()) {
             final DifferenceTreeItem child = this.children.get(index);
             if (child instanceof DifferenceNode) {
                 this.children.set(index, new Delete(((DifferenceNode) child).getPrototype()));

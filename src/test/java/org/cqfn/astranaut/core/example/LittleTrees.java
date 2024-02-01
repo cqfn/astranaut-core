@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
+import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
@@ -145,7 +146,7 @@ public final class LittleTrees {
      * Creates a tree that has a "delete" action in it.
      * @return Root node
      */
-    public static Node createTreeWithDeleteAction() {
+    public static DifferenceNode createTreeWithDeleteAction() {
         final Node victim = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
