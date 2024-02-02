@@ -26,9 +26,16 @@ package org.cqfn.astranaut.core.utils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.ChildDescriptor;
 import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.EmptyFragment;
 import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Fragment;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Type;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,6 +69,19 @@ class JsonSerializerTest {
         final boolean result = this.serializeAndCompare(
             tree,
             "serialization_to_string_expected.txt"
+        );
+        Assertions.assertTrue(result);
+    }
+
+    /**
+     * Test for a tree serialization where language is specified.
+     */
+    @Test
+    void testSerializationWithLanguageSpecified() {
+        final Node root = new TestNodeWithTypeWithLanguage();
+        final boolean result = this.serializeAndCompare(
+            root,
+            "serialization_language_specified.json"
         );
         Assertions.assertTrue(result);
     }
@@ -152,5 +172,73 @@ class JsonSerializerTest {
             oops = true;
         }
         return !oops && expected.equals(result);
+    }
+
+    /**
+     * Some type where language is specified.
+     *
+     * @since 1.1.0
+     */
+    private static class TestTypeWithLanguage implements Type {
+        @Override
+        public String getName() {
+            return "GandalfTheGrey";
+        }
+
+        @Override
+        public List<ChildDescriptor> getChildTypes() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List<String> getHierarchy() {
+            return Collections.singletonList(this.getName());
+        }
+
+        @Override
+        public String getProperty(final String name) {
+            String property = "";
+            if ("language".equals(name)) {
+                property = "elven";
+            }
+            return property;
+        }
+
+        @Override
+        public Builder createBuilder() {
+            return null;
+        }
+    }
+
+    /**
+     * Some node which has a type where language is specified.
+     *
+     * @since 1.1.0
+     */
+    private static class TestNodeWithTypeWithLanguage implements Node {
+        @Override
+        public Fragment getFragment() {
+            return EmptyFragment.INSTANCE;
+        }
+
+        @Override
+        public Type getType() {
+            return new TestTypeWithLanguage();
+        }
+
+        @Override
+        public String getData() {
+            return "Abracadabra";
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public Node getChild(final int index) {
+            return null;
+        }
     }
 }
