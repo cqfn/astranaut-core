@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core;
 /**
  * Interface for factories selection that selects a suitable factory
  * for the specified programming language.
+ * In other words, it's a factory of factories.
  *
  * @since 1.0.2
  */

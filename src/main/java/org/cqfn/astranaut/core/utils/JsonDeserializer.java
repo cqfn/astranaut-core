@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,48 +23,19 @@
  */
 package org.cqfn.astranaut.core.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import java.util.LinkedList;
-import java.util.List;
-import org.cqfn.astranaut.core.Builder;
+import com.kniazkov.json.Json;
+import com.kniazkov.json.JsonException;
 import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
 import org.cqfn.astranaut.core.FactorySelector;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
 /**
  * Converts a string that contains a JSON object to a tree.
  *
  * @since 1.0.2
  */
-public class JsonDeserializer {
-    /**
-     * The 'language' string.
-     */
-    private static final String STR_LANGUAGE = "language";
-
-    /**
-     * The 'root' string.
-     */
-    private static final String STR_ROOT = "root";
-
-    /**
-     * The 'type' string.
-     */
-    private static final String STR_TYPE = "type";
-
-    /**
-     * The 'data' string.
-     */
-    private static final String STR_DATA = "data";
-
-    /**
-     * The 'children' string.
-     */
-    private static final String STR_CHILDREN = "children";
-
+public final class JsonDeserializer {
     /**
      * String contains JSON object.
      */
@@ -74,11 +45,6 @@ public class JsonDeserializer {
      * The factory selector.
      */
     private final FactorySelector selector;
-
-    /**
-     * The suitable factory for node creation.
-     */
-    private Factory factory;
 
     /**
      * Constructor.
@@ -96,71 +62,13 @@ public class JsonDeserializer {
      */
     public Node convert() {
         Node result = EmptyTree.INSTANCE;
-        final JsonElement element = new Gson().fromJson(this.source, JsonElement.class);
-        if (element.isJsonObject()) {
-            final JsonObject obj = element.getAsJsonObject();
-            String language = "";
-            if (obj.has(JsonDeserializer.STR_LANGUAGE)) {
-                language = obj.get(JsonDeserializer.STR_LANGUAGE).getAsString();
+        try {
+            final TreeDescriptor tree = Json.parse(this.source, TreeDescriptor.class);
+            if (tree != null) {
+                result = tree.convert(this.selector);
             }
-            this.factory = this.selector.select(language);
-            if (obj.has(JsonDeserializer.STR_ROOT)) {
-                result = this.convertElement(obj.get(JsonDeserializer.STR_ROOT));
-            }
+        } catch (final JsonException ignored) {
         }
         return result;
-    }
-
-    /**
-     * Converts JSON element to node.
-     * @param element JSON element
-     * @return A node
-     */
-    private Node convertElement(final JsonElement element) {
-        Node result = EmptyTree.INSTANCE;
-        if (element.isJsonObject()) {
-            final JsonObject obj = element.getAsJsonObject();
-            result = this.convertObject(obj);
-        }
-        return result;
-    }
-
-    /**
-     * Converts JSON object to node.
-     * @param obj JSON element
-     * @return A node
-     */
-    private Node convertObject(final JsonObject obj) {
-        Node result = EmptyTree.INSTANCE;
-        if (obj.has(JsonDeserializer.STR_TYPE)) {
-            final String type = obj.get(JsonDeserializer.STR_TYPE).getAsString();
-            final Builder builder = this.factory.createBuilder(type);
-            this.fillNodeBuilder(obj, builder);
-            if (builder.isValid()) {
-                result = builder.createNode();
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Fills the node builder.
-     * @param obj JSON element
-     * @param builder The node builder
-     */
-    private void fillNodeBuilder(final JsonObject obj, final Builder builder) {
-        if (obj.has(JsonDeserializer.STR_DATA)) {
-            builder.setData(obj.get(JsonDeserializer.STR_DATA).getAsString());
-        }
-        if (obj.has(JsonDeserializer.STR_CHILDREN)) {
-            final JsonElement children = obj.get(JsonDeserializer.STR_CHILDREN);
-            if (children.isJsonArray()) {
-                final List<Node> list = new LinkedList<>();
-                for (final JsonElement child : children.getAsJsonArray()) {
-                    list.add(this.convertElement(child));
-                }
-                builder.setChildrenList(list);
-            }
-        }
     }
 }

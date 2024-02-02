@@ -2,7 +2,7 @@
 <!--
 The MIT License (MIT)
 
-Copyright (c) 2023 Ivan Kniazkov
+Copyright (c) 2024 Ivan Kniazkov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -132,9 +132,9 @@ SOFTWARE.
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.9.0</version>
+      <groupId>com.kniazkov</groupId>
+      <artifactId>json</artifactId>
+      <version>0.3</version>
     </dependency>
     <dependency>
       <groupId>guru.nidi</groupId>

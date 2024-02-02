@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 
 /**
@@ -32,7 +35,7 @@ import org.cqfn.astranaut.core.utils.Pair;
  *
  * @since 1.0
  */
-public class NodeReplacer {
+public class ReplaceNode {
     /**
      * Replaces a subtree of the initial tree with the newly created subtree.
      * @param tree The initial tree
