@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.algorithms.hash;
+package org.cqfn.astranaut.core.algorithms;
 
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
@@ -29,24 +29,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link AbsoluteHash} class.
+ * Testing {@link Depth} class.
  *
- * @since 1.0
+ * @since 1.1.0
  */
-class AbsoluteHashTest {
-    /**
-     * Testing the feature that two matching subtrees will have the same hash.
-     */
+class DepthTest {
     @Test
-    void testingEqualityFeature() {
-        final Hash hash = new AbsoluteHash();
-        final Node first = LittleTrees.createTreeWithDeleteAction();
-        final Node second = LittleTrees.createTreeWithDeleteAction();
-        int expected = hash.calculate(first);
-        int actual = hash.calculate(second);
-        Assertions.assertEquals(expected, actual);
-        expected = hash.calculate(first.getChild(0));
-        actual = hash.calculate(second.getChild(0));
-        Assertions.assertEquals(expected, actual);
+    void test() {
+        final Node tree = LittleTrees.createTreeWithDeleteAction();
+        final Depth depth = new Depth();
+        int value = depth.calculate(tree);
+        Assertions.assertEquals(5, value);
+        value = depth.calculate(tree.getChild(0));
+        Assertions.assertEquals(3, value);
     }
 }
