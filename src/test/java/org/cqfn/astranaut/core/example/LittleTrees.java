@@ -143,6 +143,48 @@ public final class LittleTrees {
     }
 
     /**
+     * Creates a tree (statement list) that has two children.
+     * @return Root node
+     */
+    public static Node createStatementListWithTwoChildren() {
+        return createStatementBlock(
+            wrapExpressionWithStatement(
+                createAssignment(
+                    createVariable("x"),
+                    createIntegerLiteral(1)
+                )
+            ),
+            createReturnStatement(
+                createVariable("x")
+            )
+        );
+    }
+
+    /**
+     * Creates a tree (statement list) that has three children.
+     * @return Root node
+     */
+    public static Node createStatementListWithThreeChildren() {
+        return createStatementBlock(
+            wrapExpressionWithStatement(
+                createAssignment(
+                    createVariable("x"),
+                    createIntegerLiteral(1)
+                )
+            ),
+            wrapExpressionWithStatement(
+                createAssignment(
+                    createVariable("y"),
+                    createIntegerLiteral(2)
+                )
+            ),
+            createReturnStatement(
+                createVariable("x")
+            )
+        );
+    }
+
+    /**
      * Creates a tree that has a "delete" action in it.
      * @return Root node
      */

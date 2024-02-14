@@ -35,15 +35,34 @@ import org.junit.jupiter.api.Test;
  */
 class BottomUpMapperTest {
     /**
-     * A test.
+     * Test in which the identical trees are mapped.
      */
     @Test
-    void test() {
+    void testIdenticalTrees() {
         final Node first = LittleTrees.createTreeWithDeleteAction();
         final Node second = LittleTrees.createTreeWithDeleteAction();
         final Mapper mapper = new BottomUpMapper();
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
         Assertions.assertEquals(mapping.getLeft(second), first);
+    }
+
+    /**
+     * Testing mapping of two trees, with some node removed in the second tree.
+     */
+    @Test
+    void testOneWasRemoved() {
+        final Node first = LittleTrees.createStatementListWithThreeChildren();
+        final Node second = LittleTrees.createStatementListWithTwoChildren();
+        final Mapper mapper = new BottomUpMapper();
+        final Mapping mapping = mapper.map(first, second);
+        Node left = first.getChild(0);
+        Node right = second.getChild(0);
+        Assertions.assertEquals(mapping.getRight(left), right);
+        Assertions.assertEquals(mapping.getLeft(right), left);
+        left = first.getChild(2);
+        right = second.getChild(1);
+        Assertions.assertEquals(mapping.getRight(left), right);
+        Assertions.assertEquals(mapping.getLeft(right), left);
     }
 }
