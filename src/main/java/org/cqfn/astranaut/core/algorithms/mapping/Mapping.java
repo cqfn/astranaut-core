@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
+import java.util.Set;
 import org.cqfn.astranaut.core.Node;
 
 /**
@@ -47,4 +48,11 @@ public interface Mapping {
      *  {@code null} if there is nothing corresponding to the node of the 'right' tree
      */
     Node getLeft(Node right);
+
+    /**
+     * Returns the set of nodes of the 'left' tree that need to be removed
+     * to get the 'right' tree.
+     * @return The set of deleted nodes
+     */
+    Set<Node> getDeleted();
 }

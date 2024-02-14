@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.algorithms.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -80,6 +81,11 @@ class BottomUpMappingAlgorithm {
     private final Map<Node, Node> rtl;
 
     /**
+     * Set of deleted nodes.
+     */
+    private final Set<Node> deleted;
+
+    /**
      * Constructor.
      * @param left Root node of the 'left' tree
      * @param right Root node of the 'right' tree
@@ -92,6 +98,7 @@ class BottomUpMappingAlgorithm {
         this.right = this.createNodeSet(right);
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
+        this.deleted = new HashSet<>();
     }
 
     /**
@@ -123,6 +130,11 @@ class BottomUpMappingAlgorithm {
             @Override
             public Node getLeft(final Node node) {
                 return BottomUpMappingAlgorithm.this.rtl.get(node);
+            }
+
+            @Override
+            public Set<Node> getDeleted() {
+                return Collections.unmodifiableSet(BottomUpMappingAlgorithm.this.deleted);
             }
         };
     }
@@ -280,6 +292,13 @@ class BottomUpMappingAlgorithm {
             this.right.remove(related);
             this.ltr.put(node, related);
             this.rtl.put(related, node);
+            final int count = node.getChildCount();
+            for (int index = 0; index < count; index = index + 1) {
+                final Node child = node.getChild(index);
+                if (!this.ltr.containsKey(child)) {
+                    this.deleted.add(child);
+                }
+            }
             next = this.parents.get(node);
         } while (false);
         this.left.remove(node);

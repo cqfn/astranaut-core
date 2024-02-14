@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
+import java.util.Set;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
@@ -66,5 +67,8 @@ class BottomUpMapperTest {
         right = second.getChild(1);
         Assertions.assertEquals(mapping.getRight(left), right);
         Assertions.assertEquals(mapping.getLeft(right), left);
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        Assertions.assertEquals(first.getChild(1), deleted.iterator().next());
     }
 }
