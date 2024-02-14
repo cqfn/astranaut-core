@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,6 +100,13 @@ class BottomUpMappingAlgorithm {
     void execute() {
         final Map<Node, List<Node>> draft = this.performInitialMapping();
         this.absorbLargestSubtrees(draft);
+        Node node = this.findPartiallyMappedLeftNode();
+        while (node != null) {
+            node = this.mapPartiallyMappedLeftNode(node);
+            if (node == null) {
+                node = this.findPartiallyMappedLeftNode();
+            }
+        }
     }
 
     /**
@@ -210,6 +218,8 @@ class BottomUpMappingAlgorithm {
         final Map<Node, List<Node>> draft) {
         assert this.hashes.calculate(node) == this.hashes.calculate(related);
         draft.remove(node);
+        this.left.remove(node);
+        this.right.remove(related);
         this.ltr.put(node, related);
         this.rtl.put(related, node);
         final int count = node.getChildCount();
@@ -218,5 +228,61 @@ class BottomUpMappingAlgorithm {
             final Node second = related.getChild(index);
             this.mapSubtreesWithTheSameHash(first, second, draft);
         }
+    }
+
+    /**
+     * Finds a partially mapped node from the 'left' set, that is, one that has some children
+     * mapped and some not.
+     * @return A node or {@code null} if such node not found
+     */
+    private Node findPartiallyMappedLeftNode() {
+        Node result = null;
+        final Iterator<Node> iterator = this.left.iterator();
+        while (result == null && iterator.hasNext()) {
+            final Node node = iterator.next();
+            final int count = node.getChildCount();
+            for (int index = 0; index < count; index = index + 1) {
+                final Node child = node.getChild(index);
+                if (this.ltr.containsKey(child)) {
+                    result = node;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Tries to map a partially mapped 'left' node to another node.
+     * @param node A node to be mapped
+     * @return Next partially mapped node to be processed
+     */
+    private Node mapPartiallyMappedLeftNode(final Node node) {
+        final Set<Node> ancestors = new HashSet<>();
+        Node next = null;
+        node.forEachChild(
+            child -> {
+                final Node mapped = this.ltr.get(child);
+                if (mapped != null) {
+                    ancestors.add(this.parents.get(mapped));
+                }
+            }
+        );
+        do {
+            if (ancestors.size() != 1) {
+                break;
+            }
+            final Node related = ancestors.iterator().next();
+            if (!node.getTypeName().equals(related.getTypeName())
+                || !node.getData().equals(related.getData())) {
+                break;
+            }
+            this.right.remove(related);
+            this.ltr.put(node, related);
+            this.rtl.put(related, node);
+            next = this.parents.get(node);
+        } while (false);
+        this.left.remove(node);
+        return next;
     }
 }

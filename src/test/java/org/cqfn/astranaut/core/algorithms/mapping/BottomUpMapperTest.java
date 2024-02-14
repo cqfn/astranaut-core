@@ -56,6 +56,8 @@ class BottomUpMapperTest {
         final Node second = LittleTrees.createStatementListWithTwoChildren();
         final Mapper mapper = new BottomUpMapper();
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(mapping.getRight(first), second);
+        Assertions.assertEquals(mapping.getLeft(second), first);
         Node left = first.getChild(0);
         Node right = second.getChild(0);
         Assertions.assertEquals(mapping.getRight(left), right);
