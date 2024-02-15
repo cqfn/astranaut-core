@@ -52,4 +52,27 @@ class DifferenceTreeBuilderTest {
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }
+
+    /**
+     * Testing the construction of a difference tree with a deleted node.
+     * This node is just below the root, so that the number and type of children of the root
+     * do not change.
+     */
+    @Test
+    void testTreeWithDeletedNodeInDepth() {
+        final Node before = LittleTrees.createStatementBlock(
+            LittleTrees.createStatementListWithThreeChildren()
+        );
+        final Node after = LittleTrees.createStatementBlock(
+            LittleTrees.createStatementListWithTwoChildren()
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final boolean result = builder.build(after, new BottomUpMapper());
+        Assertions.assertTrue(result);
+        final DifferenceNode diff = builder.getRoot();
+        final Node expected = LittleTrees.createTreeWithDeleteActionInDepth();
+        Assertions.assertTrue(expected.deepCompare(diff));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
 }

@@ -203,9 +203,42 @@ public final class LittleTrees {
                         createIntegerLiteral(1)
                     )
                 ),
-                    victim,
+                victim,
                 createReturnStatement(
                     createVariable("x")
+                )
+            )
+        );
+        builder.deleteNode(victim);
+        return builder.getRoot();
+    }
+
+    /**
+     * Creates a tree that has a "delete" action in it.
+     * This action is just below the root, so that the number and type of children of the root
+     * do not change.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithDeleteActionInDepth() {
+        final Node victim = wrapExpressionWithStatement(
+            createAssignment(
+                createVariable("y"),
+                createIntegerLiteral(2)
+            )
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                createStatementBlock(
+                    wrapExpressionWithStatement(
+                        createAssignment(
+                            createVariable("x"),
+                            createIntegerLiteral(1)
+                        )
+                    ),
+                    victim,
+                    createReturnStatement(
+                        createVariable("x")
+                    )
                 )
             )
         );
