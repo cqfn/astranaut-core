@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
+import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
 
 /**
  * Builder of difference syntax tree, that is, one that stores changes between two trees.
@@ -48,11 +50,26 @@ public final class DifferenceTreeBuilder {
 
     /**
      * Constructor.
-     * @param prototype Root node of an 'ordinary', non-difference original tree before the changes
+     * @param before Root node of an 'ordinary', non-difference original tree before the changes
      */
-    public DifferenceTreeBuilder(final Node prototype) {
-        this.root = new DifferenceNode(prototype);
+    public DifferenceTreeBuilder(final Node before) {
+        this.root = new DifferenceNode(before);
         this.parents = DifferenceTreeBuilder.buildParentsMap(this.root);
+    }
+
+    /**
+     * Builds a difference tree based on the original tree and the tree after changes.
+     * @param after Root node of tree before the changes
+     * @param mapper A mapper used for node mappings
+     * @return Result of operation, {@code true} if difference tree was built
+     */
+    public boolean build(final Node after, final Mapper mapper) {
+        final Mapping mapping = mapper.map(this.root.getPrototype(), after);
+        boolean result = true;
+        for (final Node deleted : mapping.getDeleted()) {
+            result = result & this.deleteNode(deleted);
+        }
+        return result;
     }
 
     /**

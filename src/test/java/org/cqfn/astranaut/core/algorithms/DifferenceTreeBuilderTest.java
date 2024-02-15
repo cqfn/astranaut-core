@@ -21,38 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.algorithms.mapping;
+package org.cqfn.astranaut.core.algorithms;
 
-import java.util.Set;
+import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.mapping.BottomUpMapper;
+import org.cqfn.astranaut.core.example.LittleTrees;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * A mapping from one syntactic tree ('left') to another ('right'), i.e.,
- * set of correspondences between the nodes of one tree and the nodes of another tree.
+ * Testing {@link DifferenceTreeBuilder} class.
  *
  * @since 1.1.0
  */
-public interface Mapping {
+class DifferenceTreeBuilderTest {
     /**
-     * Returns the node of the 'right' tree that is mapped to the node of the 'left' tree.
-     * @param left A node of the 'left' tree
-     * @return The corresponding node of the 'right' tree or
-     *  {@code null} if there is nothing corresponding to the node of the 'left' tree
+     * Testing the construction of a difference tree with a deleted node.
      */
-    Node getRight(Node left);
-
-    /**
-     * Returns the node of the 'left' tree that is mapped to the node of the 'right' tree.
-     * @param right A node of the 'right' tree
-     * @return The corresponding node of the 'left' tree or
-     *  {@code null} if there is nothing corresponding to the node of the 'right' tree
-     */
-    Node getLeft(Node right);
-
-    /**
-     * Returns the set of nodes of the 'left' tree that need to be removed
-     * to get the 'right' tree.
-     * @return The set of deleted nodes
-     */
-    Set<Node> getDeleted();
+    @Test
+    void testTreeWithDeletedNode() {
+        final Node before = LittleTrees.createStatementListWithThreeChildren();
+        final Node after = LittleTrees.createStatementListWithTwoChildren();
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final boolean result = builder.build(after, new BottomUpMapper());
+        Assertions.assertTrue(result);
+        final DifferenceNode diff = builder.getRoot();
+        final Node expected = LittleTrees.createTreeWithDeleteAction();
+        Assertions.assertTrue(expected.deepCompare(diff));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
 }

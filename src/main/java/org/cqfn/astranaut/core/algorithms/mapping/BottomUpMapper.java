@@ -24,26 +24,19 @@
 package org.cqfn.astranaut.core.algorithms.mapping;
 
 import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.example.LittleTrees;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link TopDownMapper} class.
+ * Bottom-up mapper.
+ * Tries to match leaf nodes first, and then subtrees containing leaf nodes,
+ * gradually increasing the size of the matched subtrees.
  *
- * @since 1.0
+ * @since 1.1.0
  */
-class TopDownMapperTest {
-    /**
-     * A test.
-     */
-    @Test
-    void test() {
-        final Node first = LittleTrees.createTreeWithDeleteAction();
-        final Node second = LittleTrees.createTreeWithDeleteAction();
-        final Mapper mapper = new TopDownMapper();
-        final Mapping mapping = mapper.map(first, second);
-        Assertions.assertEquals(mapping.getRight(first), second);
-        Assertions.assertEquals(mapping.getLeft(second), first);
+public final class BottomUpMapper implements Mapper {
+    @Override
+    public Mapping map(final Node left, final Node right) {
+        final BottomUpMappingAlgorithm algorithm = new BottomUpMappingAlgorithm(left, right);
+        algorithm.execute();
+        return algorithm.getResult();
     }
 }
