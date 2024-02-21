@@ -54,8 +54,8 @@ public final class Replace implements Action {
 
     /**
      * Constructor.
-     * @param before Child element that will be replaced.
-     * @param after Child element to be replaced by.
+     * @param before Child element that will be replaced
+     * @param after Child element to be replaced by
      */
     public Replace(final Node before, final Node after) {
         this.before = before;

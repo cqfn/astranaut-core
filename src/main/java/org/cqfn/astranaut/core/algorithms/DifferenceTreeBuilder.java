@@ -66,6 +66,9 @@ public final class DifferenceTreeBuilder {
     public boolean build(final Node after, final Mapper mapper) {
         final Mapping mapping = mapper.map(this.root.getPrototype(), after);
         boolean result = true;
+        for (final Map.Entry<Node, Node> replaced : mapping.getReplaced().entrySet()) {
+            result = result & this.replaceNode(replaced.getKey(), replaced.getValue());
+        }
         for (final Node deleted : mapping.getDeleted()) {
             result = result & this.deleteNode(deleted);
         }
@@ -78,6 +81,21 @@ public final class DifferenceTreeBuilder {
      */
     public DifferenceNode getRoot() {
         return this.root;
+    }
+
+    /**
+     * Adds an action to the difference tree that replaces a node.
+     * @param node Child element that will be replaced
+     * @param replacement Child element to be replaced by
+     * @return Result of operation, {@code true} if action was added
+     */
+    public boolean replaceNode(final Node node, final Node replacement) {
+        boolean result = false;
+        final DifferenceNode parent = this.parents.get(node);
+        if (parent != null) {
+            result = parent.replaceNode(node, replacement);
+        }
+        return result;
     }
 
     /**

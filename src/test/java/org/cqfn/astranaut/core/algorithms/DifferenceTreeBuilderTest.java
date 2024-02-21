@@ -25,6 +25,8 @@ package org.cqfn.astranaut.core.algorithms;
 
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
+import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.BottomUpMapper;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
@@ -37,11 +39,38 @@ import org.junit.jupiter.api.Test;
  */
 class DifferenceTreeBuilderTest {
     /**
+     * Testing the construction of a difference tree with a replaced node.
+     */
+    @Test
+    void testTreeWithReplacedNode() {
+        final Node before = LittleTrees.createStatementListWithThreeChildren(
+            LittleTrees.createIntegerLiteral(2)
+        );
+        final Node after = LittleTrees.createStatementListWithThreeChildren(
+            LittleTrees.createVariable("x")
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final boolean result = builder.build(after, new BottomUpMapper());
+        Assertions.assertTrue(result);
+        final DifferenceNode diff = builder.getRoot();
+        final Node expected = LittleTrees.createTreeWithReplaceAction();
+        final Hash hash = new AbsoluteHash();
+        final int diffhash = hash.calculate(diff);
+        final int expectedhash = hash.calculate(expected);
+        Assertions.assertEquals(expectedhash, diffhash);
+        Assertions.assertTrue(expected.deepCompare(diff));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
+
+    /**
      * Testing the construction of a difference tree with a deleted node.
      */
     @Test
     void testTreeWithDeletedNode() {
-        final Node before = LittleTrees.createStatementListWithThreeChildren();
+        final Node before = LittleTrees.createStatementListWithThreeChildren(
+            LittleTrees.createIntegerLiteral(2)
+        );
         final Node after = LittleTrees.createStatementListWithTwoChildren();
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, new BottomUpMapper());
@@ -61,7 +90,9 @@ class DifferenceTreeBuilderTest {
     @Test
     void testTreeWithDeletedNodeInDepth() {
         final Node before = LittleTrees.createStatementBlock(
-            LittleTrees.createStatementListWithThreeChildren()
+            LittleTrees.createStatementListWithThreeChildren(
+                LittleTrees.createIntegerLiteral(2)
+            )
         );
         final Node after = LittleTrees.createStatementBlock(
             LittleTrees.createStatementListWithTwoChildren()

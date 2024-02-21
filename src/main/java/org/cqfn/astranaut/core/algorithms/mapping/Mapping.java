@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
+import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.Node;
 
@@ -48,6 +49,14 @@ public interface Mapping {
      *  {@code null} if there is nothing corresponding to the node of the 'right' tree
      */
     Node getLeft(Node right);
+
+    /**
+     * Returns relationship between the nodes of the 'left' tree that have been replaced
+     * by nodes of the 'right' tree.
+     * @return Mapping, where keys are the nodes of the 'left' tree
+     *  and values are the corresponding nodes of the 'right' tree
+     */
+    Map<Node, Node> getReplaced();
 
     /**
      * Returns the set of nodes of the 'left' tree that need to be removed

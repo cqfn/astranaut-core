@@ -81,6 +81,11 @@ class BottomUpMappingAlgorithm {
     private final Map<Node, Node> rtl;
 
     /**
+     * Map containing replaces nodes.
+     */
+    private final Map<Node, Node> replaced;
+
+    /**
      * Set of deleted nodes.
      */
     private final Set<Node> deleted;
@@ -98,6 +103,7 @@ class BottomUpMappingAlgorithm {
         this.right = this.createNodeSet(right);
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
+        this.replaced = new HashMap<>();
         this.deleted = new HashSet<>();
     }
 
@@ -130,6 +136,11 @@ class BottomUpMappingAlgorithm {
             @Override
             public Node getLeft(final Node node) {
                 return BottomUpMappingAlgorithm.this.rtl.get(node);
+            }
+
+            @Override
+            public Map<Node, Node> getReplaced() {
+                return Collections.unmodifiableMap(BottomUpMappingAlgorithm.this.replaced);
             }
 
             @Override
@@ -292,16 +303,62 @@ class BottomUpMappingAlgorithm {
             this.right.remove(related);
             this.ltr.put(node, related);
             this.rtl.put(related, node);
-            final int count = node.getChildCount();
-            for (int index = 0; index < count; index = index + 1) {
-                final Node child = node.getChild(index);
-                if (!this.ltr.containsKey(child)) {
-                    this.deleted.add(child);
-                }
-            }
+            this.mapChildren(node, related);
             next = this.parents.get(node);
         } while (false);
         this.left.remove(node);
         return next;
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildren(final Node before, final Node after) {
+        final int sign = Integer.compare(before.getChildCount(), after.getChildCount());
+        if (sign > 0) {
+            this.mapChildrenIfDeleted(before);
+        } else if (sign == 0) {
+            this.mapChildrenIfReplaced(before, after);
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has the same number of child nodes as the node after changes, i.e., when it is obvious
+     * that some nodes have been replaced.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildrenIfReplaced(final Node before, final Node after) {
+        final int count = before.getChildCount();
+        assert count == after.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node first = before.getChild(index);
+            if (!this.ltr.containsKey(first)) {
+                final Node second = after.getChild(index);
+                this.replaced.put(first, second);
+                this.left.remove(first);
+                this.right.remove(second);
+            }
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has more child nodes than the node after changes, i.e., when it is obvious
+     * that some nodes have been deleted.
+     * @param before Node before changes
+     */
+    private void mapChildrenIfDeleted(final Node before) {
+        final int count = before.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = before.getChild(index);
+            if (!this.ltr.containsKey(child)) {
+                this.deleted.add(child);
+                this.left.remove(child);
+            }
+        }
     }
 }

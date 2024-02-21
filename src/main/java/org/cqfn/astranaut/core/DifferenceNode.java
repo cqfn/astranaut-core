@@ -118,6 +118,46 @@ public final class DifferenceNode implements DifferenceTreeItem {
     }
 
     /**
+     * Adds an action that replaces the node.
+     * The position of the node is specified by the index.
+     * @param index Node index
+     * @param replacement Child node to be replaced by
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean replaceNode(final int index, final Node replacement) {
+        boolean result = false;
+        if (index >= 0 && index < this.children.size()) {
+            final DifferenceTreeItem child = this.children.get(index);
+            if (child instanceof DifferenceNode) {
+                this.children.set(
+                    index,
+                    new Replace(
+                        ((DifferenceNode) child).getPrototype(),
+                        replacement
+                    )
+                );
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Adds an action that replaces the node.
+     * @param node A node
+     * @param replacement Child node to be replaced by
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean replaceNode(final Node node, final Node replacement) {
+        boolean result = false;
+        final int index = this.findChildIndex(node);
+        if (index >= 0) {
+            result = this.replaceNode(index, replacement);
+        }
+        return result;
+    }
+
+    /**
      * Adds an action that removes a node by index.
      * @param index Node index
      * @return Result of operation, @return {@code true} if action was added

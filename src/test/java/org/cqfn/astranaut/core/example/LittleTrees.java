@@ -162,9 +162,10 @@ public final class LittleTrees {
 
     /**
      * Creates a tree (statement list) that has three children.
+     * @param assignable Node whose value is assigned in the third (middle) statement
      * @return Root node
      */
-    public static Node createStatementListWithThreeChildren() {
+    public static Node createStatementListWithThreeChildren(final Node assignable) {
         return createStatementBlock(
             wrapExpressionWithStatement(
                 createAssignment(
@@ -175,13 +176,43 @@ public final class LittleTrees {
             wrapExpressionWithStatement(
                 createAssignment(
                     createVariable("y"),
-                    createIntegerLiteral(2)
+                    assignable
                 )
             ),
             createReturnStatement(
                 createVariable("x")
             )
         );
+    }
+
+    /**
+     * Creates a tree that has a "replace" action in it.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithReplaceAction() {
+        final Node before = createIntegerLiteral(2);
+        final Node after = createVariable("x");
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                wrapExpressionWithStatement(
+                    createAssignment(
+                        createVariable("x"),
+                        createIntegerLiteral(1)
+                    )
+                ),
+                wrapExpressionWithStatement(
+                    createAssignment(
+                        createVariable("y"),
+                        before
+                    )
+                ),
+                createReturnStatement(
+                    createVariable("x")
+                )
+            )
+        );
+        builder.replaceNode(before, after);
+        return builder.getRoot();
     }
 
     /**
