@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,14 +62,14 @@ class BottomUpMappingAlgorithm {
     private final Map<Node, Node> parents;
 
     /**
-     * Not yet processed nodes from the 'left' tree.
+     * Sorted nodes from the 'left' tree.
      */
-    private final Set<Node> left;
+    private final List<Node> left;
 
     /**
-     * Not yet processed nodes from the 'right' tree.
+     * Sorted nodes from the 'right' tree.
      */
-    private final Set<Node> right;
+    private final List<Node> right;
 
     /**
      * Left-to-right mapping.
@@ -99,8 +100,8 @@ class BottomUpMappingAlgorithm {
         this.hashes = new AbsoluteHash();
         this.depth = new Depth();
         this.parents = new HashMap<>();
-        this.left = this.createNodeSet(left);
-        this.right = this.createNodeSet(right);
+        this.left = this.createNodeList(left);
+        this.right = this.createNodeList(right);
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
         this.replaced = new HashMap<>();
@@ -151,26 +152,26 @@ class BottomUpMappingAlgorithm {
     }
 
     /**
-     * Creates an initial set of nodes suitable for processing from the tree.
+     * Creates an initial list of nodes suitable for processing from the tree.
      * @param root The root of the tree
-     * @return Set of nodes
+     * @return List of nodes where leaves are placed first.
      */
-    private Set<Node> createNodeSet(final Node root) {
-        final Set<Node> set = new HashSet<>();
-        this.createNodeSet(root, null, set);
-        return set;
+    private List<Node> createNodeList(final Node root) {
+        final List<Node> list = new LinkedList<>();
+        this.createNodeList(root, null, list);
+        return list;
     }
 
     /**
      * Creates an initial set of nodes suitable for processing from the tree (recursive method).
      * @param node The current node
      * @param parent The current node parent
-     * @param set The resulting set
+     * @param list The resulting list
      */
-    private void createNodeSet(final Node node, final Node parent, final Set<Node> set) {
-        set.add(node);
+    private void createNodeList(final Node node, final Node parent, final List<Node> list) {
         this.parents.put(node, parent);
-        node.forEachChild(child -> this.createNodeSet(child, node, set));
+        node.forEachChild(child -> this.createNodeList(child, node, list));
+        list.add(node);
     }
 
     /**
