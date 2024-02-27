@@ -45,7 +45,8 @@ import org.cqfn.astranaut.core.algorithms.hash.Hash;
  *
  * @since 1.1.0
  */
-class BottomUpMappingAlgorithm {
+@SuppressWarnings("PMD.TooManyMethods")
+class BottomUpAlgorithm {
     /**
      * Set of node hashes.
      */
@@ -96,7 +97,7 @@ class BottomUpMappingAlgorithm {
      * @param left Root node of the 'left' tree
      * @param right Root node of the 'right' tree
      */
-    BottomUpMappingAlgorithm(final Node left, final Node right) {
+    BottomUpAlgorithm(final Node left, final Node right) {
         this.hashes = new AbsoluteHash();
         this.depth = new Depth();
         this.parents = new HashMap<>();
@@ -128,27 +129,7 @@ class BottomUpMappingAlgorithm {
      * @return Result of mapping
      */
     Mapping getResult() {
-        return new Mapping() {
-            @Override
-            public Node getRight(final Node node) {
-                return BottomUpMappingAlgorithm.this.ltr.get(node);
-            }
-
-            @Override
-            public Node getLeft(final Node node) {
-                return BottomUpMappingAlgorithm.this.rtl.get(node);
-            }
-
-            @Override
-            public Map<Node, Node> getReplaced() {
-                return Collections.unmodifiableMap(BottomUpMappingAlgorithm.this.replaced);
-            }
-
-            @Override
-            public Set<Node> getDeleted() {
-                return Collections.unmodifiableSet(BottomUpMappingAlgorithm.this.deleted);
-            }
-        };
+        return new Result(this);
     }
 
     /**
@@ -360,6 +341,46 @@ class BottomUpMappingAlgorithm {
                 this.deleted.add(child);
                 this.left.remove(child);
             }
+        }
+    }
+
+    /**
+     * Mapping result.
+     *
+     * @since 1.1.0
+     */
+    private static final class Result implements Mapping {
+        /**
+         * Structure from which the mapping results can be taken.
+         */
+        private final BottomUpAlgorithm data;
+
+        /**
+         * Constructor.
+         * @param data Structure from which the mapping results can be taken
+         */
+        private Result(final BottomUpAlgorithm data) {
+            this.data = data;
+        }
+
+        @Override
+        public Node getRight(final Node node) {
+            return this.data.ltr.get(node);
+        }
+
+        @Override
+        public Node getLeft(final Node node) {
+            return this.data.rtl.get(node);
+        }
+
+        @Override
+        public Map<Node, Node> getReplaced() {
+            return Collections.unmodifiableMap(this.data.replaced);
+        }
+
+        @Override
+        public Set<Node> getDeleted() {
+            return Collections.unmodifiableSet(this.data.deleted);
         }
     }
 }

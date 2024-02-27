@@ -41,7 +41,7 @@ import org.cqfn.astranaut.core.example.green.Variable;
  *
  * @since 1.1.0
  */
-@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+@SuppressWarnings({"PMD.ProhibitPublicStaticMethods", "PMD.TooManyMethods"})
 public final class LittleTrees {
     /**
      * Private constructor.
