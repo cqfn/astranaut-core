@@ -42,12 +42,37 @@ class DifferenceNodeTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
+     * File name with tree containing 'Insert' action.
+     */
+    private static final String TREE_BEFORE_DELETE = "before_delete_action.json";
+
+
+    /**
+     * File name with tree containing 'Insert' action.
+     */
+    private static final String TREE_WITH_INSERT = "tree_containing_insert_action.json";
+
+    /**
      * File name with tree containing 'Delete' action.
      */
     private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
 
     /**
-     * Testing {@link  DifferenceNode#getBefore()} method.
+     * Testing {@link  DifferenceNode#getAfter()} method with inserted node.
+     */
+    @Test
+    void testInsertGetAfter() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node actual = diff.getAfter();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFORE_DELETE);
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing {@link  DifferenceNode#getBefore()} method with deleted node.
      */
     @Test
     void testDeleteGetBefore() {
@@ -56,12 +81,12 @@ class DifferenceNodeTest {
         final DifferenceNode diff = (DifferenceNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree("before_delete_action.json");
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFORE_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
     /**
-     * Testing {@link  DifferenceNode#getAfter()} method.
+     * Testing {@link  DifferenceNode#getAfter()} method with deleted node.
      */
     @Test
     void testDeleteGetAfter() {

@@ -29,7 +29,9 @@ import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Factory;
+import org.cqfn.astranaut.core.Insert;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Replace;
 
 /**
  * Node descriptor represented as it is stored in the JSON file.
@@ -95,10 +97,23 @@ public class NodeDescriptor {
         final List<Node> list = new ArrayList<>(this.children.size());
         for (final NodeDescriptor child : this.children) {
             final Node converted = child.convert(factory, actions);
-            if (converted instanceof Delete) {
-                final Node before = ((Delete) converted).getBefore();
-                list.add(before);
-                actions.deleteNode(before);
+            if (converted instanceof Insert) {
+                final Node node = ((Insert) converted).getAfter();
+                Node after = null;
+                final int size = list.size();
+                if (size > 0) {
+                    after = list.get(size - 1);
+                }
+                actions.insertNodeAfter(node, after);
+            } else if (converted instanceof Replace) {
+                final Replace action = (Replace) converted;
+                final Node node = action.getBefore();
+                list.add(node);
+                actions.replaceNode(node, action.getAfter());
+            } else if (converted instanceof Delete) {
+                final Node node = ((Delete) converted).getBefore();
+                list.add(node);
+                actions.deleteNode(node);
             } else {
                 list.add(converted);
             }

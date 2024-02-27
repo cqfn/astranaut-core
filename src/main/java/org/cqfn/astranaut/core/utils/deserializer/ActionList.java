@@ -23,7 +23,9 @@
  */
 package org.cqfn.astranaut.core.utils.deserializer;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
@@ -36,6 +38,16 @@ import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
  */
 public class ActionList {
     /**
+     * Collection of nodes to be inserted (node -> after which to insert).
+     */
+    private final Map<Node, Node> insert;
+
+    /**
+     * Collection of nodes to be replaced (node before changes -> node after changes).
+     */
+    private final Map<Node, Node> replace;
+
+    /**
      * Set of nodes to be deleted.
      */
     private final Set<Node> delete;
@@ -44,6 +56,8 @@ public class ActionList {
      * Constructor.
      */
     public ActionList() {
+        this.insert = new HashMap<>();
+        this.replace = new HashMap<>();
         this.delete = new HashSet<>();
     }
 
@@ -52,7 +66,25 @@ public class ActionList {
      * @return Checking result
      */
     public boolean hasActions() {
-        return !this.delete.isEmpty();
+        return  !this.insert.isEmpty() || !this.replace.isEmpty() || !this.delete.isEmpty();
+    }
+
+    /**
+     * Adds the node to the list of nodes to be inserted.
+     * @param node Node to be inserted
+     * @param after Node after which to insert
+     */
+    public void insertNodeAfter(final Node node, final Node after) {
+        this.insert.put(node, after);
+    }
+
+    /**
+     * Adds the node to the list of nodes to be replaced.
+     * @param node Node to be replaced
+     * @param replacement Node to be replaced by
+     */
+    public void replaceNode(final Node node, final Node replacement) {
+        this.replace.put(node, replacement);
     }
 
     /**
@@ -70,6 +102,12 @@ public class ActionList {
      */
     public DifferenceNode convertTreeToDifferenceTree(final Node root) {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(root);
+        for (final Map.Entry<Node, Node> pair : this.insert.entrySet()) {
+            builder.insertNodeAfter(pair.getKey(), pair.getValue());
+        }
+        for (final Map.Entry<Node, Node> pair : this.replace.entrySet()) {
+            builder.replaceNode(pair.getKey(), pair.getValue());
+        }
         for (final Node node : this.delete) {
             builder.deleteNode(node);
         }

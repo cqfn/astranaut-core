@@ -84,6 +84,22 @@ public final class DifferenceTreeBuilder {
     }
 
     /**
+     * Adds an action to the difference tree that inserts a node after another node.
+     * If no other node is specified, inserts at the beginning of the children's list.
+     * @param node Child element that will be inserted
+     * @param after Node after which to insert
+     * @return Result of operation, {@code true} if action was added
+     */
+    public boolean insertNodeAfter(final Node node, final Node after) {
+        boolean result = false;
+        final DifferenceNode parent = this.parents.get(after);
+        if (parent != null) {
+            result = parent.insertNodeAfter(node, after);
+        }
+        return result;
+    }
+
+    /**
      * Adds an action to the difference tree that replaces a node.
      * @param node Child element that will be replaced
      * @param replacement Child element to be replaced by

@@ -126,7 +126,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
      * @param after Node after which to insert
      * @return Result of operation, @return {@code true} if action was added
      */
-    public boolean addNodeAfter(final Node node, final Node after) {
+    public boolean insertNodeAfter(final Node node, final Node after) {
         boolean result = false;
         if (after == null) {
             this.children.add(0, new Insert(node));
