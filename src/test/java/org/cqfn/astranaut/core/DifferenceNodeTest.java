@@ -49,12 +49,31 @@ class DifferenceNodeTest {
     /**
      * File name with tree containing 'Insert' action.
      */
+    private static final String TREE_AFTER_DELETE = "after_delete_action.json";
+
+    /**
+     * File name with tree containing 'Insert' action.
+     */
     private static final String TREE_WITH_INSERT = "tree_containing_insert_action.json";
 
     /**
      * File name with tree containing 'Delete' action.
      */
     private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
+
+    /**
+     * Testing {@link  DifferenceNode#getBefore()} method with inserted node.
+     */
+    @Test
+    void testInsertGetBefore() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node actual = diff.getBefore();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
 
     /**
      * Testing {@link  DifferenceNode#getAfter()} method with inserted node.
@@ -94,7 +113,7 @@ class DifferenceNodeTest {
         final DifferenceNode diff = (DifferenceNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree("after_delete_action.json");
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
