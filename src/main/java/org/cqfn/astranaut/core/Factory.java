@@ -55,12 +55,21 @@ public class Factory {
             final Type type = this.types.get(name);
             result = type.createBuilder();
         } else {
-            if (name.equals("Delete")) {
-                result = new Delete.Constructor();
-            } else {
-                final DraftNode.Constructor draft = new DraftNode.Constructor();
-                draft.setName(name);
-                result = draft;
+            switch (name) {
+                case "Insert":
+                    result = new Insert.Constructor();
+                    break;
+                case "Replace":
+                    result = new Replace.Constructor();
+                    break;
+                case "Delete":
+                    result = new Delete.Constructor();
+                    break;
+                default:
+                    final DraftNode.Constructor draft = new DraftNode.Constructor();
+                    draft.setName(name);
+                    result = draft;
+                    break;
             }
         }
         return result;
