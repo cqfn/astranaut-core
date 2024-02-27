@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core;
 
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -115,6 +116,44 @@ class DifferenceNodeTest {
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Tests the case where a node is inserted at the start position of the child list.
+     */
+    @Test
+    void testInsertNodeFirst() {
+        final Node first = LittleTrees.createReturnStatement(null);
+        final Node second = LittleTrees.wrapExpressionWithStatement(
+            LittleTrees.createAssignment(
+                LittleTrees.createVariable("x"),
+                LittleTrees.createIntegerLiteral(0)
+            )
+        );
+        final Node before = LittleTrees.createStatementBlock(first);
+        final Node after = LittleTrees.createStatementBlock(second, first);
+        final DifferenceNode diff = new DifferenceNode(before);
+        final boolean result = diff.insertNodeAfter(second, null);
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
+
+    /**
+     * Tests the case where an attempt to insert a node fails.
+     */
+    @Test
+    void testInsertNodeFails() {
+        final DifferenceNode diff = new DifferenceNode(
+            LittleTrees.createStatementBlock(
+                LittleTrees.createReturnStatement(null)
+            )
+        );
+        final boolean result = diff.insertNodeAfter(
+            LittleTrees.createVariable("x"),
+            LittleTrees.createVariable("y")
+        );
+        Assertions.assertFalse(result);
     }
 
     /**
