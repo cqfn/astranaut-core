@@ -63,6 +63,11 @@ class BottomUpAlgorithm {
     private final Map<Node, Node> parents;
 
     /**
+     * A set of nodes that have not yet been processed.
+     */
+    private final Set<Node> unprocessed;
+
+    /**
      * Sorted nodes from the 'left' tree.
      */
     private final List<Node> left;
@@ -101,6 +106,7 @@ class BottomUpAlgorithm {
         this.hashes = new AbsoluteHash();
         this.depth = new Depth();
         this.parents = new HashMap<>();
+        this.unprocessed = new HashSet<>();
         this.left = this.createNodeList(left);
         this.right = this.createNodeList(right);
         this.ltr = new HashMap<>();
@@ -153,6 +159,8 @@ class BottomUpAlgorithm {
         this.parents.put(node, parent);
         node.forEachChild(child -> this.createNodeList(child, node, list));
         list.add(node);
+        final boolean added = this.unprocessed.add(node);
+        assert added;
     }
 
     /**
@@ -194,9 +202,9 @@ class BottomUpAlgorithm {
     private void absorbLargestSubtrees(final Map<Node, List<Node>> draft) {
         final List<Node> sorted = new ArrayList<>(draft.keySet());
         sorted.sort(
-            (first, second) -> -Integer.compare(
-                this.depth.calculate(first),
-                this.depth.calculate(second)
+            (first, second) -> Integer.compare(
+                this.depth.calculate(second),
+                this.depth.calculate(first)
             )
         );
         for (final Node node : sorted) {
@@ -223,8 +231,8 @@ class BottomUpAlgorithm {
         final Map<Node, List<Node>> draft) {
         assert this.hashes.calculate(node) == this.hashes.calculate(related);
         draft.remove(node);
-        this.left.remove(node);
-        this.right.remove(related);
+        this.unprocessed.remove(node);
+        this.unprocessed.remove(related);
         this.ltr.put(node, related);
         this.rtl.put(related, node);
         final int count = node.getChildCount();
@@ -245,12 +253,14 @@ class BottomUpAlgorithm {
         final Iterator<Node> iterator = this.left.iterator();
         while (result == null && iterator.hasNext()) {
             final Node node = iterator.next();
-            final int count = node.getChildCount();
-            for (int index = 0; index < count; index = index + 1) {
-                final Node child = node.getChild(index);
-                if (this.ltr.containsKey(child)) {
-                    result = node;
-                    break;
+            if (this.unprocessed.contains(node)) {
+                final int count = node.getChildCount();
+                for (int index = 0; index < count; index = index + 1) {
+                    final Node child = node.getChild(index);
+                    if (this.ltr.containsKey(child)) {
+                        result = node;
+                        break;
+                    }
                 }
             }
         }
@@ -282,13 +292,13 @@ class BottomUpAlgorithm {
                 || !node.getData().equals(related.getData())) {
                 break;
             }
-            this.right.remove(related);
+            this.unprocessed.remove(related);
             this.ltr.put(node, related);
             this.rtl.put(related, node);
             this.mapChildren(node, related);
             next = this.parents.get(node);
         } while (false);
-        this.left.remove(node);
+        this.unprocessed.remove(node);
         return next;
     }
 
@@ -321,8 +331,8 @@ class BottomUpAlgorithm {
             if (!this.ltr.containsKey(first)) {
                 final Node second = after.getChild(index);
                 this.replaced.put(first, second);
-                this.left.remove(first);
-                this.right.remove(second);
+                this.unprocessed.remove(first);
+                this.unprocessed.remove(second);
             }
         }
     }
@@ -339,7 +349,7 @@ class BottomUpAlgorithm {
             final Node child = before.getChild(index);
             if (!this.ltr.containsKey(child)) {
                 this.deleted.add(child);
-                this.left.remove(child);
+                this.unprocessed.remove(child);
             }
         }
     }
