@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.HashMap;
 import java.util.Map;
 import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
@@ -37,11 +38,16 @@ import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
  */
 public final class DifferenceTreeBuilder {
     /**
-     * The relationship of the nodes to their parents.
-     * This information is necessary to implement algorithms for
-     * adding, removing and replacing nodes.
+     * Default node info (to avoid null checks).
      */
-    private final Map<Node, DifferenceNode> parents;
+    private static final NodeInfo DEFAULT_INFO = new NodeInfo(null, null);
+
+    /**
+     * The relationship of the nodes to their parents and corresponding difference nodes.
+     * This information is necessary to implement algorithms for inserting, removing
+     * and replacing nodes.
+     */
+    private final Map<Node, NodeInfo> info;
 
     /**
      * Root node.
@@ -54,7 +60,7 @@ public final class DifferenceTreeBuilder {
      */
     public DifferenceTreeBuilder(final Node before) {
         this.root = new DifferenceNode(before);
-        this.parents = DifferenceTreeBuilder.buildParentsMap(this.root);
+        this.info = DifferenceTreeBuilder.buildNodeInfoMap(this.root);
     }
 
     /**
@@ -66,6 +72,9 @@ public final class DifferenceTreeBuilder {
     public boolean build(final Node after, final Mapper mapper) {
         final Mapping mapping = mapper.map(this.root.getPrototype(), after);
         boolean result = true;
+        for (final Insertion insertion : mapping.getInserted()) {
+            result = result & this.insertNode(insertion);
+        }
         for (final Map.Entry<Node, Node> replaced : mapping.getReplaced().entrySet()) {
             result = result & this.replaceNode(replaced.getKey(), replaced.getValue());
         }
@@ -86,15 +95,23 @@ public final class DifferenceTreeBuilder {
     /**
      * Adds an action to the difference tree that inserts a node after another node.
      * If no other node is specified, inserts at the beginning of the children's list.
-     * @param node Child element that will be inserted
-     * @param after Node after which to insert
+     * @param insertion Full information about the node being inserted
      * @return Result of operation, {@code true} if action was added
      */
-    public boolean insertNodeAfter(final Node node, final Node after) {
+    public boolean insertNode(final Insertion insertion) {
         boolean result = false;
-        final DifferenceNode parent = this.parents.get(after);
+        DifferenceNode parent = this.info.getOrDefault(
+            insertion.getInto(),
+            DifferenceTreeBuilder.DEFAULT_INFO
+        ).getDiff();
+        if (parent == null) {
+            parent = this.info.getOrDefault(
+                insertion.getAfter(),
+                DifferenceTreeBuilder.DEFAULT_INFO
+            ).getParent();
+        }
         if (parent != null) {
-            result = parent.insertNodeAfter(node, after);
+            result = parent.insertNodeAfter(insertion.getNode(), insertion.getAfter());
         }
         return result;
     }
@@ -107,7 +124,8 @@ public final class DifferenceTreeBuilder {
      */
     public boolean replaceNode(final Node node, final Node replacement) {
         boolean result = false;
-        final DifferenceNode parent = this.parents.get(node);
+        final DifferenceNode parent =
+            this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.replaceNode(node, replacement);
         }
@@ -121,7 +139,8 @@ public final class DifferenceTreeBuilder {
      */
     public boolean deleteNode(final Node node) {
         boolean result = false;
-        final DifferenceNode parent = this.parents.get(node);
+        final DifferenceNode parent =
+            this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.deleteNode(node);
         }
@@ -133,28 +152,72 @@ public final class DifferenceTreeBuilder {
      * @param root Root node
      * @return The map containing relationship of the nodes to their parents.
      */
-    private static Map<Node, DifferenceNode> buildParentsMap(final DifferenceNode root) {
-        final Map<Node, DifferenceNode> map = new HashMap<>();
-        DifferenceTreeBuilder.buildParentsMap(map, root);
+    private static Map<Node, NodeInfo> buildNodeInfoMap(final DifferenceNode root) {
+        final Map<Node, NodeInfo> map = new HashMap<>();
+        map.put(root.getPrototype(), new NodeInfo(root, null));
+        DifferenceTreeBuilder.buildNodeInfoMap(map, root);
         return map;
     }
 
     /**
      * Builds the map containing relationship of the nodes to their parents (recursive method).
      * @param map Where to put the results
-     * @param node Current node
+     * @param parent Parent node
      */
-    private static void buildParentsMap(
-        final Map<Node, DifferenceNode> map,
-        final DifferenceNode node) {
-        node.forEachChild(
+    private static void buildNodeInfoMap(
+        final Map<Node, NodeInfo> map,
+        final DifferenceNode parent) {
+        parent.forEachChild(
             child -> {
                 if (child instanceof DifferenceNode) {
-                    final DifferenceNode diff = (DifferenceNode) child;
-                    map.put(diff.getPrototype(), node);
-                    DifferenceTreeBuilder.buildParentsMap(map, diff);
+                    final DifferenceNode node = (DifferenceNode) child;
+                    map.put(node.getPrototype(), new NodeInfo(node, parent));
+                    DifferenceTreeBuilder.buildNodeInfoMap(map, node);
                 }
             }
         );
+    }
+
+    /**
+     * Some additional information about each node needed to insert, replace, or delete nodes.
+     *
+     * @since 1.1.0
+     */
+    private static final class NodeInfo {
+        /**
+         * The corresponding difference node.
+         */
+        private final DifferenceNode diff;
+
+        /**
+         * The parent node.
+         */
+        private final DifferenceNode parent;
+
+        /**
+         * Constructor.
+         * @param diff The corresponding difference node
+         * @param parent The parent node
+         */
+        NodeInfo(final DifferenceNode diff, final DifferenceNode parent) {
+            this.diff = diff;
+            this.parent = parent;
+        }
+
+        /**
+         * Returns corresponding difference node.
+         * @return Difference node
+         */
+        public DifferenceNode getDiff() {
+            return this.diff;
+        }
+
+        /**
+         * Returns parent node.
+         * @return Difference node containing this node
+         */
+        public DifferenceNode getParent() {
+            return this.parent;
+        }
     }
 }

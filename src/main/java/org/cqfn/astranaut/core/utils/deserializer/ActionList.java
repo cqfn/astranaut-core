@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 
@@ -38,9 +39,9 @@ import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
  */
 public class ActionList {
     /**
-     * Collection of nodes to be inserted (node -> after which to insert).
+     * Collection of nodes to be inserted.
      */
-    private final Map<Node, Node> insert;
+    private final Set<Insertion> insert;
 
     /**
      * Collection of nodes to be replaced (node before changes -> node after changes).
@@ -56,7 +57,7 @@ public class ActionList {
      * Constructor.
      */
     public ActionList() {
-        this.insert = new HashMap<>();
+        this.insert = new HashSet<>();
         this.replace = new HashMap<>();
         this.delete = new HashSet<>();
     }
@@ -72,10 +73,11 @@ public class ActionList {
     /**
      * Adds the node to the list of nodes to be inserted.
      * @param node Node to be inserted
+     * @param into Parent node into which the child node will be inserted
      * @param after Node after which to insert
      */
-    public void insertNodeAfter(final Node node, final Node after) {
-        this.insert.put(node, after);
+    public void insertNodeAfter(final Node node, final Node into, final Node after) {
+        this.insert.add(new Insertion(node, into, after));
     }
 
     /**
@@ -102,8 +104,8 @@ public class ActionList {
      */
     public DifferenceNode convertTreeToDifferenceTree(final Node root) {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(root);
-        for (final Map.Entry<Node, Node> pair : this.insert.entrySet()) {
-            builder.insertNodeAfter(pair.getKey(), pair.getValue());
+        for (final Insertion insertion : this.insert) {
+            builder.insertNode(insertion);
         }
         for (final Map.Entry<Node, Node> pair : this.replace.entrySet()) {
             builder.replaceNode(pair.getKey(), pair.getValue());

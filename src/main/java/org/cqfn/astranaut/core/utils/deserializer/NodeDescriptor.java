@@ -104,7 +104,7 @@ public class NodeDescriptor {
                 if (size > 0) {
                     after = list.get(size - 1);
                 }
-                actions.insertNodeAfter(node, after);
+                actions.insertNodeAfter(node, null, after);
             } else if (converted instanceof Replace) {
                 final Replace action = (Replace) converted;
                 final Node node = action.getBefore();

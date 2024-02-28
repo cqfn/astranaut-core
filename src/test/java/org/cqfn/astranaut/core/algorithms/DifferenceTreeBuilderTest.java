@@ -39,6 +39,25 @@ import org.junit.jupiter.api.Test;
  */
 class DifferenceTreeBuilderTest {
     /**
+     * Testing the construction of a difference tree with an inserted node.
+     */
+    @Test
+    void testTreeWithInsertedNode() {
+        final Node before = LittleTrees.createStatementListWithTwoChildren();
+        final Node after = LittleTrees.createStatementListWithThreeChildren(
+            LittleTrees.createIntegerLiteral(3)
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final boolean result = builder.build(after, new BottomUpMapper());
+        Assertions.assertTrue(result);
+        final DifferenceNode diff = builder.getRoot();
+        final Node expected = LittleTrees.createTreeWithInsertAction();
+        Assertions.assertTrue(expected.deepCompare(diff));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
+
+    /**
      * Testing the construction of a difference tree with a replaced node.
      */
     @Test

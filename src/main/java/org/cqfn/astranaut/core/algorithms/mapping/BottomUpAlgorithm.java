@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.Depth;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
@@ -88,6 +89,11 @@ class BottomUpAlgorithm {
     private final Map<Node, Node> rtl;
 
     /**
+     * Set containing inserted nodes.
+     */
+    private final Set<Insertion> inserted;
+
+    /**
      * Map containing replaces nodes.
      */
     private final Map<Node, Node> replaced;
@@ -111,6 +117,7 @@ class BottomUpAlgorithm {
         this.right = this.createNodeList(right);
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
+        this.inserted = new HashSet<>();
         this.replaced = new HashMap<>();
         this.deleted = new HashSet<>();
     }
@@ -309,10 +316,33 @@ class BottomUpAlgorithm {
      */
     private void mapChildren(final Node before, final Node after) {
         final int sign = Integer.compare(before.getChildCount(), after.getChildCount());
-        if (sign > 0) {
+        if (sign < 0) {
+            this.mapChildrenIfInserted(before, after);
+        } else if (sign > 0) {
             this.mapChildrenIfDeleted(before);
-        } else if (sign == 0) {
+        } else {
             this.mapChildrenIfReplaced(before, after);
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has less child nodes than the node after changes, i.e., when it is obvious
+     * that some nodes have been inserted.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildrenIfInserted(final Node before, final Node after) {
+        final int count = after.getChildCount();
+        Node previous = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = after.getChild(index);
+            if (this.rtl.containsKey(child)) {
+                previous = this.rtl.get(child);
+            } else {
+                this.inserted.add(new Insertion(child, before, previous));
+                this.unprocessed.remove(child);
+            }
         }
     }
 
@@ -381,6 +411,11 @@ class BottomUpAlgorithm {
         @Override
         public Node getLeft(final Node node) {
             return this.data.rtl.get(node);
+        }
+
+        @Override
+        public Set<Insertion> getInserted() {
+            return Collections.unmodifiableSet(this.data.inserted);
         }
 
         @Override

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
@@ -183,6 +184,36 @@ public final class LittleTrees {
                 createVariable("x")
             )
         );
+    }
+
+    /**
+     * Creates a tree that has a "insert" action in it.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithInsertAction() {
+        final Node after =
+            wrapExpressionWithStatement(
+                createAssignment(
+                createVariable("x"),
+                createIntegerLiteral(1)
+            )
+        );
+        final Node inserted = wrapExpressionWithStatement(
+            createAssignment(
+                createVariable("y"),
+                createIntegerLiteral(3)
+            )
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                after,
+                createReturnStatement(
+                    createVariable("x")
+                )
+            )
+        );
+        builder.insertNode(new Insertion(inserted, after));
+        return builder.getRoot();
     }
 
     /**

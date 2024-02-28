@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 
 import java.util.Map;
 import java.util.Set;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 
 /**
@@ -49,6 +50,12 @@ public interface Mapping {
      *  {@code null} if there is nothing corresponding to the node of the 'right' tree
      */
     Node getLeft(Node right);
+
+    /**
+     * Returns a collection of nodes that must be added to the 'left' tree to get the 'right' tree.
+     * @return The set of inserted nodes
+     */
+    Set<Insertion> getInserted();
 
     /**
      * Returns relationship between the nodes of the 'left' tree that have been replaced
