@@ -89,7 +89,7 @@ public final class Replace implements Action {
 
     @Override
     public int getChildCount() {
-        return 1;
+        return 2;
     }
 
     @Override

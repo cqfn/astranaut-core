@@ -42,6 +42,16 @@ class ActionTest {
     private static final String INSERT_TYPE = "Insert";
 
     /**
+     * The 'Replace' type.
+     */
+    private static final String REPLACE_TYPE = "Replace";
+
+    /**
+     * The 'Delete' type.
+     */
+    private static final String DELETE_TYPE = "Delete";
+
+    /**
      * The 'color' property.
      */
     private static final String COLOR_PROPERTY = "color";
@@ -85,5 +95,79 @@ class ActionTest {
         Assertions.assertFalse(builder.setChildrenList(Arrays.asList(inserted, inserted)));
         created = builder.createNode();
         Assertions.assertEquals(ActionTest.INSERT_TYPE, created.getTypeName());
+    }
+
+    /**
+     * Testing {@link Replace} action.
+     */
+    @Test
+    void testReplaceAction() {
+        final Node before = LittleTrees.createVariable("x");
+        final Node after = LittleTrees.createIntegerLiteral(0);
+        final Action action = new Replace(before, after);
+        Assertions.assertEquals(EmptyFragment.INSTANCE, action.getFragment());
+        Assertions.assertEquals("", action.getData());
+        Assertions.assertEquals(2, action.getChildCount());
+        Assertions.assertEquals(before, action.getChild(0));
+        Assertions.assertEquals(after, action.getChild(1));
+        Assertions.assertNull(action.getChild(2));
+        final Type type = action.getType();
+        Assertions.assertEquals(ActionTest.REPLACE_TYPE, type.getName());
+        final List<ChildDescriptor> descriptors = type.getChildTypes();
+        Assertions.assertFalse(descriptors.isEmpty());
+        final List<String> hierarchy = type.getHierarchy();
+        Assertions.assertFalse(hierarchy.isEmpty());
+        Assertions.assertEquals(type.getName(), hierarchy.get(0));
+        Assertions.assertEquals(
+            ActionTest.EXPECTED_COLOR,
+            type.getProperty(ActionTest.COLOR_PROPERTY)
+        );
+        final Builder builder = type.createBuilder();
+        builder.setFragment(EmptyFragment.INSTANCE);
+        Assertions.assertTrue(builder.setData(""));
+        Assertions.assertFalse(builder.setData("it's a kind of magic"));
+        Assertions.assertFalse(builder.isValid());
+        Node created = builder.createNode();
+        Assertions.assertEquals(EmptyTree.INSTANCE, created);
+        Assertions.assertTrue(builder.setChildrenList(Arrays.asList(before, after)));
+        Assertions.assertFalse(builder.setChildrenList(Collections.singletonList(before)));
+        created = builder.createNode();
+        Assertions.assertEquals(ActionTest.REPLACE_TYPE, created.getTypeName());
+    }
+
+    /**
+     * Testing {@link Delete} action.
+     */
+    @Test
+    void testDeleteAction() {
+        final Node deleted = LittleTrees.createReturnStatement(null);
+        final Action action = new Delete(deleted);
+        Assertions.assertEquals(EmptyFragment.INSTANCE, action.getFragment());
+        Assertions.assertEquals("", action.getData());
+        Assertions.assertEquals(1, action.getChildCount());
+        Assertions.assertEquals(deleted, action.getChild(0));
+        Assertions.assertNull(action.getChild(1));
+        final Type type = action.getType();
+        Assertions.assertEquals(ActionTest.DELETE_TYPE, type.getName());
+        final List<ChildDescriptor> descriptors = type.getChildTypes();
+        Assertions.assertFalse(descriptors.isEmpty());
+        final List<String> hierarchy = type.getHierarchy();
+        Assertions.assertFalse(hierarchy.isEmpty());
+        Assertions.assertEquals(type.getName(), hierarchy.get(0));
+        Assertions.assertEquals(
+            ActionTest.EXPECTED_COLOR,
+            type.getProperty(ActionTest.COLOR_PROPERTY)
+        );
+        final Builder builder = type.createBuilder();
+        builder.setFragment(EmptyFragment.INSTANCE);
+        Assertions.assertTrue(builder.setData(""));
+        Assertions.assertFalse(builder.setData("I hate syntax trees"));
+        Assertions.assertFalse(builder.isValid());
+        Node created = builder.createNode();
+        Assertions.assertEquals(EmptyTree.INSTANCE, created);
+        Assertions.assertTrue(builder.setChildrenList(Collections.singletonList(deleted)));
+        Assertions.assertFalse(builder.setChildrenList(Arrays.asList(deleted, deleted)));
+        created = builder.createNode();
+        Assertions.assertEquals(ActionTest.DELETE_TYPE, created.getTypeName());
     }
 }
