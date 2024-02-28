@@ -1,0 +1,52 @@
+{
+  "root": {
+    "type": "StatementBlock",
+    "children": [
+      {
+        "type": "ExpressionStatement",
+        "children": [
+          {
+            "type": "SimpleAssignment",
+            "children": [
+              {
+                "type": "Variable",
+                "data": "x"
+              },
+              {
+                "type": "IntegerLiteral",
+                "data": "1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ExpressionStatement",
+        "children": [
+          {
+            "type": "SimpleAssignment",
+            "children": [
+              {
+                "type": "Variable",
+                "data": "y"
+              },
+              {
+                "type": "Variable",
+                "data": "x"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Return",
+        "children": [
+          {
+            "type": "Variable",
+            "data": "x"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -43,19 +43,34 @@ class DifferenceNodeTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
-     * File name with tree containing 'Insert' action.
+     * File name with tree before 'Delete' action.
      */
     private static final String TREE_BEFO_DELETE = "before_delete_action.json";
 
     /**
-     * File name with tree containing 'Insert' action.
+     * File name with tree after 'Delete' action.
      */
     private static final String TREE_AFTER_DELETE = "after_delete_action.json";
+
+    /**
+     * File name with tree before 'Replace' action.
+     */
+    private static final String TREE_BEFORE_REPL = "before_replace_action.json";
+
+    /**
+     * File name with tree after 'Replace' action.
+     */
+    private static final String TREE_AFTER_REPL = "after_replace_action.json";
 
     /**
      * File name with tree containing 'Insert' action.
      */
     private static final String TREE_WITH_INSERT = "tree_containing_insert_action.json";
+
+    /**
+     * File name with tree containing 'Replace' action.
+     */
+    private static final String TREE_WITH_REPLACE = "tree_containing_replace_action.json";
 
     /**
      * File name with tree containing 'Delete' action.
@@ -88,6 +103,26 @@ class DifferenceNodeTest {
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing tree loading / composing with replaced node.
+     */
+    @Test
+    void testReplace() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_REPLACE);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node before = diff.getBefore();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, before);
+        Assertions.assertTrue(
+            before.deepCompare(this.loadTree(DifferenceNodeTest.TREE_BEFORE_REPL))
+        );
+        final Node after = diff.getAfter();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, after);
+        Assertions.assertTrue(
+            after.deepCompare(this.loadTree(DifferenceNodeTest.TREE_AFTER_REPL))
+        );
     }
 
     /**
