@@ -53,7 +53,9 @@ class BottomUpMapperTest {
      */
     @Test
     void testOneWasRemoved() {
-        final Node first = LittleTrees.createStatementListWithThreeChildren();
+        final Node first = LittleTrees.createStatementListWithThreeChildren(
+            LittleTrees.createIntegerLiteral(2)
+        );
         final Node second = LittleTrees.createStatementListWithTwoChildren();
         final Mapper mapper = new BottomUpMapper();
         final Mapping mapping = mapper.map(first, second);

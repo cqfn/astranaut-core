@@ -35,7 +35,7 @@ import org.cqfn.astranaut.core.Node;
 public final class BottomUpMapper implements Mapper {
     @Override
     public Mapping map(final Node left, final Node right) {
-        final BottomUpMappingAlgorithm algorithm = new BottomUpMappingAlgorithm(left, right);
+        final BottomUpAlgorithm algorithm = new BottomUpAlgorithm(left, right);
         algorithm.execute();
         return algorithm.getResult();
     }

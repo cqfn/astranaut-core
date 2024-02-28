@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
@@ -41,7 +42,7 @@ import org.cqfn.astranaut.core.example.green.Variable;
  *
  * @since 1.1.0
  */
-@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+@SuppressWarnings({"PMD.ProhibitPublicStaticMethods", "PMD.TooManyMethods"})
 public final class LittleTrees {
     /**
      * Private constructor.
@@ -162,9 +163,10 @@ public final class LittleTrees {
 
     /**
      * Creates a tree (statement list) that has three children.
+     * @param assignable Node whose value is assigned in the third (middle) statement
      * @return Root node
      */
-    public static Node createStatementListWithThreeChildren() {
+    public static Node createStatementListWithThreeChildren(final Node assignable) {
         return createStatementBlock(
             wrapExpressionWithStatement(
                 createAssignment(
@@ -175,13 +177,73 @@ public final class LittleTrees {
             wrapExpressionWithStatement(
                 createAssignment(
                     createVariable("y"),
-                    createIntegerLiteral(2)
+                    assignable
                 )
             ),
             createReturnStatement(
                 createVariable("x")
             )
         );
+    }
+
+    /**
+     * Creates a tree that has a "insert" action in it.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithInsertAction() {
+        final Node after =
+            wrapExpressionWithStatement(
+                createAssignment(
+                createVariable("x"),
+                createIntegerLiteral(1)
+            )
+        );
+        final Node inserted = wrapExpressionWithStatement(
+            createAssignment(
+                createVariable("y"),
+                createIntegerLiteral(3)
+            )
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                after,
+                createReturnStatement(
+                    createVariable("x")
+                )
+            )
+        );
+        builder.insertNode(new Insertion(inserted, after));
+        return builder.getRoot();
+    }
+
+    /**
+     * Creates a tree that has a "replace" action in it.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithReplaceAction() {
+        final Node before = createIntegerLiteral(2);
+        final Node after = createVariable("x");
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                wrapExpressionWithStatement(
+                    createAssignment(
+                        createVariable("x"),
+                        createIntegerLiteral(1)
+                    )
+                ),
+                wrapExpressionWithStatement(
+                    createAssignment(
+                        createVariable("y"),
+                        before
+                    )
+                ),
+                createReturnStatement(
+                    createVariable("x")
+                )
+            )
+        );
+        builder.replaceNode(before, after);
+        return builder.getRoot();
     }
 
     /**
@@ -203,9 +265,42 @@ public final class LittleTrees {
                         createIntegerLiteral(1)
                     )
                 ),
-                    victim,
+                victim,
                 createReturnStatement(
                     createVariable("x")
+                )
+            )
+        );
+        builder.deleteNode(victim);
+        return builder.getRoot();
+    }
+
+    /**
+     * Creates a tree that has a "delete" action in it.
+     * This action is just below the root, so that the number and type of children of the root
+     * do not change.
+     * @return Root node
+     */
+    public static DifferenceNode createTreeWithDeleteActionInDepth() {
+        final Node victim = wrapExpressionWithStatement(
+            createAssignment(
+                createVariable("y"),
+                createIntegerLiteral(2)
+            )
+        );
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            createStatementBlock(
+                createStatementBlock(
+                    wrapExpressionWithStatement(
+                        createAssignment(
+                            createVariable("x"),
+                            createIntegerLiteral(1)
+                        )
+                    ),
+                    victim,
+                    createReturnStatement(
+                        createVariable("x")
+                    )
                 )
             )
         );

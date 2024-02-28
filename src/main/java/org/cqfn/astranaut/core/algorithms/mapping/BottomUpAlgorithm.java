@@ -28,10 +28,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.Depth;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
@@ -44,7 +46,8 @@ import org.cqfn.astranaut.core.algorithms.hash.Hash;
  *
  * @since 1.1.0
  */
-class BottomUpMappingAlgorithm {
+@SuppressWarnings("PMD.TooManyMethods")
+class BottomUpAlgorithm {
     /**
      * Set of node hashes.
      */
@@ -61,14 +64,19 @@ class BottomUpMappingAlgorithm {
     private final Map<Node, Node> parents;
 
     /**
-     * Not yet processed nodes from the 'left' tree.
+     * A set of nodes that have not yet been processed.
      */
-    private final Set<Node> left;
+    private final Set<Node> unprocessed;
 
     /**
-     * Not yet processed nodes from the 'right' tree.
+     * Sorted nodes from the 'left' tree.
      */
-    private final Set<Node> right;
+    private final List<Node> left;
+
+    /**
+     * Sorted nodes from the 'right' tree.
+     */
+    private final List<Node> right;
 
     /**
      * Left-to-right mapping.
@@ -81,6 +89,16 @@ class BottomUpMappingAlgorithm {
     private final Map<Node, Node> rtl;
 
     /**
+     * Set containing inserted nodes.
+     */
+    private final Set<Insertion> inserted;
+
+    /**
+     * Map containing replaces nodes.
+     */
+    private final Map<Node, Node> replaced;
+
+    /**
      * Set of deleted nodes.
      */
     private final Set<Node> deleted;
@@ -90,14 +108,17 @@ class BottomUpMappingAlgorithm {
      * @param left Root node of the 'left' tree
      * @param right Root node of the 'right' tree
      */
-    BottomUpMappingAlgorithm(final Node left, final Node right) {
+    BottomUpAlgorithm(final Node left, final Node right) {
         this.hashes = new AbsoluteHash();
         this.depth = new Depth();
         this.parents = new HashMap<>();
-        this.left = this.createNodeSet(left);
-        this.right = this.createNodeSet(right);
+        this.unprocessed = new HashSet<>();
+        this.left = this.createNodeList(left);
+        this.right = this.createNodeList(right);
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
+        this.inserted = new HashSet<>();
+        this.replaced = new HashMap<>();
         this.deleted = new HashSet<>();
     }
 
@@ -121,45 +142,32 @@ class BottomUpMappingAlgorithm {
      * @return Result of mapping
      */
     Mapping getResult() {
-        return new Mapping() {
-            @Override
-            public Node getRight(final Node node) {
-                return BottomUpMappingAlgorithm.this.ltr.get(node);
-            }
-
-            @Override
-            public Node getLeft(final Node node) {
-                return BottomUpMappingAlgorithm.this.rtl.get(node);
-            }
-
-            @Override
-            public Set<Node> getDeleted() {
-                return Collections.unmodifiableSet(BottomUpMappingAlgorithm.this.deleted);
-            }
-        };
+        return new Result(this);
     }
 
     /**
-     * Creates an initial set of nodes suitable for processing from the tree.
+     * Creates an initial list of nodes suitable for processing from the tree.
      * @param root The root of the tree
-     * @return Set of nodes
+     * @return List of nodes where leaves are placed first.
      */
-    private Set<Node> createNodeSet(final Node root) {
-        final Set<Node> set = new HashSet<>();
-        this.createNodeSet(root, null, set);
-        return set;
+    private List<Node> createNodeList(final Node root) {
+        final List<Node> list = new LinkedList<>();
+        this.createNodeList(root, null, list);
+        return list;
     }
 
     /**
      * Creates an initial set of nodes suitable for processing from the tree (recursive method).
      * @param node The current node
      * @param parent The current node parent
-     * @param set The resulting set
+     * @param list The resulting list
      */
-    private void createNodeSet(final Node node, final Node parent, final Set<Node> set) {
-        set.add(node);
+    private void createNodeList(final Node node, final Node parent, final List<Node> list) {
         this.parents.put(node, parent);
-        node.forEachChild(child -> this.createNodeSet(child, node, set));
+        node.forEachChild(child -> this.createNodeList(child, node, list));
+        list.add(node);
+        final boolean added = this.unprocessed.add(node);
+        assert added;
     }
 
     /**
@@ -201,9 +209,9 @@ class BottomUpMappingAlgorithm {
     private void absorbLargestSubtrees(final Map<Node, List<Node>> draft) {
         final List<Node> sorted = new ArrayList<>(draft.keySet());
         sorted.sort(
-            (first, second) -> -Integer.compare(
-                this.depth.calculate(first),
-                this.depth.calculate(second)
+            (first, second) -> Integer.compare(
+                this.depth.calculate(second),
+                this.depth.calculate(first)
             )
         );
         for (final Node node : sorted) {
@@ -230,8 +238,8 @@ class BottomUpMappingAlgorithm {
         final Map<Node, List<Node>> draft) {
         assert this.hashes.calculate(node) == this.hashes.calculate(related);
         draft.remove(node);
-        this.left.remove(node);
-        this.right.remove(related);
+        this.unprocessed.remove(node);
+        this.unprocessed.remove(related);
         this.ltr.put(node, related);
         this.rtl.put(related, node);
         final int count = node.getChildCount();
@@ -252,12 +260,14 @@ class BottomUpMappingAlgorithm {
         final Iterator<Node> iterator = this.left.iterator();
         while (result == null && iterator.hasNext()) {
             final Node node = iterator.next();
-            final int count = node.getChildCount();
-            for (int index = 0; index < count; index = index + 1) {
-                final Node child = node.getChild(index);
-                if (this.ltr.containsKey(child)) {
-                    result = node;
-                    break;
+            if (this.unprocessed.contains(node)) {
+                final int count = node.getChildCount();
+                for (int index = 0; index < count; index = index + 1) {
+                    final Node child = node.getChild(index);
+                    if (this.ltr.containsKey(child)) {
+                        result = node;
+                        break;
+                    }
                 }
             }
         }
@@ -289,19 +299,133 @@ class BottomUpMappingAlgorithm {
                 || !node.getData().equals(related.getData())) {
                 break;
             }
-            this.right.remove(related);
+            this.unprocessed.remove(related);
             this.ltr.put(node, related);
             this.rtl.put(related, node);
-            final int count = node.getChildCount();
-            for (int index = 0; index < count; index = index + 1) {
-                final Node child = node.getChild(index);
-                if (!this.ltr.containsKey(child)) {
-                    this.deleted.add(child);
-                }
-            }
+            this.mapChildren(node, related);
             next = this.parents.get(node);
         } while (false);
-        this.left.remove(node);
+        this.unprocessed.remove(node);
         return next;
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildren(final Node before, final Node after) {
+        final int sign = Integer.compare(before.getChildCount(), after.getChildCount());
+        if (sign < 0) {
+            this.mapChildrenIfInserted(before, after);
+        } else if (sign > 0) {
+            this.mapChildrenIfDeleted(before);
+        } else {
+            this.mapChildrenIfReplaced(before, after);
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has less child nodes than the node after changes, i.e., when it is obvious
+     * that some nodes have been inserted.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildrenIfInserted(final Node before, final Node after) {
+        final int count = after.getChildCount();
+        Node previous = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = after.getChild(index);
+            if (this.rtl.containsKey(child)) {
+                previous = this.rtl.get(child);
+            } else {
+                this.inserted.add(new Insertion(child, before, previous));
+                this.unprocessed.remove(child);
+            }
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has the same number of child nodes as the node after changes, i.e., when it is obvious
+     * that some nodes have been replaced.
+     * @param before Node before changes
+     * @param after Node after changes
+     */
+    private void mapChildrenIfReplaced(final Node before, final Node after) {
+        final int count = before.getChildCount();
+        assert count == after.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node first = before.getChild(index);
+            if (!this.ltr.containsKey(first)) {
+                final Node second = after.getChild(index);
+                this.replaced.put(first, second);
+                this.unprocessed.remove(first);
+                this.unprocessed.remove(second);
+            }
+        }
+    }
+
+    /**
+     * Maps the child nodes of partially mapped nodes if the node before changes
+     * has more child nodes than the node after changes, i.e., when it is obvious
+     * that some nodes have been deleted.
+     * @param before Node before changes
+     */
+    private void mapChildrenIfDeleted(final Node before) {
+        final int count = before.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = before.getChild(index);
+            if (!this.ltr.containsKey(child)) {
+                this.deleted.add(child);
+                this.unprocessed.remove(child);
+            }
+        }
+    }
+
+    /**
+     * Mapping result.
+     *
+     * @since 1.1.0
+     */
+    private static final class Result implements Mapping {
+        /**
+         * Structure from which the mapping results can be taken.
+         */
+        private final BottomUpAlgorithm data;
+
+        /**
+         * Constructor.
+         * @param data Structure from which the mapping results can be taken
+         */
+        private Result(final BottomUpAlgorithm data) {
+            this.data = data;
+        }
+
+        @Override
+        public Node getRight(final Node node) {
+            return this.data.ltr.get(node);
+        }
+
+        @Override
+        public Node getLeft(final Node node) {
+            return this.data.rtl.get(node);
+        }
+
+        @Override
+        public Set<Insertion> getInserted() {
+            return Collections.unmodifiableSet(this.data.inserted);
+        }
+
+        @Override
+        public Map<Node, Node> getReplaced() {
+            return Collections.unmodifiableMap(this.data.replaced);
+        }
+
+        @Override
+        public Set<Node> getDeleted() {
+            return Collections.unmodifiableSet(this.data.deleted);
+        }
     }
 }

@@ -31,15 +31,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Action that deletes a child element.
+ * An action that inserts a child element.
  *
  * @since 1.1.0
  */
-public final class Delete implements Action {
+public final class Insert implements Action {
     /**
      * The type.
      */
-    public static final Type TYPE = new DeleteType();
+    public static final Type TYPE = new InsertType();
 
     /**
      * Child element.
@@ -48,20 +48,20 @@ public final class Delete implements Action {
 
     /**
      * Constructor.
-     * @param child A child element that will be removed.
+     * @param child A child element that will be added.
      */
-    public Delete(final Node child) {
+    public Insert(final Node child) {
         this.child = child;
     }
 
     @Override
     public Node getBefore() {
-        return this.child;
+        return null;
     }
 
     @Override
     public Node getAfter() {
-        return null;
+        return this.child;
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class Delete implements Action {
 
     @Override
     public Type getType() {
-        return Delete.TYPE;
+        return Insert.TYPE;
     }
 
     @Override
@@ -96,11 +96,11 @@ public final class Delete implements Action {
     }
 
     /**
-     * Type of 'Delete' action.
+     * Type of 'Insert' action.
      *
      * @since 1.1.0
      */
-    private static final class DeleteType implements Type {
+    private static final class InsertType implements Type {
         /**
          * The 'Node' string.
          */
@@ -114,7 +114,7 @@ public final class Delete implements Action {
         /**
          * The 'DELETE' string.
          */
-        private static final String DELETE = "Delete";
+        private static final String INSERT = "Insert";
 
         /**
          * The list of child descriptors.
@@ -122,7 +122,7 @@ public final class Delete implements Action {
         private static final List<ChildDescriptor> CHILDREN =
             Collections.singletonList(
                 new ChildDescriptor(
-                    DeleteType.NODE,
+                    InsertType.NODE,
                     false
                 )
             );
@@ -133,8 +133,8 @@ public final class Delete implements Action {
         private static final List<String> HIERARCHY =
             Collections.unmodifiableList(
                 Arrays.asList(
-                    DeleteType.DELETE,
-                    DeleteType.ACTION
+                    InsertType.INSERT,
+                    InsertType.ACTION
                 )
             );
 
@@ -148,22 +148,22 @@ public final class Delete implements Action {
 
         @Override
         public String getName() {
-            return DeleteType.DELETE;
+            return InsertType.INSERT;
         }
 
         @Override
         public List<ChildDescriptor> getChildTypes() {
-            return DeleteType.CHILDREN;
+            return InsertType.CHILDREN;
         }
 
         @Override
         public List<String> getHierarchy() {
-            return DeleteType.HIERARCHY;
+            return InsertType.HIERARCHY;
         }
 
         @Override
         public String getProperty(final String name) {
-            return DeleteType.PROPERTIES.getOrDefault(name, "");
+            return InsertType.PROPERTIES.getOrDefault(name, "");
         }
 
         @Override
@@ -212,7 +212,7 @@ public final class Delete implements Action {
         public Node createNode() {
             Node node = EmptyTree.INSTANCE;
             if (this.isValid()) {
-                node = new Delete(this.child);
+                node = new Insert(this.child);
             }
             return node;
         }

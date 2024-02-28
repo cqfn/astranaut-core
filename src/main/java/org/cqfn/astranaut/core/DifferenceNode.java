@@ -24,7 +24,9 @@
 package org.cqfn.astranaut.core;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Node containing child nodes, as well as actions on these nodes.
@@ -118,6 +120,73 @@ public final class DifferenceNode implements DifferenceTreeItem {
     }
 
     /**
+     * Adds an action that inserts the node after another node.
+     * If no other node is specified, inserts at the beginning of the children's list.
+     * @param node Node to be inserted
+     * @param after Node after which to insert
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean insertNodeAfter(final Node node, final Node after) {
+        boolean result = false;
+        if (after == null) {
+            this.children.add(0, new Insert(node));
+            result = true;
+        } else {
+            final ListIterator<DifferenceTreeItem> iterator = this.children.listIterator();
+            while (iterator.hasNext()) {
+                final Node child = iterator.next();
+                if (child instanceof DifferenceNode
+                    && ((DifferenceNode) child).getPrototype() == after) {
+                    iterator.add(new Insert(node));
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Adds an action that replaces a node.
+     * The position of the node is specified by the index.
+     * @param index Node index
+     * @param replacement Child node to be replaced by
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean replaceNode(final int index, final Node replacement) {
+        boolean result = false;
+        if (index >= 0 && index < this.children.size()) {
+            final DifferenceTreeItem child = this.children.get(index);
+            if (child instanceof DifferenceNode) {
+                this.children.set(
+                    index,
+                    new Replace(
+                        ((DifferenceNode) child).getPrototype(),
+                        replacement
+                    )
+                );
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Adds an action that replaces a node.
+     * @param node A node
+     * @param replacement Child node to be replaced by
+     * @return Result of operation, @return {@code true} if action was added
+     */
+    public boolean replaceNode(final Node node, final Node replacement) {
+        boolean result = false;
+        final int index = this.findChildIndex(node);
+        if (index >= 0) {
+            result = this.replaceNode(index, replacement);
+        }
+        return result;
+    }
+
+    /**
      * Adds an action that removes a node by index.
      * @param index Node index
      * @return Result of operation, @return {@code true} if action was added
@@ -154,7 +223,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
      */
     private List<DifferenceTreeItem> initChildrenList() {
         final int count = this.prototype.getChildCount();
-        final List<DifferenceTreeItem> result = new ArrayList<>(count);
+        final List<DifferenceTreeItem> result = new LinkedList<>();
         for (int index = 0; index < count; index = index + 1) {
             result.add(
                 new DifferenceNode(this, this.prototype.getChild(index))

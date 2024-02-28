@@ -25,53 +25,61 @@ package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Action that deletes a child element.
+ * Action that replaces a child element.
  *
  * @since 1.1.0
  */
-public final class Delete implements Action {
+public final class Replace implements Action {
     /**
      * The type.
      */
-    public static final Type TYPE = new DeleteType();
+    public static final Type TYPE = new ReplaceType();
 
     /**
-     * Child element.
+     * Child element before changes.
      */
-    private final Node child;
+    private final Node before;
+
+    /**
+     * Child element after changes.
+     */
+    private final Node after;
 
     /**
      * Constructor.
-     * @param child A child element that will be removed.
+     * @param before Child element that will be replaced
+     * @param after Child element to be replaced by
      */
-    public Delete(final Node child) {
-        this.child = child;
+    public Replace(final Node before, final Node after) {
+        this.before = before;
+        this.after = after;
     }
 
     @Override
     public Node getBefore() {
-        return this.child;
+        return this.before;
     }
 
     @Override
     public Node getAfter() {
-        return null;
+        return this.after;
     }
 
     @Override
     public Fragment getFragment() {
-        return this.child.getFragment();
+        return this.before.getFragment();
     }
 
     @Override
     public Type getType() {
-        return Delete.TYPE;
+        return Replace.TYPE;
     }
 
     @Override
@@ -81,26 +89,32 @@ public final class Delete implements Action {
 
     @Override
     public int getChildCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     public Node getChild(final int index) {
         final Node node;
-        if (index == 0) {
-            node = this.child;
-        } else {
-            node = null;
+        switch (index) {
+            case 0:
+                node = this.before;
+                break;
+            case 1:
+                node = this.after;
+                break;
+            default:
+                node = null;
+                break;
         }
         return node;
     }
 
     /**
-     * Type of 'Delete' action.
+     * Type of 'Replace' action.
      *
      * @since 1.1.0
      */
-    private static final class DeleteType implements Type {
+    private static final class ReplaceType implements Type {
         /**
          * The 'Node' string.
          */
@@ -114,15 +128,19 @@ public final class Delete implements Action {
         /**
          * The 'DELETE' string.
          */
-        private static final String DELETE = "Delete";
+        private static final String REPLACE = "Replace";
 
         /**
          * The list of child descriptors.
          */
         private static final List<ChildDescriptor> CHILDREN =
-            Collections.singletonList(
+            Arrays.asList(
                 new ChildDescriptor(
-                    DeleteType.NODE,
+                    ReplaceType.NODE,
+                    false
+                ),
+                new ChildDescriptor(
+                    ReplaceType.NODE,
                     false
                 )
             );
@@ -133,8 +151,8 @@ public final class Delete implements Action {
         private static final List<String> HIERARCHY =
             Collections.unmodifiableList(
                 Arrays.asList(
-                    DeleteType.DELETE,
-                    DeleteType.ACTION
+                    ReplaceType.REPLACE,
+                    ReplaceType.ACTION
                 )
             );
 
@@ -148,22 +166,22 @@ public final class Delete implements Action {
 
         @Override
         public String getName() {
-            return DeleteType.DELETE;
+            return ReplaceType.REPLACE;
         }
 
         @Override
         public List<ChildDescriptor> getChildTypes() {
-            return DeleteType.CHILDREN;
+            return ReplaceType.CHILDREN;
         }
 
         @Override
         public List<String> getHierarchy() {
-            return DeleteType.HIERARCHY;
+            return ReplaceType.HIERARCHY;
         }
 
         @Override
         public String getProperty(final String name) {
-            return DeleteType.PROPERTIES.getOrDefault(name, "");
+            return ReplaceType.PROPERTIES.getOrDefault(name, "");
         }
 
         @Override
@@ -179,9 +197,14 @@ public final class Delete implements Action {
      */
     public static final class Constructor implements Builder {
         /**
-         * Child node.
+         * Child node before changes.
          */
-        private Node child;
+        private Node before;
+
+        /**
+         * Child node after changes.
+         */
+        private Node after;
 
         @Override
         public void setFragment(final Fragment fragment) {
@@ -196,8 +219,10 @@ public final class Delete implements Action {
         @Override
         public boolean setChildrenList(final List<Node> list) {
             boolean result = false;
-            if (list.size() == 1) {
-                this.child = list.get(0);
+            if (list.size() == 2) {
+                final Iterator<Node> iterator = list.iterator();
+                this.before = iterator.next();
+                this.after = iterator.next();
                 result = true;
             }
             return result;
@@ -205,14 +230,14 @@ public final class Delete implements Action {
 
         @Override
         public boolean isValid() {
-            return this.child != null;
+            return this.before != null && this.after != null;
         }
 
         @Override
         public Node createNode() {
             Node node = EmptyTree.INSTANCE;
             if (this.isValid()) {
-                node = new Delete(this.child);
+                node = new Replace(this.before, this.after);
             }
             return node;
         }

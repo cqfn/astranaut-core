@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core;
 
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -42,12 +43,90 @@ class DifferenceNodeTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
+     * File name with tree before 'Delete' action.
+     */
+    private static final String TREE_BEFO_DELETE = "before_delete_action.json";
+
+    /**
+     * File name with tree after 'Delete' action.
+     */
+    private static final String TREE_AFTER_DELETE = "after_delete_action.json";
+
+    /**
+     * File name with tree before 'Replace' action.
+     */
+    private static final String TREE_BEFORE_REPL = "before_replace_action.json";
+
+    /**
+     * File name with tree after 'Replace' action.
+     */
+    private static final String TREE_AFTER_REPL = "after_replace_action.json";
+
+    /**
+     * File name with tree containing 'Insert' action.
+     */
+    private static final String TREE_WITH_INSERT = "tree_containing_insert_action.json";
+
+    /**
+     * File name with tree containing 'Replace' action.
+     */
+    private static final String TREE_WITH_REPLACE = "tree_containing_replace_action.json";
+
+    /**
      * File name with tree containing 'Delete' action.
      */
     private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
 
     /**
-     * Testing {@link  DifferenceNode#getBefore()} method.
+     * Testing {@link  DifferenceNode#getBefore()} method with inserted node.
+     */
+    @Test
+    void testInsertGetBefore() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node actual = diff.getBefore();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing {@link  DifferenceNode#getAfter()} method with inserted node.
+     */
+    @Test
+    void testInsertGetAfter() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node actual = diff.getAfter();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing tree loading / composing with replaced node.
+     */
+    @Test
+    void testReplace() {
+        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_REPLACE);
+        Assertions.assertTrue(root instanceof DifferenceNode);
+        final DifferenceNode diff = (DifferenceNode) root;
+        final Node before = diff.getBefore();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, before);
+        Assertions.assertTrue(
+            before.deepCompare(this.loadTree(DifferenceNodeTest.TREE_BEFORE_REPL))
+        );
+        final Node after = diff.getAfter();
+        Assertions.assertNotEquals(EmptyTree.INSTANCE, after);
+        Assertions.assertTrue(
+            after.deepCompare(this.loadTree(DifferenceNodeTest.TREE_AFTER_REPL))
+        );
+    }
+
+    /**
+     * Testing {@link  DifferenceNode#getBefore()} method with deleted node.
      */
     @Test
     void testDeleteGetBefore() {
@@ -56,12 +135,12 @@ class DifferenceNodeTest {
         final DifferenceNode diff = (DifferenceNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree("before_delete_action.json");
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
     /**
-     * Testing {@link  DifferenceNode#getAfter()} method.
+     * Testing {@link  DifferenceNode#getAfter()} method with deleted node.
      */
     @Test
     void testDeleteGetAfter() {
@@ -70,8 +149,46 @@ class DifferenceNodeTest {
         final DifferenceNode diff = (DifferenceNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree("after_delete_action.json");
+        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Tests the case where a node is inserted at the start position of the child list.
+     */
+    @Test
+    void testInsertNodeFirst() {
+        final Node first = LittleTrees.createReturnStatement(null);
+        final Node second = LittleTrees.wrapExpressionWithStatement(
+            LittleTrees.createAssignment(
+                LittleTrees.createVariable("x"),
+                LittleTrees.createIntegerLiteral(0)
+            )
+        );
+        final Node before = LittleTrees.createStatementBlock(first);
+        final Node after = LittleTrees.createStatementBlock(second, first);
+        final DifferenceNode diff = new DifferenceNode(before);
+        final boolean result = diff.insertNodeAfter(second, null);
+        Assertions.assertTrue(result);
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
+
+    /**
+     * Tests the case where an attempt to insert a node fails.
+     */
+    @Test
+    void testInsertNodeFails() {
+        final DifferenceNode diff = new DifferenceNode(
+            LittleTrees.createStatementBlock(
+                LittleTrees.createReturnStatement(null)
+            )
+        );
+        final boolean result = diff.insertNodeAfter(
+            LittleTrees.createVariable("x"),
+            LittleTrees.createVariable("y")
+        );
+        Assertions.assertFalse(result);
     }
 
     /**
