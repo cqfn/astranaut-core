@@ -146,5 +146,15 @@ SOFTWARE.
       <artifactId>logback-classic</artifactId>
       <version>1.2.11</version>
     </dependency>
+    <dependency>
+      <groupId>org.janusgraph</groupId>
+      <artifactId>janusgraph-driver</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>gremlin-driver</artifactId>
+      <version>3.7.0</version>
+    </dependency>
   </dependencies>
 </project>
