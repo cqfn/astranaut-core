@@ -168,7 +168,7 @@ public final class Delete implements Action {
 
         @Override
         public Builder createBuilder() {
-            return null;
+            return new Constructor();
         }
     }
 

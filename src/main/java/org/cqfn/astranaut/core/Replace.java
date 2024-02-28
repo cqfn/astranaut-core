@@ -186,7 +186,7 @@ public final class Replace implements Action {
 
         @Override
         public Builder createBuilder() {
-            return null;
+            return new Constructor();
         }
     }
 
