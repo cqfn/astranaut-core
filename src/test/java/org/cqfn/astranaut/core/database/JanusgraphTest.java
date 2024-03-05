@@ -6,6 +6,7 @@ import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.database.janusgraph.JGDbConnection;
 import org.cqfn.astranaut.core.database.janusgraph.JGNode;
 import org.cqfn.astranaut.core.example.LittleTrees;
+import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class JanusgraphTest {
         JGDbConnection jgDbConnection = new JGDbConnection(IP, PORT);
         jgDbConnection.drop();
         Node node = LittleTrees.createStatementListWithThreeChildren();
-        JGNode jgNode = new JGNode(node);
+        JGNode jgNode = new JGNode(node, true);
         jgDbConnection.addVertex(jgNode);
         Assertions.assertDoesNotThrow(() -> {
             GraphTraversal<Vertex, Vertex> statementBlock = jgDbConnection.getG().V()
@@ -81,6 +82,12 @@ public class JanusgraphTest {
             literal2.next();
             variableY.next();
             variableX.next();
+
+            Node back = jgDbConnection.getNode(
+                jgDbConnection.getG().V().has("TYPE", "StatementBlock").next(),
+                GreenFactory.INSTANCE
+            );
+            Assertions.assertTrue(back.deepCompare(node));
         });
 
         jgDbConnection.close();
@@ -94,7 +101,7 @@ public class JanusgraphTest {
         JGDbConnection jgDbConnection = new JGDbConnection(IP, PORT);
         jgDbConnection.drop();
         Node node = LittleTrees.createTreeWithDeleteAction();
-        JGNode jgNode = new JGNode(node);
+        JGNode jgNode = new JGNode(node, true);
         jgDbConnection.addVertex(jgNode);
         Assertions.assertDoesNotThrow(() -> {
             GraphTraversal<Vertex, Vertex> statementBlock = jgDbConnection.getG().V()
@@ -165,6 +172,13 @@ public class JanusgraphTest {
             variableX.next();
             literal2Deleted.next();
             variableYDeleted.next();
+
+            Node back = jgDbConnection.getNode(
+                jgDbConnection.getG().V().has("TYPE", "StatementBlock").next(),
+                 GreenFactory.INSTANCE
+            );
+
+            Assertions.assertTrue(back.deepCompare(node));
         });
         jgDbConnection.close();
     }

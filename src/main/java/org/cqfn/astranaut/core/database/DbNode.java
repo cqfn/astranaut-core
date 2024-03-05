@@ -1,5 +1,7 @@
 package org.cqfn.astranaut.core.database;
 
-public interface DbNode {
+import org.cqfn.astranaut.core.Node;
+
+public interface DbNode extends Node {
     // TODO:: Later
 }
