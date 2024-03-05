@@ -125,4 +125,83 @@ class DifferenceTreeBuilderTest {
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }
+
+    /**
+     * Replacing a node, so that somewhere else there is another node
+     * just like the node being replaced.
+     */
+    @Test
+    void testTreeWithReplacedNotUniqueNode() {
+        final Node removed = LittleTrees.createIntegerLiteral(1);
+        final Node added = LittleTrees.createIntegerLiteral(2);
+        final Node before = LittleTrees.createStatementBlock(
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        LittleTrees.createIntegerLiteral(1)
+                    )
+                )
+            ),
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        removed
+                    )
+                )
+            ),
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        LittleTrees.createIntegerLiteral(1)
+                    )
+                )
+            )
+        );
+        final Node after = LittleTrees.createStatementBlock(
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        LittleTrees.createIntegerLiteral(1)
+                    )
+                )
+            ),
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        added
+                    )
+                )
+            ),
+            LittleTrees.wrapExpressionWithStatement(
+                LittleTrees.createAssignment(
+                    LittleTrees.createVariable("x"),
+                    LittleTrees.createAddition(
+                        LittleTrees.createVariable("x"),
+                        LittleTrees.createIntegerLiteral(1)
+                    )
+                )
+            )
+        );
+        final DifferenceTreeBuilder first = new DifferenceTreeBuilder(before);
+        first.replaceNode(removed, added);
+        DifferenceNode expected = first.getRoot();
+        Assertions.assertTrue(before.deepCompare(expected.getBefore()));
+        Assertions.assertTrue(after.deepCompare(expected.getAfter()));
+        final DifferenceTreeBuilder second = new DifferenceTreeBuilder(before);
+        second.build(after, new BottomUpMapper());
+        DifferenceNode actual = second.getRoot();
+        Assertions.assertTrue(expected.deepCompare(actual));
+        Assertions.assertTrue(before.deepCompare(actual.getBefore()));
+        Assertions.assertTrue(after.deepCompare(actual.getAfter()));
+    }
 }

@@ -30,6 +30,7 @@ import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
+import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.cqfn.astranaut.core.example.green.Return;
@@ -89,6 +90,22 @@ public final class LittleTrees {
     public static Node createAssignment(final Node left, final Node right) {
         Node result = EmptyTree.INSTANCE;
         final SimpleAssignment.Constructor ctor = new SimpleAssignment.Constructor();
+        ctor.setChildrenList(Arrays.asList(left, right));
+        if (ctor.isValid()) {
+            result = ctor.createNode();
+        }
+        return result;
+    }
+
+    /**
+     * Creates a node that represents additional operator.
+     * @param left Left operand (expression)
+     * @param right Right operand (expression)
+     * @return Resulting node
+     */
+    public static Node createAddition(final Node left, final Node right) {
+        Node result = EmptyTree.INSTANCE;
+        final Addition.Constructor ctor = new Addition.Constructor();
         ctor.setChildrenList(Arrays.asList(left, right));
         if (ctor.isValid()) {
             result = ctor.createNode();
