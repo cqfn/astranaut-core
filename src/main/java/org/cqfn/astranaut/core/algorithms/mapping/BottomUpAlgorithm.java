@@ -369,9 +369,11 @@ class BottomUpAlgorithm {
             final Node first = before.getChild(index);
             if (!this.ltr.containsKey(first)) {
                 final Node second = after.getChild(index);
-                this.replaced.put(first, second);
-                this.unprocessed.remove(first);
-                this.unprocessed.remove(second);
+                if (!this.mapTwoNodes(first, second)) {
+                    this.replaced.put(first, second);
+                    this.unprocessed.remove(first);
+                    this.unprocessed.remove(second);
+                }
             }
         }
     }
@@ -393,6 +395,28 @@ class BottomUpAlgorithm {
                 this.unprocessed.remove(child);
                 result = true;
             }
+        }
+        return result;
+    }
+
+    /**
+     * Trying to map the two nodes.
+     * @param before Node before changes
+     * @param after Node after changes
+     * @return Mapping result, {@code true} if nodes have been mapped
+     */
+    private boolean mapTwoNodes(final Node before, final Node after) {
+        assert !this.ltr.containsKey(before);
+        boolean result = false;
+        if (before.getTypeName().equals(after.getTypeName())
+            && before.getData().equals(after.getData())) {
+            this.unprocessed.remove(before);
+            this.unprocessed.remove(after);
+            this.ltr.put(before, after);
+            this.rtl.put(after, before);
+            final boolean mapped = this.mapChildren(before, after);
+            assert mapped;
+            result = true;
         }
         return result;
     }

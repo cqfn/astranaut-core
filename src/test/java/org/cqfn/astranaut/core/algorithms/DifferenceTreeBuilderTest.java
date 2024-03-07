@@ -184,5 +184,6 @@ class DifferenceTreeBuilderTest {
         final DifferenceNode actual = second.getRoot();
         Assertions.assertTrue(before.deepCompare(actual.getBefore()));
         Assertions.assertTrue(after.deepCompare(actual.getAfter()));
+        Assertions.assertTrue(actual.deepCompare(expected));
     }
 }
