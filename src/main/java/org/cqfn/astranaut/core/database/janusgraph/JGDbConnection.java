@@ -13,10 +13,17 @@ import org.apache.tinkerpop.gremlin.util.ser.GraphBinaryMessageSerializerV1;
 import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.Factory;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.database.DbConnection;
 import org.janusgraph.graphdb.tinkerpop.JanusGraphIoRegistry;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Vector;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal;
 
@@ -25,6 +32,8 @@ public class JGDbConnection implements DbConnection<JGNode, Vertex> {
     private Cluster cluster;
 
     private GraphTraversalSource g;
+
+    private final AbsoluteHash hasher = new AbsoluteHash();
 
     public static void main(String[] args) {
         new JGDbConnection("172.28.162.16", 8182);
@@ -56,10 +65,25 @@ public class JGDbConnection implements DbConnection<JGNode, Vertex> {
     }
 
     @Override
-    public Vertex addVertex(JGNode node) {
+    public Optional<Vertex> addVertex(JGNode node) {
+        final int hash = hasher.calculate(node);
+        if (!hasEqualRoot(hash)) {
+            return Optional.of(this.addVertex(node, -1));
+        } else
+            return Optional.empty();
+    }
+
+    public Vertex addVertex(JGNode node, int index) {
         GraphTraversal<Vertex, Vertex> thisVertexGT = g.addV();
-        for (Map.Entry<JGNode.PName, Object> entry: node.properties.entrySet()) {
+        final int hash = hasher.calculate(node);
+        thisVertexGT.property(PName.HASH.name(), hash);
+        for (Map.Entry<PName, Object> entry: node.properties.entrySet()) {
             thisVertexGT.property(entry.getKey().toString(), entry.getValue());
+        }
+        if (index != -1) {
+            thisVertexGT.property(PName.INDEX.name(), index);
+        } else {
+            thisVertexGT.property(PName.ROOT.name(), true);
         }
         Vertex thisVertex = thisVertexGT.next();
         for (int i = 0; i < node.children.size(); i++) {
@@ -70,19 +94,20 @@ public class JGDbConnection implements DbConnection<JGNode, Vertex> {
         return Objects.requireNonNull(thisVertex);
     }
 
-    public Vertex addVertex(JGNode node, int index) {
-        GraphTraversal<Vertex, Vertex> thisVertexGT = g.addV();
-        for (Map.Entry<JGNode.PName, Object> entry: node.properties.entrySet()) {
-            thisVertexGT.property(entry.getKey().toString(), entry.getValue());
-        }
-        thisVertexGT.property("INDEX", index);
-        Vertex thisVertex = thisVertexGT.next();
-        for (JGNode child: node.children) {
-            GraphTraversal<Vertex, Edge> edgeGT = g.V(thisVertex).addE("ast");
-            Vertex childVertex = addVertex(child);
-            edgeGT.to(childVertex).next();
-        }
-        return Objects.requireNonNull(thisVertex);
+    public boolean hasEqual(final Node node) {
+        return hasEqual(hasher.calculate(node));
+    }
+
+    public boolean hasEqual(final int hash) {
+        GraphTraversal<Vertex, Vertex> hashSearch = g.V().has(PName.HASH.name(), hash);
+        return !hashSearch.toList().isEmpty();
+    }
+
+    public boolean hasEqualRoot(final int hash) {
+        GraphTraversal<Vertex, Vertex> hashSearch = g.V()
+            .has(PName.HASH.name(), hash)
+            .has("ROOT", true);
+        return !hashSearch.toList().isEmpty();
     }
 
     @Override
@@ -99,11 +124,11 @@ public class JGDbConnection implements DbConnection<JGNode, Vertex> {
             }
         }
 
-        final Map<JGNode.PName, Object> properties = new HashMap<>();
+        final Map<PName, Object> properties = new HashMap<>();
         Iterator<VertexProperty<Object>> vpIterator = vertex.properties();
         while (vpIterator.hasNext()) {
             VertexProperty<Object> vertexProperty = vpIterator.next();
-            properties.put(JGNode.PName.valueOf(vertexProperty.label()), vertexProperty.value());
+            properties.put(PName.valueOf(vertexProperty.label()), vertexProperty.value());
         }
 
         JGNode node = new JGNode(properties, factory);

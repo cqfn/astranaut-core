@@ -6,22 +6,19 @@ import org.cqfn.astranaut.core.database.DbNode;
 import java.util.*;
 
 public class JGNode implements DbNode {
+
+    final Node base;
+
     final Map<PName, Object> properties = new HashMap<>();
 
     final List<JGNode> children = new ArrayList<>();
 
     private Factory factory = null;
 
-    public enum PName {
-        ROOT, BEGIN, END, SOURCE, TYPE, DATA, CHILD_COUNT, INDEX, UUID
-    }
-
-    public JGNode(Node node, boolean root) {
+    public JGNode(Node node) {
+        base = node;
         Position begin = node.getFragment().getBegin();
         Position end = node.getFragment().getEnd();
-        if (root) {
-            properties.put(PName.ROOT, true);
-        }
         properties.put(PName.BEGIN, String.valueOf(begin.getIndex()));
         properties.put(PName.END, String.valueOf(end.getIndex()));
         properties.put(PName.SOURCE, node.getFragment().getSource().getFragmentAsString(begin, end));
@@ -30,42 +27,67 @@ public class JGNode implements DbNode {
         properties.put(PName.CHILD_COUNT, String.valueOf(node.getChildCount()));
         properties.put(PName.UUID, UUID.randomUUID().toString()); // TODO:: think about collisions
         for (final Node child: node.getChildrenList()) {
-            children.add(new JGNode(child, false));
+            children.add(new JGNode(child));
         }
     }
 
     public JGNode(Map<PName, Object> vertexProperties, Factory factory) {
+        base = null;
         properties.putAll(vertexProperties);
         this.factory = factory;
     }
 
+    public void setMetadata(String value) {
+        properties.put(PName.META, value);
+    }
+
     @Override
     public Fragment getFragment() {
-        return new CommonFragment(
-            (String) properties.get(PName.SOURCE),
-            Integer.parseInt((String) properties.get(PName.BEGIN)),
-            Integer.parseInt((String) properties.get(PName.BEGIN))
-        );
+        if (base != null) {
+            return base.getFragment();
+        } else {
+            return new CommonFragment(
+                    (String) properties.get(PName.SOURCE),
+                    Integer.parseInt((String) properties.get(PName.BEGIN)),
+                    Integer.parseInt((String) properties.get(PName.BEGIN))
+            );
+        }
     }
 
     @Override
     public Type getType() {
-        return factory.getType((String) properties.get(PName.TYPE));
+        if (base != null) {
+            return base.getType();
+        } else {
+            return factory.getType((String) properties.get(PName.TYPE));
+        }
     }
 
     @Override
     public String getTypeName() {
-        return getType().getName();
+        if (base != null) {
+            return base.getTypeName();
+        } else {
+            return this.getType().getName();
+        }
     }
 
     @Override
     public String getData() {
-        return (String) properties.get(PName.DATA);
+        if (base != null) {
+            return base.getData();
+        } else {
+            return (String) properties.get(PName.DATA);
+        }
     }
 
     @Override
     public int getChildCount() {
-        return Integer.parseInt((String) properties.get(PName.CHILD_COUNT));
+        if (base != null) {
+            return base.getChildCount();
+        } else {
+            return Integer.parseInt((String) properties.get(PName.CHILD_COUNT));
+        }
     }
 
     @Override
