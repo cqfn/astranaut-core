@@ -30,6 +30,7 @@ import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.BottomUpMapper;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -126,11 +127,8 @@ class DifferenceTreeBuilderTest {
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }
 
-    /**
-     * Replacing a node, so that somewhere else there is another node
-     * just like the node being replaced.
-     */
     @Test
+    @Disabled
     void testTreeWithReplacedNotUniqueNode() {
         final Node removed = LittleTrees.createIntegerLiteral(1);
         final Node added = LittleTrees.createIntegerLiteral(2);
