@@ -126,7 +126,7 @@ class BottomUpAlgorithm {
      * Performs the mapping.
      */
     void execute() {
-        final Map<Node, List<Node>> draft = this.performInitialMapping();
+        final DraftMapping draft = this.performInitialMapping();
         this.absorbLargestSubtrees(draft);
         Node node = this.findPartiallyMappedLeftNode();
         while (node != null) {
@@ -172,15 +172,15 @@ class BottomUpAlgorithm {
 
     /**
      * Performs hash calculation of nodes from the 'right' set.
-     * @return The hash relation to the list of nodes that have such a hash
+     * @return The hash relation to the set of nodes that have such a hash
      */
-    private Map<Integer, List<Node>> calculateRightHashes() {
-        final Map<Integer, List<Node>> result = new TreeMap<>();
+    private Map<Integer, Set<Node>> calculateRightHashes() {
+        final Map<Integer, Set<Node>> result = new TreeMap<>();
         for (final Node node : this.right) {
             final int hash = this.hashes.calculate(node);
-            final List<Node> list =
-                result.computeIfAbsent(hash, k -> new ArrayList<>(1));
-            list.add(node);
+            final Set<Node> set =
+                result.computeIfAbsent(hash, k -> new HashSet<>());
+            set.add(node);
         }
         return result;
     }
@@ -189,14 +189,14 @@ class BottomUpAlgorithm {
      * Performs initial (draft) node mapping.
      * @return Relationships of nodes to lists of nodes to which they can be mapped to
      */
-    private Map<Node, List<Node>> performInitialMapping() {
-        final Map<Node, List<Node>> result = new HashMap<>();
-        final Map<Integer, List<Node>> relation = this.calculateRightHashes();
+    private DraftMapping performInitialMapping() {
+        final DraftMapping result = new DraftMapping();
+        final Map<Integer, Set<Node>> relation = this.calculateRightHashes();
         for (final Node node : this.left) {
             final int hash = this.hashes.calculate(node);
-            final List<Node> list = relation.get(hash);
-            if (list != null) {
-                result.put(node, list);
+            final Set<Node> set = relation.get(hash);
+            if (set != null) {
+                result.addRelation(node, set);
             }
         }
         return result;
@@ -206,8 +206,8 @@ class BottomUpAlgorithm {
      * Selects the largest size subtrees from the initial node relation and maps them.
      * @param draft Initial node relation
      */
-    private void absorbLargestSubtrees(final Map<Node, List<Node>> draft) {
-        final List<Node> sorted = new ArrayList<>(draft.keySet());
+    private void absorbLargestSubtrees(final DraftMapping draft) {
+        final List<Node> sorted = new ArrayList<>(draft.getLeftNodes());
         sorted.sort(
             (first, second) -> Integer.compare(
                 this.depth.calculate(second),
@@ -215,9 +215,9 @@ class BottomUpAlgorithm {
             )
         );
         for (final Node node : sorted) {
-            final List<Node> related = draft.get(node);
+            final Set<Node> related = draft.getRelation(node);
             if (related != null && related.size() == 1 && !this.ltr.containsKey(node)) {
-                this.mapSubtreesWithTheSameHash(node, related.get(0), draft);
+                this.mapSubtreesWithTheSameHash(node, related.iterator().next(), draft);
             }
             if (draft.isEmpty()) {
                 break;
@@ -235,9 +235,9 @@ class BottomUpAlgorithm {
     private void mapSubtreesWithTheSameHash(
         final Node node,
         final Node related,
-        final Map<Node, List<Node>> draft) {
+        final DraftMapping draft) {
         assert this.hashes.calculate(node) == this.hashes.calculate(related);
-        draft.remove(node);
+        draft.removeRelation(node, related);
         this.unprocessed.remove(node);
         this.unprocessed.remove(related);
         this.ltr.put(node, related);
@@ -302,7 +302,8 @@ class BottomUpAlgorithm {
             this.unprocessed.remove(related);
             this.ltr.put(node, related);
             this.rtl.put(related, node);
-            this.mapChildren(node, related);
+            final boolean mapped = this.mapChildren(node, related);
+            assert mapped;
             next = this.parents.get(node);
         } while (false);
         this.unprocessed.remove(node);
@@ -313,16 +314,20 @@ class BottomUpAlgorithm {
      * Maps the child nodes of partially mapped nodes.
      * @param before Node before changes
      * @param after Node after changes
+     * @return Mapping result, {@code true} if at least one action has been added
      */
-    private void mapChildren(final Node before, final Node after) {
+    private boolean mapChildren(final Node before, final Node after) {
         final int sign = Integer.compare(before.getChildCount(), after.getChildCount());
+        final boolean result;
         if (sign < 0) {
-            this.mapChildrenIfInserted(before, after);
+            result = this.mapChildrenIfInserted(before, after);
         } else if (sign > 0) {
-            this.mapChildrenIfDeleted(before);
+            result = this.mapChildrenIfDeleted(before);
         } else {
             this.mapChildrenIfReplaced(before, after);
+            result = true;
         }
+        return result;
     }
 
     /**
@@ -331,9 +336,11 @@ class BottomUpAlgorithm {
      * that some nodes have been inserted.
      * @param before Node before changes
      * @param after Node after changes
+     * @return Mapping result, {@code true} if at least one action has been added
      */
-    private void mapChildrenIfInserted(final Node before, final Node after) {
+    private boolean mapChildrenIfInserted(final Node before, final Node after) {
         final int count = after.getChildCount();
+        boolean result = false;
         Node previous = null;
         for (int index = 0; index < count; index = index + 1) {
             final Node child = after.getChild(index);
@@ -342,8 +349,10 @@ class BottomUpAlgorithm {
             } else {
                 this.inserted.add(new Insertion(child, before, previous));
                 this.unprocessed.remove(child);
+                result = true;
             }
         }
+        return result;
     }
 
     /**
@@ -360,9 +369,11 @@ class BottomUpAlgorithm {
             final Node first = before.getChild(index);
             if (!this.ltr.containsKey(first)) {
                 final Node second = after.getChild(index);
-                this.replaced.put(first, second);
-                this.unprocessed.remove(first);
-                this.unprocessed.remove(second);
+                if (!this.mapTwoNodes(first, second)) {
+                    this.replaced.put(first, second);
+                    this.unprocessed.remove(first);
+                    this.unprocessed.remove(second);
+                }
             }
         }
     }
@@ -372,16 +383,42 @@ class BottomUpAlgorithm {
      * has more child nodes than the node after changes, i.e., when it is obvious
      * that some nodes have been deleted.
      * @param before Node before changes
+     * @return Mapping result, {@code true} if at least one action has been added
      */
-    private void mapChildrenIfDeleted(final Node before) {
+    private boolean mapChildrenIfDeleted(final Node before) {
         final int count = before.getChildCount();
+        boolean result = false;
         for (int index = 0; index < count; index = index + 1) {
             final Node child = before.getChild(index);
             if (!this.ltr.containsKey(child)) {
                 this.deleted.add(child);
                 this.unprocessed.remove(child);
+                result = true;
             }
         }
+        return result;
+    }
+
+    /**
+     * Trying to map the two nodes.
+     * @param before Node before changes
+     * @param after Node after changes
+     * @return Mapping result, {@code true} if nodes have been mapped
+     */
+    private boolean mapTwoNodes(final Node before, final Node after) {
+        assert !this.ltr.containsKey(before);
+        boolean result = false;
+        if (before.getTypeName().equals(after.getTypeName())
+            && before.getData().equals(after.getData())) {
+            this.unprocessed.remove(before);
+            this.unprocessed.remove(after);
+            this.ltr.put(before, after);
+            this.rtl.put(after, before);
+            final boolean mapped = this.mapChildren(before, after);
+            assert mapped;
+            result = true;
+        }
+        return result;
     }
 
     /**
