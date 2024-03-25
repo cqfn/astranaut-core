@@ -87,6 +87,28 @@ public final class DraftNode implements Node {
         return this.children.get(index);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(this.type.getName());
+        if (!this.data.isEmpty()) {
+            builder.append("<\"").append(this.data).append("\">");
+        }
+        if (!this.children.isEmpty()) {
+            boolean flag = false;
+            builder.append('(');
+            for (final Node child : this.children) {
+                if (flag) {
+                    builder.append(", ");
+                }
+                flag = true;
+                builder.append(child.toString());
+            }
+            builder.append(')');
+        }
+        return builder.toString();
+    }
+
     /**
      * Type implementation for the draft node.
      *
@@ -219,6 +241,28 @@ public final class DraftNode implements Node {
             node.data = this.data;
             node.children = new ArrayList<>(this.children);
             return node;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append(this.name);
+            if (!this.data.isEmpty()) {
+                builder.append("<\"").append(this.data).append("\">");
+            }
+            if (!this.children.isEmpty()) {
+                boolean flag = false;
+                builder.append('(');
+                for (final Node child : this.children) {
+                    if (flag) {
+                        builder.append(", ");
+                    }
+                    flag = true;
+                    builder.append(child.toString());
+                }
+                builder.append(')');
+            }
+            return builder.toString();
         }
     }
 }

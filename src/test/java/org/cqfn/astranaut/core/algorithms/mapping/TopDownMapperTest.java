@@ -23,8 +23,10 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.LinkedList;
+import java.util.List;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
@@ -38,8 +40,9 @@ import org.junit.jupiter.api.Test;
 class TopDownMapperTest {
     @Test
     void testIdenticalTrees() {
-        final Node first = TopDownMapperTest.createTreeAlpha();
-        final Node second = TopDownMapperTest.createTreeAlpha();
+        final String description = "A(B(C, D))";
+        final Node first = TopDownMapperTest.createTree(description);
+        final Node second = TopDownMapperTest.createTree(description);
         final Mapper mapper = new TopDownMapper();
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
@@ -47,20 +50,56 @@ class TopDownMapperTest {
     }
 
     /**
-     * Creates tree A(B(C, D)).
-     * @return Root node
+     * Creates a tree based on its description. Description format: A(B,C(...),...) where 'A'
+     * is the type name (may consist of only one capital letter) followed by child nodes
+     * (in the same format) in parentheses separated by commas.
+     * @param description Description
+     * @return Root node of the tree created by description
      */
-    private static Node createTreeAlpha() {
-        final DraftNode.Constructor ccc = new DraftNode.Constructor();
-        ccc.setName("C");
-        final DraftNode.Constructor ddd = new DraftNode.Constructor();
-        ddd.setName("D");
-        final DraftNode.Constructor bbb = new DraftNode.Constructor();
-        bbb.setName("B");
-        bbb.setChildrenList(Arrays.asList(ccc.createNode(), ddd.createNode()));
-        final DraftNode.Constructor aaa = new DraftNode.Constructor();
-        aaa.setName("A");
-        aaa.setChildrenList(Collections.singletonList(bbb.createNode()));
-        return aaa.createNode();
+    private static Node createTree(final String description) {
+        final CharacterIterator iterator = new StringCharacterIterator(description);
+        return TopDownMapperTest.createNode(iterator);
+    }
+
+    /**
+     * Creates a tree based on its description (recursive method).
+     * @param iterator Iterator by description characters
+     * @return Node of the tree with its children, created by description
+     */
+    private static Node createNode(final CharacterIterator iterator) {
+        final char name = iterator.current();
+        final Node result;
+        if (name >= 'A' && name <= 'Z') {
+            final DraftNode.Constructor builder = new DraftNode.Constructor();
+            builder.setName(String.valueOf(name));
+            final char next = iterator.next();
+            if (next == '(') {
+                builder.setChildrenList(TopDownMapperTest.parseChildrenList(iterator));
+            }
+            result = builder.createNode();
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
+    /**
+     * Parses children list from description.
+     * @param iterator Iterator by description characters
+     * @return Children list, created by description
+     */
+    private static List<Node> parseChildrenList(final CharacterIterator iterator) {
+        final List<Node> children = new LinkedList<>();
+        char next;
+        do {
+            iterator.next();
+            final Node child = TopDownMapperTest.createNode(iterator);
+            if (child != null) {
+                children.add(child);
+            }
+            next = iterator.current();
+            assert next == ')' || next == ',' || next == ' ';
+        } while (next != ')');
+        return children;
     }
 }

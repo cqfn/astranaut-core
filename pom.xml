@@ -134,7 +134,7 @@ SOFTWARE.
     <dependency>
       <groupId>com.kniazkov</groupId>
       <artifactId>json</artifactId>
-      <version>0.3</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>guru.nidi</groupId>
