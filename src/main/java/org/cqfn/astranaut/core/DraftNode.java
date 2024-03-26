@@ -141,6 +141,10 @@ public final class DraftNode implements Node {
         if (name.length() > 0) {
             final DraftNode.Constructor builder = new DraftNode.Constructor();
             builder.setName(name.toString());
+            if (symbol == '<') {
+                builder.setData(DraftNode.parseData(iterator));
+                symbol = iterator.current();
+            }
             if (symbol == '(') {
                 builder.setChildrenList(DraftNode.parseChildrenList(iterator));
             }
@@ -149,6 +153,29 @@ public final class DraftNode implements Node {
             result = null;
         }
         return result;
+    }
+
+    /**
+     * Parses data from description.
+     * @param iterator Iterator by description characters
+     * @return Node data, extracted from description
+     */
+    private static String parseData(final CharacterIterator iterator) {
+        assert iterator.current() == '<';
+        final StringBuilder data = new StringBuilder();
+        char symbol = iterator.next();
+        if (symbol == '\"') {
+            symbol = iterator.next();
+            while (symbol != '\"') {
+                data.append(symbol);
+                symbol = iterator.next();
+            }
+            symbol = iterator.next();
+        }
+        if (symbol == '>') {
+            iterator.next();
+        }
+        return data.toString();
     }
 
     /**
