@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -107,6 +109,63 @@ public final class DraftNode implements Node {
             builder.append(')');
         }
         return builder.toString();
+    }
+
+    /**
+     * Creates a tree from draft nodes based on description.
+     *  Description format: A(B,C(...),...) where 'A' is the type name (may consist of only one
+     *  capital letter) followed by child nodes (in the same format) in parentheses
+     *  separated by commas.
+     * @param description Description
+     * @return Root node of the tree created by description
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Node createByDescription(final String description) {
+        final CharacterIterator iterator = new StringCharacterIterator(description);
+        return DraftNode.createByDescription(iterator);
+    }
+
+    /**
+     * Creates a tree based on its description (recursive method).
+     * @param iterator Iterator by description characters
+     * @return Node of the tree with its children, created by description
+     */
+    private static Node createByDescription(final CharacterIterator iterator) {
+        final char name = iterator.current();
+        final Node result;
+        if (name >= 'A' && name <= 'Z') {
+            final DraftNode.Constructor builder = new DraftNode.Constructor();
+            builder.setName(String.valueOf(name));
+            final char next = iterator.next();
+            if (next == '(') {
+                builder.setChildrenList(DraftNode.parseChildrenList(iterator));
+            }
+            result = builder.createNode();
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
+    /**
+     * Parses children list from description.
+     * @param iterator Iterator by description characters
+     * @return Children list, created by description
+     */
+    private static List<Node> parseChildrenList(final CharacterIterator iterator) {
+        assert iterator.current() == '(';
+        final List<Node> children = new LinkedList<>();
+        char next;
+        do {
+            iterator.next();
+            final Node child = DraftNode.createByDescription(iterator);
+            if (child != null) {
+                children.add(child);
+            }
+            next = iterator.current();
+            assert next == ')' || next == ',' || next == ' ';
+        } while (next != ')');
+        return children;
     }
 
     /**

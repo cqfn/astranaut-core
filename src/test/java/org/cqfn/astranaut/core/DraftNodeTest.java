@@ -21,27 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.algorithms.mapping;
+package org.cqfn.astranaut.core;
 
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link TopDownMapper} class.
+ * Tests covering {@link DraftNode} class.
  *
- * @since 1.0
+ * @since 1.1.0
  */
-class TopDownMapperTest {
+class DraftNodeTest {
+    /**
+     * Testing {@link  DraftNode#createByDescription(String)} and
+     * {@link  DraftNode#toString()} methods.
+     */
     @Test
-    void testIdenticalTrees() {
-        final String description = "A(B(C, D))";
-        final Node first = DraftNode.createByDescription(description);
-        final Node second = DraftNode.createByDescription(description);
-        final Mapper mapper = new TopDownMapper();
-        final Mapping mapping = mapper.map(first, second);
-        Assertions.assertEquals(mapping.getRight(first), second);
-        Assertions.assertEquals(mapping.getLeft(second), first);
+    void createAndSerialize() {
+        final String[] cases = {
+            "X",
+            "X(A)",
+            "X(A, B, C)",
+            "X(A(B, C))",
+        };
+        for (final String test : cases) {
+            Assertions.assertTrue(DraftNodeTest.createAndSerialize(test));
+        }
+    }
+
+    /**
+     * Testing {@link  DraftNode#createByDescription(String)} and
+     * {@link  DraftNode#toString()} methods (testing of one case).
+     * @param description Syntax tree description
+     * @return Testing result ({@code true} if passed)
+     */
+    private static boolean createAndSerialize(final String description) {
+        final Node node = DraftNode.createByDescription(description);
+        final String serialized = node.toString();
+        return description.equals(serialized);
     }
 }
