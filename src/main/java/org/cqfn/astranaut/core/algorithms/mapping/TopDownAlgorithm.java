@@ -138,8 +138,8 @@ final class TopDownAlgorithm {
      * @param right Related node to the left node
      */
     private static void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
-        final Unprocessed unprocessed = new Unprocessed(left, right);
-        assert unprocessed.hasNodes();
+        final Unprocessed counter = new Unprocessed(left, right);
+        assert counter.hasUnprocessedNodes();
     }
 
     /**
@@ -229,7 +229,7 @@ final class TopDownAlgorithm {
          * Checks are there still unprocessed nodes.
          * @return Checking result ({@code true} if yes)
          */
-        boolean hasNodes() {
+        boolean hasUnprocessedNodes() {
             return this.left > 0 && this.right > 0;
         }
 
@@ -237,7 +237,7 @@ final class TopDownAlgorithm {
          * Analyzes a case where the only actions that are allowed are additions.
          * @return Checking result, {@code true} if we can only add nodes
          */
-        boolean isJustToAdd() {
+        boolean onlyActionIsToAddNodes() {
             return this.left == 0 && this.add == this.right;
         }
 
@@ -245,7 +245,7 @@ final class TopDownAlgorithm {
          * Analyzes a case where the only actions that are allowed are deletions.
          * @return Checking result, {@code true} if we can only delete nodes
          */
-        boolean isJustToDelete() {
+        boolean onlyActionIsToDeleteNodes() {
             return this.right == 0 && this.delete == this.left;
         }
 

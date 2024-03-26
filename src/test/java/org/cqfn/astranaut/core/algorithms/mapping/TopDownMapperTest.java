@@ -23,8 +23,6 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import java.util.Arrays;
-import java.util.Collections;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
@@ -38,29 +36,12 @@ import org.junit.jupiter.api.Test;
 class TopDownMapperTest {
     @Test
     void testIdenticalTrees() {
-        final Node first = TopDownMapperTest.createTreeAlpha();
-        final Node second = TopDownMapperTest.createTreeAlpha();
+        final String description = "A(B(C, D))";
+        final Node first = DraftNode.createByDescription(description);
+        final Node second = DraftNode.createByDescription(description);
         final Mapper mapper = new TopDownMapper();
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
         Assertions.assertEquals(mapping.getLeft(second), first);
-    }
-
-    /**
-     * Creates tree A(B(C, D)).
-     * @return Root node
-     */
-    private static Node createTreeAlpha() {
-        final DraftNode.Constructor ccc = new DraftNode.Constructor();
-        ccc.setName("C");
-        final DraftNode.Constructor ddd = new DraftNode.Constructor();
-        ddd.setName("D");
-        final DraftNode.Constructor bbb = new DraftNode.Constructor();
-        bbb.setName("B");
-        bbb.setChildrenList(Arrays.asList(ccc.createNode(), ddd.createNode()));
-        final DraftNode.Constructor aaa = new DraftNode.Constructor();
-        aaa.setName("A");
-        aaa.setChildrenList(Collections.singletonList(bbb.createNode()));
-        return aaa.createNode();
     }
 }
