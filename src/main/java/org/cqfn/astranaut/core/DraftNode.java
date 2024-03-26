@@ -113,8 +113,8 @@ public final class DraftNode implements Node {
 
     /**
      * Creates a tree from draft nodes based on description.
-     *  Description format: A(B,C(...),...) where 'A' is the type name (may consist of only one
-     *  capital letter) followed by child nodes (in the same format) in parentheses
+     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
      *  separated by commas.
      * @param description Description
      * @return Root node of the tree created by description
@@ -131,13 +131,17 @@ public final class DraftNode implements Node {
      * @return Node of the tree with its children, created by description
      */
     private static Node createByDescription(final CharacterIterator iterator) {
-        final char name = iterator.current();
+        char symbol = iterator.current();
         final Node result;
-        if (name >= 'A' && name <= 'Z') {
+        final StringBuilder name = new StringBuilder();
+        while (symbol >= 'A' && symbol <= 'Z' || symbol >= 'a' && symbol <= 'z') {
+            name.append(symbol);
+            symbol = iterator.next();
+        }
+        if (name.length() > 0) {
             final DraftNode.Constructor builder = new DraftNode.Constructor();
-            builder.setName(String.valueOf(name));
-            final char next = iterator.next();
-            if (next == '(') {
+            builder.setName(name.toString());
+            if (symbol == '(') {
                 builder.setChildrenList(DraftNode.parseChildrenList(iterator));
             }
             result = builder.createNode();

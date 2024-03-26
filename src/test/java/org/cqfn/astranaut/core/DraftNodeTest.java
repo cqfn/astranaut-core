@@ -43,6 +43,7 @@ class DraftNodeTest {
             "X(A)",
             "X(A, B, C)",
             "X(A(B, C))",
+            "Addition(Expression, Expression)",
         };
         for (final String test : cases) {
             Assertions.assertTrue(DraftNodeTest.createAndSerialize(test));
