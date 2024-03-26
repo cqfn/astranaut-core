@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,6 +51,29 @@ class DraftNodeTest {
         for (final String test : cases) {
             Assertions.assertTrue(DraftNodeTest.createAndSerialize(test));
         }
+    }
+
+    /**
+     * Testing {@link DraftNode.Constructor} class.
+     */
+    @Test
+    void constructorTest() {
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        Assertions.assertEquals("", ctor.toString());
+        final String name = "Name";
+        ctor.setName(name);
+        Assertions.assertEquals(name, ctor.toString());
+        ctor.setData("data");
+        Assertions.assertEquals("Name<\"data\">", ctor.toString());
+        final List<Node> children = Arrays.asList(
+            DraftNode.createByDescription("A"),
+            DraftNode.createByDescription("B"),
+            DraftNode.createByDescription("C")
+        );
+        ctor.setChildrenList(children);
+        final String serialized = "Name<\"data\">(A, B, C)";
+        Assertions.assertEquals(serialized, ctor.toString());
+        Assertions.assertEquals(serialized, ctor.createNode().toString());
     }
 
     /**
