@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.cqfn.astranaut.core.EmptyFragment;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.utils.Pair;
@@ -51,6 +52,8 @@ class SubtreeTest {
         Assertions.assertEquals("IntegerLiteral", changed.getType().getName());
         final SubtreeNode leaf = root.getChild(0).getChild(2);
         Assertions.assertEquals(0, leaf.getChildCount());
+        Assertions.assertEquals(root.getFragment(), EmptyFragment.INSTANCE);
+        Assertions.assertEquals(root.getData(), tree.getData());
     }
 
     @Test
