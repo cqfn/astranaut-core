@@ -23,7 +23,11 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,9 +43,23 @@ class TopDownMapperTest {
         final String description = "A(B(C, D))";
         final Node first = DraftNode.createByDescription(description);
         final Node second = DraftNode.createByDescription(description);
-        final Mapper mapper = new TopDownMapper();
+        final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
         Assertions.assertEquals(mapping.getLeft(second), first);
+    }
+
+    @Test
+    void testPairOfTreesWhereOnlyInsertion() {
+        final Node first = DraftNode.createByDescription("X()");
+        final Node second = DraftNode.createByDescription("X(A,B)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final List<String> inserted = Arrays.asList("A", "B");
+        final Set<Insertion> set = mapping.getInserted();
+        for (final Insertion insertion : set) {
+            final String name = insertion.getNode().getTypeName();
+            Assertions.assertTrue(inserted.contains(name));
+        }
     }
 }

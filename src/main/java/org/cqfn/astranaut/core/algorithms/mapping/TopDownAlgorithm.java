@@ -100,7 +100,7 @@ final class TopDownAlgorithm {
             if (result) {
                 this.ltr.put(left, right);
                 this.rtl.put(right, left);
-                TopDownAlgorithm.mapSubtreesWithDifferentHashes(left, right);
+                this.mapSubtreesWithDifferentHashes(left, right);
             }
         }
         return result;
@@ -137,9 +137,31 @@ final class TopDownAlgorithm {
      * @param left Left node
      * @param right Related node to the left node
      */
-    private static void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
+    private void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
         final Unprocessed counter = new Unprocessed(left, right);
         assert counter.hasUnprocessedNodes();
+        if (counter.onlyActionIsToInsertNodes()) {
+            this.insertAllNotYetMappedNodes(right);
+        }
+    }
+
+    /**
+     * For all child nodes of the right node that are not yet mapped, performs an insert operation.
+     * @param right Related node to the left node
+     */
+    private void insertAllNotYetMappedNodes(final Node right) {
+        final int count = right.getChildCount();
+        Node after = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node node = right.getChild(index);
+            if (this.rtl.containsKey(node)) {
+                after = this.rtl.get(node);
+            } else {
+                final Insertion insertion = new Insertion(node, right, after);
+                this.inserted.add(insertion);
+                after = node;
+            }
+        }
     }
 
     /**
@@ -230,14 +252,14 @@ final class TopDownAlgorithm {
          * @return Checking result ({@code true} if yes)
          */
         boolean hasUnprocessedNodes() {
-            return this.left > 0 && this.right > 0;
+            return this.left > 0 || this.right > 0;
         }
 
         /**
-         * Analyzes a case where the only actions that are allowed are additions.
+         * Analyzes a case where the only actions that are allowed are insertions.
          * @return Checking result, {@code true} if we can only add nodes
          */
-        boolean onlyActionIsToAddNodes() {
+        boolean onlyActionIsToInsertNodes() {
             return this.left == 0 && this.add == this.right;
         }
 
