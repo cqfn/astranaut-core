@@ -138,11 +138,53 @@ final class TopDownAlgorithm {
      * @param right Related node to the left node
      */
     private void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
-        final Unprocessed counter = new Unprocessed(left, right);
-        assert counter.hasUnprocessedNodes();
-        if (counter.onlyActionIsToInsertNodes()) {
-            this.insertAllNotYetMappedNodes(right);
+        final Unprocessed unprocessed = new Unprocessed(left, right);
+        assert unprocessed.hasNodes();
+        do {
+            if (unprocessed.onlyActionIsToInsertNodes()) {
+                this.insertAllNotYetMappedNodes(right);
+                break;
+            }
+            this.mapTwoFirstUnmappedNodes(left, right, unprocessed);
+        } while (unprocessed.hasNodes());
+    }
+
+    /**
+     * Finds the first unmapped child of the left node and the first unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoFirstUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findFirstUnmappedChild(left);
+        final Node second = this.findFirstUnmappedChild(right);
+        final boolean result = this.execute(first, second);
+        if (result) {
+            unprocessed.removeOnePair();
         }
+        return result;
+    }
+
+    /**
+     * Finds the first child node that has not yet been mapped.
+     * @param node Parent node
+     * @return First child node that has not yet been mapped
+     */
+    private Node findFirstUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Node result = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                result = child;
+                break;
+            }
+        }
+        assert result != null;
+        return result;
     }
 
     /**
@@ -251,7 +293,7 @@ final class TopDownAlgorithm {
          * Checks are there still unprocessed nodes.
          * @return Checking result ({@code true} if yes)
          */
-        boolean hasUnprocessedNodes() {
+        boolean hasNodes() {
             return this.left > 0 || this.right > 0;
         }
 
@@ -272,9 +314,10 @@ final class TopDownAlgorithm {
         }
 
         /**
-         * Marks that some child of the left node has been replaced by a child of the right node.
+         * Marks that some child of the left node has been mapped or replaced by a child
+         * of the right node.
          */
-        void nodeWasReplaced() {
+        void removeOnePair() {
             this.left = this.left - 1;
             this.right = this.right - 1;
             assert this.right >= this.add;
