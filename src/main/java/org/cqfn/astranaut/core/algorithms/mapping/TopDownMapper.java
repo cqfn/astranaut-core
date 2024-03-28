@@ -32,6 +32,17 @@ import org.cqfn.astranaut.core.Node;
  * @since 1.1.0
  */
 public final class TopDownMapper implements Mapper {
+    /**
+     * The instance.
+     */
+    public static final Mapper INSTANCE = new TopDownMapper();
+
+    /**
+     * Private constructor.
+     */
+    private TopDownMapper() {
+    }
+
     @Override
     public Mapping map(final Node left, final Node right) {
         final TopDownAlgorithm algorithm = new TopDownAlgorithm();

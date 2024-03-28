@@ -100,7 +100,7 @@ final class TopDownAlgorithm {
             if (result) {
                 this.ltr.put(left, right);
                 this.rtl.put(right, left);
-                TopDownAlgorithm.mapSubtreesWithDifferentHashes(left, right);
+                this.mapSubtreesWithDifferentHashes(left, right);
             }
         }
         return result;
@@ -137,9 +137,114 @@ final class TopDownAlgorithm {
      * @param left Left node
      * @param right Related node to the left node
      */
-    private static void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
-        final Unprocessed counter = new Unprocessed(left, right);
-        assert counter.hasUnprocessedNodes();
+    private void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
+        final Unprocessed unprocessed = new Unprocessed(left, right);
+        assert unprocessed.hasNodes();
+        do {
+            if (unprocessed.onlyActionIsToInsertNodes()) {
+                this.insertAllNotYetMappedNodes(right);
+                break;
+            }
+            if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
+                continue;
+            }
+            this.mapTwoLastUnmappedNodes(left, right, unprocessed);
+        } while (unprocessed.hasNodes());
+    }
+
+    /**
+     * Finds the first unmapped child of the left node and the first unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoFirstUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findFirstUnmappedChild(left);
+        final Node second = this.findFirstUnmappedChild(right);
+        final boolean result = this.execute(first, second);
+        if (result) {
+            unprocessed.removeOnePair();
+        }
+        return result;
+    }
+
+    /**
+     * Finds the first child node that has not yet been mapped.
+     * @param node Parent node
+     * @return First child node that has not yet been mapped
+     */
+    private Node findFirstUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Node result = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                result = child;
+                break;
+            }
+        }
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Finds the last unmapped child of the left node and the last unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoLastUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findLastUnmappedChild(left);
+        final Node second = this.findLastUnmappedChild(right);
+        final boolean result = this.execute(first, second);
+        if (result) {
+            unprocessed.removeOnePair();
+        }
+        return result;
+    }
+
+    /**
+     * Finds the last child node that has not yet been mapped.
+     * @param node Parent node
+     * @return Last child node that has not yet been mapped
+     */
+    private Node findLastUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Node result = null;
+        for (int index = count - 1; index >= 0; index = index - 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                result = child;
+                break;
+            }
+        }
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * For all child nodes of the right node that are not yet mapped, performs an insert operation.
+     * @param right Related node to the left node
+     */
+    private void insertAllNotYetMappedNodes(final Node right) {
+        final int count = right.getChildCount();
+        Node after = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node node = right.getChild(index);
+            if (this.rtl.containsKey(node)) {
+                after = this.rtl.get(node);
+            } else {
+                final Insertion insertion = new Insertion(node, right, after);
+                this.inserted.add(insertion);
+                after = node;
+            }
+        }
     }
 
     /**
@@ -229,15 +334,15 @@ final class TopDownAlgorithm {
          * Checks are there still unprocessed nodes.
          * @return Checking result ({@code true} if yes)
          */
-        boolean hasUnprocessedNodes() {
-            return this.left > 0 && this.right > 0;
+        boolean hasNodes() {
+            return this.left > 0 || this.right > 0;
         }
 
         /**
-         * Analyzes a case where the only actions that are allowed are additions.
+         * Analyzes a case where the only actions that are allowed are insertions.
          * @return Checking result, {@code true} if we can only add nodes
          */
-        boolean onlyActionIsToAddNodes() {
+        boolean onlyActionIsToInsertNodes() {
             return this.left == 0 && this.add == this.right;
         }
 
@@ -250,9 +355,10 @@ final class TopDownAlgorithm {
         }
 
         /**
-         * Marks that some child of the left node has been replaced by a child of the right node.
+         * Marks that some child of the left node has been mapped or replaced by a child
+         * of the right node.
          */
-        void nodeWasReplaced() {
+        void removeOnePair() {
             this.left = this.left - 1;
             this.right = this.right - 1;
             assert this.right >= this.add;
