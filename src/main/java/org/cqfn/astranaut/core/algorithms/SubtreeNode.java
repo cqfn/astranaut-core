@@ -33,7 +33,7 @@ import org.cqfn.astranaut.core.Type;
  *
  * @since 1.1.4
  */
-public class SubtreeNode implements Node {
+class SubtreeNode implements Node {
     /**
      * The subtree where this node belongs.
      */
@@ -50,7 +50,7 @@ public class SubtreeNode implements Node {
      * @param original The node of the original tree
      * @param subtree The subtree where this node belongs
      */
-    public SubtreeNode(final Node original, final Subtree subtree) {
+    SubtreeNode(final Node original, final Subtree subtree) {
         this.original = original;
         this.subtree = subtree;
     }
@@ -81,5 +81,14 @@ public class SubtreeNode implements Node {
             this.original.getChild(this.subtree.getMapping().get(this.original).get(index)),
             this.subtree
         );
+    }
+
+    /**
+     * Get original node of this subtree node.
+     *
+     * @return Original {@link Node}
+     */
+    Node getOriginal() {
+        return this.original;
     }
 }

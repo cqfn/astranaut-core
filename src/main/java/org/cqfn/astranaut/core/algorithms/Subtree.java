@@ -44,33 +44,32 @@ public class Subtree {
     /**
      * The set of nodes for this subtree.
      */
-    private final Set<Node> nodes;
+    private Set<Node> nodes;
 
     /**
      * The mapping of the nodes' children for this subtree.
      */
-    private final Map<Node, List<Integer>> mapping;
+    private Map<Node, List<Integer>> mapping;
 
     /**
-     * Constructor.
+     * Constructor. Create subtree with the given tree root.
      *
      * @param root The root of the subtree
-     * @param nodes The set of nodes in this subtree
      */
-    @SuppressWarnings("PMD.ConstructorOnlyInitializesOrCallOtherConstructors")
-    public Subtree(final Node root, final Set<Node> nodes) {
-        this.nodes = nodes;
-        this.mapping = new HashMap<>();
-        this.preOrderTraversal(root);
+    public Subtree(final Node root) {
         this.root = new SubtreeNode(root, this);
     }
 
     /**
-     * Get subtree root.
+     * Create the subtree for the given set of nodes.
      *
-     * @return The root of the subtree
+     * @param subtree The set of nodes, which make up a subtree
+     * @return The {@link SubtreeNode}, which is the root of the created subtree
      */
-    public SubtreeNode getRoot() {
+    public SubtreeNode create(final Set<Node> subtree) {
+        this.nodes = subtree;
+        this.mapping = new HashMap<>();
+        this.preOrderTraversal(this.root.getOriginal());
         return this.root;
     }
 
@@ -79,7 +78,7 @@ public class Subtree {
      *
      * @return The mapping for this subtree
      */
-    public Map<Node, List<Integer>> getMapping() {
+    Map<Node, List<Integer>> getMapping() {
         return this.mapping;
     }
 

@@ -44,8 +44,8 @@ class SubtreeTest {
         final Pair<Node, Set<Node>> init = LittleTrees.createTreeWithSubtree();
         final Node tree = init.getKey();
         final Set<Node> nodes = init.getValue();
-        final Subtree subtree = new Subtree(tree, nodes);
-        final SubtreeNode root = subtree.getRoot();
+        final Subtree subtree = new Subtree(tree);
+        final SubtreeNode root = subtree.create(nodes);
         final SubtreeNode changed = root
             .getChild(0).getChild(0)
             .getChild(0).getChild(0);
@@ -74,8 +74,8 @@ class SubtreeTest {
         nodes.add(stmtright);
         nodes.add(assright);
         nodes.add(tree.getChild(2));
-        final Subtree subtree = new Subtree(tree, nodes);
-        final SubtreeNode root = subtree.getRoot();
+        final Subtree subtree = new Subtree(tree);
+        final SubtreeNode root = subtree.create(nodes);
         final SubtreeNode changed = root.getChild(0).getChild(0).getChild(0);
         Assertions.assertEquals("IntegerLiteral", changed.getType().getName());
         final SubtreeNode leaf = root.getChild(2);
