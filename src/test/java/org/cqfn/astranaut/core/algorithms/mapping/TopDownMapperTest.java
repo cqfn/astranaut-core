@@ -73,4 +73,15 @@ class TopDownMapperTest {
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
+
+    @Test
+    void testPairOfTreesWhereTwoAndOneInserted() {
+        final Node first = DraftNode.createByDescription("X(A,C)");
+        final Node second = DraftNode.createByDescription("X(A,B,C)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+    }
 }

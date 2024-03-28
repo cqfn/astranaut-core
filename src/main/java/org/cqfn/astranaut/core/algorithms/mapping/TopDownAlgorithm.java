@@ -145,7 +145,10 @@ final class TopDownAlgorithm {
                 this.insertAllNotYetMappedNodes(right);
                 break;
             }
-            this.mapTwoFirstUnmappedNodes(left, right, unprocessed);
+            if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
+                continue;
+            }
+            this.mapTwoLastUnmappedNodes(left, right, unprocessed);
         } while (unprocessed.hasNodes());
     }
 
@@ -177,6 +180,44 @@ final class TopDownAlgorithm {
         final int count = node.getChildCount();
         Node result = null;
         for (int index = 0; index < count; index = index + 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                result = child;
+                break;
+            }
+        }
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Finds the last unmapped child of the left node and the last unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoLastUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findLastUnmappedChild(left);
+        final Node second = this.findLastUnmappedChild(right);
+        final boolean result = this.execute(first, second);
+        if (result) {
+            unprocessed.removeOnePair();
+        }
+        return result;
+    }
+
+    /**
+     * Finds the last child node that has not yet been mapped.
+     * @param node Parent node
+     * @return Last child node that has not yet been mapped
+     */
+    private Node findLastUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Node result = null;
+        for (int index = count - 1; index >= 0; index = index - 1) {
             final Node child = node.getChild(index);
             if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
                 result = child;
