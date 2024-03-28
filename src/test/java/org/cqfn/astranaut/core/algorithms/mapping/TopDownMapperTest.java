@@ -84,4 +84,19 @@ class TopDownMapperTest {
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
+
+    @Test
+    void testNodeInsertedAmongIdenticalNodes() {
+        final Node first = DraftNode.createByDescription("X(A,A,A,A,C)");
+        final Node second = DraftNode.createByDescription("X(A,A,A,B,A,C)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+        Assertions.assertEquals(second.getChild(0), mapping.getRight(first.getChild(0)));
+        Assertions.assertEquals(second.getChild(1), mapping.getRight(first.getChild(1)));
+        Assertions.assertEquals(second.getChild(2), mapping.getRight(first.getChild(2)));
+        Assertions.assertEquals(second.getChild(4), mapping.getRight(first.getChild(3)));
+    }
 }
