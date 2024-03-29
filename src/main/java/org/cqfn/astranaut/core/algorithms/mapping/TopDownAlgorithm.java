@@ -152,7 +152,10 @@ final class TopDownAlgorithm {
             if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
                 continue;
             }
-            this.mapTwoLastUnmappedNodes(left, right, unprocessed);
+            if (this.mapTwoLastUnmappedNodes(left, right, unprocessed)) {
+                continue;
+            }
+            this.replaceTwoFirstUnmappedNodes(left, right, unprocessed);
         } while (unprocessed.hasNodes());
     }
 
@@ -173,6 +176,27 @@ final class TopDownAlgorithm {
             unprocessed.removeOnePair();
         }
         return result;
+    }
+
+    /**
+     * Finds the first unmapped child of the left node and the first unmapped child
+     *  of the right node and adds a 'Replace' operation for them.
+     * This is a universal operation because it reduces the number of unprocessed pairs,
+     *  and sooner or later there will be no nodes left and the algorithm will inevitably
+     *  terminate with some result. This is fate. However, this operation may produce
+     *  suboptimal results, and should therefore be used last.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     */
+    private void replaceTwoFirstUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findFirstUnmappedChild(left);
+        final Node second = this.findFirstUnmappedChild(right);
+        this.replaced.put(first, second);
+        this.ltr.put(first, null);
+        this.rtl.put(second, null);
+        unprocessed.removeOnePair();
     }
 
     /**
@@ -247,6 +271,7 @@ final class TopDownAlgorithm {
             } else {
                 final Insertion insertion = new Insertion(node, right, after);
                 this.inserted.add(insertion);
+                this.rtl.put(node, null);
                 after = node;
             }
         }
@@ -263,6 +288,7 @@ final class TopDownAlgorithm {
             final Node node = left.getChild(index);
             if (!this.ltr.containsKey(node)) {
                 this.deleted.add(node);
+                this.ltr.put(node, null);
             }
         }
     }

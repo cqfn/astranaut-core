@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Insertion;
@@ -109,5 +110,18 @@ class TopDownMapperTest {
         final Set<Node> deleted = mapping.getDeleted();
         Assertions.assertEquals(1, deleted.size());
         Assertions.assertEquals("B", deleted.iterator().next().getTypeName());
+    }
+
+    @Test
+    void testPairOfTreesWhereThreeAndOneReplaced() {
+        final Node first = DraftNode.createByDescription("X(A,B,C)");
+        final Node second = DraftNode.createByDescription("X(A,D,C)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("B", pair.getKey().getTypeName());
+        Assertions.assertEquals("D", pair.getValue().getTypeName());
     }
 }
