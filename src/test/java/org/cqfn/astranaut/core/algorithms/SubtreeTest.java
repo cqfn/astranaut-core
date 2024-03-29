@@ -23,8 +23,10 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.EmptyFragment;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
@@ -85,4 +87,29 @@ class SubtreeTest {
         Assertions.assertEquals(0, actionleaf.getChildCount());
     }
 
+    @Test
+    void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
+        final Node original = DraftNode.createByDescription("X(A,B,C,D,E)");
+        final Subtree subtree = new Subtree(original);
+        final Node first = subtree.create(
+            new HashSet<>(
+                Arrays.asList(
+                    original.getChild(0),
+                    original.getChild(1)
+                )
+            )
+        );
+        Assertions.assertEquals(2,  first.getChildCount());
+        final Node second = subtree.create(
+            new HashSet<>(
+                Arrays.asList(
+                    original.getChild(0),
+                    original.getChild(1),
+                    original.getChild(2)
+                )
+            )
+        );
+        Assertions.assertEquals(2,  first.getChildCount());
+        Assertions.assertEquals(3,  second.getChildCount());
+    }
 }
