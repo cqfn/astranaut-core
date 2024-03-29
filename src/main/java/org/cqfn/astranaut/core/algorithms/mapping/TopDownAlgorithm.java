@@ -145,6 +145,10 @@ final class TopDownAlgorithm {
                 this.insertAllNotYetMappedNodes(right);
                 break;
             }
+            if (unprocessed.onlyActionIsToDeleteNodes()) {
+                this.deleteAllNotYetMappedNodes(left);
+                break;
+            }
             if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
                 continue;
             }
@@ -229,7 +233,8 @@ final class TopDownAlgorithm {
     }
 
     /**
-     * For all child nodes of the right node that are not yet mapped, performs an insert operation.
+     * For all child nodes of the right node that are not yet mapped, performs
+     *  the 'Insert' operation.
      * @param right Related node to the left node
      */
     private void insertAllNotYetMappedNodes(final Node right) {
@@ -243,6 +248,21 @@ final class TopDownAlgorithm {
                 final Insertion insertion = new Insertion(node, right, after);
                 this.inserted.add(insertion);
                 after = node;
+            }
+        }
+    }
+
+    /**
+     * For all child nodes of the left node that are not yet mapped, performs
+     *  the 'Delete' operation.
+     * @param left Related node to the left node
+     */
+    private void deleteAllNotYetMappedNodes(final Node left) {
+        final int count = left.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node node = left.getChild(index);
+            if (!this.ltr.containsKey(node)) {
+                this.deleted.add(node);
             }
         }
     }

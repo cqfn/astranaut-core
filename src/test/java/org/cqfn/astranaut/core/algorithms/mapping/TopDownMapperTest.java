@@ -99,4 +99,15 @@ class TopDownMapperTest {
         Assertions.assertEquals(second.getChild(2), mapping.getRight(first.getChild(2)));
         Assertions.assertEquals(second.getChild(4), mapping.getRight(first.getChild(3)));
     }
+
+    @Test
+    void testPairOfTreesWhereTwoAndOneDeleted() {
+        final Node first = DraftNode.createByDescription("X(A,B)");
+        final Node second = DraftNode.createByDescription("X(A)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        Assertions.assertEquals("B", deleted.iterator().next().getTypeName());
+    }
 }
