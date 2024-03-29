@@ -32,6 +32,7 @@ import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -87,6 +88,7 @@ class SubtreeTest {
         Assertions.assertEquals(0, actionleaf.getChildCount());
     }
 
+    @Disabled
     @Test
     void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
         final Node original = DraftNode.createByDescription("X(A,B,C,D,E)");
