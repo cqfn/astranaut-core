@@ -124,4 +124,20 @@ class TopDownMapperTest {
         Assertions.assertEquals("B", pair.getKey().getTypeName());
         Assertions.assertEquals("D", pair.getValue().getTypeName());
     }
+
+    @Test
+    void testPairOfTreesWhereOneAddedAndOneReplaced() {
+        final Node first = DraftNode.createByDescription("X(A,Y(C,D,E))");
+        final Node second = DraftNode.createByDescription("X(A,Y(B,C,F,E))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> added = mapping.getInserted();
+        Assertions.assertEquals(1, added.size());
+        Assertions.assertEquals("B", added.iterator().next().getNode().getTypeName());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("D", pair.getKey().getTypeName());
+        Assertions.assertEquals("F", pair.getValue().getTypeName());
+    }
 }

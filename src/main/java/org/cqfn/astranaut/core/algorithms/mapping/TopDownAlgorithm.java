@@ -169,12 +169,27 @@ final class TopDownAlgorithm {
      */
     private boolean mapTwoFirstUnmappedNodes(final Node left, final Node right,
         final Unprocessed unprocessed) {
-        final Node first = this.findFirstUnmappedChild(left);
-        final Node second = this.findFirstUnmappedChild(right);
-        final boolean result = this.execute(first, second);
-        if (result) {
-            unprocessed.removeOnePair();
-        }
+        final Child first = this.findFirstUnmappedChild(left);
+        final Child second = this.findFirstUnmappedChild(right);
+        boolean result;
+        do {
+            result = this.execute(first.node, second.node);
+            if (result) {
+                unprocessed.removeOnePair();
+                break;
+            }
+            if (second.after != null) {
+                result = this.execute(first.node, second.after);
+            }
+            if (result) {
+                unprocessed.removeOnePair();
+                final Insertion insertion = new Insertion(second.node, right, first.before);
+                this.inserted.add(insertion);
+                this.rtl.put(second.node, null);
+                unprocessed.nodeWasInserted();
+                break;
+            }
+        } while (false);
         return result;
     }
 
@@ -191,11 +206,11 @@ final class TopDownAlgorithm {
      */
     private void replaceTwoFirstUnmappedNodes(final Node left, final Node right,
         final Unprocessed unprocessed) {
-        final Node first = this.findFirstUnmappedChild(left);
-        final Node second = this.findFirstUnmappedChild(right);
+        final Node first = this.findFirstUnmappedChild(left).node;
+        final Node second = this.findFirstUnmappedChild(right).node;
         this.replaced.put(first, second);
-        this.ltr.put(first, null);
-        this.rtl.put(second, null);
+        this.ltr.put(first, second);
+        this.rtl.put(second, first);
         unprocessed.removeOnePair();
     }
 
@@ -204,13 +219,21 @@ final class TopDownAlgorithm {
      * @param node Parent node
      * @return First child node that has not yet been mapped
      */
-    private Node findFirstUnmappedChild(final Node node) {
+    private Child findFirstUnmappedChild(final Node node) {
         final int count = node.getChildCount();
-        Node result = null;
+        Child result = null;
         for (int index = 0; index < count; index = index + 1) {
             final Node child = node.getChild(index);
             if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
-                result = child;
+                Node before = null;
+                if (index > 0) {
+                    before = node.getChild(index - 1);
+                }
+                Node after = null;
+                if (index < count - 1) {
+                    after = node.getChild(index + 1);
+                }
+                result = new Child(child, before, after);
                 break;
             }
         }
@@ -357,7 +380,7 @@ final class TopDownAlgorithm {
         /**
          * Number of nodes to be added.
          */
-        private final int add;
+        private int add;
 
         /**
          * Number of nodes to be deleted.
@@ -401,6 +424,16 @@ final class TopDownAlgorithm {
         }
 
         /**
+         * Notes that some child node of the right node has been recognized as an inserted node.
+         */
+        void nodeWasInserted() {
+            assert this.right > 0;
+            this.right = this.right - 1;
+            assert this.add > 0;
+            this.add = this.add - 1;
+        }
+
+        /**
          * Marks that some child of the left node has been mapped or replaced by a child
          * of the right node.
          */
@@ -411,4 +444,44 @@ final class TopDownAlgorithm {
             assert this.left >= this.delete;
         }
     }
+
+    /**
+     * A child node found by some criteria.
+     *
+     * @since 1.1.0
+     */
+    private static class Child {
+        /**
+         * Child node itself.
+         */
+        private final Node node;
+
+        /**
+         * Child node before (if exists).
+         */
+        private final Node before;
+
+        /**
+         * Child node after (if exists).
+         */
+        private final Node after;
+
+        /**
+         * Constructor.
+         * @param node Child node itself
+         * @param before Child node before
+         * @param after Child node after
+         */
+        Child(final Node node, final Node before, final Node after) {
+            this.node = node;
+            this.before = before;
+            this.after = after;
+        }
+
+        @Override
+        public String toString() {
+            return this.node.toString();
+        }
+    }
 }
+
