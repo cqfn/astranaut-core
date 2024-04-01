@@ -189,6 +189,16 @@ final class TopDownAlgorithm {
                 unprocessed.nodeWasInserted();
                 break;
             }
+            if (first.after != null) {
+                result = this.execute(first.after, second.node);
+            }
+            if (result) {
+                unprocessed.removeOnePair();
+                this.deleted.add(first.node);
+                this.ltr.put(first.node, null);
+                unprocessed.nodeWasDeleted();
+                break;
+            }
         } while (false);
         return result;
     }
@@ -385,7 +395,7 @@ final class TopDownAlgorithm {
         /**
          * Number of nodes to be deleted.
          */
-        private final int delete;
+        private int delete;
 
         /**
          * Constructor.
@@ -431,6 +441,16 @@ final class TopDownAlgorithm {
             this.right = this.right - 1;
             assert this.add > 0;
             this.add = this.add - 1;
+        }
+
+        /**
+         * Notes that some child node of the right node has been recognized as a deleted node.
+         */
+        void nodeWasDeleted() {
+            assert this.left > 0;
+            this.left = this.left - 1;
+            assert this.delete > 0;
+            this.delete = this.delete - 1;
         }
 
         /**
