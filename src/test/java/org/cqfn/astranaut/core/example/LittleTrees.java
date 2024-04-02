@@ -25,8 +25,6 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Insertion;
@@ -39,7 +37,6 @@ import org.cqfn.astranaut.core.example.green.Return;
 import org.cqfn.astranaut.core.example.green.SimpleAssignment;
 import org.cqfn.astranaut.core.example.green.StatementBlock;
 import org.cqfn.astranaut.core.example.green.Variable;
-import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Little trees for testing purposes.
@@ -327,37 +324,4 @@ public final class LittleTrees {
         builder.deleteNode(victim);
         return builder.getRoot();
     }
-
-    /**
-     * Creates a tree that has a "delete" action in it.
-     * This action is just below the root, so that the number and type of children of the root
-     * do not change.
-     * @return Root node
-     */
-    public static Pair<Node, Set<Node>> createTreeWithSubtree() {
-        final Node variabley = createVariable("y");
-        final Node literaltwo = createIntegerLiteral(2);
-        final Node assleft = createAssignment(variabley, literaltwo);
-        final Node victim = wrapExpressionWithStatement(assleft);
-        final Node variablex = createVariable("x");
-        final Node literalone = createIntegerLiteral(1);
-        final Node assright = createAssignment(variablex, literalone);
-        final Node stmtright = wrapExpressionWithStatement(assright);
-        final Node returns = createReturnStatement(createVariable("x"));
-        final Node stmtroot = createStatementBlock(
-            stmtright,
-            victim,
-            returns
-        );
-        final Node root = createStatementBlock(stmtroot);
-        final Set<Node> subtree = new HashSet<>(
-            Arrays.asList(
-                variabley, literaltwo, assleft, victim,
-                literalone, assright, stmtright, returns,
-                stmtroot, root, root
-            )
-        );
-        return new Pair<>(root, subtree);
-    }
-
 }

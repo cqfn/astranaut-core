@@ -28,73 +28,158 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.cqfn.astranaut.core.Fragment;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Type;
 
 /**
- * Subtree.
+ * Algorithm that produces a subtree from the original tree.
  *
  * @since 1.1.4
  */
 public class Subtree {
     /**
-     * The root of the subtree.
+     * Algorithm that composes a subtree only from the nodes that are specified in the set.
      */
-    private final SubtreeNode root;
+    public static final Algorithm INCLUDE = (node, set) -> set.contains(node);
 
     /**
-     * The set of nodes for this subtree.
+     * Algorithm that composes a subtree from all nodes in the original tree,
+     *  but excludes nodes specified in the set.
      */
-    private Set<Node> nodes;
+    public static final Algorithm EXCLUDE = (node, set) -> !set.contains(node);
 
     /**
-     * The mapping of the nodes' children for this subtree.
+     * The root node of the original tree.
      */
-    private Map<Node, List<Integer>> mapping;
+    private final Node original;
 
     /**
-     * Constructor. Create subtree with the given tree root.
+     * Algorithm that selects nodes based on some criteria.
+     */
+    private final Algorithm algorithm;
+
+    /**
+     * Constructor.
      *
-     * @param root The root of the subtree
+     * @param original The root node of the original tree
+     * @param algorithm Algorithm that selects nodes based on some criteria
      */
-    public Subtree(final Node root) {
-        this.root = new SubtreeNode(root, this);
+    public Subtree(final Node original, final Algorithm algorithm) {
+        this.original = original;
+        this.algorithm = algorithm;
     }
 
     /**
-     * Create the subtree for the given set of nodes.
-     *
-     * @param subtree The set of nodes, which make up a subtree
-     * @return The {@link SubtreeNode}, which is the root of the created subtree
+     * Creates a subtree from the original tree, with the result depends on the nodes that are
+     *  specified in the set.
+     * @param nodes The set of nodes
+     * @return Root node of created subtree.
      */
-    public SubtreeNode create(final Set<Node> subtree) {
-        this.nodes = subtree;
-        this.mapping = new HashMap<>();
-        this.preOrderTraversal(this.root.getOriginal());
-        return this.root;
+    public Node create(final Set<Node> nodes) {
+        final Map<Node, List<Integer>> indexes = new HashMap<>();
+        this.build(this.original, indexes, nodes);
+        return new SubNode(this.original, indexes);
     }
 
     /**
-     * Get subtree mapping.
-     *
-     * @return The mapping for this subtree
+     * Constructs an index map containing the indexes of the nodes that will be included
+     *  in the resulting tree.
+     * @param node Current node
+     * @param indexes Index map
+     * @param set The set of nodes
      */
-    Map<Node, List<Integer>> getMapping() {
-        return this.mapping;
-    }
-
-    /**
-     * Pre-order traverse the tree from the given node.
-     *
-     * @param node The node to traverse from
-     */
-    private void preOrderTraversal(final Node node) {
-        this.mapping.computeIfAbsent(node, s -> new ArrayList<>(0));
-        for (int index = 0; index < node.getChildCount(); index += 1) {
+    private void build(final Node node, final Map<Node, List<Integer>> indexes,
+        final Set<Node> set) {
+        final List<Integer> list = indexes.computeIfAbsent(node, s -> new ArrayList<>(0));
+        final int count = node.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
             final Node child = node.getChild(index);
-            if (this.nodes.contains(child)) {
-                this.mapping.get(node).add(index);
-                this.preOrderTraversal(child);
+            if (this.algorithm.isApplicable(child, set)) {
+                list.add(index);
+                this.build(child, indexes, set);
             }
+        }
+    }
+
+    /**
+     * An algorithm that selects nodes based on some criteria.
+     *
+     * @since 1.1.4
+     */
+    public interface Algorithm {
+        /**
+         * Checks if the node is applicable to the set.
+         * @param node Node to be checked
+         * @param set Set of nodes
+         * @return Checking result.
+         */
+        boolean isApplicable(Node node, Set<Node> set);
+    }
+
+    /**
+     * A node created from the original node, but which has only children from the specified set.
+     *
+     * @since 1.1.4
+     */
+    private static final class SubNode implements Node {
+        /**
+         * Original node.
+         */
+        private final Node original;
+
+        /**
+         * Index map containing the indexes of the nodes that should be included
+         *  to the resulting tree.
+         */
+        private final Map<Node, List<Integer>> indexes;
+
+        /**
+         * Array of children (also truncated nodes).
+         */
+        private final SubNode[] children;
+
+        /**
+         * Constructor.
+         * @param original Original node
+         * @param indexes Index map containing the indexes of the nodes that should be included
+         *  to the resulting tree
+         */
+        private SubNode(final Node original, final Map<Node, List<Integer>> indexes) {
+            this.original = original;
+            this.indexes = indexes;
+            this.children = new SubNode[indexes.get(original).size()];
+        }
+
+        @Override
+        public Fragment getFragment() {
+            return this.original.getFragment();
+        }
+
+        @Override
+        public Type getType() {
+            return this.original.getType();
+        }
+
+        @Override
+        public String getData() {
+            return this.original.getData();
+        }
+
+        @Override
+        public int getChildCount() {
+            return this.children.length;
+        }
+
+        @Override
+        public Node getChild(final int index) {
+            if (this.children[index] == null) {
+                this.children[index] = new SubNode(
+                    this.original.getChild(this.indexes.get(this.original).get(index)),
+                    this.indexes
+                );
+            }
+            return this.children[index];
         }
     }
 }

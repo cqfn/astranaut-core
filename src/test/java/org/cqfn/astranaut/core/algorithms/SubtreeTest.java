@@ -25,14 +25,9 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.EmptyFragment;
 import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.example.LittleTrees;
-import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,59 +36,11 @@ import org.junit.jupiter.api.Test;
  * @since 1.1.4
  */
 class SubtreeTest {
-
-    @Test
-    void testSubtree() {
-        final Pair<Node, Set<Node>> init = LittleTrees.createTreeWithSubtree();
-        final Node tree = init.getKey();
-        final Set<Node> nodes = init.getValue();
-        final Subtree subtree = new Subtree(tree);
-        final SubtreeNode root = subtree.create(nodes);
-        final SubtreeNode changed = root
-            .getChild(0).getChild(0)
-            .getChild(0).getChild(0);
-        Assertions.assertEquals("IntegerLiteral", changed.getType().getName());
-        final SubtreeNode leaf = root.getChild(0).getChild(2);
-        Assertions.assertEquals(0, leaf.getChildCount());
-        Assertions.assertEquals(root.getFragment(), EmptyFragment.INSTANCE);
-        Assertions.assertEquals(root.getData(), tree.getData());
-    }
-
-    @Test
-    void testSubtreeWithDelete() {
-        final Node tree = LittleTrees.createTreeWithDeleteAction();
-        final Set<Node> nodes = new HashSet<>();
-        nodes.add(tree);
-        final Node stmtleft = tree.getChild(0);
-        final Node assleft = stmtleft.getChild(0);
-        final Node literal = assleft.getChild(1);
-        nodes.add(stmtleft);
-        nodes.add(assleft);
-        nodes.add(literal);
-        final Node delete = tree.getChild(1);
-        final Node stmtright = delete.getChild(0);
-        final Node assright = stmtright.getChild(0);
-        nodes.add(delete);
-        nodes.add(stmtright);
-        nodes.add(assright);
-        nodes.add(tree.getChild(2));
-        final Subtree subtree = new Subtree(tree);
-        final SubtreeNode root = subtree.create(nodes);
-        final SubtreeNode changed = root.getChild(0).getChild(0).getChild(0);
-        Assertions.assertEquals("IntegerLiteral", changed.getType().getName());
-        final SubtreeNode leaf = root.getChild(2);
-        Assertions.assertEquals(0, leaf.getChildCount());
-        final SubtreeNode actionleaf = root.getChild(1).getChild(0).getChild(0);
-        Assertions.assertEquals(actionleaf.getType().getName(), "SimpleAssignment");
-        Assertions.assertEquals(0, actionleaf.getChildCount());
-    }
-
-    @Disabled
     @Test
     void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
         final Node original = DraftNode.createByDescription("X(A,B,C,D,E)");
-        final Subtree subtree = new Subtree(original);
-        final Node first = subtree.create(
+        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final Node first = algorithm.create(
             new HashSet<>(
                 Arrays.asList(
                     original.getChild(0),
@@ -102,7 +49,7 @@ class SubtreeTest {
             )
         );
         Assertions.assertEquals(2,  first.getChildCount());
-        final Node second = subtree.create(
+        final Node second = algorithm.create(
             new HashSet<>(
                 Arrays.asList(
                     original.getChild(0),
