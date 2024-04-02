@@ -25,6 +25,8 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +38,18 @@ import org.junit.jupiter.api.Test;
  * @since 1.1.4
  */
 class SubtreeTest {
+    @Test
+    void testSubtreeCreation() {
+        final Node original = DraftNode.createByDescription("A(B,C(D,E,F))");
+        final List<String> list = Arrays.asList("A", "C", "E", "F");
+        final Set<Node> selected =
+            new NodeSelector(original).select((node, parents) -> list.contains(node.getTypeName()));
+        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final Node subtree = algorithm.create(selected);
+        final Node expected = DraftNode.createByDescription("A(C(E,F))");
+        Assertions.assertTrue(expected.deepCompare(subtree));
+    }
+
     @Test
     void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
         final Node original = DraftNode.createByDescription("X(A,B,C,D,E)");

@@ -52,7 +52,7 @@ public class Subtree {
     /**
      * The root node of the original tree.
      */
-    private final Node original;
+    private final Node root;
 
     /**
      * Algorithm that selects nodes based on some criteria.
@@ -62,11 +62,11 @@ public class Subtree {
     /**
      * Constructor.
      *
-     * @param original The root node of the original tree
+     * @param root The root node of the original tree
      * @param algorithm Algorithm that selects nodes based on some criteria
      */
-    public Subtree(final Node original, final Algorithm algorithm) {
-        this.original = original;
+    public Subtree(final Node root, final Algorithm algorithm) {
+        this.root = root;
         this.algorithm = algorithm;
     }
 
@@ -78,8 +78,8 @@ public class Subtree {
      */
     public Node create(final Set<Node> nodes) {
         final Map<Node, List<Integer>> indexes = new HashMap<>();
-        this.build(this.original, indexes, nodes);
-        return new SubNode(this.original, indexes);
+        this.build(this.root, indexes, nodes);
+        return new SubNode(this.root, indexes);
     }
 
     /**
