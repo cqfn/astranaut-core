@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class TopDownMapperTest {
     @Test
     void testIdenticalTrees() {
@@ -208,11 +209,10 @@ class TopDownMapperTest {
         Assertions.assertEquals("F", deleted.iterator().next().getTypeName());
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(2, replaced.size());
-        final Map<String, String> expected = new TreeMap<String, String>(){{
-            put("B", "G");
-            put("D", "I");
-        }};
-        for (Map.Entry<Node, Node> pair : replaced.entrySet()) {
+        final Map<String, String> expected = new TreeMap<>();
+        expected.put("B", "G");
+        expected.put("D", "I");
+        for (final Map.Entry<Node, Node> pair : replaced.entrySet()) {
             Assertions.assertTrue(expected.containsKey(pair.getKey().getTypeName()));
             Assertions.assertEquals(
                 pair.getValue().getTypeName(),

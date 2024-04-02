@@ -24,13 +24,13 @@
 package org.cqfn.astranaut.core.algorithms;
 
 import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -128,7 +128,6 @@ class DifferenceTreeBuilderTest {
     }
 
     @Test
-    @Disabled
     void testTreeWithReplacedNotUniqueNode() {
         final Node removed = LittleTrees.createIntegerLiteral(1);
         final Node added = LittleTrees.createIntegerLiteral(2);
@@ -183,5 +182,17 @@ class DifferenceTreeBuilderTest {
         Assertions.assertTrue(before.deepCompare(actual.getBefore()));
         Assertions.assertTrue(after.deepCompare(actual.getAfter()));
         Assertions.assertTrue(actual.deepCompare(expected));
+    }
+
+    @Test
+    void testComplexCase() {
+        final Node before = DraftNode.createByDescription("X(A,B,Y(C,D,E,F,J,K))");
+        final Node after = DraftNode.createByDescription("X(A,G,Y(H,C,I,E,J,K))");
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final boolean result = builder.build(after, TopDownMapper.INSTANCE);
+        Assertions.assertTrue(result);
+        final DifferenceNode diff = builder.getRoot();
+        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }
 }

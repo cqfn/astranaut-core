@@ -142,7 +142,7 @@ final class TopDownAlgorithm {
         assert unprocessed.hasNodes();
         do {
             if (unprocessed.onlyActionIsToInsertNodes()) {
-                this.insertAllNotYetMappedNodes(right);
+                this.insertAllNotYetMappedNodes(left, right);
                 break;
             }
             if (unprocessed.onlyActionIsToDeleteNodes()) {
@@ -183,7 +183,7 @@ final class TopDownAlgorithm {
             }
             if (result) {
                 unprocessed.removeOnePair();
-                final Insertion insertion = new Insertion(second.node, right, first.before);
+                final Insertion insertion = new Insertion(second.node, left, first.before);
                 this.inserted.add(insertion);
                 this.rtl.put(second.node, null);
                 unprocessed.nodeWasInserted();
@@ -292,9 +292,10 @@ final class TopDownAlgorithm {
     /**
      * For all child nodes of the right node that are not yet mapped, performs
      *  the 'Insert' operation.
+     * @param left Left node
      * @param right Related node to the left node
      */
-    private void insertAllNotYetMappedNodes(final Node right) {
+    private void insertAllNotYetMappedNodes(final Node left, final Node right) {
         final int count = right.getChildCount();
         Node after = null;
         for (int index = 0; index < count; index = index + 1) {
@@ -302,7 +303,7 @@ final class TopDownAlgorithm {
             if (this.rtl.containsKey(node)) {
                 after = this.rtl.get(node);
             } else {
-                final Insertion insertion = new Insertion(node, right, after);
+                final Insertion insertion = new Insertion(node, left, after);
                 this.inserted.add(insertion);
                 this.rtl.put(node, null);
                 after = node;
@@ -313,7 +314,7 @@ final class TopDownAlgorithm {
     /**
      * For all child nodes of the left node that are not yet mapped, performs
      *  the 'Delete' operation.
-     * @param left Related node to the left node
+     * @param left Left node
      */
     private void deleteAllNotYetMappedNodes(final Node left) {
         final int count = left.getChildCount();
