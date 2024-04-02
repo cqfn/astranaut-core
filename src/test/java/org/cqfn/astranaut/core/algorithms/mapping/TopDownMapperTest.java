@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
@@ -191,5 +192,32 @@ class TopDownMapperTest {
         final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
         Assertions.assertEquals("E", pair.getKey().getTypeName());
         Assertions.assertEquals("C", pair.getValue().getTypeName());
+    }
+
+    @Test
+    void testPairOfTreesWhereAllActions() {
+        final Node first = DraftNode.createByDescription("X(A,B,Y(C,D,E,F,J,K))");
+        final Node second = DraftNode.createByDescription("X(A,G,Y(H,C,I,E,J,K))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertEquals("H", inserted.iterator().next().getNode().getTypeName());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        Assertions.assertEquals("F", deleted.iterator().next().getTypeName());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(2, replaced.size());
+        final Map<String, String> expected = new TreeMap<String, String>(){{
+            put("B", "G");
+            put("D", "I");
+        }};
+        for (Map.Entry<Node, Node> pair : replaced.entrySet()) {
+            Assertions.assertTrue(expected.containsKey(pair.getKey().getTypeName()));
+            Assertions.assertEquals(
+                pair.getValue().getTypeName(),
+                expected.get(pair.getKey().getTypeName())
+            );
+        }
     }
 }

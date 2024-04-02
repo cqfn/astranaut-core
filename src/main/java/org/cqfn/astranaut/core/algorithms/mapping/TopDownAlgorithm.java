@@ -439,8 +439,11 @@ final class TopDownAlgorithm {
         void nodeWasInserted() {
             assert this.right > 0;
             this.right = this.right - 1;
-            assert this.add > 0;
-            this.add = this.add - 1;
+            if (this.add > 0) {
+                this.add = this.add - 1;
+            } else {
+                this.delete = this.delete + 1;
+            }
         }
 
         /**
@@ -449,8 +452,11 @@ final class TopDownAlgorithm {
         void nodeWasDeleted() {
             assert this.left > 0;
             this.left = this.left - 1;
-            assert this.delete > 0;
-            this.delete = this.delete - 1;
+            if (this.delete > 0) {
+                this.delete = this.delete - 1;
+            } else {
+                this.add = this.add + 1;
+            }
         }
 
         /**
