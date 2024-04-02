@@ -100,7 +100,7 @@ final class TopDownAlgorithm {
             if (result) {
                 this.ltr.put(left, right);
                 this.rtl.put(right, left);
-                TopDownAlgorithm.mapSubtreesWithDifferentHashes(left, right);
+                this.mapSubtreesWithDifferentHashes(left, right);
             }
         }
         return result;
@@ -137,9 +137,194 @@ final class TopDownAlgorithm {
      * @param left Left node
      * @param right Related node to the left node
      */
-    private static void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
-        final Unprocessed counter = new Unprocessed(left, right);
-        assert counter.hasUnprocessedNodes();
+    private void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
+        final Unprocessed unprocessed = new Unprocessed(left, right);
+        assert unprocessed.hasNodes();
+        do {
+            if (unprocessed.onlyActionIsToInsertNodes()) {
+                this.insertAllNotYetMappedNodes(left, right);
+                break;
+            }
+            if (unprocessed.onlyActionIsToDeleteNodes()) {
+                this.deleteAllNotYetMappedNodes(left);
+                break;
+            }
+            if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
+                continue;
+            }
+            if (this.mapTwoLastUnmappedNodes(left, right, unprocessed)) {
+                continue;
+            }
+            this.replaceTwoFirstUnmappedNodes(left, right, unprocessed);
+        } while (unprocessed.hasNodes());
+    }
+
+    /**
+     * Finds the first unmapped child of the left node and the first unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoFirstUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Child first = this.findFirstUnmappedChild(left);
+        final Child second = this.findFirstUnmappedChild(right);
+        boolean result;
+        do {
+            result = this.execute(first.node, second.node);
+            if (result) {
+                unprocessed.removeOnePair();
+                break;
+            }
+            if (second.after != null) {
+                result = this.execute(first.node, second.after);
+            }
+            if (result) {
+                unprocessed.removeOnePair();
+                final Insertion insertion = new Insertion(second.node, left, first.before);
+                this.inserted.add(insertion);
+                this.rtl.put(second.node, null);
+                unprocessed.nodeWasInserted();
+                break;
+            }
+            if (first.after != null) {
+                result = this.execute(first.after, second.node);
+            }
+            if (result) {
+                unprocessed.removeOnePair();
+                this.deleted.add(first.node);
+                this.ltr.put(first.node, null);
+                unprocessed.nodeWasDeleted();
+                break;
+            }
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Finds the first unmapped child of the left node and the first unmapped child
+     *  of the right node and adds a 'Replace' operation for them.
+     * This is a universal operation because it reduces the number of unprocessed pairs,
+     *  and sooner or later there will be no nodes left and the algorithm will inevitably
+     *  terminate with some result. This is fate. However, this operation may produce
+     *  suboptimal results, and should therefore be used last.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     */
+    private void replaceTwoFirstUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findFirstUnmappedChild(left).node;
+        final Node second = this.findFirstUnmappedChild(right).node;
+        this.replaced.put(first, second);
+        this.ltr.put(first, second);
+        this.rtl.put(second, first);
+        unprocessed.removeOnePair();
+    }
+
+    /**
+     * Finds the first child node that has not yet been mapped.
+     * @param node Parent node
+     * @return First child node that has not yet been mapped
+     */
+    private Child findFirstUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Child result = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                Node before = null;
+                if (index > 0) {
+                    before = node.getChild(index - 1);
+                }
+                Node after = null;
+                if (index < count - 1) {
+                    after = node.getChild(index + 1);
+                }
+                result = new Child(child, before, after);
+                break;
+            }
+        }
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * Finds the last unmapped child of the left node and the last unmapped child
+     *  of the right node and tries to map them.
+     * @param left Left node
+     * @param right Related node to the left node
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if such nodes were found and mapped
+     */
+    private boolean mapTwoLastUnmappedNodes(final Node left, final Node right,
+        final Unprocessed unprocessed) {
+        final Node first = this.findLastUnmappedChild(left);
+        final Node second = this.findLastUnmappedChild(right);
+        final boolean result = this.execute(first, second);
+        if (result) {
+            unprocessed.removeOnePair();
+        }
+        return result;
+    }
+
+    /**
+     * Finds the last child node that has not yet been mapped.
+     * @param node Parent node
+     * @return Last child node that has not yet been mapped
+     */
+    private Node findLastUnmappedChild(final Node node) {
+        final int count = node.getChildCount();
+        Node result = null;
+        for (int index = count - 1; index >= 0; index = index - 1) {
+            final Node child = node.getChild(index);
+            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
+                result = child;
+                break;
+            }
+        }
+        assert result != null;
+        return result;
+    }
+
+    /**
+     * For all child nodes of the right node that are not yet mapped, performs
+     *  the 'Insert' operation.
+     * @param left Left node
+     * @param right Related node to the left node
+     */
+    private void insertAllNotYetMappedNodes(final Node left, final Node right) {
+        final int count = right.getChildCount();
+        Node after = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Node node = right.getChild(index);
+            if (this.rtl.containsKey(node)) {
+                after = this.rtl.get(node);
+            } else {
+                final Insertion insertion = new Insertion(node, left, after);
+                this.inserted.add(insertion);
+                this.rtl.put(node, null);
+                after = node;
+            }
+        }
+    }
+
+    /**
+     * For all child nodes of the left node that are not yet mapped, performs
+     *  the 'Delete' operation.
+     * @param left Left node
+     */
+    private void deleteAllNotYetMappedNodes(final Node left) {
+        final int count = left.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            final Node node = left.getChild(index);
+            if (!this.ltr.containsKey(node)) {
+                this.deleted.add(node);
+                this.ltr.put(node, null);
+            }
+        }
     }
 
     /**
@@ -206,12 +391,12 @@ final class TopDownAlgorithm {
         /**
          * Number of nodes to be added.
          */
-        private final int add;
+        private int add;
 
         /**
          * Number of nodes to be deleted.
          */
-        private final int delete;
+        private int delete;
 
         /**
          * Constructor.
@@ -229,15 +414,15 @@ final class TopDownAlgorithm {
          * Checks are there still unprocessed nodes.
          * @return Checking result ({@code true} if yes)
          */
-        boolean hasUnprocessedNodes() {
-            return this.left > 0 && this.right > 0;
+        boolean hasNodes() {
+            return this.left > 0 || this.right > 0;
         }
 
         /**
-         * Analyzes a case where the only actions that are allowed are additions.
+         * Analyzes a case where the only actions that are allowed are insertions.
          * @return Checking result, {@code true} if we can only add nodes
          */
-        boolean onlyActionIsToAddNodes() {
+        boolean onlyActionIsToInsertNodes() {
             return this.left == 0 && this.add == this.right;
         }
 
@@ -250,13 +435,80 @@ final class TopDownAlgorithm {
         }
 
         /**
-         * Marks that some child of the left node has been replaced by a child of the right node.
+         * Notes that some child node of the right node has been recognized as an inserted node.
          */
-        void nodeWasReplaced() {
+        void nodeWasInserted() {
+            assert this.right > 0;
+            this.right = this.right - 1;
+            if (this.add > 0) {
+                this.add = this.add - 1;
+            } else {
+                this.delete = this.delete + 1;
+            }
+        }
+
+        /**
+         * Notes that some child node of the right node has been recognized as a deleted node.
+         */
+        void nodeWasDeleted() {
+            assert this.left > 0;
+            this.left = this.left - 1;
+            if (this.delete > 0) {
+                this.delete = this.delete - 1;
+            } else {
+                this.add = this.add + 1;
+            }
+        }
+
+        /**
+         * Marks that some child of the left node has been mapped or replaced by a child
+         * of the right node.
+         */
+        void removeOnePair() {
             this.left = this.left - 1;
             this.right = this.right - 1;
             assert this.right >= this.add;
             assert this.left >= this.delete;
         }
     }
+
+    /**
+     * A child node found by some criteria.
+     *
+     * @since 1.1.0
+     */
+    private static class Child {
+        /**
+         * Child node itself.
+         */
+        private final Node node;
+
+        /**
+         * Child node before (if exists).
+         */
+        private final Node before;
+
+        /**
+         * Child node after (if exists).
+         */
+        private final Node after;
+
+        /**
+         * Constructor.
+         * @param node Child node itself
+         * @param before Child node before
+         * @param after Child node after
+         */
+        Child(final Node node, final Node before, final Node after) {
+            this.node = node;
+            this.before = before;
+            this.after = after;
+        }
+
+        @Override
+        public String toString() {
+            return this.node.toString();
+        }
+    }
 }
+
