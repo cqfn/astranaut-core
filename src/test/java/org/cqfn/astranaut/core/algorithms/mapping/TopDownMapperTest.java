@@ -160,7 +160,7 @@ class TopDownMapperTest {
     @Test
     void testPairOfTreesWhereTwoAddedAndOneReplaced() {
         final Node first = DraftNode.createByDescription("X(A,Y(B,C,D))");
-        final Node second = DraftNode.createByDescription("X(A,Y(B,E,D,F,F))");
+        final Node second = DraftNode.createByDescription("X(A,Y(B,E,F,D,F))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> insertions = mapping.getInserted();
@@ -173,5 +173,23 @@ class TopDownMapperTest {
         final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
         Assertions.assertEquals("C", pair.getKey().getTypeName());
         Assertions.assertEquals("E", pair.getValue().getTypeName());
+    }
+
+    @Test
+    void testPairOfTreesWhereTwoRemovedAndOneReplaced() {
+        final Node first = DraftNode.createByDescription("X(A,Y(B,E,F,D,F))");
+        final Node second = DraftNode.createByDescription("X(A,Y(B,C,D))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Node> deletions = mapping.getDeleted();
+        Assertions.assertEquals(2, deletions.size());
+        for (final Node deleted : deletions) {
+            Assertions.assertEquals("F", deleted.getTypeName());
+        }
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("E", pair.getKey().getTypeName());
+        Assertions.assertEquals("C", pair.getValue().getTypeName());
     }
 }
