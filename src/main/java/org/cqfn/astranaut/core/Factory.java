@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -55,9 +55,22 @@ public class Factory {
             final Type type = this.types.get(name);
             result = type.createBuilder();
         } else {
-            final DraftNode.Constructor draft = new DraftNode.Constructor();
-            draft.setName(name);
-            result = draft;
+            switch (name) {
+                case "Insert":
+                    result = new Insert.Constructor();
+                    break;
+                case "Replace":
+                    result = new Replace.Constructor();
+                    break;
+                case "Delete":
+                    result = new Delete.Constructor();
+                    break;
+                default:
+                    final DraftNode.Constructor draft = new DraftNode.Constructor();
+                    draft.setName(name);
+                    result = draft;
+                    break;
+            }
         }
         return result;
     }

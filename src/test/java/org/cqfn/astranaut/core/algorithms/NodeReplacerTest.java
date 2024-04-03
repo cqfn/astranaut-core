@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.algorithms;
 
 import java.util.Arrays;
+import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.EmptyTree;
+import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link NodeReplacer} class.
+ * Test for {@link ReplaceNode} class.
  *
  * @since 1.0
  */
@@ -70,7 +73,7 @@ class NodeReplacerTest {
                 )
             );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new NodeReplacer().replace(root, root, target);
+        final Pair<Node, Integer> result = new ReplaceNode().replace(root, root, target);
         Assertions.assertEquals(target, result.getKey());
         Assertions.assertEquals(-1, result.getValue());
     }
@@ -113,7 +116,7 @@ class NodeReplacerTest {
                 source
             );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
+        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
         Assertions.assertEquals(target, result.getKey().getChild(2));
         Assertions.assertEquals(2, result.getValue());
     }
@@ -154,7 +157,7 @@ class NodeReplacerTest {
             )
         );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
+        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
         Assertions.assertEquals(target, result.getKey().getChild(2).getChild(0));
         Assertions.assertEquals(left, result.getKey().getChild(0));
         Assertions.assertEquals(mid, result.getKey().getChild(1));
@@ -175,7 +178,7 @@ class NodeReplacerTest {
         );
         final Node source = this.createNode("444", "");
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
+        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
         Assertions.assertEquals(EmptyTree.INSTANCE, result.getKey());
         Assertions.assertEquals(-1, result.getValue());
     }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -85,6 +87,116 @@ public final class DraftNode implements Node {
     @Override
     public Node getChild(final int index) {
         return this.children.get(index);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(this.type.getName());
+        if (!this.data.isEmpty()) {
+            builder.append("<\"").append(this.data).append("\">");
+        }
+        if (!this.children.isEmpty()) {
+            boolean flag = false;
+            builder.append('(');
+            for (final Node child : this.children) {
+                if (flag) {
+                    builder.append(", ");
+                }
+                flag = true;
+                builder.append(child.toString());
+            }
+            builder.append(')');
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Creates a tree from draft nodes based on description.
+     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
+     *  separated by commas.
+     * @param description Description
+     * @return Root node of the tree created by description
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Node createByDescription(final String description) {
+        final CharacterIterator iterator = new StringCharacterIterator(description);
+        return DraftNode.createByDescription(iterator);
+    }
+
+    /**
+     * Creates a tree based on its description (recursive method).
+     * @param iterator Iterator by description characters
+     * @return Node of the tree with its children, created by description
+     */
+    private static Node createByDescription(final CharacterIterator iterator) {
+        char symbol = iterator.current();
+        final Node result;
+        final StringBuilder name = new StringBuilder();
+        while (symbol >= 'A' && symbol <= 'Z' || symbol >= 'a' && symbol <= 'z') {
+            name.append(symbol);
+            symbol = iterator.next();
+        }
+        if (name.length() > 0) {
+            final DraftNode.Constructor builder = new DraftNode.Constructor();
+            builder.setName(name.toString());
+            if (symbol == '<') {
+                builder.setData(DraftNode.parseData(iterator));
+                symbol = iterator.current();
+            }
+            if (symbol == '(') {
+                builder.setChildrenList(DraftNode.parseChildrenList(iterator));
+            }
+            result = builder.createNode();
+        } else {
+            result = null;
+        }
+        return result;
+    }
+
+    /**
+     * Parses data from description.
+     * @param iterator Iterator by description characters
+     * @return Node data, extracted from description
+     */
+    private static String parseData(final CharacterIterator iterator) {
+        assert iterator.current() == '<';
+        final StringBuilder data = new StringBuilder();
+        char symbol = iterator.next();
+        if (symbol == '\"') {
+            symbol = iterator.next();
+            while (symbol != '\"') {
+                data.append(symbol);
+                symbol = iterator.next();
+            }
+            symbol = iterator.next();
+        }
+        if (symbol == '>') {
+            iterator.next();
+        }
+        return data.toString();
+    }
+
+    /**
+     * Parses children list from description.
+     * @param iterator Iterator by description characters
+     * @return Children list, created by description
+     */
+    private static List<Node> parseChildrenList(final CharacterIterator iterator) {
+        assert iterator.current() == '(';
+        final List<Node> children = new LinkedList<>();
+        char next;
+        do {
+            iterator.next();
+            final Node child = DraftNode.createByDescription(iterator);
+            if (child != null) {
+                children.add(child);
+            }
+            next = iterator.current();
+            assert next == ')' || next == ',' || next == ' ';
+        } while (next != ')');
+        return children;
     }
 
     /**
@@ -219,6 +331,28 @@ public final class DraftNode implements Node {
             node.data = this.data;
             node.children = new ArrayList<>(this.children);
             return node;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder builder = new StringBuilder();
+            builder.append(this.name);
+            if (!this.data.isEmpty()) {
+                builder.append("<\"").append(this.data).append("\">");
+            }
+            if (!this.children.isEmpty()) {
+                boolean flag = false;
+                builder.append('(');
+                for (final Node child : this.children) {
+                    if (flag) {
+                        builder.append(", ");
+                    }
+                    flag = true;
+                    builder.append(child.toString());
+                }
+                builder.append(')');
+            }
+            return builder.toString();
         }
     }
 }

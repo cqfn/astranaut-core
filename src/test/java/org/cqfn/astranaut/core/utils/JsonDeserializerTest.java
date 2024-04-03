@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,9 @@ import java.util.TreeMap;
 import org.cqfn.astranaut.core.Factory;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
+import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.junit.jupiter.api.Assertions;
@@ -97,6 +99,21 @@ class JsonDeserializerTest {
         final Node node = deserializer.convert();
         Assertions.assertNotNull(node);
         Assertions.assertEquals("Example", node.getTypeName());
+    }
+
+    /**
+     * Testing the deserialization of a tree that contains actions.
+     */
+    @Test
+    void loadTreeWithActions() {
+        final String source = this.getFileContent("tree_containing_delete_action.json");
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> GreenFactory.INSTANCE
+        );
+        final Node actual = deserializer.convert();
+        final Node expected = LittleTrees.createTreeWithDeleteAction();
+        Assertions.assertTrue(expected.deepCompare(actual));
     }
 
     /**

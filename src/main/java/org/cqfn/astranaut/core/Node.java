@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * An abstract syntax tree node.
@@ -91,5 +92,38 @@ public interface Node {
             result[index] = this.getChild(index);
         }
         return Arrays.asList(result);
+    }
+
+    /**
+     * Performs some action for each child node.
+     * @param action An action
+     */
+    default void forEachChild(Consumer<Node> action) {
+        final int count = this.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            action.accept(this.getChild(index));
+        }
+    }
+
+    /**
+     * Performs a deep comparison of a node with another node,
+     * i.e., compares nodes, as well as recursively all children of nodes one-to-one.
+     * @param other Other node
+     * @return Comparison result, {@code true} if the nodes are equal
+     */
+    default boolean deepCompare(Node other) {
+        boolean equals;
+        if (this == other) {
+            equals = true;
+        } else {
+            final int count = this.getChildCount();
+            equals = count == other.getChildCount()
+                && this.getTypeName().equals(other.getTypeName())
+                && this.getData().equals(other.getData());
+            for (int index = 0; equals && index < count; index = index + 1) {
+                equals = this.getChild(index).deepCompare(other.getChild(index));
+            }
+        }
+        return equals;
     }
 }

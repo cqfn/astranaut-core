@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ import java.util.List;
  * @param <T> Item type
  * @since 1.0
  */
-public class ListUtils<T> {
+public final class ListUtils<T> {
     /**
      * List being built.
      */
@@ -66,7 +66,7 @@ public class ListUtils<T> {
      * Merges another list with the result. Null items are skipped.
      * @param list Another list
      */
-    public final void merge(final List<T> list) {
+    public void merge(final List<T> list) {
         if (list != null) {
             for (final T item : list) {
                 if (item != null) {

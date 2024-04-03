@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,8 @@
  */
 package org.cqfn.astranaut.core.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.kniazkov.json.JsonArray;
+import com.kniazkov.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import org.cqfn.astranaut.core.Node;
@@ -94,12 +92,12 @@ public final class JsonSerializer {
      */
     public String serialize() {
         final JsonObject obj = new JsonObject();
-        obj.add(JsonSerializer.STR_ROOT, this.convertNode(this.root));
+        final JsonObject child = obj.createObject(JsonSerializer.STR_ROOT);
+        this.convertNode(this.root, child);
         if (!this.language.isEmpty()) {
-            obj.addProperty(JsonSerializer.STR_LANGUAGE, this.language);
+            obj.addString(JsonSerializer.STR_LANGUAGE, this.language);
         }
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(obj);
+        return obj.toText("  ");
     }
 
     /**
@@ -122,22 +120,21 @@ public final class JsonSerializer {
     /**
      * Converts the node to a JSON object.
      * @param node The node
-     * @return The JSON object
+     * @param result Object to be filled with node data
      */
-    private JsonObject convertNode(final Node node) {
-        final JsonObject result = new JsonObject();
+    private void convertNode(final Node node, final JsonObject result) {
         final Type type = node.getType();
-        result.addProperty(JsonSerializer.STR_TYPE, type.getName());
+        result.addString(JsonSerializer.STR_TYPE, type.getName());
         final String data = node.getData();
         if (!data.isEmpty()) {
-            result.addProperty(JsonSerializer.STR_DATA, data);
+            result.addString(JsonSerializer.STR_DATA, data);
         }
         final int count = node.getChildCount();
         if (count > 0) {
-            final JsonArray children = new JsonArray();
-            result.add(JsonSerializer.STR_CHILDREN, children);
+            final JsonArray children = result.createArray(JsonSerializer.STR_CHILDREN);
             for (int index = 0; index < count; index = index + 1) {
-                children.add(this.convertNode(node.getChild(index)));
+                final JsonObject child = children.createObject();
+                this.convertNode(node.getChild(index), child);
             }
         }
         if (this.language.isEmpty()) {
@@ -146,6 +143,5 @@ public final class JsonSerializer {
                 this.language = property;
             }
         }
-        return result;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2023 Ivan Kniazkov
+ * Copyright (c) 2024 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,12 @@ public final class GreenFactory extends Factory {
     private static Map<String, Type> init() {
         final List<Type> types = Arrays.asList(
             Addition.TYPE,
+            ExpressionList.TYPE,
+            ExpressionStatement.TYPE,
             IntegerLiteral.TYPE,
+            Return.TYPE,
+            SimpleAssignment.TYPE,
+            StatementBlock.TYPE,
             Variable.TYPE
         );
         final Map<String, Type> map = new TreeMap<>();
