@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Fragment;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Type;
@@ -79,7 +80,13 @@ public class Subtree {
     public Node create(final Set<Node> nodes) {
         final Map<Node, List<Integer>> indexes = new HashMap<>();
         this.build(this.root, indexes, nodes);
-        return new SubNode(this.root, indexes);
+        final Node result;
+        if (indexes.get(this.root).isEmpty()) {
+            result = EmptyTree.INSTANCE;
+        } else {
+            result = new SubNode(this.root, indexes);
+        }
+        return result;
     }
 
     /**

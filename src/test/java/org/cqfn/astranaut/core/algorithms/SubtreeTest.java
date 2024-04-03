@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.EmptyTree;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -74,5 +75,55 @@ class SubtreeTest {
         );
         Assertions.assertEquals(2,  first.getChildCount());
         Assertions.assertEquals(3,  second.getChildCount());
+    }
+
+    @Test
+    void testingParametersThatProduceEmptyTree() {
+        final Node original = DraftNode.createByDescription("X(A,B,C)");
+        final Set<Node> set = new HashSet<>(
+            Arrays.asList(
+                DraftNode.createByDescription("D"),
+                DraftNode.createByDescription("E")
+            )
+        );
+        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final Node subtree = algorithm.create(set);
+        Assertions.assertSame(subtree, EmptyTree.INSTANCE);
+    }
+
+    @Test
+    void testingParametersThatProduceTreeIdenticalToOriginal() {
+        final Node original = DraftNode.createByDescription("X(A,B,C,D(E,F))");
+        final Set<Node> selected =
+            new NodeSelector(original).select((node, parents) -> true);
+        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final Node subtree = algorithm.create(selected);
+        Assertions.assertTrue(original.deepCompare(subtree));
+    }
+
+    @Test
+    void testSubtreeCreationWithExcludedNodes() {
+        final Node original = DraftNode.createByDescription("A(B,C(D,E,F))");
+        final Set<Node> selected =
+            new NodeSelector(original).select(
+                (node, parents) -> {
+                    final String name = node.getTypeName();
+                    return name.equals("B") || name.equals("E");
+                }
+            );
+        final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
+        final Node subtree = algorithm.create(selected);
+        final Node expected = DraftNode.createByDescription("A(C(D,F))");
+        Assertions.assertTrue(expected.deepCompare(subtree));
+    }
+
+    @Test
+    void testSubtreeCreationWhenAllNodesAreExcluded() {
+        final Node original = DraftNode.createByDescription("X(A,B,C(D,E))");
+        final Set<Node> selected =
+            new NodeSelector(original).select((node, parents) -> true);
+        final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
+        final Node subtree = algorithm.create(selected);
+        Assertions.assertSame(subtree, EmptyTree.INSTANCE);
     }
 }

@@ -23,9 +23,10 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
-import java.util.Stack;
 import org.cqfn.astranaut.core.Node;
 
 /**
@@ -104,7 +105,7 @@ public class NodeSelector {
          * @param root Root node of the tree
          */
         void walk(final Node root) {
-            this.check(root, new Stack<>());
+            this.check(root, new LinkedList<>());
         }
 
         /**
@@ -112,17 +113,17 @@ public class NodeSelector {
          * @param node The node
          * @param parents Stack containing the parents of the node
          */
-        void check(final Node node, final Stack<Node> parents) {
+        void check(final Node node, final Deque<Node> parents) {
             if (this.criteria.isApplicable(node, parents)) {
                 this.set.add(node);
             }
             final int count = node.getChildCount();
             if (count > 0) {
-                parents.push(node);
+                parents.addFirst(node);
                 for (int index = 0; index < count; index = index + 1) {
                     this.check(node.getChild(index), parents);
                 }
-                parents.pop();
+                parents.removeFirst();
             }
         }
     }
