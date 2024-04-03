@@ -206,5 +206,6 @@ For post-processing of previously created ASTs (described with `Node` classes):
 
 * Ivan Kniazkov, @kniazkov
 * Polina Volkhontseva, @pollyvolk
+* Andrei Grishchenko, @GingerYouth
 
 See our [Contributing policy](CONTRIBUTING.md).
