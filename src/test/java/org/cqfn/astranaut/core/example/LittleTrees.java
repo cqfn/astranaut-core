@@ -211,10 +211,10 @@ public final class LittleTrees {
         final Node after =
             wrapExpressionWithStatement(
                 createAssignment(
-                createVariable("x"),
-                createIntegerLiteral(1)
-            )
-        );
+                    createVariable("x"),
+                    createIntegerLiteral(1)
+                )
+            );
         final Node inserted = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
