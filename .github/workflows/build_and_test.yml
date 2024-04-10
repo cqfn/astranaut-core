@@ -21,9 +21,7 @@ jobs:
         cache: maven
     - name: Maven Build and Verify
       run: mvn -B clean verify
-    - uses: codecov/codecov-action@v3
+    - uses: codecov/codecov-action@v2
       with:
         name: Code coverage report
         fail_ci_if_error: true
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
