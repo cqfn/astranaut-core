@@ -37,7 +37,6 @@ import org.cqfn.astranaut.core.algorithms.hash.SimpleHash;
  *
  * @since 1.1.5
  */
-@SuppressWarnings("PMD.ConstructorShouldDoInitialization")
 public class Identical {
     /**
      * The root of the tree to search in.
@@ -48,11 +47,6 @@ public class Identical {
      * The {@link SimpleHash} storage for the tree nodes.
      */
     private final SimpleHash hashes;
-
-    /**
-     * The map of the calculated hashes and corresponding nodes.
-     */
-    private final Map<Integer, Set<Node>> results = new HashMap<>();
 
     /**
      * Constructor.
@@ -70,8 +64,9 @@ public class Identical {
      * @return The set of sets with identical nodes.
      */
     public Set<Set<Node>> get() {
-        this.search(this.root);
-        return this.results.values()
+        final Map<Integer, Set<Node>> result = new HashMap<>();
+        this.search(this.root, result);
+        return result.values()
             .stream()
             .filter(set -> set.size() >= 2)
             .collect(Collectors.toSet());
@@ -82,16 +77,17 @@ public class Identical {
      * adds entries to the resulting map.
      *
      * @param node The current node to process
+     * @param result Where to put the result
      */
-    private void search(final Node node) {
+    private void search(final Node node, final Map<Integer, Set<Node>> result) {
         if (!node.getData().isEmpty()) {
-            this.results.computeIfAbsent(
+            result.computeIfAbsent(
                 this.hashes.calculate(node),
                 s -> new HashSet<>()
             ).add(node);
         }
         for (final Node child: node.getChildrenList()) {
-            this.search(child);
+            this.search(child, result);
         }
     }
 }
