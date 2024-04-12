@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.cqfn.astranaut.core.Node;
 
 /**
@@ -48,21 +50,36 @@ public class DeepTraversal {
      * Processes nodes starting from the root. Processes a node first.
      * If the stopping criterion is not reached, recursively processes all children of it,
      * starting from the first one. Once a node is found that satisfies the criterion,
-     * stops traversal.
+     * stops traversal.<br/>
+     * And yes, you can use this algorithm not only to find nodes, but also just to traverse
+     * the tree in the specific order.
      * @param visitor Visitor that processes nodes
      * @return Found node or {@code null} if no node is found
      */
-    public Node findFirstFromRoot(final Visitor visitor) {
-        return DeepTraversal.findFirstFromRoot(this.root, visitor);
+    public Node findFirst(final Visitor visitor) {
+        return DeepTraversal.findFirst(this.root, visitor);
     }
 
     /**
-     * Recursive method that implements the "Find the first starting from the root" algorithm.
+     * Processes nodes starting from the root.
+     * If a node matches the criterion, adds it to the set and does not check
+     * the children of this node, otherwise it does.
+     * @param visitor Visitor that processes nodes
+     * @return List of found nodes (can be empty, but not {@code null})
+     */
+    public List<Node> findAll(final Visitor visitor) {
+        final List<Node> list = new ArrayList<>(0);
+        DeepTraversal.findAll(this.root, visitor, list);
+        return list;
+    }
+
+    /**
+     * Recursive method that implements the "Find first starting from the root" algorithm.
      * @param node Current node to be processed
      * @param visitor Visitor that processes nodes
      * @return Found node or {@code null} if no node is found
      */
-    private static Node findFirstFromRoot(final Node node, final Visitor visitor) {
+    private static Node findFirst(final Node node, final Visitor visitor) {
         Node result = null;
         final boolean stop = visitor.process(node);
         if (stop) {
@@ -70,10 +87,28 @@ public class DeepTraversal {
         } else {
             final int count = node.getChildCount();
             for (int index = 0; index < count && result == null; index = index + 1) {
-                result = DeepTraversal.findFirstFromRoot(node.getChild(index), visitor);
+                result = DeepTraversal.findFirst(node.getChild(index), visitor);
             }
         }
         return result;
+    }
+
+    /**
+     * Recursive method that implements the "Find all starting from the root" algorithm.
+     * @param node Current node to be processed
+     * @param visitor Visitor that processes nodes
+     * @param list List of found nodes
+     */
+    private static void findAll(final Node node, final Visitor visitor, final List<Node> list) {
+        final boolean found = visitor.process(node);
+        if (found) {
+            list.add(node);
+        } else {
+            final int count = node.getChildCount();
+            for (int index = 0; index < count; index = index + 1) {
+                DeepTraversal.findAll(node.getChild(index), visitor, list);
+            }
+        }
     }
 
     /**

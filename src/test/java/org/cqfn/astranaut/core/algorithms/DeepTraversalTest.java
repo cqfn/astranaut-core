@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
+import java.util.List;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
@@ -35,19 +36,37 @@ import org.junit.jupiter.api.Test;
  */
 class DeepTraversalTest {
     @Test
-    void testFindFirstFromRoot() {
-        final Node root = DraftNode.createByDescription("A(B,C,D(E<\"test\">,F<\"xxx\">)))");
+    void testFindFirst() {
+        final Node root = DraftNode.createByDescription("A(B,C,D(E<\"eee\">,F<\"fff\">)))");
         final DeepTraversal traversal = new DeepTraversal(root);
-        final Node node = traversal.findFirstFromRoot(node1 -> !node1.getData().isEmpty());
+        final Node node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertNotNull(node);
         Assertions.assertEquals("E", node.getTypeName());
     }
 
     @Test
-    void testNotFoundFirstFromRoot() {
+    void testNotFoundFirst() {
         final Node root = DraftNode.createByDescription("A(B,C,D)");
         final DeepTraversal traversal = new DeepTraversal(root);
-        final Node node = traversal.findFirstFromRoot(node1 -> !node1.getData().isEmpty());
+        final Node node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertNull(node);
+    }
+
+    @Test
+    void testFindAll() {
+        final Node root = DraftNode.createByDescription("A(B,C<\"ccc\">,D(E<\"eee\">)))");
+        final DeepTraversal traversal = new DeepTraversal(root);
+        final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
+        Assertions.assertNotNull(list);
+        Assertions.assertEquals(2, list.size());
+    }
+
+    @Test
+    void testFindNothing() {
+        final Node root = DraftNode.createByDescription("A(X,Y,Z)");
+        final DeepTraversal traversal = new DeepTraversal(root);
+        final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
+        Assertions.assertNotNull(list);
+        Assertions.assertTrue(list.isEmpty());
     }
 }
