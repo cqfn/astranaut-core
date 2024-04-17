@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.algorithms;
 
 import java.util.List;
+import java.util.Optional;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
 import org.junit.jupiter.api.Assertions;
@@ -39,17 +40,17 @@ class DeepTraversalTest {
     void testFindFirst() {
         final Node root = DraftNode.createByDescription("A(B,C,D(E<\"eee\">,F<\"fff\">)))");
         final DeepTraversal traversal = new DeepTraversal(root);
-        final Node node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
-        Assertions.assertNotNull(node);
-        Assertions.assertEquals("E", node.getTypeName());
+        final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
+        Assertions.assertTrue(node.isPresent());
+        Assertions.assertEquals("E", node.get().getTypeName());
     }
 
     @Test
     void testNotFoundFirst() {
         final Node root = DraftNode.createByDescription("A(B,C,D)");
         final DeepTraversal traversal = new DeepTraversal(root);
-        final Node node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
-        Assertions.assertNull(node);
+        final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
+        Assertions.assertFalse(node.isPresent());
     }
 
     @Test

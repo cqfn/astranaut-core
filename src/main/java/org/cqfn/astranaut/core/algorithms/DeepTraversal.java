@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.cqfn.astranaut.core.Node;
 
 /**
@@ -54,10 +55,10 @@ public class DeepTraversal {
      * And yes, you can use this algorithm not only to find nodes, but also just to traverse
      * the tree in the specific order.
      * @param visitor Visitor that processes nodes
-     * @return Found node or {@code null} if no node is found
+     * @return Found node (optional)
      */
-    public Node findFirst(final Visitor visitor) {
-        return DeepTraversal.findFirst(this.root, visitor);
+    public Optional<Node> findFirst(final Visitor visitor) {
+        return Optional.ofNullable(DeepTraversal.findFirst(this.root, visitor));
     }
 
     /**
