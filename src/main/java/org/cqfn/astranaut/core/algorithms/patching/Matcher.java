@@ -24,9 +24,11 @@
 package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.DeepTraversal;
 
 /**
  * The matcher matches syntax tree and patterns.
@@ -53,18 +55,47 @@ class Matcher {
      * @return Nodes that match the root node of the pattern
      */
     Set<Node> match(final DifferenceNode pattern) {
+        final DeepTraversal deep = new DeepTraversal(this.root);
+        final List<Node> preset = deep.findAll(
+            node -> node.getTypeName().equals(pattern.getTypeName()) &&
+                node.getData().equals(pattern.getData())
+        );
         final Set<Node> set = new HashSet<>();
-
+        set.addAll(preset);
         return set;
     }
 
     /**
-     * Matches the subtree and the pattern.
-     * @param node Root node of the subtree
-     * @param pattern Root node of the pattern
+     * Checks if the children of the original tree node matches the children of the pattern node.
+     * @param node Node of the original tree
+     * @param diff Node of the difference tree (i.e. pattern)
      * @return Matching result ({@code true} if matches)
      */
-    private static boolean matchSubtree(final Node node, final DifferenceNode pattern) {
+    private static boolean checkChildren(final Node node, final DifferenceNode diff) {
+        final int count = node.getChildCount();
+        for (int left = 0; left < count; left = left + 1) {
+
+        }
         return false;
+    }
+
+    /**
+     * Finds the first child of the original tree node that matches the first child
+     * of the pattern node.
+     * @param node Node of the original tree
+     * @param diff Node of the difference tree (i.e. pattern)
+     * @return Index of the found child or a negative number if no match is found
+     */
+    private static int findFirstMatchingChild(final Node node, final DifferenceNode diff) {
+        final int left = node.getChildCount();
+        final int right = diff.getChildCount();
+        assert right > 0;
+        final Node sample = diff.getChild(0);
+
+        for (int index = 0; left - index >= right; index = index + 1) {
+            final Node child = node.getChild(index);
+        }
+        return false;
+
     }
 }

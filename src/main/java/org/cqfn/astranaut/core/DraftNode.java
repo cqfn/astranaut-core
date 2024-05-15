@@ -196,6 +196,7 @@ public final class DraftNode implements Node {
             next = iterator.current();
             assert next == ')' || next == ',' || next == ' ';
         } while (next != ')');
+        iterator.next();
         return children;
     }
 
