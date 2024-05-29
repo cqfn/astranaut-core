@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 class MatcherTest {
     @Test
     void findSubtreeInATree() {
-        final Node tree = DraftNode.createByDescription("X(Y(A(B,C)),A(B,C))");
+        final Node tree = DraftNode.createByDescription("X(Y(A(B,C)),A(B,C),A(B,D))");
         final DifferenceNode subtree = new DifferenceNode(DraftNode.createByDescription("A(B,C)"));
         final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(subtree);

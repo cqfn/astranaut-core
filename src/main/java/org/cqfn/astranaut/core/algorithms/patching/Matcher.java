@@ -61,41 +61,40 @@ class Matcher {
                 node.getData().equals(pattern.getData())
         );
         final Set<Node> set = new HashSet<>();
-        set.addAll(preset);
+        for (final Node node : preset) {
+            final boolean matches = Matcher.checkNode(node, pattern);
+            if (matches) {
+                set.add(node);
+            }
+        }
         return set;
     }
 
     /**
-     * Checks if the children of the original tree node matches the children of the pattern node.
+     * Checks if the node of the original tree matches the pattern node.
      * @param node Node of the original tree
-     * @param diff Node of the difference tree (i.e. pattern)
+     * @param sample Node of the difference tree (i.e. pattern)
      * @return Matching result ({@code true} if matches)
      */
-    private static boolean checkChildren(final Node node, final DifferenceNode diff) {
-        final int count = node.getChildCount();
-        for (int left = 0; left < count; left = left + 1) {
-
-        }
-        return false;
-    }
-
-    /**
-     * Finds the first child of the original tree node that matches the first child
-     * of the pattern node.
-     * @param node Node of the original tree
-     * @param diff Node of the difference tree (i.e. pattern)
-     * @return Index of the found child or a negative number if no match is found
-     */
-    private static int findFirstMatchingChild(final Node node, final DifferenceNode diff) {
+    private static boolean checkNode(final Node node, final Node sample) {
         final int left = node.getChildCount();
-        final int right = diff.getChildCount();
-        assert right > 0;
-        final Node sample = diff.getChild(0);
-
-        for (int index = 0; left - index >= right; index = index + 1) {
-            final Node child = node.getChild(index);
+        final int right = sample.getChildCount();
+        boolean result = left >= right && node.getTypeName().equals(sample.getTypeName()) &&
+            node.getData().equals(sample.getData());
+        if (result) {
+            for (int index = 0; index < left - right + 1; index = index + 1) {
+                result = true;
+                for (int offset = 0; result && offset < right; offset = offset + 1) {
+                    result = Matcher.checkNode(
+                        node.getChild(index + offset),
+                        sample.getChild(offset)
+                    );
+                }
+                if (result) {
+                    break;
+                }
+            }
         }
-        return false;
-
+        return result;
     }
 }
