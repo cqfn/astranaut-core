@@ -57,8 +57,8 @@ class Matcher {
     Set<Node> match(final DifferenceNode pattern) {
         final DeepTraversal deep = new DeepTraversal(this.root);
         final List<Node> preset = deep.findAll(
-            node -> node.getTypeName().equals(pattern.getTypeName()) &&
-                node.getData().equals(pattern.getData())
+            node -> node.getTypeName().equals(pattern.getTypeName())
+                && node.getData().equals(pattern.getData())
         );
         final Set<Node> set = new HashSet<>();
         for (final Node node : preset) {
@@ -79,8 +79,9 @@ class Matcher {
     private static boolean checkNode(final Node node, final Node sample) {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
-        boolean result = left >= right && node.getTypeName().equals(sample.getTypeName()) &&
-            node.getData().equals(sample.getData());
+        boolean result = left >= right
+            && node.getTypeName().equals(sample.getTypeName())
+            && node.getData().equals(sample.getData());
         if (result) {
             for (int index = 0; index < left - right + 1; index = index + 1) {
                 result = true;

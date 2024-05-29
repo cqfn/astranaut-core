@@ -47,4 +47,18 @@ class MatcherTest {
             Assertions.assertEquals("A", node.getTypeName());
         }
     }
+
+    @Test
+    void findReducedSubtreeInATree() {
+        final Node tree = DraftNode.createByDescription("X(A(B,C(F),D,E),A(B,D,E),A(B))");
+        final DifferenceNode subtree = new DifferenceNode(
+            DraftNode.createByDescription("A(C(F),D)")
+        );
+        final Matcher matcher = new Matcher(tree);
+        final Set<Node> found = matcher.match(subtree);
+        Assertions.assertEquals(1, found.size());
+        final Node node = found.iterator().next();
+        Assertions.assertEquals("A", node.getTypeName());
+        Assertions.assertEquals(4, node.getChildCount());
+    }
 }
