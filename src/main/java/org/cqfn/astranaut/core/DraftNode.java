@@ -27,9 +27,12 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Draft node for wrapping the results of third-party parsers
@@ -121,16 +124,35 @@ public final class DraftNode implements Node {
      */
     @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
     public static Node createByDescription(final String description) {
+        return DraftNode.createByDescription(description, null);
+    }
+
+    /**
+     * Creates a tree from draft nodes based on description.
+     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
+     *  separated by commas.
+     * @param description Description
+     * @param nodes Collection in which to place the nodes to be created, sorted by type name
+     * @return Root node of the tree created by description
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Node createByDescription(
+        final String description,
+        final Map<String, Set<Node>> nodes) {
         final CharacterIterator iterator = new StringCharacterIterator(description);
-        return DraftNode.createByDescription(iterator);
+        return DraftNode.createByDescription(iterator, nodes);
     }
 
     /**
      * Creates a tree based on its description (recursive method).
      * @param iterator Iterator by description characters
+     * @param nodes Collection in which to place the nodes to be created, sorted by type name
      * @return Node of the tree with its children, created by description
      */
-    private static Node createByDescription(final CharacterIterator iterator) {
+    private static Node createByDescription(
+        final CharacterIterator iterator,
+        final Map<String, Set<Node>> nodes) {
         char symbol = iterator.current();
         final Node result;
         final StringBuilder name = new StringBuilder();
@@ -146,9 +168,14 @@ public final class DraftNode implements Node {
                 symbol = iterator.current();
             }
             if (symbol == '(') {
-                builder.setChildrenList(DraftNode.parseChildrenList(iterator));
+                builder.setChildrenList(DraftNode.parseChildrenList(iterator, nodes));
             }
             result = builder.createNode();
+            if (nodes != null) {
+                final Set<Node> set =
+                    nodes.computeIfAbsent(result.getTypeName(), k -> new HashSet<>());
+                set.add(result);
+            }
         } else {
             result = null;
         }
@@ -181,15 +208,18 @@ public final class DraftNode implements Node {
     /**
      * Parses children list from description.
      * @param iterator Iterator by description characters
+     * @param nodes Collection in which to place the nodes to be created, sorted by type name
      * @return Children list, created by description
      */
-    private static List<Node> parseChildrenList(final CharacterIterator iterator) {
+    private static List<Node> parseChildrenList(
+        final CharacterIterator iterator,
+        final Map<String, Set<Node>> nodes) {
         assert iterator.current() == '(';
         final List<Node> children = new LinkedList<>();
         char next;
         do {
             iterator.next();
-            final Node child = DraftNode.createByDescription(iterator);
+            final Node child = DraftNode.createByDescription(iterator, nodes);
             if (child != null) {
                 children.add(child);
             }
@@ -213,7 +243,7 @@ public final class DraftNode implements Node {
 
         /**
          * Constructor.
-         * @param name The type name
+         * @param name The type name`
          */
         TypeImpl(final String name) {
             this.name = name;

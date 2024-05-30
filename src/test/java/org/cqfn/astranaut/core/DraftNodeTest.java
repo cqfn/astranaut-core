@@ -24,7 +24,11 @@
 package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -74,6 +78,36 @@ class DraftNodeTest {
         final String serialized = "Name<\"data\">(A, B, C)";
         Assertions.assertEquals(serialized, ctor.toString());
         Assertions.assertEquals(serialized, ctor.createNode().toString());
+    }
+
+    /**
+     * Testing {@link DraftNode#createByDescription(String, Map)} method.
+     */
+    @Test
+    void testExtendedDescriptorProcessor() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node root = DraftNode.createByDescription("X(A,A,B(C,D))", nodes);
+        Assertions.assertSame(
+            root,
+            nodes.computeIfAbsent(
+                "X",
+                s -> Collections.singleton(EmptyTree.INSTANCE)
+            ).iterator().next()
+        );
+        Assertions.assertEquals(
+            2,
+            nodes.computeIfAbsent(
+                "A",
+                s -> Collections.singleton(EmptyTree.INSTANCE)
+            ).size()
+        );
+        Assertions.assertEquals(
+            2,
+            nodes.computeIfAbsent(
+                "B",
+                s -> Collections.singleton(EmptyTree.INSTANCE)
+            ).iterator().next().getChildCount()
+        );
     }
 
     /**
