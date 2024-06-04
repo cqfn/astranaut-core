@@ -26,8 +26,11 @@ package org.cqfn.astranaut.core.algorithms.patching;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.cqfn.astranaut.core.Action;
+import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.Replace;
 import org.cqfn.astranaut.core.algorithms.DeepTraversal;
 
 /**
@@ -73,10 +76,16 @@ class Matcher {
     /**
      * Checks if the node of the original tree matches the pattern node.
      * @param node Node of the original tree
-     * @param sample Node of the difference tree (i.e. pattern)
+     * @param pattern Node of the difference tree (i.e. pattern)
      * @return Matching result ({@code true} if matches)
      */
-    private static boolean checkNode(final Node node, final Node sample) {
+    private static boolean checkNode(final Node node, final Node pattern) {
+        final Node sample;
+        if (pattern instanceof Replace || pattern instanceof Delete) {
+            sample = ((Action) pattern).getBefore();
+        } else {
+            sample = pattern;
+        }
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = left >= right

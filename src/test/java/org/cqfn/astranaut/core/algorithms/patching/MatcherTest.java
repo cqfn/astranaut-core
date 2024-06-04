@@ -23,10 +23,13 @@
  */
 package org.cqfn.astranaut.core.algorithms.patching;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -60,5 +63,20 @@ class MatcherTest {
         final Node node = found.iterator().next();
         Assertions.assertEquals("A", node.getTypeName());
         Assertions.assertEquals(4, node.getChildCount());
+    }
+
+    @Test
+    void findPatternWithReplacementInATree() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
+        final DifferenceNode pattern = builder.getRoot();
+        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Matcher matcher = new Matcher(tree);
+        final Set<Node> found = matcher.match(pattern);
+        Assertions.assertEquals(1, found.size());
+        final Node node = found.iterator().next();
+        Assertions.assertEquals("A", node.getTypeName());
     }
 }
