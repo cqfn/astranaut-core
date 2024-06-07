@@ -34,16 +34,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link Matcher} class.
+ * Testing {@link PatternMatcher} class.
  *
  * @since 1.1.5
  */
-class MatcherTest {
+class PatternMatcherTest {
     @Test
     void findSubtreeInATree() {
         final Node tree = DraftNode.createByDescription("X(Y(A(B,C)),A(B,C),A(B,D))");
         final DifferenceNode subtree = new DifferenceNode(DraftNode.createByDescription("A(B,C)"));
-        final Matcher matcher = new Matcher(tree);
+        final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(subtree);
         Assertions.assertEquals(2, found.size());
         for (final Node node : found) {
@@ -57,7 +57,7 @@ class MatcherTest {
         final DifferenceNode subtree = new DifferenceNode(
             DraftNode.createByDescription("A(C(F),D)")
         );
-        final Matcher matcher = new Matcher(tree);
+        final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(subtree);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
@@ -73,7 +73,7 @@ class MatcherTest {
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
         final DifferenceNode pattern = builder.getRoot();
         final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
-        final Matcher matcher = new Matcher(tree);
+        final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();

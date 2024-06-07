@@ -32,24 +32,39 @@ import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Replace;
 import org.cqfn.astranaut.core.algorithms.DeepTraversal;
+import org.cqfn.astranaut.core.utils.deserializer.ActionList;
 
 /**
  * The matcher matches syntax tree and patterns.
  *
  * @since 1.1.5
  */
-class Matcher {
+class PatternMatcher {
     /**
      * Root node of the tree in which patterns are searched.
      */
     private final Node root;
 
     /**
+     * List of actions to be performed on the original tree to apply the pattern.
+     */
+    private final ActionList actions;
+
+    /**
      * Constructor.
      * @param root Root node of the tree in which patterns are searched
      */
-    Matcher(final Node root) {
+    PatternMatcher(final Node root) {
         this.root = root;
+        this.actions = new ActionList();
+    }
+
+    /**
+     * Returns the list of actions that were compiled when the pattern was matched.
+     * @return Action list
+     */
+    public ActionList getActionList() {
+        return this.actions;
     }
 
     /**
@@ -65,7 +80,7 @@ class Matcher {
         );
         final Set<Node> set = new HashSet<>();
         for (final Node node : preset) {
-            final boolean matches = Matcher.checkNode(node, pattern);
+            final boolean matches = this.checkNode(node, null, pattern);
             if (matches) {
                 set.add(node);
             }
@@ -76,33 +91,47 @@ class Matcher {
     /**
      * Checks if the node of the original tree matches the pattern node.
      * @param node Node of the original tree
+     * @param parent Parent node of the node being checked.
      * @param pattern Node of the difference tree (i.e. pattern)
      * @return Matching result ({@code true} if matches)
      */
-    private static boolean checkNode(final Node node, final Node pattern) {
+    @SuppressWarnings("PMD.UnusedFormalParameter")
+    private boolean checkNode(final Node node, final Node parent, final Node pattern) {
         final Node sample;
         if (pattern instanceof Replace || pattern instanceof Delete) {
             sample = ((Action) pattern).getBefore();
         } else {
             sample = pattern;
         }
+        final boolean result = node.getChildCount() >= sample.getChildCount()
+            && node.getTypeName().equals(sample.getTypeName())
+            && node.getData().equals(sample.getData())
+            && this.checkChildren(node, sample);
+        if (result && pattern instanceof Replace) {
+            this.actions.replaceNode(node, ((Action) pattern).getAfter());
+        }
+        return result;
+    }
+
+    /**
+     * Checks if the children of the node of the original tree
+     *  matches the children of the pattern node.
+     * @param node Node of the original tree
+     * @param sample Node of the difference tree (i.e. pattern)
+     * @return Matching result ({@code true} if matches)
+     */
+    private boolean checkChildren(final Node node, final Node sample) {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
-        boolean result = left >= right
-            && node.getTypeName().equals(sample.getTypeName())
-            && node.getData().equals(sample.getData());
-        if (result) {
-            for (int index = 0; index < left - right + 1; index = index + 1) {
-                result = true;
-                for (int offset = 0; result && offset < right; offset = offset + 1) {
-                    result = Matcher.checkNode(
-                        node.getChild(index + offset),
-                        sample.getChild(offset)
-                    );
-                }
-                if (result) {
-                    break;
-                }
+        boolean result = false;
+        for (int index = 0; !result && index < left - right + 1; index = index + 1) {
+            result = true;
+            for (int offset = 0; result && offset < right; offset = offset + 1) {
+                result = this.checkNode(
+                    node.getChild(index + offset),
+                    node,
+                    sample.getChild(offset)
+                );
             }
         }
         return result;
