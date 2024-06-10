@@ -109,6 +109,8 @@ class PatternMatcher {
             && this.checkChildren(node, sample);
         if (result && pattern instanceof Replace) {
             this.actions.replaceNode(node, ((Action) pattern).getAfter());
+        } else if (result & pattern instanceof Delete) {
+            this.actions.deleteNode(node);
         }
         return result;
     }

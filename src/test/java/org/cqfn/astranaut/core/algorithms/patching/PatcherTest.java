@@ -52,4 +52,18 @@ class PatcherTest {
         final Node expected = DraftNode.createByDescription("X(Y,A(C,D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
+
+    @Test
+    void patchPatternWithDeletion() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        builder.deleteNode(nodes.get("B").iterator().next());
+        final DifferenceNode pattern = builder.getRoot();
+        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Patcher patcher = new DefaultPatcher();
+        final Node result = patcher.patch(tree, pattern);
+        final Node expected = DraftNode.createByDescription("X(Y,A(D),Z)");
+        Assertions.assertTrue(expected.deepCompare(result));
+    }
 }

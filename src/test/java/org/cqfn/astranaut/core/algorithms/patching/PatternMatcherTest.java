@@ -79,4 +79,19 @@ class PatternMatcherTest {
         final Node node = found.iterator().next();
         Assertions.assertEquals("A", node.getTypeName());
     }
+
+    @Test
+    void findPatternWithDeletionInATree() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        builder.deleteNode(nodes.get("B").iterator().next());
+        final DifferenceNode pattern = builder.getRoot();
+        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Set<Node> found = matcher.match(pattern);
+        Assertions.assertEquals(1, found.size());
+        final Node node = found.iterator().next();
+        Assertions.assertEquals("A", node.getTypeName());
+    }
 }
