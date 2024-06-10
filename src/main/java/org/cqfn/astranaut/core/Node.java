@@ -24,7 +24,9 @@
 package org.cqfn.astranaut.core;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 /**
@@ -32,7 +34,7 @@ import java.util.function.Consumer;
  *
  * @since 1.0
  */
-public interface Node {
+public interface Node extends Iterable<Node> {
     /**
      * Returns the fragment associated with the node.
      * @return The fragment
@@ -125,5 +127,51 @@ public interface Node {
             }
         }
         return equals;
+    }
+
+    @Override
+    default Iterator<Node> iterator() {
+        return new NodeIterator(this);
+    }
+
+    /**
+     * Iterator that enumerates the children of a node.
+     *
+     * @since 1.1.5
+     */
+    class NodeIterator implements Iterator<Node> {
+        /**
+         * Node.
+         */
+        private final Node node;
+
+        /**
+         * Current index.
+         */
+        private int index;
+
+        /**
+         * Constructor.
+         * @param node Node whose children should be enumerated.
+         */
+        private NodeIterator(final Node node) {
+            this.node = node;
+            this.index = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return this.index < this.node.getChildCount();
+        }
+
+        @Override
+        public Node next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            final Node child = this.node.getChild(this.index);
+            this.index = this.index + 1;
+            return child;
+        }
     }
 }

@@ -24,11 +24,13 @@
 package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.cqfn.astranaut.core.Action;
 import org.cqfn.astranaut.core.Delete;
 import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.Insert;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.Replace;
 import org.cqfn.astranaut.core.algorithms.DeepTraversal;
@@ -103,10 +105,11 @@ class PatternMatcher {
         } else {
             sample = pattern;
         }
-        final boolean result = node.getChildCount() >= sample.getChildCount()
-            && node.getTypeName().equals(sample.getTypeName())
-            && node.getData().equals(sample.getData())
-            && this.checkChildren(node, sample);
+        boolean result = node.getTypeName().equals(sample.getTypeName())
+            && node.getData().equals(sample.getData());
+        if (result && node.getChildCount() > 0) {
+            result = this.checkChildren(node, sample);
+        }
         if (result && pattern instanceof Replace) {
             this.actions.replaceNode(node, ((Action) pattern).getAfter());
         } else if (result & pattern instanceof Delete) {
@@ -126,14 +129,26 @@ class PatternMatcher {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = false;
-        for (int index = 0; !result && index < left - right + 1; index = index + 1) {
+        for (int index = 0; !result && index < left; index = index + 1) {
             result = true;
-            for (int offset = 0; result && offset < right; offset = offset + 1) {
-                result = this.checkNode(
-                    node.getChild(index + offset),
-                    node,
-                    sample.getChild(offset)
-                );
+            final Iterator<Node> iterator = sample.iterator();
+            int offset = 0;
+            Node current = null;
+            while (result && offset < right && iterator.hasNext()) {
+                final Node child = iterator.next();
+                if (child instanceof Insert) {
+                    this.actions.insertNodeAfter(((Insert) child).getAfter(), node, current);
+                } else if (index + offset >= left) {
+                    result = false;
+                } else {
+                    current = node.getChild(index + offset);
+                    result = this.checkNode(
+                        current,
+                        node,
+                        child
+                    );
+                    offset = offset + 1;
+                }
             }
         }
         return result;

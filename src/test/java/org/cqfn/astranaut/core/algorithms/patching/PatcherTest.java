@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,26 @@ import org.junit.jupiter.api.Test;
  * @since 1.1.5
  */
 class PatcherTest {
+    @Test
+    void patchPatternWithInsertion() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node prepattern = DraftNode.createByDescription("A(B)", nodes);
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        builder.insertNode(
+            new Insertion(
+                DraftNode.createByDescription("C"),
+                prepattern,
+                nodes.get("B").iterator().next()
+            )
+        );
+        final DifferenceNode pattern = builder.getRoot();
+        final Node tree = DraftNode.createByDescription("X(Y,A(B),Z)");
+        final Patcher patcher = new DefaultPatcher();
+        final Node result = patcher.patch(tree, pattern);
+        final Node expected = DraftNode.createByDescription("X(Y,A(B,C),Z)");
+        Assertions.assertTrue(expected.deepCompare(result));
+    }
+
     @Test
     void patchPatternWithReplacement() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
