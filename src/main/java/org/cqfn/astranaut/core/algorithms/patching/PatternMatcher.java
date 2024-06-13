@@ -29,9 +29,10 @@ import java.util.List;
 import java.util.Set;
 import org.cqfn.astranaut.core.Action;
 import org.cqfn.astranaut.core.Delete;
-import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.Hole;
 import org.cqfn.astranaut.core.Insert;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.PatternNode;
 import org.cqfn.astranaut.core.Replace;
 import org.cqfn.astranaut.core.algorithms.DeepTraversal;
 import org.cqfn.astranaut.core.utils.deserializer.ActionList;
@@ -74,7 +75,7 @@ class PatternMatcher {
      * @param pattern Root node of the pattern
      * @return Nodes that match the root node of the pattern
      */
-    Set<Node> match(final DifferenceNode pattern) {
+    Set<Node> match(final PatternNode pattern) {
         final DeepTraversal deep = new DeepTraversal(this.root);
         final List<Node> preset = deep.findAll(
             node -> node.getTypeName().equals(pattern.getTypeName())
@@ -105,10 +106,10 @@ class PatternMatcher {
         } else {
             sample = pattern;
         }
-        boolean result = node.getTypeName().equals(sample.getTypeName())
-            && node.getData().equals(sample.getData());
-        if (result && node.getChildCount() > 0) {
-            result = this.checkChildren(node, sample);
+        boolean result = node.getTypeName().equals(sample.getTypeName());
+        if (!(pattern instanceof Hole)) {
+            result = result && node.getData().equals(sample.getData());
+            result = result && (node.getChildCount() == 0 || this.checkChildren(node, sample));
         }
         if (result && pattern instanceof Replace) {
             this.actions.replaceNode(node, ((Action) pattern).getAfter());

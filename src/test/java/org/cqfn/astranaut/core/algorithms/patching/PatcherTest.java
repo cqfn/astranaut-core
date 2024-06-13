@@ -26,10 +26,10 @@ package org.cqfn.astranaut.core.algorithms.patching;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.PatternNode;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ class PatcherTest {
                 nodes.get("B").iterator().next()
             )
         );
-        final DifferenceNode pattern = builder.getRoot();
+        final PatternNode pattern = new PatternNode(builder.getRoot());
         final Node tree = DraftNode.createByDescription("X(Y,A(B),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
@@ -66,7 +66,7 @@ class PatcherTest {
         final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
-        final DifferenceNode pattern = builder.getRoot();
+        final PatternNode pattern = new PatternNode(builder.getRoot());
         final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
@@ -80,7 +80,7 @@ class PatcherTest {
         final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
-        final DifferenceNode pattern = builder.getRoot();
+        final PatternNode pattern = new PatternNode(builder.getRoot());
         final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);

@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.algorithms.patching;
 import java.util.Set;
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.PatternNode;
 import org.cqfn.astranaut.core.utils.deserializer.ActionList;
 
 /**
@@ -36,7 +37,7 @@ import org.cqfn.astranaut.core.utils.deserializer.ActionList;
  */
 public final class DefaultPatcher implements Patcher {
     @Override
-    public Node patch(final Node source, final DifferenceNode pattern) {
+    public Node patch(final Node source, final PatternNode pattern) {
         final PatternMatcher matcher = new PatternMatcher(source);
         final Set<Node> nodes = matcher.match(pattern);
         final Node result;
