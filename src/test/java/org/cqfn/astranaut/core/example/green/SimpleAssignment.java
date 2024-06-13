@@ -116,6 +116,11 @@ public final class SimpleAssignment implements Assignment {
         return this.right;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s = %s", this.left.toString(), this.right.toString());
+    }
+
     /**
      * Type descriptor of the 'SimpleAssignment' node.
      *

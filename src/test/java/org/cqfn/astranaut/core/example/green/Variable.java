@@ -88,6 +88,11 @@ public final class Variable implements AssignableExpression {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
+    public String toString() {
+        return this.data;
+    }
+
     /**
      * Type descriptor of the 'Addition' node.
      *

@@ -84,6 +84,11 @@ public final class Hole implements PatternItem {
         return this.number;
     }
 
+    @Override
+    public String toString() {
+        return this.getData();
+    }
+
     /**
      * Type implementation for a hole based on a prototype.
      *

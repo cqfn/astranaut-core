@@ -110,6 +110,11 @@ public final class Addition implements BinaryExpression {
         return this.right;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s + %s", this.left.toString(), this.right.toString());
+    }
+
     /**
      * Type descriptor of the 'Addition' node.
      *
