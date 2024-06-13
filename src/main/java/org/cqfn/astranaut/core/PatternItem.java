@@ -24,10 +24,9 @@
 package org.cqfn.astranaut.core;
 
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * An element of a pattern.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+public interface PatternItem extends Node {
 }

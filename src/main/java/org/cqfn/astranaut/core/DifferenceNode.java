@@ -223,7 +223,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
     }
 
     /**
-     * Transforms children nodes to convertible ones.
+     * Transforms children nodes to difference ones.
      * @return List of difference nodes
      */
     private List<DifferenceTreeItem> initChildrenList() {
