@@ -47,7 +47,7 @@ public final class PatternNode implements PatternItem {
      * Constructor.
      * @param diff Node of the differential tree from which the pattern is built
      */
-    private PatternNode(final DifferenceNode diff) {
+    public PatternNode(final DifferenceNode diff) {
         this.prototype = diff.getPrototype();
         this.children = PatternNode.initChildrenList(diff);
     }
@@ -91,6 +91,23 @@ public final class PatternNode implements PatternItem {
     }
 
     /**
+     * Turns a child node into a hole.
+     * @param node Child node
+     * @param number Hole number
+     * @return Result of operation, @return {@code true} if node was transformer
+     */
+    public boolean makeHole(final Node node, final int number) {
+        boolean result = false;
+        final int index = this.findChildIndex(node);
+        if (index >= 0) {
+            final Hole hole = new Hole(node.getType(), number);
+            this.children.set(index, hole);
+            result = true;
+        }
+        return result;
+    }
+
+    /**
      * Transforms children nodes of difference node to pattern items.
      * @param diff Difference node
      * @return List of pattern item
@@ -106,6 +123,25 @@ public final class PatternNode implements PatternItem {
                 );
             } else if (child instanceof Action) {
                 result.add((PatternItem) child);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Searches the index of a child element by its prototype.
+     * @param node Prototype of the node whose index is to be found
+     * @return Index or -1 if there is no such node
+     */
+    private int findChildIndex(final Node node) {
+        int result = -1;
+        final int count = this.children.size();
+        for (int index = 0; index < count; index = index + 1) {
+            final PatternItem child = this.children.get(index);
+            if (child instanceof PatternNode
+                && node == ((PatternNode) child).getPrototype()) {
+                result = index;
+                break;
             }
         }
         return result;
