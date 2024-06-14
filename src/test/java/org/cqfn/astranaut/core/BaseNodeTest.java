@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,5 +47,26 @@ class BaseNodeTest {
         final boolean deleted = second.deleteNode(0);
         Assertions.assertTrue(deleted);
         Assertions.assertFalse(first.deepCompare(second));
+    }
+
+    /**
+     * Testing {@link  Node#deepCompare(Node)} method.
+     */
+    @Test
+    void testNodeIterator() {
+        final Node root = DraftNode.createByDescription("A(B,C)");
+        final Iterator<Node> iterator = root.iterator();
+        Assertions.assertTrue(iterator.hasNext());
+        Assertions.assertEquals("B", iterator.next().getTypeName());
+        Assertions.assertTrue(iterator.hasNext());
+        Assertions.assertEquals("C", iterator.next().getTypeName());
+        Assertions.assertFalse(iterator.hasNext());
+        boolean oops = false;
+        try {
+            iterator.next();
+        } catch (final NoSuchElementException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
     }
 }

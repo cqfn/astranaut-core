@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.Builder;
+import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
@@ -49,6 +50,19 @@ import org.junit.jupiter.api.Test;
  * @since 1.1.5
  */
 class PatcherTest {
+    @Test
+    void patchingByPatternThatDoesNotMatch() {
+        final Node source = DraftNode.createByDescription("A(B,C,D)");
+        final PatternNode pattern = new PatternNode(
+            new DifferenceNode(
+                DraftNode.createByDescription("D")
+            )
+        );
+        final Patcher patcher = new DefaultPatcher();
+        final Node result = patcher.patch(source, pattern);
+        Assertions.assertTrue(source.deepCompare(result));
+    }
+
     @Test
     void patchPatternWithInsertion() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
