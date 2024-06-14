@@ -23,14 +23,23 @@
  */
 package org.cqfn.astranaut.core.algorithms.patching;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.PatternNode;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
+import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.example.green.Addition;
+import org.cqfn.astranaut.core.example.green.ExpressionStatement;
+import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.cqfn.astranaut.core.example.green.SimpleAssignment;
+import org.cqfn.astranaut.core.example.green.Variable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -86,5 +95,75 @@ class PatcherTest {
         final Node result = patcher.patch(tree, pattern);
         final Node expected = DraftNode.createByDescription("X(Y,A(D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
+    }
+
+    @Test
+    void patchPatternWithHole() {
+        Builder ctor = new Variable.Constructor();
+        ctor.setData("a");
+        Node first = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("1");
+        Node second = ctor.createNode();
+        ctor = new Addition.Constructor();
+        ctor.setChildrenList(Arrays.asList(first, second));
+        Node addition = ctor.createNode();
+        ctor = new Variable.Constructor();
+        ctor.setData("x");
+        Node variable = ctor.createNode();
+        ctor = new SimpleAssignment.Constructor();
+        ctor.setChildrenList(Arrays.asList(variable, addition));
+        Node assignment = ctor.createNode();
+        ctor = new ExpressionStatement.Constructor();
+        ctor.setChildrenList(Collections.singletonList(assignment));
+        final Node stmt = ctor.createNode();
+        final Patcher patcher = new DefaultPatcher();
+        final PatternNode pattern = PatcherTest.createPatternWithHole();
+        final Node patched = patcher.patch(stmt, pattern);
+        ctor = new Variable.Constructor();
+        ctor.setData("a");
+        first = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("2");
+        second = ctor.createNode();
+        ctor = new Addition.Constructor();
+        ctor.setChildrenList(Arrays.asList(first, second));
+        addition = ctor.createNode();
+        ctor = new Variable.Constructor();
+        ctor.setData("x");
+        variable = ctor.createNode();
+        ctor = new SimpleAssignment.Constructor();
+        ctor.setChildrenList(Arrays.asList(variable, addition));
+        assignment = ctor.createNode();
+        ctor = new ExpressionStatement.Constructor();
+        ctor.setChildrenList(Collections.singletonList(assignment));
+        final Node expected = ctor.createNode();
+        Assertions.assertTrue(expected.deepCompare(patched));
+    }
+
+    /**
+     * Creates pattern with a hole.
+     * @return A pattern
+     */
+    private static PatternNode createPatternWithHole() {
+        Builder ctor = new Variable.Constructor();
+        ctor.setData("w");
+        final Node first = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("1");
+        final Node second = ctor.createNode();
+        ctor = new Addition.Constructor();
+        ctor.setChildrenList(Arrays.asList(first, second));
+        final Node addition = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("2");
+        final Node replacement = ctor.createNode();
+        final DifferenceTreeBuilder dtbld = new DifferenceTreeBuilder(addition);
+        dtbld.replaceNode(second, replacement);
+        final PatternBuilder pbld = new PatternBuilder(dtbld.getRoot());
+        pbld.makeHole(first, 0);
+        final PatternNode pattern = pbld.getRoot();
+        Assertions.assertNotNull(pattern);
+        return pattern;
     }
 }
