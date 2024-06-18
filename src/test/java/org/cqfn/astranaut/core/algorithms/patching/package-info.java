@@ -21,13 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
 
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * This package contains tests covering patching algorithms.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
-}
+package org.cqfn.astranaut.core.algorithms.patching;

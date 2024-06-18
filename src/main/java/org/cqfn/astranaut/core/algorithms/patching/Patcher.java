@@ -21,13 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.algorithms.patching;
+
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.PatternNode;
 
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * Interface to an algorithm that applies patches, i.e. makes some changes in the syntax tree
+ * based on patterns describing such changes. Patterns are differential trees.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+public interface Patcher {
+    /**
+     * Applies a pattern to a syntax tree.
+     * @param source Root node of a syntax tree
+     * @param pattern Root node af a pattern
+     * @return Root node of updated syntax tree
+     */
+    Node patch(Node source, PatternNode pattern);
 }

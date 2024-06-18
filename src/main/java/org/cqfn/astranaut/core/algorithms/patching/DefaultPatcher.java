@@ -21,13 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core;
+package org.cqfn.astranaut.core.algorithms.patching;
+
+import java.util.Set;
+import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.PatternNode;
+import org.cqfn.astranaut.core.utils.deserializer.ActionList;
 
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * Default algorithm that applies patches, i.e. makes some changes in the syntax tree
+ * based on patterns describing such changes. Patterns are differential trees.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+public final class DefaultPatcher implements Patcher {
+    @Override
+    public Node patch(final Node source, final PatternNode pattern) {
+        final PatternMatcher matcher = new PatternMatcher(source);
+        final Set<Node> nodes = matcher.match(pattern);
+        final Node result;
+        if (nodes.isEmpty()) {
+            result = source;
+        } else {
+            final ActionList actions = matcher.getActionList();
+            final DifferenceNode diff = actions.convertTreeToDifferenceTree(source);
+            result = diff.getAfter();
+        }
+        return result;
+    }
 }

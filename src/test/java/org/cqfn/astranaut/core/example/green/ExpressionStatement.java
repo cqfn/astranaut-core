@@ -101,6 +101,11 @@ public final class ExpressionStatement implements Statement {
         return this.children.get(index);
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s;", this.expression.toString());
+    }
+
     /**
      * Returns the child with the 'expression' tag.
      * @return The node

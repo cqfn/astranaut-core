@@ -192,6 +192,27 @@ class DifferenceNodeTest {
     }
 
     /**
+     * Tests {@link DifferenceNode#getParent()} method.
+     */
+    @Test
+    void testParentReference() {
+        final DifferenceNode root = new DifferenceNode(DraftNode.createByDescription("A(B,C)"));
+        final Node child = root.getChild(0);
+        Assertions.assertTrue(child instanceof DifferenceNode);
+        Assertions.assertSame(((DifferenceNode) child).getParent(), root);
+    }
+
+    /**
+     * Tests {@link DifferenceNode#getParent()} method.
+     */
+    @Test
+    void testDiffNodeAsString() {
+        final String description = "X(Y, Z)";
+        final DifferenceNode root = new DifferenceNode(DraftNode.createByDescription(description));
+        Assertions.assertEquals(description, root.toString());
+    }
+
+    /**
      * Returns content of the specified file.
      * @param name The name of the file
      * @return The file content

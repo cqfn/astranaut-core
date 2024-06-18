@@ -34,7 +34,7 @@ import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
 /**
  * Builder of difference syntax tree, that is, one that stores changes between two trees.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
 public final class DifferenceTreeBuilder {
     /**

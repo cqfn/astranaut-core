@@ -34,7 +34,7 @@ import org.cqfn.astranaut.core.Node;
  *
  * @since 1.1.4
  */
-public class NodeSelector {
+public final class NodeSelector {
     /**
      * The root node of the tree from which the nodes will be selected.
      */

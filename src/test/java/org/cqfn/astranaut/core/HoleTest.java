@@ -23,11 +23,32 @@
  */
 package org.cqfn.astranaut.core;
 
+import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * Tests covering {@link Hole} class.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+class HoleTest {
+    @Test
+    void testBaseInterface() {
+        final Hole hole = new Hole(IntegerLiteral.TYPE, 1);
+        Assertions.assertSame(EmptyFragment.INSTANCE, hole.getFragment());
+        Assertions.assertEquals(0, hole.getChildCount());
+        Assertions.assertNull(hole.getChild(0));
+        Assertions.assertEquals(1, hole.getNumber());
+        final Type type = hole.getType();
+        final String typename = "IntegerLiteral";
+        Assertions.assertEquals(typename, type.getName());
+        Assertions.assertEquals(typename, type.getHierarchy().get(0));
+        Assertions.assertEquals("purple", type.getProperty("color"));
+        Assertions.assertEquals("", type.getProperty("abracadabra"));
+        final Builder builder = type.createBuilder();
+        builder.setData("0");
+        final Node node = builder.createNode();
+        Assertions.assertEquals(typename, node.getTypeName());
+    }
 }
