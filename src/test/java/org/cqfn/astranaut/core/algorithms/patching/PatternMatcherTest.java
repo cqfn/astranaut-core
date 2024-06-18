@@ -138,4 +138,30 @@ class PatternMatcherTest {
         final Node node = found.iterator().next();
         Assertions.assertEquals("A", node.getTypeName());
     }
+
+    @Test
+    void matchPatternWithData() {
+        final PatternNode pattern = new PatternNode(
+            new DifferenceNode(
+                DraftNode.createByDescription("A(B<\"test\">)")
+            )
+        );
+        final Node tree = DraftNode.createByDescription("X(Y, A(B<\"test\">), Z)");
+        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Set<Node> found = matcher.match(pattern);
+        Assertions.assertEquals(1, found.size());
+    }
+
+    @Test
+    void matchPatternThatIsTooBig() {
+        final PatternNode pattern = new PatternNode(
+            new DifferenceNode(
+                DraftNode.createByDescription("A(B,C,D,E,F)")
+            )
+        );
+        final Node tree = DraftNode.createByDescription("X(Y,A(B,C),Z)");
+        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Set<Node> found = matcher.match(pattern);
+        Assertions.assertEquals(0, found.size());
+    }
 }

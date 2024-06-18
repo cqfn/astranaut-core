@@ -155,6 +155,19 @@ class PatcherTest {
         Assertions.assertTrue(expected.deepCompare(patched));
     }
 
+    @Test
+    void patchWithPatternThatDoesNotMatch() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Node prepattern = DraftNode.createByDescription("E(B,D)", nodes);
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
+        final PatternNode pattern = new PatternNode(builder.getRoot());
+        final Node tree = DraftNode.createByDescription("X(Y,K(B,D),Z)");
+        final Patcher patcher = new DefaultPatcher();
+        final Node result = patcher.patch(tree, pattern);
+        Assertions.assertTrue(tree.deepCompare(result));
+    }
+
     /**
      * Creates pattern with a hole.
      * @return A pattern

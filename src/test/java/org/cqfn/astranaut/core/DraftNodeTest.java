@@ -81,6 +81,18 @@ class DraftNodeTest {
     }
 
     /**
+     * Testing {@link DraftNode.Constructor#addChild(Node)} method.
+     */
+    @Test
+    void addNodeTest() {
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        ctor.setName("X");
+        ctor.addChild(DraftNode.createByDescription("A"));
+        final String serialized = "X(A)";
+        Assertions.assertEquals(serialized, ctor.createNode().toString());
+    }
+
+    /**
      * Testing {@link DraftNode#createByDescription(String, Map)} method.
      */
     @Test
@@ -108,6 +120,31 @@ class DraftNodeTest {
                 s -> Collections.singleton(EmptyTree.INSTANCE)
             ).iterator().next().getChildCount()
         );
+    }
+
+    @Test
+    void typeTest() {
+        final Node node = DraftNode.createByDescription("A");
+        final Type type = node.getType();
+        Assertions.assertEquals("A", type.getName());
+        Assertions.assertEquals(0, type.getChildTypes().size());
+        Assertions.assertEquals(1, type.getHierarchy().size());
+        Assertions.assertEquals("A", type.getHierarchy().get(0));
+        final Builder builder = type.createBuilder();
+        final Node clone = builder.createNode();
+        Assertions.assertTrue(node.deepCompare(clone));
+    }
+
+    @Test
+    void wrongConstructionTest() {
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        boolean oops = false;
+        try {
+            ctor.createNode();
+        } catch (final IllegalStateException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
     }
 
     /**

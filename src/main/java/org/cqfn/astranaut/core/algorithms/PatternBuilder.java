@@ -38,7 +38,7 @@ public final class PatternBuilder {
     /**
      * Default node info (to avoid null checks).
      */
-    private static final NodeInfo DEFAULT_INFO = new NodeInfo(null, null);
+    private static final NodeInfo DEFAULT_INFO = new NodeInfo(null);
 
     /**
      * The relationship of the nodes to their parents and corresponding difference nodes.
@@ -92,7 +92,7 @@ public final class PatternBuilder {
      */
     private static Map<Node, NodeInfo> buildNodeInfoMap(final PatternNode root) {
         final Map<Node, NodeInfo> map = new HashMap<>();
-        map.put(root.getPrototype(), new NodeInfo(root, null));
+        map.put(root.getPrototype(), new NodeInfo(null));
         PatternBuilder.buildNodeInfoMap(map, root);
         return map;
     }
@@ -107,7 +107,7 @@ public final class PatternBuilder {
             child -> {
                 if (child instanceof PatternNode) {
                     final PatternNode node = (PatternNode) child;
-                    map.put(node.getPrototype(), new NodeInfo(node, parent));
+                    map.put(node.getPrototype(), new NodeInfo(parent));
                     PatternBuilder.buildNodeInfoMap(map, node);
                 }
             }
@@ -115,16 +115,12 @@ public final class PatternBuilder {
     }
 
     /**
-     * Some additional information about each node needed to insert, replace, or delete nodes.
+     * Some additional information about each node needed to make holes.
+     * So far there's only a parent node here, but we may need something else.
      *
      * @since 1.1.0
      */
     private static final class NodeInfo {
-        /**
-         * The corresponding pattern node.
-         */
-        private final PatternNode pnode;
-
         /**
          * The parent node.
          */
@@ -132,20 +128,10 @@ public final class PatternBuilder {
 
         /**
          * Constructor.
-         * @param pnode The corresponding pattern node
          * @param parent The parent node
          */
-        NodeInfo(final PatternNode pnode, final PatternNode parent) {
-            this.pnode = pnode;
+        NodeInfo(final PatternNode parent) {
             this.parent = parent;
-        }
-
-        /**
-         * Returns corresponding patter node.
-         * @return Pattern node
-         */
-        public PatternNode getPatternNode() {
-            return this.pnode;
         }
 
         /**

@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.DifferenceNode;
+import org.cqfn.astranaut.core.DraftNode;
 import org.cqfn.astranaut.core.Hole;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.PatternNode;
@@ -73,5 +74,16 @@ class PatternBuilderTest {
         final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
         Assertions.assertTrue(hole.isPresent());
         Assertions.assertEquals("#1",  hole.get().getData());
+    }
+
+    @Test
+    void wrongHole() {
+        final PatternBuilder builder = new PatternBuilder(
+            new DifferenceNode(
+                DraftNode.createByDescription("X")
+            )
+        );
+        final boolean result = builder.makeHole(DraftNode.createByDescription("A"), 0);
+        Assertions.assertFalse(result);
     }
 }
