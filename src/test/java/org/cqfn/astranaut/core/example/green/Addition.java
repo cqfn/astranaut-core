@@ -26,6 +26,9 @@ package org.cqfn.astranaut.core.example.green;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.cqfn.astranaut.core.Builder;
 import org.cqfn.astranaut.core.ChildDescriptor;
 import org.cqfn.astranaut.core.ChildrenMapper;
@@ -110,6 +113,11 @@ public final class Addition implements BinaryExpression {
         return this.right;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s + %s", this.left.toString(), this.right.toString());
+    }
+
     /**
      * Type descriptor of the 'Addition' node.
      *
@@ -154,6 +162,15 @@ public final class Addition implements BinaryExpression {
                 )
             );
 
+        /**
+         * Properties.
+         */
+        private static final Map<String, String> PROPERTIES = Stream.of(
+            new String[][] {
+                {"color", "green"},
+                {"language", "common"},
+            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
         @Override
         public String getName() {
             return TypeImpl.NAME;
@@ -171,7 +188,7 @@ public final class Addition implements BinaryExpression {
 
         @Override
         public String getProperty(final String name) {
-            return "";
+            return TypeImpl.PROPERTIES.getOrDefault(name, "");
         }
 
         @Override

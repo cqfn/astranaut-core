@@ -217,8 +217,13 @@ public final class DifferenceNode implements DifferenceTreeItem {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return this.prototype.toString();
+    }
+
     /**
-     * Transforms children nodes to convertible ones.
+     * Transforms children nodes to difference ones.
      * @return List of difference nodes
      */
     private List<DifferenceTreeItem> initChildrenList() {

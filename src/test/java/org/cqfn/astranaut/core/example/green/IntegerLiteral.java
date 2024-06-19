@@ -88,6 +88,11 @@ public final class IntegerLiteral implements Expression {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
+    public String toString() {
+        return this.getData();
+    }
+
     /**
      * Type descriptor of the 'Addition' node.
      *

@@ -23,11 +23,40 @@
  */
 package org.cqfn.astranaut.core;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 /**
- * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
+ * Tests covering {@link PatternNode} class.
  *
- * @since 1.1.0
+ * @since 1.1.5
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+class PatternNodeTest {
+    @Test
+    void testBaseInterface() {
+        final Fragment fragment = new Fragment() {
+            @Override
+            public Source getSource() {
+                return null;
+            }
+
+            @Override
+            public Position getBegin() {
+                return () -> 0;
+            }
+
+            @Override
+            public Position getEnd() {
+                return () -> 100;
+            }
+        };
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        ctor.setFragment(fragment);
+        ctor.setName("X");
+        ctor.setData("test");
+        final Node node = ctor.createNode();
+        final PatternNode pattern = new PatternNode(new DifferenceNode(node));
+        Assertions.assertEquals(100, pattern.getFragment().getEnd().getIndex());
+        Assertions.assertEquals("X<\"test\">", pattern.toString());
+    }
 }

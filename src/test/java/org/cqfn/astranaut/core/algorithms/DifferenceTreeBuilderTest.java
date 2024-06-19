@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import org.cqfn.astranaut.core.DifferenceNode;
 import org.cqfn.astranaut.core.DraftNode;
+import org.cqfn.astranaut.core.Insertion;
 import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
@@ -194,5 +195,40 @@ class DifferenceTreeBuilderTest {
         final DifferenceNode diff = builder.getRoot();
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+    }
+
+    @Test
+    void testWrongInsertion() {
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            DraftNode.createByDescription("X")
+        );
+        final boolean result = builder.insertNode(
+            new Insertion(
+                DraftNode.createByDescription("A"),
+                DraftNode.createByDescription("B")
+            )
+        );
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testWrongReplacement() {
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            DraftNode.createByDescription("X")
+        );
+        final boolean result = builder.replaceNode(
+            DraftNode.createByDescription("A"),
+            DraftNode.createByDescription("B")
+        );
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    void testWrongDeletion() {
+        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+            DraftNode.createByDescription("X")
+        );
+        final boolean result = builder.deleteNode(DraftNode.createByDescription("A"));
+        Assertions.assertFalse(result);
     }
 }
