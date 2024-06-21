@@ -25,13 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

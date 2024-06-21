@@ -23,10 +23,11 @@
  */
 package org.cqfn.astranaut.core.utils.deserializer;
 
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.FactorySelector;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.FactorySelector;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.

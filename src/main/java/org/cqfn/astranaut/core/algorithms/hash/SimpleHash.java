@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.algorithms.hash;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Computes the simple hash of a node, that is, a hash that is computed from the type

@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Top-down mapping algorithm.

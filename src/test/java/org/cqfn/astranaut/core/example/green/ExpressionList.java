@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.EmptyFragment;
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Node that describes the 'ExpressionList' type.

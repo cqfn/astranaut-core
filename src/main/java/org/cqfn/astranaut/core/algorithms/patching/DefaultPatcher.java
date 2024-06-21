@@ -24,10 +24,10 @@
 package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.Set;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
-import org.cqfn.astranaut.core.utils.deserializer.ActionList;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.PatternNode;
 
 /**
  * Default algorithm that applies patches, i.e. makes some changes in the syntax tree

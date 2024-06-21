@@ -24,9 +24,9 @@
 package org.cqfn.astranaut.core.utils.visualizer;
 
 import java.util.Objects;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Renders a DOT file from a tree.

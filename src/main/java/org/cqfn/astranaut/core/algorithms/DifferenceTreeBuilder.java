@@ -25,11 +25,11 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Builder of difference syntax tree, that is, one that stores changes between two trees.

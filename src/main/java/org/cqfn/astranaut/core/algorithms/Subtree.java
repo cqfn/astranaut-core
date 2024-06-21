@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Algorithm that produces a subtree from the original tree.

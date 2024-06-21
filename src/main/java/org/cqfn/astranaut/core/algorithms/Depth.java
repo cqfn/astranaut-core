@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Algorithm for measuring the depth of syntax trees.

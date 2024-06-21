@@ -25,9 +25,9 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.PatternNode;
 
 /**
  * Pattern builder.

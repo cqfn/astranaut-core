@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Performs a deep traversal of the syntax tree.

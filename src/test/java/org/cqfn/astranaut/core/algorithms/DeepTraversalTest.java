@@ -25,8 +25,8 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.List;
 import java.util.Optional;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

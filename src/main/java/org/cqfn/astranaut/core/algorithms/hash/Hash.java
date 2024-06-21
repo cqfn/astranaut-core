@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.hash;
 
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * An interface that calculates the hash of a node.

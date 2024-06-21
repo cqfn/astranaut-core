@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.hash.SimpleHash;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A class which finds and returns identical nodes in a tree.

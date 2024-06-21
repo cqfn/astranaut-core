@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Factory that creates 'green' nodes.

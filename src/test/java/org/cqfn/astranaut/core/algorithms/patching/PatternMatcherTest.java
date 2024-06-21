@@ -26,13 +26,13 @@ package org.cqfn.astranaut.core.algorithms.patching;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.PatternNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -25,11 +25,11 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;

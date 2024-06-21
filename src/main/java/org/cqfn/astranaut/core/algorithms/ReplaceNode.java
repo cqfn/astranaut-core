@@ -25,9 +25,9 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 
 /**

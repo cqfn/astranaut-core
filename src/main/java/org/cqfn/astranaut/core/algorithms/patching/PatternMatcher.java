@@ -27,15 +27,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.cqfn.astranaut.core.Action;
-import org.cqfn.astranaut.core.Delete;
-import org.cqfn.astranaut.core.Hole;
-import org.cqfn.astranaut.core.Insert;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
-import org.cqfn.astranaut.core.Replace;
 import org.cqfn.astranaut.core.algorithms.DeepTraversal;
-import org.cqfn.astranaut.core.utils.deserializer.ActionList;
+import org.cqfn.astranaut.core.base.Action;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.Delete;
+import org.cqfn.astranaut.core.base.Hole;
+import org.cqfn.astranaut.core.base.Insert;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Replace;
 
 /**
  * The matcher matches syntax tree and patterns.

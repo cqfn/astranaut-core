@@ -25,8 +25,8 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 
 import java.util.Map;
 import java.util.Set;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A mapping from one syntactic tree ('left') to another ('right'), i.e.,

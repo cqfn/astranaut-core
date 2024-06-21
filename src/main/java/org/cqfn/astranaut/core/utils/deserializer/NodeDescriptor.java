@@ -25,13 +25,14 @@ package org.cqfn.astranaut.core.utils.deserializer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.Delete;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.Insert;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Replace;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.Delete;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Insert;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Replace;
 
 /**
  * Node descriptor represented as it is stored in the JSON file.

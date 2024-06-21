@@ -23,9 +23,6 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
-
 /**
  * A syntax tree, which represents the hierarchical structure of source code,
  *  depicting the syntactic structure and relationships between code elements.

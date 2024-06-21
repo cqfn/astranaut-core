@@ -27,8 +27,8 @@ import com.kniazkov.json.JsonArray;
 import com.kniazkov.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Converts a tree to a string that contains JSON object.

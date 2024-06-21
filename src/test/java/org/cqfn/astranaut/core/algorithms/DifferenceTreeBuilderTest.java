@@ -23,13 +23,13 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
+import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
