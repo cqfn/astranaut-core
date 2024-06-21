@@ -30,7 +30,12 @@ import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 /**
- * An abstract syntax tree node.
+ * The {@code Node} interface represents a node in an abstract syntax tree (AST).
+ * This is our foundational interface on which the entire platform is built.
+ * The interface contains a minimal number of non-default methods, making it
+ * easy to create custom nodes by requiring the implementation of only a few methods.
+ * Additionally, the interface is designed to allow for automatic generation
+ * of classes based on it.
  *
  * @since 1.0
  */
@@ -39,7 +44,9 @@ public interface Node extends Iterable<Node> {
      * Returns the fragment associated with the node.
      * @return The fragment
      */
-    Fragment getFragment();
+    default Fragment getFragment() {
+        return EmptyFragment.INSTANCE;
+    }
 
     /**
      * Returns the type of the node.
@@ -54,6 +61,15 @@ public interface Node extends Iterable<Node> {
     String getData();
 
     /**
+     * Returns the value of some custom property (depends on implementation).
+     * @param name The name of property
+     * @return Property value (if the property is not defined, returns an empty string)
+     */
+    default String getProperty(final String name) {
+        return this.getType().getProperty(name);
+    }
+
+    /**
      * Returns the number of children.
      * @return Child node count
      */
@@ -65,15 +81,6 @@ public interface Node extends Iterable<Node> {
      * @return A node
      */
     Node getChild(int index);
-
-    /**
-     * Returns the value of some property (depends on implementation).
-     * @param name The name of property
-     * @return Property value (if the property is not defined, returns an empty string)
-     */
-    default String getProperty(final String name) {
-        return this.getType().getProperty(name);
-    }
 
     /**
      * Returns the name of the type.
