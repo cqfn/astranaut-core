@@ -67,6 +67,15 @@ public interface Node extends Iterable<Node> {
     Node getChild(int index);
 
     /**
+     * Returns the value of some property (depends on implementation).
+     * @param name The name of property
+     * @return Property value (if the property is not defined, returns an empty string)
+     */
+    default String getProperty(final String name) {
+        return this.getType().getProperty(name);
+    }
+
+    /**
      * Returns the name of the type.
      * @return The name
      */
