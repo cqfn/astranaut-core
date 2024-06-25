@@ -39,6 +39,7 @@ import java.util.Set;
  *  where no data consistency checks are performed. The constructor of this class allows
  *  the creation of any tree structure without validation, making it suitable for testing
  *  purposes and for displaying trees obtained from third-party parsers in the ASTranaut format.
+ * DraftNode is designed to be immutable.
  *
  * @since 1.0
  */

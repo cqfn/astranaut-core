@@ -422,7 +422,7 @@ public interface Node {
 
         @Override
         public List<Node> subList(final int start, final int end) {
-            if (start < 0 || end >= this.node.getChildCount() || start > end) {
+            if (start < 0 || end > this.node.getChildCount() || start >= end) {
                 throw new IndexOutOfBoundsException();
             }
             return new AbstractList<Node>() {

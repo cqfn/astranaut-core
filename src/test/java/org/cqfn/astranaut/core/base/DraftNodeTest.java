@@ -38,10 +38,6 @@ import org.junit.jupiter.api.Test;
  * @since 1.1.0
  */
 class DraftNodeTest {
-    /**
-     * Testing {@link  DraftNode#create(String)} and
-     * {@link  DraftNode#toString()} methods.
-     */
     @Test
     void createAndSerialize() {
         final String[] cases = {
@@ -57,9 +53,6 @@ class DraftNodeTest {
         }
     }
 
-    /**
-     * Testing {@link DraftNode.Constructor} class.
-     */
     @Test
     void constructorTest() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
@@ -80,9 +73,6 @@ class DraftNodeTest {
         Assertions.assertEquals(serialized, ctor.createNode().toString());
     }
 
-    /**
-     * Testing {@link DraftNode.Constructor#addChild(Node)} method.
-     */
     @Test
     void addNodeTest() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
@@ -92,9 +82,6 @@ class DraftNodeTest {
         Assertions.assertEquals(serialized, ctor.createNode().toString());
     }
 
-    /**
-     * Testing {@link DraftNode#create(String, Map)} method.
-     */
     @Test
     void testExtendedDescriptorProcessor() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
@@ -148,10 +135,12 @@ class DraftNodeTest {
     }
 
     /**
-     * Testing {@link  DraftNode#create(String)} and
-     * {@link  DraftNode#toString()} methods (testing of one case).
-     * @param description Syntax tree description
-     * @return Testing result ({@code true} if passed)
+     * Creates a tree based on the given description and then serializes it to obtain
+     *  its description. If the original description matches the generated one, the test
+     *  is considered successful; otherwise, the test fails.
+     * @param description The description used to create the tree.
+     * @return Testing result, {@code true} if the original description matches the serialized
+     *  description, {@code false} otherwise.
      */
     private static boolean createAndSerialize(final String description) {
         final Node node = DraftNode.create(description);
