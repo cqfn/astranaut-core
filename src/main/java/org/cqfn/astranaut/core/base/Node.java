@@ -24,7 +24,6 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +44,7 @@ import java.util.function.Consumer;
  * @since 1.0
  */
 @SuppressWarnings("PMD.ExcessivePublicCount")
-public interface Node extends Iterable<Node> {
+public interface Node {
     /**
      * Returns the fragment associated with the node.
      * @return The fragment
@@ -110,12 +109,15 @@ public interface Node extends Iterable<Node> {
      * @return The node list
      */
     default List<Node> getChildrenList() {
-        final int count = this.getChildCount();
-        final Node[] result = new Node[count];
-        for (int index = 0; index < count; index = index + 1) {
-            result[index] = this.getChild(index);
-        }
-        return Arrays.asList(result);
+        return new ChildrenList(this);
+    }
+
+    /**
+     * Returns an iterator over the child nodes of this node.
+     * @return An {@link Iterator} over the child nodes
+     */
+    default Iterator<Node> getIteratorOverChildren() {
+        return new ChildrenIterator(this, 0);
     }
 
     /**
@@ -149,11 +151,6 @@ public interface Node extends Iterable<Node> {
             }
         }
         return equals;
-    }
-
-    @Override
-    default Iterator<Node> iterator() {
-        return new ChildrenIterator(this, 0);
     }
 
     /**

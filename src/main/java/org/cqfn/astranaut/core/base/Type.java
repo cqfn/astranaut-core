@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,20 +42,26 @@ public interface Type {
      * Returns the list of child types.
      * @return The list of descriptors
      */
-    List<ChildDescriptor> getChildTypes();
+    default List<ChildDescriptor> getChildTypes() {
+        return Collections.emptyList();
+    }
 
     /**
      * The hierarchy of names of groups the node type belongs to.
      * @return The list of type names
      */
-    List<String> getHierarchy();
+    default List<String> getHierarchy() {
+        return Collections.singletonList(this.getName());
+    }
 
     /**
      * Returns the value of some property (depends on implementation).
      * @param name The name of property
      * @return Property value (if the property is not defined, returns an empty string)
      */
-    String getProperty(String name);
+    default String getProperty(final String name) {
+        return "";
+    }
 
     /**
      * Creates a new builder who builds a node of this type.

@@ -132,7 +132,7 @@ class PatternMatcher {
         boolean result = false;
         for (int index = 0; !result && index < left; index = index + 1) {
             result = true;
-            final Iterator<Node> iterator = sample.iterator();
+            final Iterator<Node> iterator = sample.getIteratorOverChildren();
             int offset = 0;
             Node current = null;
             while (result && offset < right && iterator.hasNext()) {
