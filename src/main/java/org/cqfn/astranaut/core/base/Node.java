@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -151,6 +152,26 @@ public interface Node {
             }
         }
         return equals;
+    }
+
+    /**
+     * Creates a deep clone of the node, including all its children.
+     * This method performs a deep cloning operation on the node. It first clones
+     *  the node itself and then recursively clones all its children, ensuring that
+     *  the entire subtree rooted at this node is cloned.
+     * @return A deep clone of the node, including all its children
+     */
+    default Node deepClone() {
+        final Builder builder = this.getType().createBuilder();
+        builder.setFragment(this.getFragment());
+        builder.setData(this.getData());
+        final int count = this.getChildCount();
+        final List<Node> list = new ArrayList<>(count);
+        for (int index = 0; index < count; index = index + 1) {
+            list.add(this.getChild(index).deepClone());
+        }
+        builder.setChildrenList(list);
+        return builder.createNode();
     }
 
     /**

@@ -285,6 +285,15 @@ class BaseInterfaceTest {
     }
 
     @Test
+    void testDeepClone() {
+        final String description = "X(A(B,C,D<\"data\">),E,F,G(H(I,j)))";
+        final Node node = DraftNode.create(description);
+        final Node clone = node.deepClone();
+        Assertions.assertNotSame(node, clone);
+        Assertions.assertTrue(clone.deepCompare(node));
+    }
+
+    @Test
     void testBuilder() {
         final Builder first = new IntegerLiteral.Constructor();
         first.setFragment(EmptyFragment.INSTANCE);
