@@ -187,8 +187,8 @@ class DifferenceTreeBuilderTest {
 
     @Test
     void testComplexCase() {
-        final Node before = DraftNode.createByDescription("X(A,B,Y(C,D,E,F,J,K))");
-        final Node after = DraftNode.createByDescription("X(A,G,Y(H,C,I,E,J,K))");
+        final Node before = DraftNode.create("X(A,B,Y(C,D,E,F,J,K))");
+        final Node after = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
@@ -200,12 +200,12 @@ class DifferenceTreeBuilderTest {
     @Test
     void testWrongInsertion() {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
-            DraftNode.createByDescription("X")
+            DraftNode.create("X")
         );
         final boolean result = builder.insertNode(
             new Insertion(
-                DraftNode.createByDescription("A"),
-                DraftNode.createByDescription("B")
+                DraftNode.create("A"),
+                DraftNode.create("B")
             )
         );
         Assertions.assertFalse(result);
@@ -214,11 +214,11 @@ class DifferenceTreeBuilderTest {
     @Test
     void testWrongReplacement() {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
-            DraftNode.createByDescription("X")
+            DraftNode.create("X")
         );
         final boolean result = builder.replaceNode(
-            DraftNode.createByDescription("A"),
-            DraftNode.createByDescription("B")
+            DraftNode.create("A"),
+            DraftNode.create("B")
         );
         Assertions.assertFalse(result);
     }
@@ -226,9 +226,9 @@ class DifferenceTreeBuilderTest {
     @Test
     void testWrongDeletion() {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
-            DraftNode.createByDescription("X")
+            DraftNode.create("X")
         );
-        final boolean result = builder.deleteNode(DraftNode.createByDescription("A"));
+        final boolean result = builder.deleteNode(DraftNode.create("A"));
         Assertions.assertFalse(result);
     }
 }

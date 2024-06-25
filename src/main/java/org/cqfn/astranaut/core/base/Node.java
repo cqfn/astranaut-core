@@ -238,7 +238,12 @@ public interface Node extends Iterable<Node> {
     }
 
     /**
-     * Class that wraps a node and provides a list of its children..
+     * Class that wraps a node and provides a list of its children.
+     * This custom implementation provides an efficient wrapper for managing
+     *  the list of child nodes. By creating our own implementation, we ensure
+     *  minimal overhead and optimal performance for operations involving child
+     *  nodes. Using the List interface for child nodes is frequent in our codebase
+     *  due to its convenience and flexibility in handling node collections.
      *
      * @since 2.0.0
      */

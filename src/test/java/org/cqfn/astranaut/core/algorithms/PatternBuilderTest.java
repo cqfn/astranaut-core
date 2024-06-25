@@ -80,10 +80,10 @@ class PatternBuilderTest {
     void wrongHole() {
         final PatternBuilder builder = new PatternBuilder(
             new DifferenceNode(
-                DraftNode.createByDescription("X")
+                DraftNode.create("X")
             )
         );
-        final boolean result = builder.makeHole(DraftNode.createByDescription("A"), 0);
+        final boolean result = builder.makeHole(DraftNode.create("A"), 0);
         Assertions.assertFalse(result);
     }
 }

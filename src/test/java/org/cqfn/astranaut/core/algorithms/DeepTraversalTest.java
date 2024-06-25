@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 class DeepTraversalTest {
     @Test
     void testFindFirst() {
-        final Node root = DraftNode.createByDescription("A(B,C,D(E<\"eee\">,F<\"fff\">)))");
+        final Node root = DraftNode.create("A(B,C,D(E<\"eee\">,F<\"fff\">)))");
         final DeepTraversal traversal = new DeepTraversal(root);
         final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertTrue(node.isPresent());
@@ -47,7 +47,7 @@ class DeepTraversalTest {
 
     @Test
     void testNotFoundFirst() {
-        final Node root = DraftNode.createByDescription("A(B,C,D)");
+        final Node root = DraftNode.create("A(B,C,D)");
         final DeepTraversal traversal = new DeepTraversal(root);
         final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertFalse(node.isPresent());
@@ -55,7 +55,7 @@ class DeepTraversalTest {
 
     @Test
     void testFindAll() {
-        final Node root = DraftNode.createByDescription("A(B,C<\"ccc\">,D(E<\"eee\">)))");
+        final Node root = DraftNode.create("A(B,C<\"ccc\">,D(E<\"eee\">)))");
         final DeepTraversal traversal = new DeepTraversal(root);
         final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
         Assertions.assertNotNull(list);
@@ -64,7 +64,7 @@ class DeepTraversalTest {
 
     @Test
     void testFindNothing() {
-        final Node root = DraftNode.createByDescription("A(X,Y,Z)");
+        final Node root = DraftNode.create("A(X,Y,Z)");
         final DeepTraversal traversal = new DeepTraversal(root);
         final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
         Assertions.assertNotNull(list);

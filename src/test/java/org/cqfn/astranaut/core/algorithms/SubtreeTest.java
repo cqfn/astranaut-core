@@ -41,19 +41,19 @@ import org.junit.jupiter.api.Test;
 class SubtreeTest {
     @Test
     void testSubtreeCreation() {
-        final Node original = DraftNode.createByDescription("A(B,C(D,E,F))");
+        final Node original = DraftNode.create("A(B,C(D,E,F))");
         final List<String> list = Arrays.asList("A", "C", "E", "F");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> list.contains(node.getTypeName()));
         final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
         final Node subtree = algorithm.create(selected);
-        final Node expected = DraftNode.createByDescription("A(C(E,F))");
+        final Node expected = DraftNode.create("A(C(E,F))");
         Assertions.assertTrue(expected.deepCompare(subtree));
     }
 
     @Test
     void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
-        final Node original = DraftNode.createByDescription("X(A,B,C,D,E)");
+        final Node original = DraftNode.create("X(A,B,C,D,E)");
         final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
         final Node first = algorithm.create(
             new HashSet<>(
@@ -79,11 +79,11 @@ class SubtreeTest {
 
     @Test
     void testingParametersThatProduceEmptyTree() {
-        final Node original = DraftNode.createByDescription("X(A,B,C)");
+        final Node original = DraftNode.create("X(A,B,C)");
         final Set<Node> set = new HashSet<>(
             Arrays.asList(
-                DraftNode.createByDescription("D"),
-                DraftNode.createByDescription("E")
+                DraftNode.create("D"),
+                DraftNode.create("E")
             )
         );
         final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
@@ -93,7 +93,7 @@ class SubtreeTest {
 
     @Test
     void testingParametersThatProduceTreeIdenticalToOriginal() {
-        final Node original = DraftNode.createByDescription("X(A,B,C,D(E,F))");
+        final Node original = DraftNode.create("X(A,B,C,D(E,F))");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> true);
         final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
@@ -103,7 +103,7 @@ class SubtreeTest {
 
     @Test
     void testSubtreeCreationWithExcludedNodes() {
-        final Node original = DraftNode.createByDescription("A(B,C(D,E,F))");
+        final Node original = DraftNode.create("A(B,C(D,E,F))");
         final Set<Node> selected =
             new NodeSelector(original).select(
                 (node, parents) -> {
@@ -113,13 +113,13 @@ class SubtreeTest {
             );
         final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
         final Node subtree = algorithm.create(selected);
-        final Node expected = DraftNode.createByDescription("A(C(D,F))");
+        final Node expected = DraftNode.create("A(C(D,F))");
         Assertions.assertTrue(expected.deepCompare(subtree));
     }
 
     @Test
     void testSubtreeCreationWhenAllNodesAreExcluded() {
-        final Node original = DraftNode.createByDescription("X(A,B,C(D,E))");
+        final Node original = DraftNode.create("X(A,B,C(D,E))");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> true);
         final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);

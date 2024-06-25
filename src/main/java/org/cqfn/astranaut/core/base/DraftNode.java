@@ -35,8 +35,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Draft node for wrapping the results of third-party parsers
- * in the {@link Node} interface.
+ * The DraftNode class implements the {@link Node} interface. This class serves as a "draft node",
+ *  where no data consistency checks are performed. The constructor of this class allows
+ *  the creation of any tree structure without validation, making it suitable for testing
+ *  purposes and for displaying trees obtained from third-party parsers in the ASTranaut format.
  *
  * @since 1.0
  */
@@ -123,13 +125,13 @@ public final class DraftNode implements Node {
      * @return Root node of the tree created by description
      */
     @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
-    public static Node createByDescription(final String description) {
-        return DraftNode.createByDescription(description, null);
+    public static Node create(final String description) {
+        return DraftNode.create(description, null);
     }
 
     /**
      * Creates a tree from draft nodes based on description.
-     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  Description format: A(B&lt;"data"&gt;,C(...),...) where 'A' is the type name
      *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
      *  separated by commas.
      * @param description Description
@@ -137,11 +139,9 @@ public final class DraftNode implements Node {
      * @return Root node of the tree created by description
      */
     @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
-    public static Node createByDescription(
-        final String description,
-        final Map<String, Set<Node>> nodes) {
+    public static Node create(final String description, final Map<String, Set<Node>> nodes) {
         final CharacterIterator iterator = new StringCharacterIterator(description);
-        return DraftNode.createByDescription(iterator, nodes);
+        return DraftNode.create(iterator, nodes);
     }
 
     /**
@@ -150,7 +150,7 @@ public final class DraftNode implements Node {
      * @param nodes Collection in which to place the nodes to be created, sorted by type name
      * @return Node of the tree with its children, created by description
      */
-    private static Node createByDescription(
+    private static Node create(
         final CharacterIterator iterator,
         final Map<String, Set<Node>> nodes) {
         char symbol = iterator.current();
@@ -219,7 +219,7 @@ public final class DraftNode implements Node {
         char next;
         do {
             iterator.next();
-            final Node child = DraftNode.createByDescription(iterator, nodes);
+            final Node child = DraftNode.create(iterator, nodes);
             if (child != null) {
                 children.add(child);
             }
@@ -235,7 +235,7 @@ public final class DraftNode implements Node {
      *
      * @since 1.0
      */
-    private static class TypeImpl implements Type {
+    private static class DraftType implements Type {
         /**
          * The type name.
          */
@@ -243,9 +243,9 @@ public final class DraftNode implements Node {
 
         /**
          * Constructor.
-         * @param name The type name`
+         * @param name The type name
          */
-        TypeImpl(final String name) {
+        DraftType(final String name) {
             this.name = name;
         }
 
@@ -279,6 +279,7 @@ public final class DraftNode implements Node {
 
     /**
      * The constructor class for draft node.
+     *
      * @since 1.0
      */
     public static final class Constructor implements Builder {
@@ -358,7 +359,7 @@ public final class DraftNode implements Node {
             }
             final DraftNode node = new DraftNode();
             node.fragment = this.fragment;
-            node.type = new TypeImpl(this.name);
+            node.type = new DraftType(this.name);
             node.data = this.data;
             node.children = new ArrayList<>(this.children);
             return node;

@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 class IdenticalTest {
     @Test
     void testIdenticalSets() {
-        final Node original = DraftNode.createByDescription(
+        final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,T<\"b\">,T<\"a\">,F<\"a\">))"
         );
         final Identical identical = new Identical(original);
@@ -47,7 +47,7 @@ class IdenticalTest {
 
     @Test
     void testNoIdenticals() {
-        final Node original = DraftNode.createByDescription(
+        final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,F<\"b\">,F<\"c\">,K<\"a\">))"
         );
         final Identical identical = new Identical(original);
@@ -57,7 +57,7 @@ class IdenticalTest {
 
     @Test
     void testIdenticalsAndEmptyData() {
-        final Node original = DraftNode.createByDescription(
+        final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,T<\"b\">,T<\"a\">,F,F,T))"
         );
         final Identical identical = new Identical(original);

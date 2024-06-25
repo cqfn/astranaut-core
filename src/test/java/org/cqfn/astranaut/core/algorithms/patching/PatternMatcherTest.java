@@ -44,8 +44,8 @@ import org.junit.jupiter.api.Test;
 class PatternMatcherTest {
     @Test
     void findSubtreeInATree() {
-        final Node tree = DraftNode.createByDescription("X(Y(A(B,C)),A(B,C),A(B,D))");
-        final DifferenceNode subtree = new DifferenceNode(DraftNode.createByDescription("A(B,C)"));
+        final Node tree = DraftNode.create("X(Y(A(B,C)),A(B,C),A(B,D))");
+        final DifferenceNode subtree = new DifferenceNode(DraftNode.create("A(B,C)"));
         final PatternNode pattern = new PatternNode(subtree);
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
@@ -57,9 +57,9 @@ class PatternMatcherTest {
 
     @Test
     void findReducedSubtreeInATree() {
-        final Node tree = DraftNode.createByDescription("X(A(B,C(F),D,E),A(B,D,E),A(B))");
+        final Node tree = DraftNode.create("X(A(B,C(F),D,E),A(B,D,E),A(B))");
         final DifferenceNode subtree = new DifferenceNode(
-            DraftNode.createByDescription("A(C(F),D)")
+            DraftNode.create("A(C(F),D)")
         );
         final PatternMatcher matcher = new PatternMatcher(tree);
         final PatternNode pattern = new PatternNode(subtree);
@@ -73,17 +73,17 @@ class PatternMatcherTest {
     @Test
     void findPatternWithInsertionInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B)", nodes);
+        final Node prepattern = DraftNode.create("A(B)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.insertNode(
             new Insertion(
-                DraftNode.createByDescription("C"),
+                DraftNode.create("C"),
                 prepattern,
                 nodes.get("B").iterator().next()
             )
         );
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -94,11 +94,11 @@ class PatternMatcherTest {
     @Test
     void findPatternWithReplacementInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -109,11 +109,11 @@ class PatternMatcherTest {
     @Test
     void findPatternWithDeletionInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -124,14 +124,14 @@ class PatternMatcherTest {
     @Test
     void findPatternWithHoleInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D<\"7\">)", nodes);
+        final Node prepattern = DraftNode.create("A(B, D<\"7\">)", nodes);
         final DifferenceTreeBuilder dtbuilder = new DifferenceTreeBuilder(prepattern);
         dtbuilder.deleteNode(nodes.get("B").iterator().next());
         final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getRoot());
         final boolean flag = pbuilder.makeHole(nodes.get("D").iterator().next(), 0);
         Assertions.assertTrue(flag);
         final PatternNode pattern = pbuilder.getRoot();
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D<\"11\">),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,D<\"11\">),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -143,10 +143,10 @@ class PatternMatcherTest {
     void matchPatternWithData() {
         final PatternNode pattern = new PatternNode(
             new DifferenceNode(
-                DraftNode.createByDescription("A(B<\"test\">)")
+                DraftNode.create("A(B<\"test\">)")
             )
         );
-        final Node tree = DraftNode.createByDescription("X(Y, A(B<\"test\">), Z)");
+        final Node tree = DraftNode.create("X(Y, A(B<\"test\">), Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -156,10 +156,10 @@ class PatternMatcherTest {
     void matchPatternThatIsTooBig() {
         final PatternNode pattern = new PatternNode(
             new DifferenceNode(
-                DraftNode.createByDescription("A(B,C,D,E,F)")
+                DraftNode.create("A(B,C,D,E,F)")
             )
         );
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,C),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,C),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(0, found.size());

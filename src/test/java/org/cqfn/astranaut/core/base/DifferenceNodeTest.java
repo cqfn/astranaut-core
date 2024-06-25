@@ -196,7 +196,7 @@ class DifferenceNodeTest {
      */
     @Test
     void testParentReference() {
-        final DifferenceNode root = new DifferenceNode(DraftNode.createByDescription("A(B,C)"));
+        final DifferenceNode root = new DifferenceNode(DraftNode.create("A(B,C)"));
         final Node child = root.getChild(0);
         Assertions.assertTrue(child instanceof DifferenceNode);
         Assertions.assertSame(((DifferenceNode) child).getParent(), root);
@@ -208,7 +208,7 @@ class DifferenceNodeTest {
     @Test
     void testDiffNodeAsString() {
         final String description = "X(Y, Z)";
-        final DifferenceNode root = new DifferenceNode(DraftNode.createByDescription(description));
+        final DifferenceNode root = new DifferenceNode(DraftNode.create(description));
         Assertions.assertEquals(description, root.toString());
     }
 

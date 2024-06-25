@@ -54,7 +54,7 @@ class BaseNodeTest {
      */
     @Test
     void testNodeIterator() {
-        final Node root = DraftNode.createByDescription("A(B,C)");
+        final Node root = DraftNode.create("A(B,C)");
         final Iterator<Node> iterator = root.iterator();
         Assertions.assertTrue(iterator.hasNext());
         Assertions.assertEquals("B", iterator.next().getTypeName());

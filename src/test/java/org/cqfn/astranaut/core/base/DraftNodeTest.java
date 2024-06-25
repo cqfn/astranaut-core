@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  */
 class DraftNodeTest {
     /**
-     * Testing {@link  DraftNode#createByDescription(String)} and
+     * Testing {@link  DraftNode#create(String)} and
      * {@link  DraftNode#toString()} methods.
      */
     @Test
@@ -70,9 +70,9 @@ class DraftNodeTest {
         ctor.setData("data");
         Assertions.assertEquals("Name<\"data\">", ctor.toString());
         final List<Node> children = Arrays.asList(
-            DraftNode.createByDescription("A"),
-            DraftNode.createByDescription("B"),
-            DraftNode.createByDescription("C")
+            DraftNode.create("A"),
+            DraftNode.create("B"),
+            DraftNode.create("C")
         );
         ctor.setChildrenList(children);
         final String serialized = "Name<\"data\">(A, B, C)";
@@ -87,18 +87,18 @@ class DraftNodeTest {
     void addNodeTest() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("X");
-        ctor.addChild(DraftNode.createByDescription("A"));
+        ctor.addChild(DraftNode.create("A"));
         final String serialized = "X(A)";
         Assertions.assertEquals(serialized, ctor.createNode().toString());
     }
 
     /**
-     * Testing {@link DraftNode#createByDescription(String, Map)} method.
+     * Testing {@link DraftNode#create(String, Map)} method.
      */
     @Test
     void testExtendedDescriptorProcessor() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node root = DraftNode.createByDescription("X(A,A,B(C,D))", nodes);
+        final Node root = DraftNode.create("X(A,A,B(C,D))", nodes);
         Assertions.assertSame(
             root,
             nodes.computeIfAbsent(
@@ -124,7 +124,7 @@ class DraftNodeTest {
 
     @Test
     void typeTest() {
-        final Node node = DraftNode.createByDescription("A");
+        final Node node = DraftNode.create("A");
         final Type type = node.getType();
         Assertions.assertEquals("A", type.getName());
         Assertions.assertEquals(0, type.getChildTypes().size());
@@ -148,13 +148,13 @@ class DraftNodeTest {
     }
 
     /**
-     * Testing {@link  DraftNode#createByDescription(String)} and
+     * Testing {@link  DraftNode#create(String)} and
      * {@link  DraftNode#toString()} methods (testing of one case).
      * @param description Syntax tree description
      * @return Testing result ({@code true} if passed)
      */
     private static boolean createAndSerialize(final String description) {
-        final Node node = DraftNode.createByDescription(description);
+        final Node node = DraftNode.create(description);
         final String serialized = node.toString();
         return description.equals(serialized);
     }

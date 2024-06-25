@@ -52,10 +52,10 @@ import org.junit.jupiter.api.Test;
 class PatcherTest {
     @Test
     void patchingByPatternThatDoesNotMatch() {
-        final Node source = DraftNode.createByDescription("A(B,C,D)");
+        final Node source = DraftNode.create("A(B,C,D)");
         final PatternNode pattern = new PatternNode(
             new DifferenceNode(
-                DraftNode.createByDescription("D")
+                DraftNode.create("D")
             )
         );
         final Patcher patcher = new DefaultPatcher();
@@ -66,48 +66,48 @@ class PatcherTest {
     @Test
     void patchPatternWithInsertion() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B)", nodes);
+        final Node prepattern = DraftNode.create("A(B)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.insertNode(
             new Insertion(
-                DraftNode.createByDescription("C"),
+                DraftNode.create("C"),
                 prepattern,
                 nodes.get("B").iterator().next()
             )
         );
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(B,C),Z)");
+        final Node expected = DraftNode.create("X(Y,A(B,C),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
     @Test
     void patchPatternWithReplacement() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(C,D),Z)");
+        final Node expected = DraftNode.create("X(Y,A(C,D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
     @Test
     void patchPatternWithDeletion() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
+        final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(D),Z)");
+        final Node expected = DraftNode.create("X(Y,A(D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
@@ -158,11 +158,11 @@ class PatcherTest {
     @Test
     void patchWithPatternThatDoesNotMatch() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("E(B,D)", nodes);
+        final Node prepattern = DraftNode.create("E(B,D)", nodes);
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
         final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,K(B,D),Z)");
+        final Node tree = DraftNode.create("X(Y,K(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Node result = patcher.patch(tree, pattern);
         Assertions.assertTrue(tree.deepCompare(result));

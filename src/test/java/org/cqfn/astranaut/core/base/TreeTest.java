@@ -40,7 +40,7 @@ class TreeTest {
         final String description = "A(B, C)";
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("A");
-        ctor.addChild(DraftNode.createByDescription("B"));
+        ctor.addChild(DraftNode.create("B"));
         ctor.addChild(new TestNode("C", language));
         final Tree tree = new Tree(ctor.createNode());
         Assertions.assertEquals(description, tree.getRoot().toString());

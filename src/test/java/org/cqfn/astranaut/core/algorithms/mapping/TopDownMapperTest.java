@@ -44,8 +44,8 @@ class TopDownMapperTest {
     @Test
     void testIdenticalTrees() {
         final String description = "A(B(C, D))";
-        final Node first = DraftNode.createByDescription(description);
-        final Node second = DraftNode.createByDescription(description);
+        final Node first = DraftNode.create(description);
+        final Node second = DraftNode.create(description);
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
@@ -54,8 +54,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereOnlyInsertion() {
-        final Node first = DraftNode.createByDescription("X()");
-        final Node second = DraftNode.createByDescription("X(A,B)");
+        final Node first = DraftNode.create("X()");
+        final Node second = DraftNode.create("X(A,B)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final List<String> inserted = Arrays.asList("A", "B");
@@ -68,8 +68,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereOneAndOneInserted() {
-        final Node first = DraftNode.createByDescription("X(A)");
-        final Node second = DraftNode.createByDescription("X(A,B)");
+        final Node first = DraftNode.create("X(A)");
+        final Node second = DraftNode.create("X(A,B)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> inserted = mapping.getInserted();
@@ -79,8 +79,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereTwoAndOneInserted() {
-        final Node first = DraftNode.createByDescription("X(A,C)");
-        final Node second = DraftNode.createByDescription("X(A,B,C)");
+        final Node first = DraftNode.create("X(A,C)");
+        final Node second = DraftNode.create("X(A,B,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> inserted = mapping.getInserted();
@@ -90,8 +90,8 @@ class TopDownMapperTest {
 
     @Test
     void testNodeInsertedAmongIdenticalNodes() {
-        final Node first = DraftNode.createByDescription("X(A,A,A,A,C)");
-        final Node second = DraftNode.createByDescription("X(A,A,A,B,A,C)");
+        final Node first = DraftNode.create("X(A,A,A,A,C)");
+        final Node second = DraftNode.create("X(A,A,A,B,A,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> inserted = mapping.getInserted();
@@ -105,8 +105,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereTwoAndOneDeleted() {
-        final Node first = DraftNode.createByDescription("X(A,B)");
-        final Node second = DraftNode.createByDescription("X(A)");
+        final Node first = DraftNode.create("X(A,B)");
+        final Node second = DraftNode.create("X(A)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Node> deleted = mapping.getDeleted();
@@ -116,8 +116,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereThreeAndOneReplaced() {
-        final Node first = DraftNode.createByDescription("X(A,B,C)");
-        final Node second = DraftNode.createByDescription("X(A,D,C)");
+        final Node first = DraftNode.create("X(A,B,C)");
+        final Node second = DraftNode.create("X(A,D,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Map<Node, Node> replaced = mapping.getReplaced();
@@ -129,8 +129,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereOneAddedAndOneReplaced() {
-        final Node first = DraftNode.createByDescription("X(A,Y(C,D,E))");
-        final Node second = DraftNode.createByDescription("X(A,Y(B,C,F,E))");
+        final Node first = DraftNode.create("X(A,Y(C,D,E))");
+        final Node second = DraftNode.create("X(A,Y(B,C,F,E))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> added = mapping.getInserted();
@@ -145,8 +145,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereOneDeletedAndOneReplaced() {
-        final Node first = DraftNode.createByDescription("X(A,Y(B,C,D,E))");
-        final Node second = DraftNode.createByDescription("X(A,Y(C,F,E))");
+        final Node first = DraftNode.create("X(A,Y(B,C,D,E))");
+        final Node second = DraftNode.create("X(A,Y(C,F,E))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Node> deleted = mapping.getDeleted();
@@ -161,8 +161,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereTwoAddedAndOneReplaced() {
-        final Node first = DraftNode.createByDescription("X(A,Y(B,C,D))");
-        final Node second = DraftNode.createByDescription("X(A,Y(B,E,F,D,F))");
+        final Node first = DraftNode.create("X(A,Y(B,C,D))");
+        final Node second = DraftNode.create("X(A,Y(B,E,F,D,F))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> insertions = mapping.getInserted();
@@ -179,8 +179,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereTwoRemovedAndOneReplaced() {
-        final Node first = DraftNode.createByDescription("X(A,Y(B,E,F,D,F))");
-        final Node second = DraftNode.createByDescription("X(A,Y(B,C,D))");
+        final Node first = DraftNode.create("X(A,Y(B,E,F,D,F))");
+        final Node second = DraftNode.create("X(A,Y(B,C,D))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Node> deletions = mapping.getDeleted();
@@ -197,8 +197,8 @@ class TopDownMapperTest {
 
     @Test
     void testPairOfTreesWhereAllActions() {
-        final Node first = DraftNode.createByDescription("X(A,B,Y(C,D,E,F,J,K))");
-        final Node second = DraftNode.createByDescription("X(A,G,Y(H,C,I,E,J,K))");
+        final Node first = DraftNode.create("X(A,B,Y(C,D,E,F,J,K))");
+        final Node second = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final Set<Insertion> inserted = mapping.getInserted();
