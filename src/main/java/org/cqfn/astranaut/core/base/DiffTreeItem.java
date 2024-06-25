@@ -28,7 +28,7 @@ package org.cqfn.astranaut.core.base;
  *
  * @since 1.1.0
  */
-public interface DifferenceTreeItem extends Node {
+public interface DiffTreeItem extends Node {
     /**
      * Returns a node as if the action had not been applied,
      * that is, before the changes.

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests covering difference node, i.e. {@link DifferenceNode} class.
+ * Tests covering difference node, i.e. {@link DiffNode} class.
  *
  * @since 1.1.0
  */
@@ -78,13 +78,13 @@ class DifferenceNodeTest {
     private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
 
     /**
-     * Testing {@link  DifferenceNode#getBefore()} method with inserted node.
+     * Testing {@link  DiffNode#getBefore()} method with inserted node.
      */
     @Test
     void testInsertGetBefore() {
         final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
-        Assertions.assertTrue(root instanceof DifferenceNode);
-        final DifferenceNode diff = (DifferenceNode) root;
+        Assertions.assertTrue(root instanceof DiffNode);
+        final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
@@ -92,13 +92,13 @@ class DifferenceNodeTest {
     }
 
     /**
-     * Testing {@link  DifferenceNode#getAfter()} method with inserted node.
+     * Testing {@link  DiffNode#getAfter()} method with inserted node.
      */
     @Test
     void testInsertGetAfter() {
         final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
-        Assertions.assertTrue(root instanceof DifferenceNode);
-        final DifferenceNode diff = (DifferenceNode) root;
+        Assertions.assertTrue(root instanceof DiffNode);
+        final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
@@ -111,8 +111,8 @@ class DifferenceNodeTest {
     @Test
     void testReplace() {
         final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_REPLACE);
-        Assertions.assertTrue(root instanceof DifferenceNode);
-        final DifferenceNode diff = (DifferenceNode) root;
+        Assertions.assertTrue(root instanceof DiffNode);
+        final DiffNode diff = (DiffNode) root;
         final Node before = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, before);
         Assertions.assertTrue(
@@ -126,13 +126,13 @@ class DifferenceNodeTest {
     }
 
     /**
-     * Testing {@link  DifferenceNode#getBefore()} method with deleted node.
+     * Testing {@link  DiffNode#getBefore()} method with deleted node.
      */
     @Test
     void testDeleteGetBefore() {
         final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
-        Assertions.assertTrue(root instanceof DifferenceNode);
-        final DifferenceNode diff = (DifferenceNode) root;
+        Assertions.assertTrue(root instanceof DiffNode);
+        final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
@@ -140,13 +140,13 @@ class DifferenceNodeTest {
     }
 
     /**
-     * Testing {@link  DifferenceNode#getAfter()} method with deleted node.
+     * Testing {@link  DiffNode#getAfter()} method with deleted node.
      */
     @Test
     void testDeleteGetAfter() {
         final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
-        Assertions.assertTrue(root instanceof DifferenceNode);
-        final DifferenceNode diff = (DifferenceNode) root;
+        Assertions.assertTrue(root instanceof DiffNode);
+        final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
         final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
@@ -167,7 +167,7 @@ class DifferenceNodeTest {
         );
         final Node before = LittleTrees.createStatementBlock(first);
         final Node after = LittleTrees.createStatementBlock(second, first);
-        final DifferenceNode diff = new DifferenceNode(before);
+        final DiffNode diff = new DiffNode(before);
         final boolean result = diff.insertNodeAfter(second, null);
         Assertions.assertTrue(result);
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
@@ -179,7 +179,7 @@ class DifferenceNodeTest {
      */
     @Test
     void testInsertNodeFails() {
-        final DifferenceNode diff = new DifferenceNode(
+        final DiffNode diff = new DiffNode(
             LittleTrees.createStatementBlock(
                 LittleTrees.createReturnStatement(null)
             )
@@ -192,23 +192,23 @@ class DifferenceNodeTest {
     }
 
     /**
-     * Tests {@link DifferenceNode#getParent()} method.
+     * Tests {@link DiffNode#getParent()} method.
      */
     @Test
     void testParentReference() {
-        final DifferenceNode root = new DifferenceNode(DraftNode.create("A(B,C)"));
+        final DiffNode root = new DiffNode(DraftNode.create("A(B,C)"));
         final Node child = root.getChild(0);
-        Assertions.assertTrue(child instanceof DifferenceNode);
-        Assertions.assertSame(((DifferenceNode) child).getParent(), root);
+        Assertions.assertTrue(child instanceof DiffNode);
+        Assertions.assertSame(((DiffNode) child).getParent(), root);
     }
 
     /**
-     * Tests {@link DifferenceNode#getParent()} method.
+     * Tests {@link DiffNode#getParent()} method.
      */
     @Test
     void testDiffNodeAsString() {
         final String description = "X(Y, Z)";
-        final DifferenceNode root = new DifferenceNode(DraftNode.create(description));
+        final DiffNode root = new DiffNode(DraftNode.create(description));
         Assertions.assertEquals(description, root.toString());
     }
 

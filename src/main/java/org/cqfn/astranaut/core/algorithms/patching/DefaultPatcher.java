@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.Set;
 import org.cqfn.astranaut.core.base.ActionList;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.PatternNode;
 
@@ -45,7 +45,7 @@ public final class DefaultPatcher implements Patcher {
             result = source;
         } else {
             final ActionList actions = matcher.getActionList();
-            final DifferenceNode diff = actions.convertTreeToDifferenceTree(source);
+            final DiffNode diff = actions.convertTreeToDifferenceTree(source);
             result = diff.getAfter();
         }
         return result;

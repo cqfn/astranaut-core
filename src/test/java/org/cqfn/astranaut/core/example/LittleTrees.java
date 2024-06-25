@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.example;
 import java.util.Arrays;
 import java.util.Collections;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -207,7 +207,7 @@ public final class LittleTrees {
      * Creates a tree that has a "insert" action in it.
      * @return Root node
      */
-    public static DifferenceNode createTreeWithInsertAction() {
+    public static DiffNode createTreeWithInsertAction() {
         final Node after =
             wrapExpressionWithStatement(
                 createAssignment(
@@ -237,7 +237,7 @@ public final class LittleTrees {
      * Creates a tree that has a "replace" action in it.
      * @return Root node
      */
-    public static DifferenceNode createTreeWithReplaceAction() {
+    public static DiffNode createTreeWithReplaceAction() {
         final Node before = createIntegerLiteral(2);
         final Node after = createVariable("x");
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
@@ -267,7 +267,7 @@ public final class LittleTrees {
      * Creates a tree that has a "delete" action in it.
      * @return Root node
      */
-    public static DifferenceNode createTreeWithDeleteAction() {
+    public static DiffNode createTreeWithDeleteAction() {
         final Node victim = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
@@ -298,7 +298,7 @@ public final class LittleTrees {
      * do not change.
      * @return Root node
      */
-    public static DifferenceNode createTreeWithDeleteActionInDepth() {
+    public static DiffNode createTreeWithDeleteActionInDepth() {
         final Node victim = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),

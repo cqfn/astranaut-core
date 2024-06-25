@@ -31,7 +31,7 @@ import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
 import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -54,7 +54,7 @@ class PatcherTest {
     void patchingByPatternThatDoesNotMatch() {
         final Node source = DraftNode.create("A(B,C,D)");
         final PatternNode pattern = new PatternNode(
-            new DifferenceNode(
+            new DiffNode(
                 DraftNode.create("D")
             )
         );

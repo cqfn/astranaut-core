@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -52,7 +52,7 @@ class DifferenceTreeBuilderTest {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DifferenceNode diff = builder.getRoot();
+        final DiffNode diff = builder.getRoot();
         final Node expected = LittleTrees.createTreeWithInsertAction();
         Assertions.assertTrue(expected.deepCompare(diff));
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
@@ -73,7 +73,7 @@ class DifferenceTreeBuilderTest {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DifferenceNode diff = builder.getRoot();
+        final DiffNode diff = builder.getRoot();
         final Node expected = LittleTrees.createTreeWithReplaceAction();
         final Hash hash = new AbsoluteHash();
         final int diffhash = hash.calculate(diff);
@@ -96,7 +96,7 @@ class DifferenceTreeBuilderTest {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DifferenceNode diff = builder.getRoot();
+        final DiffNode diff = builder.getRoot();
         final Node expected = LittleTrees.createTreeWithDeleteAction();
         Assertions.assertTrue(expected.deepCompare(diff));
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
@@ -121,7 +121,7 @@ class DifferenceTreeBuilderTest {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DifferenceNode diff = builder.getRoot();
+        final DiffNode diff = builder.getRoot();
         final Node expected = LittleTrees.createTreeWithDeleteActionInDepth();
         Assertions.assertTrue(expected.deepCompare(diff));
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
@@ -174,12 +174,12 @@ class DifferenceTreeBuilderTest {
         );
         final DifferenceTreeBuilder first = new DifferenceTreeBuilder(before);
         first.replaceNode(removed, added);
-        final DifferenceNode expected = first.getRoot();
+        final DiffNode expected = first.getRoot();
         Assertions.assertTrue(before.deepCompare(expected.getBefore()));
         Assertions.assertTrue(after.deepCompare(expected.getAfter()));
         final DifferenceTreeBuilder second = new DifferenceTreeBuilder(before);
         second.build(after, TopDownMapper.INSTANCE);
-        final DifferenceNode actual = second.getRoot();
+        final DiffNode actual = second.getRoot();
         Assertions.assertTrue(before.deepCompare(actual.getBefore()));
         Assertions.assertTrue(after.deepCompare(actual.getAfter()));
         Assertions.assertTrue(actual.deepCompare(expected));
@@ -192,7 +192,7 @@ class DifferenceTreeBuilderTest {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DifferenceNode diff = builder.getRoot();
+        final DiffNode diff = builder.getRoot();
         Assertions.assertTrue(before.deepCompare(diff.getBefore()));
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }

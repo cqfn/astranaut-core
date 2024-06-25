@@ -47,7 +47,7 @@ public final class PatternNode implements PatternItem {
      * Constructor.
      * @param diff Node of the differential tree from which the pattern is built
      */
-    public PatternNode(final DifferenceNode diff) {
+    public PatternNode(final DiffNode diff) {
         this.prototype = diff.getPrototype();
         this.children = PatternNode.initChildrenList(diff);
     }
@@ -112,14 +112,14 @@ public final class PatternNode implements PatternItem {
      * @param diff Difference node
      * @return List of pattern item
      */
-    private static List<PatternItem> initChildrenList(final DifferenceNode diff) {
+    private static List<PatternItem> initChildrenList(final DiffNode diff) {
         final int count = diff.getChildCount();
         final List<PatternItem> result = new ArrayList<>(count);
         for (int index = 0; index < count; index = index + 1) {
             final Node child = diff.getChild(index);
-            if (child instanceof DifferenceNode) {
+            if (child instanceof DiffNode) {
                 result.add(
-                    new PatternNode((DifferenceNode) child)
+                    new PatternNode((DiffNode) child)
                 );
             } else if (child instanceof Action) {
                 result.add((PatternItem) child);

@@ -55,7 +55,7 @@ class PatternNodeTest {
         ctor.setName("X");
         ctor.setData("test");
         final Node node = ctor.createNode();
-        final PatternNode pattern = new PatternNode(new DifferenceNode(node));
+        final PatternNode pattern = new PatternNode(new DiffNode(node));
         Assertions.assertEquals(100, pattern.getFragment().getEnd().getIndex());
         Assertions.assertEquals("X<\"test\">", pattern.toString());
     }

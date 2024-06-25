@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link ConvertibleNode} class.
+ * Testing {@link MutableNode} class.
  *
  * @since 1.0
  */
@@ -49,10 +49,10 @@ class ConvertibleNodeTest {
         final Addition.Constructor acr = new Addition.Constructor();
         acr.setChildrenList(Arrays.asList(left, right));
         final Node addition = acr.createNode();
-        final ConvertibleNode convertible = new ConvertibleNode(addition);
+        final MutableNode convertible = new MutableNode(addition);
         Assertions.assertEquals("Addition", convertible.getType().getName());
         Assertions.assertEquals(2, convertible.getChildCount());
-        final ConvertibleNode first = convertible.getConvertibleChild(0);
+        final MutableNode first = convertible.getConvertibleChild(0);
         Assertions.assertEquals(convertible, first.getParent());
         final Node second = convertible.getChild(1);
         icr = new IntegerLiteral.Constructor();

@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -45,7 +45,7 @@ class PatternMatcherTest {
     @Test
     void findSubtreeInATree() {
         final Node tree = DraftNode.create("X(Y(A(B,C)),A(B,C),A(B,D))");
-        final DifferenceNode subtree = new DifferenceNode(DraftNode.create("A(B,C)"));
+        final DiffNode subtree = new DiffNode(DraftNode.create("A(B,C)"));
         final PatternNode pattern = new PatternNode(subtree);
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
@@ -58,7 +58,7 @@ class PatternMatcherTest {
     @Test
     void findReducedSubtreeInATree() {
         final Node tree = DraftNode.create("X(A(B,C(F),D,E),A(B,D,E),A(B))");
-        final DifferenceNode subtree = new DifferenceNode(
+        final DiffNode subtree = new DiffNode(
             DraftNode.create("A(C(F),D)")
         );
         final PatternMatcher matcher = new PatternMatcher(tree);
@@ -142,7 +142,7 @@ class PatternMatcherTest {
     @Test
     void matchPatternWithData() {
         final PatternNode pattern = new PatternNode(
-            new DifferenceNode(
+            new DiffNode(
                 DraftNode.create("A(B<\"test\">)")
             )
         );
@@ -155,7 +155,7 @@ class PatternMatcherTest {
     @Test
     void matchPatternThatIsTooBig() {
         final PatternNode pattern = new PatternNode(
-            new DifferenceNode(
+            new DiffNode(
                 DraftNode.create("A(B,C,D,E,F)")
             )
         );

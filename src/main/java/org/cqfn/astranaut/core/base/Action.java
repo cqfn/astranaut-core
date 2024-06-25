@@ -29,5 +29,5 @@ package org.cqfn.astranaut.core.base;
  *
  * @since 1.1.0
  */
-public interface Action extends DifferenceTreeItem, PatternItem {
+public interface Action extends DiffTreeItem, PatternItem {
 }

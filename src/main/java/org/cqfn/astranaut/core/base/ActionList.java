@@ -99,7 +99,7 @@ public class ActionList {
      * @param root Root node of the tree
      * @return Root node of a difference tree
      */
-    public DifferenceNode convertTreeToDifferenceTree(final Node root) {
+    public DiffNode convertTreeToDifferenceTree(final Node root) {
         final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(root);
         for (final Insertion insertion : this.insert) {
             builder.insertNode(insertion);

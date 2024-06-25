@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 
@@ -52,14 +52,14 @@ public final class DifferenceTreeBuilder {
     /**
      * Root node.
      */
-    private final DifferenceNode root;
+    private final DiffNode root;
 
     /**
      * Constructor.
      * @param before Root node of an 'ordinary', non-difference original tree before the changes
      */
     public DifferenceTreeBuilder(final Node before) {
-        this.root = new DifferenceNode(before);
+        this.root = new DiffNode(before);
         this.info = DifferenceTreeBuilder.buildNodeInfoMap(this.root);
     }
 
@@ -88,7 +88,7 @@ public final class DifferenceTreeBuilder {
      * Returns root of resulting difference tree.
      * @return Root node of difference tree
      */
-    public DifferenceNode getRoot() {
+    public DiffNode getRoot() {
         return this.root;
     }
 
@@ -100,7 +100,7 @@ public final class DifferenceTreeBuilder {
      */
     public boolean insertNode(final Insertion insertion) {
         boolean result = false;
-        DifferenceNode parent = this.info.getOrDefault(
+        DiffNode parent = this.info.getOrDefault(
             insertion.getInto(),
             DifferenceTreeBuilder.DEFAULT_INFO
         ).getDiff();
@@ -124,7 +124,7 @@ public final class DifferenceTreeBuilder {
      */
     public boolean replaceNode(final Node node, final Node replacement) {
         boolean result = false;
-        final DifferenceNode parent =
+        final DiffNode parent =
             this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.replaceNode(node, replacement);
@@ -139,7 +139,7 @@ public final class DifferenceTreeBuilder {
      */
     public boolean deleteNode(final Node node) {
         boolean result = false;
-        final DifferenceNode parent =
+        final DiffNode parent =
             this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.deleteNode(node);
@@ -152,7 +152,7 @@ public final class DifferenceTreeBuilder {
      * @param root Root node
      * @return The map containing relationship of the nodes to their parents.
      */
-    private static Map<Node, NodeInfo> buildNodeInfoMap(final DifferenceNode root) {
+    private static Map<Node, NodeInfo> buildNodeInfoMap(final DiffNode root) {
         final Map<Node, NodeInfo> map = new HashMap<>();
         map.put(root.getPrototype(), new NodeInfo(root, null));
         DifferenceTreeBuilder.buildNodeInfoMap(map, root);
@@ -166,11 +166,11 @@ public final class DifferenceTreeBuilder {
      */
     private static void buildNodeInfoMap(
         final Map<Node, NodeInfo> map,
-        final DifferenceNode parent) {
+        final DiffNode parent) {
         parent.forEachChild(
             child -> {
-                if (child instanceof DifferenceNode) {
-                    final DifferenceNode node = (DifferenceNode) child;
+                if (child instanceof DiffNode) {
+                    final DiffNode node = (DiffNode) child;
                     map.put(node.getPrototype(), new NodeInfo(node, parent));
                     DifferenceTreeBuilder.buildNodeInfoMap(map, node);
                 }
@@ -187,19 +187,19 @@ public final class DifferenceTreeBuilder {
         /**
          * The corresponding difference node.
          */
-        private final DifferenceNode diff;
+        private final DiffNode diff;
 
         /**
          * The parent node.
          */
-        private final DifferenceNode parent;
+        private final DiffNode parent;
 
         /**
          * Constructor.
          * @param diff The corresponding difference node
          * @param parent The parent node
          */
-        NodeInfo(final DifferenceNode diff, final DifferenceNode parent) {
+        NodeInfo(final DiffNode diff, final DiffNode parent) {
             this.diff = diff;
             this.parent = parent;
         }
@@ -208,7 +208,7 @@ public final class DifferenceTreeBuilder {
          * Returns corresponding difference node.
          * @return Difference node
          */
-        public DifferenceNode getDiff() {
+        public DiffNode getDiff() {
             return this.diff;
         }
 
@@ -216,7 +216,7 @@ public final class DifferenceTreeBuilder {
          * Returns parent node.
          * @return Difference node containing this node
          */
-        public DifferenceNode getParent() {
+        public DiffNode getParent() {
             return this.parent;
         }
     }

@@ -31,11 +31,11 @@ import java.util.List;
  *
  * @since 1.0
  */
-public final class ConvertibleNode implements Node {
+public final class MutableNode implements Node {
     /**
      * The parent convertible node.
      */
-    private final ConvertibleNode parent;
+    private final MutableNode parent;
 
     /**
      * The prototype node.
@@ -52,7 +52,7 @@ public final class ConvertibleNode implements Node {
      * @param parent The parent convertible node.
      * @param prototype The prototype node.
      */
-    private ConvertibleNode(final ConvertibleNode parent, final Node prototype) {
+    private MutableNode(final MutableNode parent, final Node prototype) {
         this.parent = parent;
         this.prototype = prototype;
         this.children = this.initChildrenList();
@@ -62,7 +62,7 @@ public final class ConvertibleNode implements Node {
      * Constructor.
      * @param prototype The prototype node.
      */
-    public ConvertibleNode(final Node prototype) {
+    public MutableNode(final Node prototype) {
         this(null, prototype);
     }
 
@@ -70,7 +70,7 @@ public final class ConvertibleNode implements Node {
      * Returns the parent node.
      * @return The parent node
      */
-    public ConvertibleNode getParent() {
+    public MutableNode getParent() {
         return this.parent;
     }
 
@@ -100,17 +100,17 @@ public final class ConvertibleNode implements Node {
     }
 
     /**
-     * Returns a child, transformed to {@link ConvertibleNode}, by its index.
+     * Returns a child, transformed to {@link MutableNode}, by its index.
      * @param index Child index
      * @return Convertible node
      */
-    public ConvertibleNode getConvertibleChild(final int index) {
+    public MutableNode getConvertibleChild(final int index) {
         final Node node = this.children.get(index);
-        final ConvertibleNode result;
-        if (node instanceof ConvertibleNode) {
-            result = (ConvertibleNode) node;
+        final MutableNode result;
+        if (node instanceof MutableNode) {
+            result = (MutableNode) node;
         } else {
-            result = new ConvertibleNode(this, node);
+            result = new MutableNode(this, node);
             this.children.set(index, result);
         }
         return result;
@@ -147,8 +147,8 @@ public final class ConvertibleNode implements Node {
         builder.setData(this.prototype.getData());
         final List<Node> list = new ArrayList<>(this.children.size());
         for (final Node child : this.children) {
-            if (child instanceof ConvertibleNode) {
-                list.add(((ConvertibleNode) child).rebuild());
+            if (child instanceof MutableNode) {
+                list.add(((MutableNode) child).rebuild());
             } else {
                 list.add(child);
             }
@@ -171,7 +171,7 @@ public final class ConvertibleNode implements Node {
         final int count = this.prototype.getChildCount();
         final List<Node> result = new ArrayList<>(count);
         for (int index = 0; index < count; index = index + 1) {
-            result.add(new ConvertibleNode(this, this.prototype.getChild(index)));
+            result.add(new MutableNode(this, this.prototype.getChild(index)));
         }
         return result;
     }

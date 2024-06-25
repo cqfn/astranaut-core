@@ -58,11 +58,11 @@ public class Adapter {
      * @return A converted tree or empty tree if the conversion is impossible
      */
     public Node convert(final Node root) {
-        final ConvertibleNode convertible = new ConvertibleNode(root);
+        final MutableNode convertible = new MutableNode(root);
         Node result = convertible;
-        final List<ConvertibleNode> nodes = new ArrayList<>(0);
+        final List<MutableNode> nodes = new ArrayList<>(0);
         NodeListBuilder.buildNodeList(convertible, nodes);
-        for (final ConvertibleNode original : nodes) {
+        for (final MutableNode original : nodes) {
             boolean converted = false;
             for (final Converter converter : this.converters) {
                 final Node transformed = converter.convert(original, this.factory);
@@ -88,11 +88,11 @@ public class Adapter {
      */
     public Node partialConvert(final int variant, final Node root) {
         int conversions = 0;
-        final ConvertibleNode convertible = new ConvertibleNode(root);
+        final MutableNode convertible = new MutableNode(root);
         Node result = convertible;
-        final List<ConvertibleNode> nodes = new ArrayList<>(0);
+        final List<MutableNode> nodes = new ArrayList<>(0);
         NodeListBuilder.buildNodeList(convertible, nodes);
-        for (final ConvertibleNode original : nodes) {
+        for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
             if (!(transformed instanceof EmptyTree)) {
@@ -114,10 +114,10 @@ public class Adapter {
      */
     public int calculateConversions(final Node root) {
         int conversions = 0;
-        final ConvertibleNode convertible = new ConvertibleNode(root);
-        final List<ConvertibleNode> nodes = new ArrayList<>(0);
+        final MutableNode convertible = new MutableNode(root);
+        final List<MutableNode> nodes = new ArrayList<>(0);
         NodeListBuilder.buildNodeList(convertible, nodes);
-        for (final ConvertibleNode original : nodes) {
+        for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
             if (!(transformed instanceof EmptyTree)) {
@@ -134,10 +134,10 @@ public class Adapter {
      * @param transformed The new node
      * @return Modified [sub]tree
      */
-    private static Node replace(final ConvertibleNode original,
+    private static Node replace(final MutableNode original,
         final Node target, final Node transformed) {
         Node result = target;
-        final ConvertibleNode parent = original.getParent();
+        final MutableNode parent = original.getParent();
         if (parent == null) {
             result = transformed;
         } else {
@@ -159,8 +159,8 @@ public class Adapter {
          * @param root Root node
          * @param nodes Resulting list of nodes
          */
-        private static void buildNodeList(final ConvertibleNode root,
-            final List<ConvertibleNode> nodes) {
+        private static void buildNodeList(final MutableNode root,
+            final List<MutableNode> nodes) {
             final int count = root.getChildCount();
             for (int index = 0; index < count; index = index + 1) {
                 NodeListBuilder.buildNodeList(root.getConvertibleChild(index), nodes);

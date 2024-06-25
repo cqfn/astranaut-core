@@ -33,11 +33,11 @@ import java.util.ListIterator;
  *
  * @since 1.1.0
  */
-public final class DifferenceNode implements DifferenceTreeItem {
+public final class DiffNode implements DiffTreeItem {
     /**
      * The parent node with action.
      */
-    private final DifferenceNode parent;
+    private final DiffNode parent;
 
     /**
      * The prototype node, i.e. 'ordinary', non-difference original node before the changes.
@@ -47,14 +47,14 @@ public final class DifferenceNode implements DifferenceTreeItem {
     /**
      * The list of children with actions.
       */
-    private final List<DifferenceTreeItem> children;
+    private final List<DiffTreeItem> children;
 
     /**
      * Constructor.
      * @param parent The parent convertible node
      * @param prototype The prototype node
      */
-    private DifferenceNode(final DifferenceNode parent, final Node prototype) {
+    private DiffNode(final DiffNode parent, final Node prototype) {
         this.parent = parent;
         this.prototype = prototype;
         this.children = this.initChildrenList();
@@ -64,7 +64,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
      * Constructor.
      * @param prototype The prototype node.
      */
-    public DifferenceNode(final Node prototype) {
+    public DiffNode(final Node prototype) {
         this(null, prototype);
     }
 
@@ -72,7 +72,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
      * Returns the parent node.
      * @return The parent node
      */
-    public DifferenceNode getParent() {
+    public DiffNode getParent() {
         return this.parent;
     }
 
@@ -111,12 +111,12 @@ public final class DifferenceNode implements DifferenceTreeItem {
 
     @Override
     public Node getBefore() {
-        return this.getBranch(DifferenceTreeItem::getBefore);
+        return this.getBranch(DiffTreeItem::getBefore);
     }
 
     @Override
     public Node getAfter() {
-        return this.getBranch(DifferenceTreeItem::getAfter);
+        return this.getBranch(DiffTreeItem::getAfter);
     }
 
     /**
@@ -132,11 +132,11 @@ public final class DifferenceNode implements DifferenceTreeItem {
             this.children.add(0, new Insert(node));
             result = true;
         } else {
-            final ListIterator<DifferenceTreeItem> iterator = this.children.listIterator();
+            final ListIterator<DiffTreeItem> iterator = this.children.listIterator();
             while (iterator.hasNext()) {
                 final Node child = iterator.next();
-                if (child instanceof DifferenceNode
-                    && ((DifferenceNode) child).getPrototype() == after) {
+                if (child instanceof DiffNode
+                    && ((DiffNode) child).getPrototype() == after) {
                     iterator.add(new Insert(node));
                     result = true;
                     break;
@@ -156,12 +156,12 @@ public final class DifferenceNode implements DifferenceTreeItem {
     public boolean replaceNode(final int index, final Node replacement) {
         boolean result = false;
         if (index >= 0 && index < this.children.size()) {
-            final DifferenceTreeItem child = this.children.get(index);
-            if (child instanceof DifferenceNode) {
+            final DiffTreeItem child = this.children.get(index);
+            if (child instanceof DiffNode) {
                 this.children.set(
                     index,
                     new Replace(
-                        ((DifferenceNode) child).getPrototype(),
+                        ((DiffNode) child).getPrototype(),
                         replacement
                     )
                 );
@@ -194,9 +194,9 @@ public final class DifferenceNode implements DifferenceTreeItem {
     public boolean deleteNode(final int index) {
         boolean result = false;
         if (index >= 0 && index < this.children.size()) {
-            final DifferenceTreeItem child = this.children.get(index);
-            if (child instanceof DifferenceNode) {
-                this.children.set(index, new Delete(((DifferenceNode) child).getPrototype()));
+            final DiffTreeItem child = this.children.get(index);
+            if (child instanceof DiffNode) {
+                this.children.set(index, new Delete(((DiffNode) child).getPrototype()));
                 result = true;
             }
         }
@@ -226,12 +226,12 @@ public final class DifferenceNode implements DifferenceTreeItem {
      * Transforms children nodes to difference ones.
      * @return List of difference nodes
      */
-    private List<DifferenceTreeItem> initChildrenList() {
+    private List<DiffTreeItem> initChildrenList() {
         final int count = this.prototype.getChildCount();
-        final List<DifferenceTreeItem> result = new LinkedList<>();
+        final List<DiffTreeItem> result = new LinkedList<>();
         for (int index = 0; index < count; index = index + 1) {
             result.add(
-                new DifferenceNode(this, this.prototype.getChild(index))
+                new DiffNode(this, this.prototype.getChild(index))
             );
         }
         return result;
@@ -246,9 +246,9 @@ public final class DifferenceNode implements DifferenceTreeItem {
         int result = -1;
         final int count = this.children.size();
         for (int index = 0; index < count; index = index + 1) {
-            final DifferenceTreeItem child = this.children.get(index);
-            if (child instanceof DifferenceNode
-                && node == ((DifferenceNode) child).getPrototype()) {
+            final DiffTreeItem child = this.children.get(index);
+            if (child instanceof DiffNode
+                && node == ((DiffNode) child).getPrototype()) {
                 result = index;
                 break;
             }
@@ -273,7 +273,7 @@ public final class DifferenceNode implements DifferenceTreeItem {
                 break;
             }
             final List<Node> list = new ArrayList<>(this.children.size());
-            for (final DifferenceTreeItem child : this.children) {
+            for (final DiffTreeItem child : this.children) {
                 final Node branch = selector.select(child);
                 if (branch != null) {
                     list.add(branch);
@@ -301,6 +301,6 @@ public final class DifferenceNode implements DifferenceTreeItem {
          * @param item An item
          * @return Branch (node before or after changes)
          */
-        Node select(DifferenceTreeItem item);
+        Node select(DiffTreeItem item);
     }
 }

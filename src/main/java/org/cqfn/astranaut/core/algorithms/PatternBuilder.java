@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.base.DifferenceNode;
+import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.PatternNode;
 
@@ -56,7 +56,7 @@ public final class PatternBuilder {
      * Constructor.
      * @param diff Node of the differential tree from which the pattern is built
      */
-    public PatternBuilder(final DifferenceNode diff) {
+    public PatternBuilder(final DiffNode diff) {
         this.root = new PatternNode(diff);
         this.info = PatternBuilder.buildNodeInfoMap(this.root);
     }
