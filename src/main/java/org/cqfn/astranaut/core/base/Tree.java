@@ -23,6 +23,9 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * A syntax tree, which represents the hierarchical structure of source code,
  *  depicting the syntactic structure and relationships between code elements.
@@ -64,6 +67,43 @@ public class Tree {
     @Override
     public final String toString() {
         return this.root.toString();
+    }
+
+    /**
+     * Performs a deep comparison of a tree with another tree,
+     *  i.e., compares root nodes, as well as recursively all children of nodes one-to-one.
+     * @param other Other node
+     * @return Comparison result, {@code true} if the nodes are equal
+     */
+    public boolean deepCompare(final Tree other) {
+        return this.root.deepCompare(other.root);
+    }
+
+    /**
+     * Creates a tree from draft nodes based on description.
+     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
+     *  separated by commas.
+     * @param description Description
+     * @return Tree created by description
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Tree createDraft(final String description) {
+        return new Tree(DraftNode.create(description));
+    }
+
+    /**
+     * Creates a tree from draft nodes based on description.
+     *  Description format: A(B&lt;"data"&gt;,C(...),...) where 'A' is the type name
+     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
+     *  separated by commas.
+     * @param description Description
+     * @param nodes Collection in which to place the nodes to be created, sorted by type name
+     * @return Tree created by description
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Tree createDraft(final String description, final Map<String, Set<Node>> nodes) {
+        return new Tree(DraftNode.create(description, nodes));
     }
 
     /**

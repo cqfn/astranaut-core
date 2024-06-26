@@ -259,7 +259,8 @@ class DifferenceNodeTest {
             source,
             language -> GreenFactory.INSTANCE
         );
-        final Node root = deserializer.convert();
+        final Tree tree = deserializer.convert();
+        final Node root = tree.getRoot();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, root);
         return root;
     }

@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,11 +36,11 @@ import org.junit.jupiter.api.Test;
 class DepthTest {
     @Test
     void test() {
-        final Node tree = LittleTrees.createTreeWithDeleteAction();
+        final DiffTree tree = LittleTrees.createTreeWithDeleteAction();
         final Depth depth = new Depth();
-        int value = depth.calculate(tree);
+        int value = depth.calculate(tree.getRoot());
         Assertions.assertEquals(5, value);
-        value = depth.calculate(tree.getChild(0));
+        value = depth.calculate(tree.getRoot().getChild(0));
         Assertions.assertEquals(3, value);
     }
 }

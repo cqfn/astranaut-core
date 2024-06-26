@@ -28,6 +28,7 @@ import java.util.Map;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
 import org.cqfn.astranaut.core.algorithms.mapping.Mapping;
 import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 
@@ -36,7 +37,7 @@ import org.cqfn.astranaut.core.base.Node;
  *
  * @since 1.1.5
  */
-public final class DifferenceTreeBuilder {
+public final class DiffTreeBuilder {
     /**
      * Default node info (to avoid null checks).
      */
@@ -58,9 +59,9 @@ public final class DifferenceTreeBuilder {
      * Constructor.
      * @param before Root node of an 'ordinary', non-difference original tree before the changes
      */
-    public DifferenceTreeBuilder(final Node before) {
+    public DiffTreeBuilder(final Node before) {
         this.root = new DiffNode(before);
-        this.info = DifferenceTreeBuilder.buildNodeInfoMap(this.root);
+        this.info = DiffTreeBuilder.buildNodeInfoMap(this.root);
     }
 
     /**
@@ -85,14 +86,6 @@ public final class DifferenceTreeBuilder {
     }
 
     /**
-     * Returns root of resulting difference tree.
-     * @return Root node of difference tree
-     */
-    public DiffNode getRoot() {
-        return this.root;
-    }
-
-    /**
      * Adds an action to the difference tree that inserts a node after another node.
      * If no other node is specified, inserts at the beginning of the children's list.
      * @param insertion Full information about the node being inserted
@@ -102,12 +95,12 @@ public final class DifferenceTreeBuilder {
         boolean result = false;
         DiffNode parent = this.info.getOrDefault(
             insertion.getInto(),
-            DifferenceTreeBuilder.DEFAULT_INFO
+            DiffTreeBuilder.DEFAULT_INFO
         ).getDiff();
         if (parent == null) {
             parent = this.info.getOrDefault(
                 insertion.getAfter(),
-                DifferenceTreeBuilder.DEFAULT_INFO
+                DiffTreeBuilder.DEFAULT_INFO
             ).getParent();
         }
         if (parent != null) {
@@ -125,7 +118,7 @@ public final class DifferenceTreeBuilder {
     public boolean replaceNode(final Node node, final Node replacement) {
         boolean result = false;
         final DiffNode parent =
-            this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
+            this.info.getOrDefault(node, DiffTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.replaceNode(node, replacement);
         }
@@ -140,11 +133,19 @@ public final class DifferenceTreeBuilder {
     public boolean deleteNode(final Node node) {
         boolean result = false;
         final DiffNode parent =
-            this.info.getOrDefault(node, DifferenceTreeBuilder.DEFAULT_INFO).getParent();
+            this.info.getOrDefault(node, DiffTreeBuilder.DEFAULT_INFO).getParent();
         if (parent != null) {
             result = parent.deleteNode(node);
         }
         return result;
+    }
+
+    /**
+     * Returns resulting difference tree.
+     * @return Difference tree
+     */
+    public DiffTree getDiffTree() {
+        return new DiffTree(this.root);
     }
 
     /**
@@ -155,7 +156,7 @@ public final class DifferenceTreeBuilder {
     private static Map<Node, NodeInfo> buildNodeInfoMap(final DiffNode root) {
         final Map<Node, NodeInfo> map = new HashMap<>();
         map.put(root.getPrototype(), new NodeInfo(root, null));
-        DifferenceTreeBuilder.buildNodeInfoMap(map, root);
+        DiffTreeBuilder.buildNodeInfoMap(map, root);
         return map;
     }
 
@@ -172,7 +173,7 @@ public final class DifferenceTreeBuilder {
                 if (child instanceof DiffNode) {
                     final DiffNode node = (DiffNode) child;
                     map.put(node.getPrototype(), new NodeInfo(node, parent));
-                    DifferenceTreeBuilder.buildNodeInfoMap(map, node);
+                    DiffTreeBuilder.buildNodeInfoMap(map, node);
                 }
             }
         );

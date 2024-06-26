@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.hash;
 
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,13 +40,13 @@ class AbsoluteHashTest {
     @Test
     void testingEqualityFeature() {
         final Hash hash = new AbsoluteHash();
-        final Node first = LittleTrees.createTreeWithDeleteAction();
-        final Node second = LittleTrees.createTreeWithDeleteAction();
+        final DiffTree first = LittleTrees.createTreeWithDeleteAction();
+        final DiffTree second = LittleTrees.createTreeWithDeleteAction();
         int expected = hash.calculate(first);
         int actual = hash.calculate(second);
         Assertions.assertEquals(expected, actual);
-        expected = hash.calculate(first.getChild(0));
-        actual = hash.calculate(second.getChild(0));
+        expected = hash.calculate(first.getRoot().getChild(0));
+        actual = hash.calculate(second.getRoot().getChild(0));
         Assertions.assertEquals(expected, actual);
     }
 }

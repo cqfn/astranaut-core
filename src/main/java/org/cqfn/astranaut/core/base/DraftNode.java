@@ -119,7 +119,7 @@ public final class DraftNode implements Node {
 
     /**
      * Creates a tree from draft nodes based on description.
-     *  Description format: A(B,C(...),...) where 'A' is the type name
+     *  Description format: A(B&lt;"data"&gt;,C(...),...) where 'A' is the type name
      *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
      *  separated by commas.
      * @param description Description

@@ -25,8 +25,8 @@ package org.cqfn.astranaut.core.example;
 
 import java.util.Arrays;
 import java.util.Collections;
-import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
-import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -207,7 +207,7 @@ public final class LittleTrees {
      * Creates a tree that has a "insert" action in it.
      * @return Root node
      */
-    public static DiffNode createTreeWithInsertAction() {
+    public static DiffTree createTreeWithInsertAction() {
         final Node after =
             wrapExpressionWithStatement(
                 createAssignment(
@@ -221,7 +221,7 @@ public final class LittleTrees {
                 createIntegerLiteral(3)
             )
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             createStatementBlock(
                 after,
                 createReturnStatement(
@@ -230,17 +230,17 @@ public final class LittleTrees {
             )
         );
         builder.insertNode(new Insertion(inserted, after));
-        return builder.getRoot();
+        return builder.getDiffTree();
     }
 
     /**
      * Creates a tree that has a "replace" action in it.
      * @return Root node
      */
-    public static DiffNode createTreeWithReplaceAction() {
+    public static DiffTree createTreeWithReplaceAction() {
         final Node before = createIntegerLiteral(2);
         final Node after = createVariable("x");
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             createStatementBlock(
                 wrapExpressionWithStatement(
                     createAssignment(
@@ -260,21 +260,21 @@ public final class LittleTrees {
             )
         );
         builder.replaceNode(before, after);
-        return builder.getRoot();
+        return builder.getDiffTree();
     }
 
     /**
      * Creates a tree that has a "delete" action in it.
      * @return Root node
      */
-    public static DiffNode createTreeWithDeleteAction() {
+    public static DiffTree createTreeWithDeleteAction() {
         final Node victim = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
                 createIntegerLiteral(2)
             )
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             createStatementBlock(
                 wrapExpressionWithStatement(
                     createAssignment(
@@ -289,7 +289,7 @@ public final class LittleTrees {
             )
         );
         builder.deleteNode(victim);
-        return builder.getRoot();
+        return builder.getDiffTree();
     }
 
     /**
@@ -298,14 +298,14 @@ public final class LittleTrees {
      * do not change.
      * @return Root node
      */
-    public static DiffNode createTreeWithDeleteActionInDepth() {
+    public static DiffTree createTreeWithDeleteActionInDepth() {
         final Node victim = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
                 createIntegerLiteral(2)
             )
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             createStatementBlock(
                 createStatementBlock(
                     wrapExpressionWithStatement(
@@ -322,6 +322,6 @@ public final class LittleTrees {
             )
         );
         builder.deleteNode(victim);
-        return builder.getRoot();
+        return builder.getDiffTree();
     }
 }

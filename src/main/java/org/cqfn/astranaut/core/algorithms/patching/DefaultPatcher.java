@@ -25,9 +25,10 @@ package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.Set;
 import org.cqfn.astranaut.core.base.ActionList;
-import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Default algorithm that applies patches, i.e. makes some changes in the syntax tree
@@ -37,15 +38,15 @@ import org.cqfn.astranaut.core.base.PatternNode;
  */
 public final class DefaultPatcher implements Patcher {
     @Override
-    public Node patch(final Node source, final PatternNode pattern) {
-        final PatternMatcher matcher = new PatternMatcher(source);
+    public Tree patch(final Tree source, final PatternNode pattern) {
+        final PatternMatcher matcher = new PatternMatcher(source.getRoot());
         final Set<Node> nodes = matcher.match(pattern);
-        final Node result;
+        final Tree result;
         if (nodes.isEmpty()) {
             result = source;
         } else {
             final ActionList actions = matcher.getActionList();
-            final DiffNode diff = actions.convertTreeToDifferenceTree(source);
+            final DiffTree diff = actions.convertTreeToDiffTree(source);
             result = diff.getAfter();
         }
         return result;

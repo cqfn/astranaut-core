@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.algorithms.patching;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
+import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
 import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -74,7 +74,7 @@ class PatternMatcherTest {
     void findPatternWithInsertionInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
         final Node prepattern = DraftNode.create("A(B)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.insertNode(
             new Insertion(
                 DraftNode.create("C"),
@@ -82,7 +82,7 @@ class PatternMatcherTest {
                 nodes.get("B").iterator().next()
             )
         );
-        final PatternNode pattern = new PatternNode(builder.getRoot());
+        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
         final Node tree = DraftNode.create("X(Y,A(B),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
@@ -95,9 +95,9 @@ class PatternMatcherTest {
     void findPatternWithReplacementInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
         final Node prepattern = DraftNode.create("A(B, D)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
-        final PatternNode pattern = new PatternNode(builder.getRoot());
+        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
         final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
@@ -110,9 +110,9 @@ class PatternMatcherTest {
     void findPatternWithDeletionInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
         final Node prepattern = DraftNode.create("A(B, D)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
-        final PatternNode pattern = new PatternNode(builder.getRoot());
+        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
         final Node tree = DraftNode.create("X(Y,A(B,D),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
         final Set<Node> found = matcher.match(pattern);
@@ -125,9 +125,9 @@ class PatternMatcherTest {
     void findPatternWithHoleInATree() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
         final Node prepattern = DraftNode.create("A(B, D<\"7\">)", nodes);
-        final DifferenceTreeBuilder dtbuilder = new DifferenceTreeBuilder(prepattern);
+        final DiffTreeBuilder dtbuilder = new DiffTreeBuilder(prepattern);
         dtbuilder.deleteNode(nodes.get("B").iterator().next());
-        final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getRoot());
+        final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getDiffTree().getRoot());
         final boolean flag = pbuilder.makeHole(nodes.get("D").iterator().next(), 0);
         Assertions.assertTrue(flag);
         final PatternNode pattern = pbuilder.getRoot();

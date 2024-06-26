@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
+import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 
 /**
  * List of actions to be added to the tree after deserialization to produce a difference tree.
@@ -96,11 +96,11 @@ public class ActionList {
 
     /**
      * Converts the tree to a difference tree using the list of actions.
-     * @param root Root node of the tree
-     * @return Root node of a difference tree
+     * @param tree Source tree
+     * @return Difference tree
      */
-    public DiffNode convertTreeToDifferenceTree(final Node root) {
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(root);
+    public DiffTree convertTreeToDiffTree(final Tree tree) {
+        final DiffTreeBuilder builder = new DiffTreeBuilder(tree.getRoot());
         for (final Insertion insertion : this.insert) {
             builder.insertNode(insertion);
         }
@@ -110,6 +110,6 @@ public class ActionList {
         for (final Node node : this.delete) {
             builder.deleteNode(node);
         }
-        return builder.getRoot();
+        return builder.getDiffTree();
     }
 }

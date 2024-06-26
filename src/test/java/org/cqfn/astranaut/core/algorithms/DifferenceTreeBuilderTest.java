@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
-import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link DifferenceTreeBuilder} class.
+ * Testing {@link DiffTreeBuilder} class.
  *
  * @since 1.1.0
  */
@@ -49,14 +49,14 @@ class DifferenceTreeBuilderTest {
         final Node after = LittleTrees.createStatementListWithThreeChildren(
             LittleTrees.createIntegerLiteral(3)
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DiffNode diff = builder.getRoot();
-        final Node expected = LittleTrees.createTreeWithInsertAction();
+        final DiffTree diff = builder.getDiffTree();
+        final DiffTree expected = LittleTrees.createTreeWithInsertAction();
         Assertions.assertTrue(expected.deepCompare(diff));
-        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
-        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
     /**
@@ -70,18 +70,18 @@ class DifferenceTreeBuilderTest {
         final Node after = LittleTrees.createStatementListWithThreeChildren(
             LittleTrees.createVariable("x")
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DiffNode diff = builder.getRoot();
-        final Node expected = LittleTrees.createTreeWithReplaceAction();
+        final DiffTree diff = builder.getDiffTree();
+        final DiffTree expected = LittleTrees.createTreeWithReplaceAction();
         final Hash hash = new AbsoluteHash();
         final int diffhash = hash.calculate(diff);
         final int expectedhash = hash.calculate(expected);
         Assertions.assertEquals(expectedhash, diffhash);
         Assertions.assertTrue(expected.deepCompare(diff));
-        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
-        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
     /**
@@ -93,14 +93,14 @@ class DifferenceTreeBuilderTest {
             LittleTrees.createIntegerLiteral(2)
         );
         final Node after = LittleTrees.createStatementListWithTwoChildren();
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DiffNode diff = builder.getRoot();
-        final Node expected = LittleTrees.createTreeWithDeleteAction();
+        final DiffTree diff = builder.getDiffTree();
+        final DiffTree expected = LittleTrees.createTreeWithDeleteAction();
         Assertions.assertTrue(expected.deepCompare(diff));
-        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
-        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
     /**
@@ -118,14 +118,14 @@ class DifferenceTreeBuilderTest {
         final Node after = LittleTrees.createStatementBlock(
             LittleTrees.createStatementListWithTwoChildren()
         );
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DiffNode diff = builder.getRoot();
-        final Node expected = LittleTrees.createTreeWithDeleteActionInDepth();
+        final DiffTree diff = builder.getDiffTree();
+        final DiffTree expected = LittleTrees.createTreeWithDeleteActionInDepth();
         Assertions.assertTrue(expected.deepCompare(diff));
-        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
-        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
     @Test
@@ -172,16 +172,16 @@ class DifferenceTreeBuilderTest {
                 )
             )
         );
-        final DifferenceTreeBuilder first = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder first = new DiffTreeBuilder(before);
         first.replaceNode(removed, added);
-        final DiffNode expected = first.getRoot();
-        Assertions.assertTrue(before.deepCompare(expected.getBefore()));
-        Assertions.assertTrue(after.deepCompare(expected.getAfter()));
-        final DifferenceTreeBuilder second = new DifferenceTreeBuilder(before);
+        final DiffTree expected = first.getDiffTree();
+        Assertions.assertTrue(before.deepCompare(expected.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(expected.getAfter().getRoot()));
+        final DiffTreeBuilder second = new DiffTreeBuilder(before);
         second.build(after, TopDownMapper.INSTANCE);
-        final DiffNode actual = second.getRoot();
-        Assertions.assertTrue(before.deepCompare(actual.getBefore()));
-        Assertions.assertTrue(after.deepCompare(actual.getAfter()));
+        final DiffTree actual = second.getDiffTree();
+        Assertions.assertTrue(before.deepCompare(actual.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(actual.getAfter().getRoot()));
         Assertions.assertTrue(actual.deepCompare(expected));
     }
 
@@ -189,17 +189,17 @@ class DifferenceTreeBuilderTest {
     void testComplexCase() {
         final Node before = DraftNode.create("X(A,B,Y(C,D,E,F,J,K))");
         final Node after = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
-        final DiffNode diff = builder.getRoot();
-        Assertions.assertTrue(before.deepCompare(diff.getBefore()));
-        Assertions.assertTrue(after.deepCompare(diff.getAfter()));
+        final DiffTree diff = builder.getDiffTree();
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
     @Test
     void testWrongInsertion() {
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             DraftNode.create("X")
         );
         final boolean result = builder.insertNode(
@@ -213,7 +213,7 @@ class DifferenceTreeBuilderTest {
 
     @Test
     void testWrongReplacement() {
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             DraftNode.create("X")
         );
         final boolean result = builder.replaceNode(
@@ -225,7 +225,7 @@ class DifferenceTreeBuilderTest {
 
     @Test
     void testWrongDeletion() {
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(
+        final DiffTreeBuilder builder = new DiffTreeBuilder(
             DraftNode.create("X")
         );
         final boolean result = builder.deleteNode(DraftNode.create("A"));

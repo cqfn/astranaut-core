@@ -134,7 +134,7 @@ public interface Node {
 
     /**
      * Performs a deep comparison of a node with another node,
-     * i.e., compares nodes, as well as recursively all children of nodes one-to-one.
+     *  i.e., compares nodes, as well as recursively all children of nodes one-to-one.
      * @param other Other node
      * @return Comparison result, {@code true} if the nodes are equal
      */

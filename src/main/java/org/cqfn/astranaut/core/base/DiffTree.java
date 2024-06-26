@@ -34,26 +34,18 @@ package org.cqfn.astranaut.core.base;
  *
  * @since 2.0.0
  */
-public class DiffTree {
-    /**
-     * Root node of the difference tree.
-     */
-    private final DiffNode root;
-
+public final class DiffTree extends Tree {
     /**
      * Constructor.
      * @param root Root node the difference tree
      */
     public DiffTree(final DiffNode root) {
-        this.root = root;
+        super(root);
     }
 
-    /**
-     * Returns the root node of the tree.
-     * @return Root node of the tree
-     */
+    @Override
     public DiffNode getRoot() {
-        return this.root;
+        return (DiffNode) super.getRoot();
     }
 
     /**
@@ -61,7 +53,7 @@ public class DiffTree {
      * @return The syntax tree before the changes
      */
     public Tree getBefore() {
-        return new Tree(this.root.getBefore());
+        return new Tree(this.getRoot().getBefore());
     }
 
     /**
@@ -69,11 +61,6 @@ public class DiffTree {
      * @return The syntax tree after the changes
      */
     public Tree getAfter() {
-        return new Tree(this.root.getAfter());
-    }
-
-    @Override
-    public final String toString() {
-        return this.root.toString();
+        return new Tree(this.getRoot().getAfter());
     }
 }

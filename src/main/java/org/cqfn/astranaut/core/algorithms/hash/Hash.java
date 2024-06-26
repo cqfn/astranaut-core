@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.algorithms.hash;
 
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * An interface that calculates the hash of a node.
@@ -34,8 +35,21 @@ import org.cqfn.astranaut.core.base.Node;
 public interface Hash {
     /**
      * Calculates the hash of the node.
-     * @param node Node
-     * @return Hash of the node
+     * This method computes the hash value for the given node, which can be used
+     *  to uniquely identify the node based on its content and structure.
+     * @param node Node to calculate the hash for.
+     * @return Hash value of the node
      */
     int calculate(Node node);
+
+    /**
+     * Calculates the hash of the tree.
+     * This default method computes the hash value for the entire tree by
+     *  calculating the hash of its root node.
+     * @param tree Tree to calculate the hash for.
+     * @return Hash value of the tree, derived from its root node.
+     */
+    default int calculate(Tree tree) {
+        return this.calculate(tree.getRoot());
+    }
 }

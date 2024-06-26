@@ -27,7 +27,7 @@ import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.FactorySelector;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.
@@ -57,14 +57,14 @@ public class TreeDescriptor {
      * @param selector The node factory selector
      * @return A root node
      */
-    public Node convert(final FactorySelector selector) {
-        Node result = EmptyTree.INSTANCE;
+    public Tree convert(final FactorySelector selector) {
+        Tree result = new Tree(EmptyTree.INSTANCE);
         final Factory factory = selector.select(this.language);
         if (factory != null) {
             final ActionList actions = new ActionList();
-            result = this.root.convert(factory, actions);
+            result = new Tree(this.root.convert(factory, actions));
             if (actions.hasActions()) {
-                result = actions.convertTreeToDifferenceTree(result);
+                result = actions.convertTreeToDiffTree(result);
             }
         }
         return result;
