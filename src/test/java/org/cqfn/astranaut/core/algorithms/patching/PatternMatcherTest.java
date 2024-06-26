@@ -28,11 +28,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
-import org.cqfn.astranaut.core.base.DiffNode;
-import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.Insertion;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -130,10 +126,10 @@ class PatternMatcherTest {
         final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getDiffTree().getRoot());
         final boolean flag = pbuilder.makeHole(nodes.get("D").iterator().next(), 0);
         Assertions.assertTrue(flag);
-        final PatternNode pattern = pbuilder.getRoot();
+        final Pattern pattern = pbuilder.getPattern();
         final Node tree = DraftNode.create("X(Y,A(B,D<\"11\">),Z)");
         final PatternMatcher matcher = new PatternMatcher(tree);
-        final Set<Node> found = matcher.match(pattern);
+        final Set<Node> found = matcher.match(pattern.getRoot());
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
         Assertions.assertEquals("A", node.getTypeName());

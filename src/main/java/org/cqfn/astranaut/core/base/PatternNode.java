@@ -34,7 +34,7 @@ import java.util.List;
  */
 public final class PatternNode implements PatternItem {
     /**
-     * The prototype node, i.e. 'ordinary', non-difference original node.
+     * The prototype node, i.e. 'ordinary', non-pattern original node.
      */
     private final Node prototype;
 

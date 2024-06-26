@@ -26,12 +26,8 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.DiffNode;
-import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.Hole;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.PatternNode;
+
+import org.cqfn.astranaut.core.base.*;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -68,9 +64,9 @@ class PatternBuilderTest {
         final Node stmt = ctor.createNode();
         final PatternBuilder builder = new PatternBuilder(new DiffNode(stmt));
         builder.makeHole(first, 1);
-        final PatternNode pattern = builder.getRoot();
+        final Pattern pattern = builder.getPattern();
         Assertions.assertNotNull(pattern);
-        final DeepTraversal traversal = new DeepTraversal(pattern);
+        final DeepTraversal traversal = new DeepTraversal(pattern.getRoot());
         final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
         Assertions.assertTrue(hole.isPresent());
         Assertions.assertEquals("#1",  hole.get().getData());

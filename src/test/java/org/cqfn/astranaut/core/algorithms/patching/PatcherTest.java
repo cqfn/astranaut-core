@@ -30,13 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.DiffNode;
-import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.Insertion;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.PatternNode;
-import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.base.*;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -133,8 +127,8 @@ class PatcherTest {
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
         final Patcher patcher = new DefaultPatcher();
-        final PatternNode pattern = PatcherTest.createPatternWithHole();
-        final Tree patched = patcher.patch(new Tree(stmt), pattern);
+        final Pattern pattern = PatcherTest.createPatternWithHole();
+        final Tree patched = patcher.patch(new Tree(stmt), pattern.getRoot());
         ctor = new Variable.Constructor();
         ctor.setData("a");
         first = ctor.createNode();
@@ -173,7 +167,7 @@ class PatcherTest {
      * Creates pattern with a hole.
      * @return A pattern
      */
-    private static PatternNode createPatternWithHole() {
+    private static Pattern createPatternWithHole() {
         Builder ctor = new Variable.Constructor();
         ctor.setData("w");
         final Node first = ctor.createNode();
@@ -190,7 +184,7 @@ class PatcherTest {
         dtbld.replaceNode(second, replacement);
         final PatternBuilder pbld = new PatternBuilder(dtbld.getDiffTree().getRoot());
         pbld.makeHole(first, 0);
-        final PatternNode pattern = pbld.getRoot();
+        final Pattern pattern = pbld.getPattern();
         Assertions.assertNotNull(pattern);
         return pattern;
     }

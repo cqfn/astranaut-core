@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
 
 /**
@@ -65,8 +66,8 @@ public final class PatternBuilder {
      * Returns root of resulting pattern.
      * @return Root node of pattern
      */
-    public PatternNode getRoot() {
-        return this.root;
+    public Pattern getPattern() {
+        return new Pattern(this.root);
     }
 
     /**
@@ -118,7 +119,7 @@ public final class PatternBuilder {
      * Some additional information about each node needed to make holes.
      * So far there's only a parent node here, but we may need something else.
      *
-     * @since 1.1.0
+     * @since 1.1.5
      */
     private static final class NodeInfo {
         /**
