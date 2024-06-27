@@ -26,7 +26,6 @@ package org.cqfn.astranaut.core.utils.visualizer;
 import java.util.Objects;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Renders a DOT file from a tree.
@@ -88,8 +87,11 @@ public class DotRender {
         if (empty) {
             this.appendNullNode();
         } else {
-            final Type type = node.getType();
-            this.appendNode(type.getName(), node.getData(), type.getProperty("color"));
+            this.appendNode(
+                node.getTypeName(),
+                node.getData(),
+                node.getProperties().getOrDefault("color", "")
+            );
             final int parent = this.index;
             for (int idx = 0; idx < node.getChildCount(); idx += 1) {
                 this.index += 1;

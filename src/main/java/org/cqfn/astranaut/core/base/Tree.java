@@ -114,8 +114,7 @@ public class Tree {
      *  in any of the child nodes.
      */
     protected static String getLanguage(final Node node) {
-        final Type type = node.getType();
-        String language = type.getProperty("language");
+        String language = node.getProperties().getOrDefault("language", "");
         if (language.isEmpty()) {
             final int count = node.getChildCount();
             for (int index = 0; language.isEmpty() && index < count; index = index + 1) {

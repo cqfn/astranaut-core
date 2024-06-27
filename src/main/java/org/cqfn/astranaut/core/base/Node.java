@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
@@ -67,12 +68,14 @@ public interface Node {
     String getData();
 
     /**
-     * Returns the value of some custom property (depends on implementation).
-     * @param name The name of property
-     * @return Property value (if the property is not defined, returns an empty string)
+     * Retrieves the properties associated with the node.
+     *  The presence of specific properties depends on the specific node implementation
+     *  and may vary. By default, returns the properties of the node type.
+     * @return Immutable map of properties where keys are property names
+     *  and values are property values
      */
-    default String getProperty(final String name) {
-        return this.getType().getProperty(name);
+    default Map<String, String> getProperties() {
+        return this.getType().getProperties();
     }
 
     /**

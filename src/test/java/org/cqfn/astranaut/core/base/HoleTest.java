@@ -39,13 +39,16 @@ class HoleTest {
         Assertions.assertSame(EmptyFragment.INSTANCE, hole.getFragment());
         Assertions.assertEquals(0, hole.getChildCount());
         Assertions.assertNull(hole.getChild(0));
+        Assertions.assertEquals(
+            "purple",
+            hole.getProperties().getOrDefault("color", "")
+        );
         Assertions.assertEquals(1, hole.getNumber());
         final Type type = hole.getType();
         final String typename = "IntegerLiteral";
         Assertions.assertEquals(typename, type.getName());
         Assertions.assertEquals(typename, type.getHierarchy().get(0));
-        Assertions.assertEquals("purple", type.getProperty("color"));
-        Assertions.assertEquals("", type.getProperty("abracadabra"));
+        Assertions.assertFalse(type.getProperties().containsKey("abracadabra"));
         final Builder builder = type.createBuilder();
         builder.setData("0");
         final Node node = builder.createNode();

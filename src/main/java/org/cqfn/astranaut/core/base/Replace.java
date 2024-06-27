@@ -180,8 +180,8 @@ public final class Replace implements Action {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return ReplaceType.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return ReplaceType.PROPERTIES;
         }
 
         @Override

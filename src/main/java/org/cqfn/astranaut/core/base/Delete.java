@@ -162,8 +162,8 @@ public final class Delete implements Action {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return DeleteType.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return DeleteType.PROPERTIES;
         }
 
         @Override

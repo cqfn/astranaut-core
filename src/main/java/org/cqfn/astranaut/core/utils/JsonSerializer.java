@@ -138,7 +138,10 @@ public final class JsonSerializer {
             }
         }
         if (this.language.isEmpty()) {
-            final String property = type.getProperty(JsonSerializer.STR_LANGUAGE);
+            final String property = node.getProperties().getOrDefault(
+                JsonSerializer.STR_LANGUAGE,
+                ""
+            );
             if (!JsonSerializer.STR_COMMON.equals(property)) {
                 this.language = property;
             }

@@ -162,8 +162,8 @@ public final class Insert implements Action {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return InsertType.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return InsertType.PROPERTIES;
         }
 
         @Override

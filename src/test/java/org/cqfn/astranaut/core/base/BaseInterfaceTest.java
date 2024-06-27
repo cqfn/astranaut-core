@@ -60,7 +60,7 @@ class BaseInterfaceTest {
         Assertions.assertNotNull(type.getChildTypes());
         Assertions.assertFalse(type.getHierarchy().isEmpty());
         Assertions.assertEquals(type.getHierarchy().get(0), type.getName());
-        Assertions.assertNotNull(type.getProperty("abracadabra"));
+        Assertions.assertNotNull(type.getProperties());
         final String group = "Expression";
         Assertions.assertTrue(type.belongsToGroup(group));
         Assertions.assertTrue(node.belongsToGroup(group));
@@ -75,9 +75,9 @@ class BaseInterfaceTest {
     }
 
     @Test
-    void testNotNullProperty() {
+    void testNotNullProperties() {
         final Node node = DraftNode.create("X");
-        Assertions.assertNotNull(node.getProperty("abc"));
+        Assertions.assertNotNull(node.getProperties());
     }
 
     @Test

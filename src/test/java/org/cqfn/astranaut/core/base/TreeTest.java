@@ -25,6 +25,8 @@ package org.cqfn.astranaut.core.base;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import org.cqfn.astranaut.core.utils.MapUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -111,19 +113,21 @@ class TreeTest {
         private final String name;
 
         /**
-         * The name of the programming language from which the source code, used to construct
-         *  this tree, was written.
+         * Properties.
          */
-        private final String language;
+        private final Map<String, String> properties;
 
         /**
          * Constructor.
          * @param name The name of the type
-         * @param language The name of the programming language
+         * @param language The name of the programming language from which the source code,
+         *  used to construct this tree, was written
          */
         private TestType(final String name, final String language) {
             this.name = name;
-            this.language = language;
+            this.properties = new MapUtils<String, String>()
+                .put("language", language)
+                .make();
         }
 
         @Override
@@ -142,14 +146,8 @@ class TreeTest {
         }
 
         @Override
-        public String getProperty(final String property) {
-            final String result;
-            if (property.equals("language")) {
-                result = this.language;
-            } else {
-                result = "";
-            }
-            return result;
+        public Map<String, String> getProperties() {
+            return this.properties;
         }
 
         @Override

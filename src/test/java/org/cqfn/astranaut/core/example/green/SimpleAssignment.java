@@ -201,8 +201,8 @@ public final class SimpleAssignment implements Assignment {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return TypeImpl.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return TypeImpl.PROPERTIES;
         }
 
         @Override

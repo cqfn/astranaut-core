@@ -180,8 +180,8 @@ public final class Return implements Statement {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return TypeImpl.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return TypeImpl.PROPERTIES;
         }
 
         @Override

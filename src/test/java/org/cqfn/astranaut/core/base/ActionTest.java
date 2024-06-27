@@ -82,7 +82,7 @@ class ActionTest {
         Assertions.assertEquals(type.getName(), hierarchy.get(0));
         Assertions.assertEquals(
             ActionTest.EXPECTED_COLOR,
-            type.getProperty(ActionTest.COLOR_PROPERTY)
+            type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);
@@ -120,7 +120,7 @@ class ActionTest {
         Assertions.assertEquals(type.getName(), hierarchy.get(0));
         Assertions.assertEquals(
             ActionTest.EXPECTED_COLOR,
-            type.getProperty(ActionTest.COLOR_PROPERTY)
+            type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);
@@ -156,7 +156,7 @@ class ActionTest {
         Assertions.assertEquals(type.getName(), hierarchy.get(0));
         Assertions.assertEquals(
             ActionTest.EXPECTED_COLOR,
-            type.getProperty(ActionTest.COLOR_PROPERTY)
+            type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);

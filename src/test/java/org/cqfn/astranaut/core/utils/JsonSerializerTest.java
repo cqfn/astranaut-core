@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -196,12 +197,8 @@ class JsonSerializerTest {
         }
 
         @Override
-        public String getProperty(final String name) {
-            String property = "";
-            if ("language".equals(name)) {
-                property = "elven";
-            }
-            return property;
+        public Map<String, String> getProperties() {
+            return new MapUtils<String, String>().put("language", "elven").make();
         }
 
         @Override

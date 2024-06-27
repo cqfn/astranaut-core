@@ -23,63 +23,56 @@
  */
 package org.cqfn.astranaut.core.utils;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Helper class for building lists.
+ * Helper class for building maps.
  *
- * @param <T> Item type
- * @since 1.0
+ * @param <K> Key type
+ * @param <V> Value type
+ * @since 2.0.0
  */
-public final class ListUtils<T> {
+public class MapUtils<K, V> {
     /**
-     * List being built.
+     * Map being built.
      */
-    private final List<T> list;
+    private final Map<K, V> map;
 
     /**
      * Constructor.
      */
-    public ListUtils() {
-        this.list = new ArrayList<>(0);
+    public MapUtils() {
+        this.map = new HashMap<>();
     }
 
     /**
-     * Adds non-null items to the list. Null items are skipped.
-     * @param items Items
-     * @return Itself
+     * Adds all mappings from the provided map into resulting map.
+     * @param other Another map whose mappings will be added
+     * @return This builder instance
      */
-    @SafeVarargs
-    public final ListUtils<T> add(final T... items) {
-        for (final T item : items) {
-            if (item != null) {
-                this.list.add(item);
-            }
-        }
+    public MapUtils<K, V> put(final Map<? extends K, ? extends V> other) {
+        this.map.putAll(other);
         return this;
     }
 
     /**
-     * Merges another list with the result. Null items are skipped.
-     * @param other Another list
+     * Adds a mapping to resulting map.
+     * @param key The key of the mapping
+     * @param value The value of the mapping
+     * @return This builder instance
      */
-    public void merge(final List<T> other) {
-        if (other != null) {
-            for (final T item : other) {
-                if (item != null) {
-                    this.list.add(item);
-                }
-            }
-        }
+    public MapUtils<K, V> put(final K key, final V value) {
+        this.map.put(key, value);
+        return this;
     }
 
     /**
-     * Builds an unmodifiable list.
-     * @return A list
+     * Constructs an unmodifiable map from the mappings added to this builder.
+     * @return An unmodifiable map containing all mappings added to this builder
      */
-    public List<T> make() {
-        return Collections.unmodifiableList(this.list);
+    public Map<K, V> make() {
+        return Collections.unmodifiableMap(this.map);
     }
 }

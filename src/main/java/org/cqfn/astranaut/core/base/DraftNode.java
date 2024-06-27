@@ -266,11 +266,6 @@ public final class DraftNode implements Node {
         }
 
         @Override
-        public String getProperty(final String property) {
-            return "";
-        }
-
-        @Override
         public Builder createBuilder() {
             final Constructor builder = new Constructor();
             builder.setName(this.name);

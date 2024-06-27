@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.base;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A type of abstract syntax tree node.
@@ -33,41 +34,31 @@ import java.util.List;
  */
 public interface Type {
     /**
-     * Returns the type name.
+     * Retrieves the name of the node type.
      * @return The type name
      */
     String getName();
 
     /**
-     * Returns the list of child types.
-     * @return The list of descriptors
+     * Returns the list of child types that the node type can have.
+     *  Child types are represented by descriptors that specify the allowed types
+     *  and their constraints. This information is used during node creation to validate
+     *  the correctness of the created node.
+     * @return Unmodifiable list of child descriptors
      */
     default List<ChildDescriptor> getChildTypes() {
         return Collections.emptyList();
     }
 
     /**
-     * The hierarchy of names of groups the node type belongs to.
-     * @return The list of type names
+     * Returns the hierarchy of type names that the node type belongs to.
+     *  The hierarchy includes the name of the type itself followed by the names of its
+     *  parent types. Parent types are listed from the immediate parent to the furthest ancestor.
+     * @return Unmodifiable list of type names in the hierarchy
      */
     default List<String> getHierarchy() {
         return Collections.singletonList(this.getName());
     }
-
-    /**
-     * Returns the value of some property (depends on implementation).
-     * @param name The name of property
-     * @return Property value (if the property is not defined, returns an empty string)
-     */
-    default String getProperty(final String name) {
-        return "";
-    }
-
-    /**
-     * Creates a new builder who builds a node of this type.
-     * @return A builder.
-     */
-    Builder createBuilder();
 
     /**
      * Checks whether the type belongs to group.
@@ -77,4 +68,21 @@ public interface Type {
     default boolean belongsToGroup(final String type) {
         return this.getHierarchy().contains(type);
     }
+
+    /**
+     * Returns an immutable set of properties.
+     *  The presence of specific properties depends on the specific implementation
+     *  and may vary. By default, there are no custom properties.
+     * @return Immutable map of properties where keys are property names
+     *  and values are property values
+     */
+    default Map<String, String> getProperties() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Creates a new builder who builds a node of this type.
+     * @return A builder.
+     */
+    Builder createBuilder();
 }

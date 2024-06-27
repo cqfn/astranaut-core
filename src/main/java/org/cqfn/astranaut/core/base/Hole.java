@@ -23,7 +23,8 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import java.util.List;
+import java.util.Map;
+import org.cqfn.astranaut.core.utils.MapUtils;
 
 /**
  * A special pattern node that can substitute for any node of a suitable type.
@@ -42,13 +43,22 @@ public final class Hole implements PatternItem {
     private final int number;
 
     /**
+     * Hole properties.
+     */
+    private final Map<String, String> properties;
+
+    /**
      * Constructor.
      * @param type The type of the hole
      * @param number The number of the hole
      */
     public Hole(final Type type, final int number) {
-        this.type = new HoleType(type);
+        this.type = type;
         this.number = number;
+        this.properties = new MapUtils<String, String>()
+            .put(type.getProperties())
+            .put("color", "purple")
+            .make();
     }
 
     @Override
@@ -76,6 +86,11 @@ public final class Hole implements PatternItem {
         return null;
     }
 
+    @Override
+    public Map<String, String> getProperties() {
+        return this.properties;
+    }
+
     /**
      * Return number of the hole.
      * @return The number
@@ -87,56 +102,5 @@ public final class Hole implements PatternItem {
     @Override
     public String toString() {
         return this.getData();
-    }
-
-    /**
-     * Type implementation for a hole based on a prototype.
-     *
-     * @since 1.1.5
-     */
-    private static final class HoleType implements Type {
-        /**
-         * Prototype.
-         */
-        private final Type prototype;
-
-        /**
-         * Constructor.
-         * @param prototype Prototype
-         */
-        private HoleType(final Type prototype) {
-            this.prototype = prototype;
-        }
-
-        @Override
-        public String getName() {
-            return this.prototype.getName();
-        }
-
-        @Override
-        public List<ChildDescriptor> getChildTypes() {
-            return this.prototype.getChildTypes();
-        }
-
-        @Override
-        public List<String> getHierarchy() {
-            return this.prototype.getHierarchy();
-        }
-
-        @Override
-        public String getProperty(final String name) {
-            final String property;
-            if ("color".equals(name)) {
-                property = "purple";
-            } else {
-                property = this.prototype.getProperty(name);
-            }
-            return property;
-        }
-
-        @Override
-        public Builder createBuilder() {
-            return this.prototype.createBuilder();
-        }
     }
 }

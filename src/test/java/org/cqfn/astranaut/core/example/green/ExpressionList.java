@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
 import org.cqfn.astranaut.core.base.EmptyFragment;
@@ -129,6 +132,15 @@ public final class ExpressionList implements Node {
                 )
             );
 
+        /**
+         * Properties.
+         */
+        private static final Map<String, String> PROPERTIES = Stream.of(
+            new String[][] {
+                {"color", "green"},
+                {"language", "common"},
+            }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
         @Override
         public String getName() {
             return TypeImpl.EXPRESSION_LIST;
@@ -145,8 +157,8 @@ public final class ExpressionList implements Node {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return "";
+        public Map<String, String> getProperties() {
+            return TypeImpl.PROPERTIES;
         }
 
         @Override
