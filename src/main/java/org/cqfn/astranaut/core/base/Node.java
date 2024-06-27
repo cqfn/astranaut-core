@@ -149,7 +149,8 @@ public interface Node {
             final int count = this.getChildCount();
             equals = count == other.getChildCount()
                 && this.getTypeName().equals(other.getTypeName())
-                && this.getData().equals(other.getData());
+                && this.getData().equals(other.getData())
+                && this.getProperties().equals(other.getProperties());
             for (int index = 0; equals && index < count; index = index + 1) {
                 equals = this.getChild(index).deepCompare(other.getChild(index));
             }
