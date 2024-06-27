@@ -30,7 +30,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
-import org.cqfn.astranaut.core.base.*;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -48,9 +55,12 @@ class PatcherTest {
     @Test
     void patchingByPatternThatDoesNotMatch() {
         final Tree source = Tree.createDraft("A(B,C,D)");
-        final PatternNode pattern = new PatternNode(
-            new DiffNode(
-                DraftNode.create("D")
+        final Pattern pattern =
+            new Pattern(
+                new PatternNode(
+                    new DiffNode(
+                        DraftNode.create("E")
+                )
             )
         );
         final Patcher patcher = new DefaultPatcher();
@@ -70,7 +80,7 @@ class PatcherTest {
                 nodes.get("B").iterator().next()
             )
         );
-        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Tree result = patcher.patch(tree, pattern);
@@ -84,7 +94,7 @@ class PatcherTest {
         final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
-        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Tree result = patcher.patch(tree, pattern);
@@ -98,7 +108,7 @@ class PatcherTest {
         final Node prepattern = DraftNode.create("A(B, D)", nodes);
         final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
-        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Tree result = patcher.patch(tree, pattern);
@@ -128,7 +138,7 @@ class PatcherTest {
         final Node stmt = ctor.createNode();
         final Patcher patcher = new DefaultPatcher();
         final Pattern pattern = PatcherTest.createPatternWithHole();
-        final Tree patched = patcher.patch(new Tree(stmt), pattern.getRoot());
+        final Tree patched = patcher.patch(new Tree(stmt), pattern);
         ctor = new Variable.Constructor();
         ctor.setData("a");
         first = ctor.createNode();
@@ -156,7 +166,7 @@ class PatcherTest {
         final Node prepattern = DraftNode.create("E(B,D)", nodes);
         final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
-        final PatternNode pattern = new PatternNode(builder.getDiffTree().getRoot());
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,K(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
         final Tree result = patcher.patch(tree, pattern);

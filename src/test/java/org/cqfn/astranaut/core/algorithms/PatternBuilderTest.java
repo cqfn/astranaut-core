@@ -26,8 +26,12 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.cqfn.astranaut.core.base.*;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Hole;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;

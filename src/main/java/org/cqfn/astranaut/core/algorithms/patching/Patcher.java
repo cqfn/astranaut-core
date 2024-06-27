@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.patching;
 
-import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.Tree;
 
 /**
@@ -39,5 +39,5 @@ public interface Patcher {
      * @param pattern Root node af a pattern
      * @return Root node of updated syntax tree
      */
-    Tree patch(Tree source, PatternNode pattern);
+    Tree patch(Tree source, Pattern pattern);
 }

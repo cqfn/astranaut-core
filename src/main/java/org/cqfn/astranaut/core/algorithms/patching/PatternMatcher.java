@@ -34,8 +34,10 @@ import org.cqfn.astranaut.core.base.Delete;
 import org.cqfn.astranaut.core.base.Hole;
 import org.cqfn.astranaut.core.base.Insert;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
 import org.cqfn.astranaut.core.base.Replace;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * The matcher matches syntax tree and patterns.
@@ -55,10 +57,10 @@ class PatternMatcher {
 
     /**
      * Constructor.
-     * @param root Root node of the tree in which patterns are searched
+     * @param tree The syntax tree in which patterns will be searched
      */
-    PatternMatcher(final Node root) {
-        this.root = root;
+    PatternMatcher(final Tree tree) {
+        this.root = tree.getRoot();
         this.actions = new ActionList();
     }
 
@@ -75,15 +77,16 @@ class PatternMatcher {
      * @param pattern Root node of the pattern
      * @return Nodes that match the root node of the pattern
      */
-    Set<Node> match(final PatternNode pattern) {
+    Set<Node> match(final Pattern pattern) {
         final DeepTraversal deep = new DeepTraversal(this.root);
+        final PatternNode head = pattern.getRoot();
         final List<Node> preset = deep.findAll(
-            node -> node.getTypeName().equals(pattern.getTypeName())
-                && node.getData().equals(pattern.getData())
+            node -> node.getTypeName().equals(head.getTypeName())
+                && node.getData().equals(head.getData())
         );
         final Set<Node> set = new HashSet<>();
         for (final Node node : preset) {
-            final boolean matches = this.checkNode(node, null, pattern);
+            final boolean matches = this.checkNode(node, null, head);
             if (matches) {
                 set.add(node);
             }

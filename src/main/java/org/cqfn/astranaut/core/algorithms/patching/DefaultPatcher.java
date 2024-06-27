@@ -27,7 +27,7 @@ import java.util.Set;
 import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.Tree;
 
 /**
@@ -38,8 +38,8 @@ import org.cqfn.astranaut.core.base.Tree;
  */
 public final class DefaultPatcher implements Patcher {
     @Override
-    public Tree patch(final Tree source, final PatternNode pattern) {
-        final PatternMatcher matcher = new PatternMatcher(source.getRoot());
+    public Tree patch(final Tree source, final Pattern pattern) {
+        final PatternMatcher matcher = new PatternMatcher(source);
         final Set<Node> nodes = matcher.match(pattern);
         final Tree result;
         if (nodes.isEmpty()) {
