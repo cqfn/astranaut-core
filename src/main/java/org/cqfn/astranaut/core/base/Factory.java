@@ -26,52 +26,67 @@ package org.cqfn.astranaut.core.base;
 import java.util.Map;
 
 /**
- * The node factory.
- *
+ * Factory class for creating and managing types and builders.
  * @since 1.0
  */
 public class Factory {
     /**
-     * The set of types arranged by name.
+     * Map of types indexed by name.
      */
     private final Map<String, Type> types;
 
     /**
-     * Constructor.
-     * @param types The set of types arranged by name
+     * Constructs a Factory with the given set of types.
+     * @param types The map of types indexed by name
      */
     public Factory(final Map<String, Type> types) {
         this.types = types;
     }
 
     /**
-     * Creates node builder by type name.
-     * @param name The type name
-     * @return A node builder
+     * Retrieves the type associated with the given name.
+     * @param name The name of the type to retrieve
+     * @return The corresponding Type object, or {@code null} if not found
      */
-    public final Builder createBuilder(final String name) {
-        final Builder result;
+    public final Type getType(final String name) {
+        final Type type;
         if (this.types.containsKey(name)) {
-            final Type type = this.types.get(name);
-            result = type.createBuilder();
+            type = this.types.get(name);
         } else {
             switch (name) {
                 case "Insert":
-                    result = new Insert.Constructor();
+                    type = Insert.TYPE;
                     break;
                 case "Replace":
-                    result = new Replace.Constructor();
+                    type = Replace.TYPE;
                     break;
                 case "Delete":
-                    result = new Delete.Constructor();
+                    type = Delete.TYPE;
                     break;
                 default:
-                    final DraftNode.Constructor draft = new DraftNode.Constructor();
-                    draft.setName(name);
-                    result = draft;
+                    type = null;
                     break;
             }
         }
-        return result;
+        return type;
+    }
+
+    /**
+     * Creates a builder for the given type name.
+     * @param name The name of the type to create a builder for
+     * @return A Builder instance corresponding to the type, or a default DraftNode builder
+     *  if the type is not found
+     */
+    public final Builder createBuilder(final String name) {
+        final Builder builder;
+        final Type type = this.getType(name);
+        if (type == null) {
+            final DraftNode.Constructor draft = new DraftNode.Constructor();
+            draft.setName(name);
+            builder = draft;
+        } else {
+            builder = type.createBuilder();
+        }
+        return builder;
     }
 }
