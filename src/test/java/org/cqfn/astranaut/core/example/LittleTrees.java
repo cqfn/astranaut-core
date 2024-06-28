@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.base.DiffTree;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.green.Addition;
@@ -57,7 +57,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createVariable(final String name) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Variable.Constructor ctor = new Variable.Constructor();
         ctor.setData(name);
         if (ctor.isValid()) {
@@ -72,7 +72,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createIntegerLiteral(final int value) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final IntegerLiteral.Constructor ctor = new IntegerLiteral.Constructor();
         ctor.setData(String.valueOf(value));
         if (ctor.isValid()) {
@@ -88,7 +88,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createAssignment(final Node left, final Node right) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final SimpleAssignment.Constructor ctor = new SimpleAssignment.Constructor();
         ctor.setChildrenList(Arrays.asList(left, right));
         if (ctor.isValid()) {
@@ -104,7 +104,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createAddition(final Node left, final Node right) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Addition.Constructor ctor = new Addition.Constructor();
         ctor.setChildrenList(Arrays.asList(left, right));
         if (ctor.isValid()) {
@@ -119,7 +119,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node wrapExpressionWithStatement(final Node expression) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final ExpressionStatement.Constructor ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(expression));
         if (ctor.isValid()) {
@@ -134,7 +134,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createReturnStatement(final Node expression) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Return.Constructor ctor = new Return.Constructor();
         if (expression != null) {
             ctor.setChildrenList(Collections.singletonList(expression));
@@ -151,7 +151,7 @@ public final class LittleTrees {
      * @return Resulting node
      */
     public static Node createStatementBlock(final Node... statements) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final StatementBlock.Constructor ctor = new StatementBlock.Constructor();
         ctor.setChildrenList(Arrays.asList(statements));
         if (ctor.isValid()) {

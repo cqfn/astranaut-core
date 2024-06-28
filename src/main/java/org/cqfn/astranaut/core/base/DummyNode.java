@@ -27,11 +27,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The empty syntax tree.
- *
+ * Dummy node, a placeholder for non-existent nodes.
  * @since 1.0
  */
-public final class EmptyTree implements Node {
+public final class DummyNode implements Node {
     /**
      * The type.
      */
@@ -40,7 +39,7 @@ public final class EmptyTree implements Node {
     /**
      * The instance.
      */
-    public static final Node INSTANCE = new EmptyTree();
+    public static final Node INSTANCE = new DummyNode();
 
     /**
      * The builder.
@@ -50,7 +49,7 @@ public final class EmptyTree implements Node {
     /**
      * Private constructor.
      */
-    private EmptyTree() {
+    private DummyNode() {
     }
 
     @Override
@@ -60,7 +59,7 @@ public final class EmptyTree implements Node {
 
     @Override
     public Type getType() {
-        return EmptyTree.TYPE;
+        return DummyNode.TYPE;
     }
 
     @Override
@@ -80,7 +79,6 @@ public final class EmptyTree implements Node {
 
     /**
      * The fake builder that only returns static reference.
-     *
      * @since 1.0
      */
     private static final class BuilderImpl implements Builder {
@@ -106,13 +104,12 @@ public final class EmptyTree implements Node {
 
         @Override
         public Node createNode() {
-            return EmptyTree.INSTANCE;
+            return DummyNode.INSTANCE;
         }
     }
 
     /**
-     * The type of empty tree.
-     *
+     * The type of dummy node.
      * @since 1.0
      */
     private static class TypeImpl implements Type {
@@ -133,7 +130,7 @@ public final class EmptyTree implements Node {
 
         @Override
         public Builder createBuilder() {
-            return EmptyTree.BUILDER;
+            return DummyNode.BUILDER;
         }
     }
 }

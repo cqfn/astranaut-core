@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.utils.visualizer.DotRender;
 import org.junit.jupiter.api.Assertions;
@@ -127,7 +127,7 @@ class DotRenderTest {
     void testNodeWithNullChild() throws IOException {
         final List<Node> children = new LinkedList<>();
         children.add(this.createNode("Child"));
-        children.add(EmptyTree.INSTANCE);
+        children.add(DummyNode.INSTANCE);
         final Node root = this.createNode("TestNode", children);
         final String expected = new FilesReader(
             DotRenderTest.DIR.concat("testNodeWithNullChild.dot")

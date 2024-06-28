@@ -169,7 +169,7 @@ public class ChildrenMapper {
                 }
                 final Integer position = positions.get(0);
                 destination[position] = node;
-                source[index] = EmptyTree.INSTANCE;
+                source[index] = DummyNode.INSTANCE;
                 this.required.removePosition(type, position);
                 this.possible.removePosition(type, position);
                 this.unused.put(type, 0);
@@ -187,7 +187,7 @@ public class ChildrenMapper {
     private boolean bindAllNodes(final Node[] destination, final Node... source) {
         boolean result = true;
         for (final Node node : source) {
-            if (!(node instanceof EmptyTree)) {
+            if (!(node instanceof DummyNode)) {
                 final String type = this.suitable.get(node);
                 final List<Integer> allowed = this.possible.getPositionsByType(type);
                 if (allowed == null) {

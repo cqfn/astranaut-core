@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
@@ -68,7 +68,7 @@ class TreeVisualizerTest {
      */
     @Test
     void testNullNodeVisualization(@TempDir final Path temp) {
-        final Node root = EmptyTree.INSTANCE;
+        final Node root = DummyNode.INSTANCE;
         final TreeVisualizer visualizer = new TreeVisualizer(root);
         final Path img = temp.resolve("null.png");
         boolean oops = false;

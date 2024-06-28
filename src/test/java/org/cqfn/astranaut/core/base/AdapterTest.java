@@ -234,7 +234,7 @@ class AdapterTest {
             )
         );
         final Node empty = converter.convert(bad, factory);
-        Assertions.assertEquals(empty, EmptyTree.INSTANCE);
+        Assertions.assertEquals(empty, DummyNode.INSTANCE);
     }
 
     /**
@@ -336,7 +336,7 @@ class AdapterTest {
     private static class VariableConverter implements Converter {
         @Override
         public Node convert(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_SINGLE_EXPR) && root.getChildCount() == 1) {
                 result = VariableConverter.firstRule(root.getChild(0), factory);
             }
@@ -350,7 +350,7 @@ class AdapterTest {
          * @return Converted node
          */
         private static Node firstRule(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_IDENTIFIER) && root.getChildCount() == 1) {
                 result = VariableConverter.secondRule(root.getChild(0), factory);
             }
@@ -364,7 +364,7 @@ class AdapterTest {
          * @return Converted node
          */
         private static Node secondRule(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_LITERAL) && root.getChildCount() == 0) {
                 final Builder builder = factory.createBuilder(AdapterTest.STR_VARIABLE);
                 builder.setData(root.getData());
@@ -381,7 +381,7 @@ class AdapterTest {
     private static class NumericConverter implements Converter {
         @Override
         public Node convert(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_SINGLE_EXPR) && root.getChildCount() == 1) {
                 result = firstRule(root.getChild(0), factory);
             }
@@ -395,7 +395,7 @@ class AdapterTest {
          * @return Converted node
          */
         private static Node firstRule(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_LITERAL) && root.getChildCount() == 1) {
                 result = secondRule(root.getChild(0), factory);
             }
@@ -409,7 +409,7 @@ class AdapterTest {
          * @return Converted node
          */
         private static Node secondRule(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_NUM_LITERAL) && root.getChildCount() == 1) {
                 result = thirdRule(root.getChild(0), factory);
             }
@@ -423,7 +423,7 @@ class AdapterTest {
          * @return Converted node
          */
         private static Node thirdRule(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_LITERAL) && root.getChildCount() == 0) {
                 final Builder builder = factory.createBuilder(AdapterTest.STR_INT_LITERAL);
                 builder.setData(root.getData());
@@ -450,7 +450,7 @@ class AdapterTest {
 
         @Override
         public Node convert(final Node root, final Factory factory) {
-            Node result = EmptyTree.INSTANCE;
+            Node result = DummyNode.INSTANCE;
             if (root.belongsToGroup(AdapterTest.STR_SINGLE_EXPR)
                 && root.getChildCount() == AdditionConverter.EXPECTED_COUNT) {
                 final Node first = root.getChild(0);

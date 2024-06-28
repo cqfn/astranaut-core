@@ -90,7 +90,7 @@ class ActionTest {
         Assertions.assertFalse(builder.setData("abracadabra"));
         Assertions.assertFalse(builder.isValid());
         Node created = builder.createNode();
-        Assertions.assertEquals(EmptyTree.INSTANCE, created);
+        Assertions.assertEquals(DummyNode.INSTANCE, created);
         Assertions.assertTrue(builder.setChildrenList(Collections.singletonList(inserted)));
         Assertions.assertFalse(builder.setChildrenList(Arrays.asList(inserted, inserted)));
         created = builder.createNode();
@@ -128,7 +128,7 @@ class ActionTest {
         Assertions.assertFalse(builder.setData("it's a kind of magic"));
         Assertions.assertFalse(builder.isValid());
         Node created = builder.createNode();
-        Assertions.assertEquals(EmptyTree.INSTANCE, created);
+        Assertions.assertEquals(DummyNode.INSTANCE, created);
         Assertions.assertTrue(builder.setChildrenList(Arrays.asList(before, after)));
         Assertions.assertFalse(builder.setChildrenList(Collections.singletonList(before)));
         created = builder.createNode();
@@ -164,7 +164,7 @@ class ActionTest {
         Assertions.assertFalse(builder.setData("I hate syntax trees"));
         Assertions.assertFalse(builder.isValid());
         Node created = builder.createNode();
-        Assertions.assertEquals(EmptyTree.INSTANCE, created);
+        Assertions.assertEquals(DummyNode.INSTANCE, created);
         Assertions.assertTrue(builder.setChildrenList(Collections.singletonList(deleted)));
         Assertions.assertFalse(builder.setChildrenList(Arrays.asList(deleted, deleted)));
         created = builder.createNode();

@@ -86,7 +86,7 @@ class DiffNodeTest {
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, actual);
         final Node expected = this.loadTree(DiffNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
@@ -100,7 +100,7 @@ class DiffNodeTest {
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, actual);
         final Node expected = this.loadTree(DiffNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
@@ -114,12 +114,12 @@ class DiffNodeTest {
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node before = diff.getBefore();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, before);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, before);
         Assertions.assertTrue(
             before.deepCompare(this.loadTree(DiffNodeTest.TREE_BEFORE_REPL))
         );
         final Node after = diff.getAfter();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, after);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, after);
         Assertions.assertTrue(
             after.deepCompare(this.loadTree(DiffNodeTest.TREE_AFTER_REPL))
         );
@@ -134,7 +134,7 @@ class DiffNodeTest {
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, actual);
         final Node expected = this.loadTree(DiffNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
@@ -148,7 +148,7 @@ class DiffNodeTest {
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, actual);
         final Node expected = this.loadTree(DiffNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
@@ -261,7 +261,7 @@ class DiffNodeTest {
         );
         final Tree tree = deserializer.convert();
         final Node root = tree.getRoot();
-        Assertions.assertNotEquals(EmptyTree.INSTANCE, root);
+        Assertions.assertNotEquals(DummyNode.INSTANCE, root);
         return root;
     }
 }

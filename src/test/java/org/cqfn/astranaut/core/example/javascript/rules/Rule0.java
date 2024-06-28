@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Converter;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
@@ -56,7 +56,7 @@ public final class Rule0 implements Converter {
 
     @Override
     public Node convert(final Node node, final Factory factory) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Map<Integer, List<Node>> children = new TreeMap<>();
         final Map<Integer, String> data = new TreeMap<>();
         final boolean matched = Matcher2.INSTANCE.match(node, children, data);

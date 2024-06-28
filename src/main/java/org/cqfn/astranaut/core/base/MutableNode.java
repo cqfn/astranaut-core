@@ -158,7 +158,7 @@ public final class MutableNode implements Node {
         if (builder.isValid()) {
             result = builder.createNode();
         } else {
-            result = EmptyTree.INSTANCE;
+            result = DummyNode.INSTANCE;
         }
         return result;
     }

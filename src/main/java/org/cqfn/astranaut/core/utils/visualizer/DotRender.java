@@ -24,7 +24,7 @@
 package org.cqfn.astranaut.core.utils.visualizer;
 
 import java.util.Objects;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
@@ -83,7 +83,7 @@ public class DotRender {
      * @param node A node.
      */
     private void processNode(final Node node) {
-        final boolean empty = node == null || node == EmptyTree.INSTANCE;
+        final boolean empty = node == null || node == DummyNode.INSTANCE;
         if (empty) {
             this.appendNullNode();
         } else {

@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.ArrayList;
 import java.util.List;
 import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 
@@ -47,7 +47,7 @@ public class ReplaceNode {
      *  - index of the root child which branch was modified if a subtree was replaced
      */
     public Pair<Node, Integer> replace(final Node tree, final Node source, final Node target) {
-        Pair<Node, Integer> result = new Pair<>(EmptyTree.INSTANCE, -1);
+        Pair<Node, Integer> result = new Pair<>(DummyNode.INSTANCE, -1);
         if (tree.equals(source)) {
             result = new Pair<>(target, -1);
         } else if (tree.getChildCount() > 0) {
@@ -56,7 +56,7 @@ public class ReplaceNode {
             for (int idx = 0; idx < tree.getChildCount(); idx += 1) {
                 final Node child = tree.getChild(idx);
                 final Pair<Node, Integer> replacement = this.replace(child, source, target);
-                if (replacement.getKey().equals(EmptyTree.INSTANCE)) {
+                if (replacement.getKey().equals(DummyNode.INSTANCE)) {
                     list.add(child);
                 } else {
                     list.add(replacement.getKey());

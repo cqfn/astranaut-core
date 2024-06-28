@@ -210,7 +210,7 @@ public final class Insert implements Action {
 
         @Override
         public Node createNode() {
-            Node node = EmptyTree.INSTANCE;
+            Node node = DummyNode.INSTANCE;
             if (this.isValid()) {
                 node = new Insert(this.child);
             }

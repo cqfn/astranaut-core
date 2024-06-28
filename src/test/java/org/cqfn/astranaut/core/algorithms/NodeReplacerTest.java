@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.Arrays;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
@@ -179,7 +179,7 @@ class NodeReplacerTest {
         final Node source = this.createNode("444", "");
         final Node target = this.createTargetTree();
         final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
-        Assertions.assertEquals(EmptyTree.INSTANCE, result.getKey());
+        Assertions.assertEquals(DummyNode.INSTANCE, result.getKey());
         Assertions.assertEquals(-1, result.getValue());
     }
 

@@ -28,7 +28,7 @@ import java.util.List;
 import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Delete;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Insert;
 import org.cqfn.astranaut.core.base.Node;
@@ -70,7 +70,7 @@ public class NodeDescriptor {
      * @return A node
      */
     public Node convert(final Factory factory, final ActionList actions) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Builder builder = factory.createBuilder(this.type);
         if (builder != null) {
             if (this.data != null) {

@@ -262,7 +262,7 @@ public final class DiffNode implements DiffTreeItem {
      * @return This node, before of after changes
      */
     private Node getBranch(final BranchSelector selector) {
-        Node result = EmptyTree.INSTANCE;
+        Node result = DummyNode.INSTANCE;
         final Builder builder = this.prototype.getType().createBuilder();
         do {
             if (builder == null) {

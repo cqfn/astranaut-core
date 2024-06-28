@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -88,7 +88,7 @@ class SubtreeTest {
         );
         final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
         final Node subtree = algorithm.create(set);
-        Assertions.assertSame(subtree, EmptyTree.INSTANCE);
+        Assertions.assertSame(subtree, DummyNode.INSTANCE);
     }
 
     @Test
@@ -124,6 +124,6 @@ class SubtreeTest {
             new NodeSelector(original).select((node, parents) -> true);
         final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
         final Node subtree = algorithm.create(selected);
-        Assertions.assertSame(subtree, EmptyTree.INSTANCE);
+        Assertions.assertSame(subtree, DummyNode.INSTANCE);
     }
 }

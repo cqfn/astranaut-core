@@ -25,7 +25,7 @@ package org.cqfn.astranaut.core.utils;
 
 import com.kniazkov.json.Json;
 import com.kniazkov.json.JsonException;
-import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
@@ -61,7 +61,7 @@ public final class JsonDeserializer {
      * @return Root node
      */
     public Tree convert() {
-        Tree result = new Tree(EmptyTree.INSTANCE);
+        Tree result = new Tree(DummyNode.INSTANCE);
         try {
             final TreeDescriptor tree = Json.parse(this.source, TreeDescriptor.class);
             if (tree != null) {

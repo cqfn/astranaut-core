@@ -66,7 +66,7 @@ public class Adapter {
             boolean converted = false;
             for (final Converter converter : this.converters) {
                 final Node transformed = converter.convert(original, this.factory);
-                if (!(transformed instanceof EmptyTree)) {
+                if (!(transformed instanceof DummyNode)) {
                     result = Adapter.replace(original, result, transformed);
                     converted = true;
                     break;
@@ -95,7 +95,7 @@ public class Adapter {
         for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
-            if (!(transformed instanceof EmptyTree)) {
+            if (!(transformed instanceof DummyNode)) {
                 if (variant == conversions) {
                     result = Adapter.replace(original, result, transformed);
                     break;
@@ -120,7 +120,7 @@ public class Adapter {
         for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
-            if (!(transformed instanceof EmptyTree)) {
+            if (!(transformed instanceof DummyNode)) {
                 conversions += 1;
             }
         }

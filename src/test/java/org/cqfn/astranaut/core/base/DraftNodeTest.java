@@ -90,21 +90,21 @@ class DraftNodeTest {
             root,
             nodes.computeIfAbsent(
                 "X",
-                s -> Collections.singleton(EmptyTree.INSTANCE)
+                s -> Collections.singleton(DummyNode.INSTANCE)
             ).iterator().next()
         );
         Assertions.assertEquals(
             2,
             nodes.computeIfAbsent(
                 "A",
-                s -> Collections.singleton(EmptyTree.INSTANCE)
+                s -> Collections.singleton(DummyNode.INSTANCE)
             ).size()
         );
         Assertions.assertEquals(
             2,
             nodes.computeIfAbsent(
                 "B",
-                s -> Collections.singleton(EmptyTree.INSTANCE)
+                s -> Collections.singleton(DummyNode.INSTANCE)
             ).iterator().next().getChildCount()
         );
     }
