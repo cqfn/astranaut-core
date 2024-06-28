@@ -24,7 +24,7 @@
 package org.cqfn.astranaut.core.utils.deserializer;
 
 import org.cqfn.astranaut.core.base.ActionList;
-import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.JsonDeserializer;
@@ -58,7 +58,7 @@ public class TreeDescriptor {
      * @return A root node
      */
     public Tree convert(final JsonDeserializer.FactorySelector selector) {
-        Tree result = new Tree(DummyNode.INSTANCE);
+        Tree result = EmptyTree.INSTANCE;
         final Factory factory = selector.select(this.language);
         if (factory != null) {
             final ActionList actions = new ActionList();

@@ -32,8 +32,8 @@ import java.util.Map;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.EmptyFragment;
+import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
@@ -128,7 +128,7 @@ class JsonSerializerTest {
      */
     @Test
     void testFilesWriterException() {
-        final Tree tree = new Tree(DummyNode.INSTANCE);
+        final Tree tree = EmptyTree.INSTANCE;
         final JsonSerializer serializer = new JsonSerializer(tree);
         final boolean result = serializer.serializeToFile("/");
         Assertions.assertFalse(result);
