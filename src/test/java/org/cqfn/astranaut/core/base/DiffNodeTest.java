@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.1.0
  */
-class DifferenceNodeTest {
+class DiffNodeTest {
     /**
      * The folder with test resources.
      */
@@ -82,12 +82,12 @@ class DifferenceNodeTest {
      */
     @Test
     void testInsertGetBefore() {
-        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        final Node root = this.loadTree(DiffNodeTest.TREE_WITH_INSERT);
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
+        final Node expected = this.loadTree(DiffNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
@@ -96,12 +96,12 @@ class DifferenceNodeTest {
      */
     @Test
     void testInsertGetAfter() {
-        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_INSERT);
+        final Node root = this.loadTree(DiffNodeTest.TREE_WITH_INSERT);
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
+        final Node expected = this.loadTree(DiffNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
@@ -110,18 +110,18 @@ class DifferenceNodeTest {
      */
     @Test
     void testReplace() {
-        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_REPLACE);
+        final Node root = this.loadTree(DiffNodeTest.TREE_WITH_REPLACE);
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node before = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, before);
         Assertions.assertTrue(
-            before.deepCompare(this.loadTree(DifferenceNodeTest.TREE_BEFORE_REPL))
+            before.deepCompare(this.loadTree(DiffNodeTest.TREE_BEFORE_REPL))
         );
         final Node after = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, after);
         Assertions.assertTrue(
-            after.deepCompare(this.loadTree(DifferenceNodeTest.TREE_AFTER_REPL))
+            after.deepCompare(this.loadTree(DiffNodeTest.TREE_AFTER_REPL))
         );
     }
 
@@ -130,12 +130,12 @@ class DifferenceNodeTest {
      */
     @Test
     void testDeleteGetBefore() {
-        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
+        final Node root = this.loadTree(DiffNodeTest.TREE_WITH_DELETE);
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getBefore();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree(DifferenceNodeTest.TREE_BEFO_DELETE);
+        final Node expected = this.loadTree(DiffNodeTest.TREE_BEFO_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
@@ -144,12 +144,12 @@ class DifferenceNodeTest {
      */
     @Test
     void testDeleteGetAfter() {
-        final Node root = this.loadTree(DifferenceNodeTest.TREE_WITH_DELETE);
+        final Node root = this.loadTree(DiffNodeTest.TREE_WITH_DELETE);
         Assertions.assertTrue(root instanceof DiffNode);
         final DiffNode diff = (DiffNode) root;
         final Node actual = diff.getAfter();
         Assertions.assertNotEquals(EmptyTree.INSTANCE, actual);
-        final Node expected = this.loadTree(DifferenceNodeTest.TREE_AFTER_DELETE);
+        final Node expected = this.loadTree(DiffNodeTest.TREE_AFTER_DELETE);
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
@@ -218,7 +218,7 @@ class DifferenceNodeTest {
      * @return The file content
      */
     private String getFileContent(final String name) {
-        final String file = DifferenceNodeTest.TESTS_PATH.concat(name);
+        final String file = DiffNodeTest.TESTS_PATH.concat(name);
         boolean oops = false;
         String source = "";
         try {

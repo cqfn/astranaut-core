@@ -51,14 +51,6 @@ public interface Position extends Comparable<Position> {
      */
     int getColumn();
 
-    /**
-     * Compares this position with the specified position for order.
-     * @param other The position to be compared
-     * @return A negative integer, zero, or a positive integer as this position is less than,
-     *  equal to, or greater than the specified position.
-     * @throws IllegalArgumentException If positions are from different sources and cannot
-     *  be compared
-     */
     @Override
     default int compareTo(final Position other) {
         if (!this.getSource().equals(other.getSource())) {

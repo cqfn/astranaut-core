@@ -61,9 +61,9 @@ class PatternNodeTest {
      * Source implementation for test purposes.
      * @since 1.1.5
      */
-    private static class TestSource implements Source {
+    private static final class TestSource implements Source {
         @Override
-        public String getFragmentAsString(Position start, Position end) {
+        public String getFragmentAsString(final Position start, final Position end) {
             return "";
         }
     }
@@ -72,7 +72,7 @@ class PatternNodeTest {
      * Position implementation for test purposes.
      * @since 1.1.5
      */
-    private static class TestPosition implements Position {
+    private static final class TestPosition implements Position {
         /**
          * Source.
          */
@@ -88,7 +88,7 @@ class PatternNodeTest {
          * @param source Source
          * @param column Column number
          */
-        private TestPosition(final Source source, int column) {
+        private TestPosition(final Source source, final int column) {
             this.source = source;
             this.column = column;
         }
