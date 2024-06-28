@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.cqfn.astranaut.core.algorithms.NodeAllocator;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
-import org.cqfn.astranaut.core.base.ChildrenMapper;
 import org.cqfn.astranaut.core.base.EmptyFragment;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
@@ -247,9 +247,9 @@ public final class ExpressionStatement implements Statement {
         @Override
         public boolean setChildrenList(final List<Node> list) {
             final Node[] mapping = new Node[Constructor.MAX_NODE_COUNT];
-            final ChildrenMapper mapper =
-                new ChildrenMapper(ExpressionStatement.TYPE.getChildTypes());
-            final boolean result = mapper.map(mapping, list);
+            final NodeAllocator allocator =
+                new NodeAllocator(ExpressionStatement.TYPE.getChildTypes());
+            final boolean result = allocator.allocate(mapping, list);
             if (result) {
                 this.expression = (Expression) mapping[Constructor.EXPRESSION_POS];
             }

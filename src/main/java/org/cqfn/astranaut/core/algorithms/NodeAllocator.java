@@ -21,20 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
- * Mapping of the list of nodes by positions based on node types.
- *
+ * Allocates nodes to positions based on a list of descriptors.
+ * This is used when creating nodes with a well-defined order of child nodes,
+ *  meaning that a child node of a specific type must be in its "correct" position.
+ *  However, the initial set of child nodes may be unordered or incomplete.
+ *  The {@link Builder} interface, which is used to create new nodes, allows an arbitrary list
+ *  to be set as the list of child nodes. Therefore, techniques such as this algorithm
+ *  are needed to allocate these nodes to the correct "slots" if necessary.
+ *  This algorithm is well-suited for most cases.
  * @since 1.0
  */
-public class ChildrenMapper {
+public class NodeAllocator {
     /**
      * The list of child descriptors.
      */
@@ -64,7 +75,7 @@ public class ChildrenMapper {
      * Constructor.
      * @param descriptors The list of child descriptors.
      */
-    public ChildrenMapper(final List<ChildDescriptor> descriptors) {
+    public NodeAllocator(final List<ChildDescriptor> descriptors) {
         this.descriptors = descriptors;
     }
 
@@ -75,7 +86,7 @@ public class ChildrenMapper {
      * @param source The source list of nodes
      * @return Mapping result, {@code true} if such a mapping is possible (array was filled)
      */
-    public boolean map(final Node[] destination, final List<Node> source) {
+    public boolean allocate(final Node[] destination, final List<Node> source) {
         boolean result = false;
         final int capacity = this.descriptors.size();
         final int count = source.size();
@@ -306,7 +317,7 @@ public class ChildrenMapper {
                 this.positions = new TreeMap<>();
                 this.count = 0;
                 int index = 0;
-                for (final ChildDescriptor descriptor : ChildrenMapper.this.descriptors) {
+                for (final ChildDescriptor descriptor : NodeAllocator.this.descriptors) {
                     boolean allowed = true;
                     if (!this.optional && descriptor.isOptional()) {
                         allowed = false;

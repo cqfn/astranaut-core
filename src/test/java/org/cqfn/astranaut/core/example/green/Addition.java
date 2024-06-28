@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.cqfn.astranaut.core.algorithms.NodeAllocator;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
-import org.cqfn.astranaut.core.base.ChildrenMapper;
 import org.cqfn.astranaut.core.base.EmptyFragment;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
@@ -247,8 +247,8 @@ public final class Addition implements BinaryExpression {
         @Override
         public boolean setChildrenList(final List<Node> list) {
             final Node[] mapping = new Node[2];
-            final ChildrenMapper mapper = new ChildrenMapper(Addition.TYPE.getChildTypes());
-            final boolean result = mapper.map(mapping, list);
+            final NodeAllocator allocator = new NodeAllocator(Addition.TYPE.getChildTypes());
+            final boolean result = allocator.allocate(mapping, list);
             if (result) {
                 this.left = (Expression) mapping[0];
                 this.right = (Expression) mapping[1];

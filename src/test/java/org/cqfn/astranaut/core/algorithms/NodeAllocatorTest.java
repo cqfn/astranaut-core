@@ -21,11 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.cqfn.astranaut.core.example.green.Variable;
@@ -33,12 +36,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link ChildrenMapper} class.
+ * Testing {@link NodeAllocator} class.
  *
  * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")
-class ChildrenMapperTest {
+class NodeAllocatorTest {
     /**
      * The 'AssignableExpression' string.
      */
@@ -394,10 +397,10 @@ class ChildrenMapperTest {
     @Test
     void testMappingWithInheritance() {
         final List<ChildDescriptor> descriptors = Arrays.asList(
-            new ChildDescriptor(ChildrenMapperTest.EXPRESSION),
-            new ChildDescriptor(ChildrenMapperTest.EXPRESSION)
+            new ChildDescriptor(NodeAllocatorTest.EXPRESSION),
+            new ChildDescriptor(NodeAllocatorTest.EXPRESSION)
         );
-        final ChildrenMapper mapper = new ChildrenMapper(descriptors);
+        final NodeAllocator mapper = new NodeAllocator(descriptors);
         IntegerLiteral.Constructor icr = new IntegerLiteral.Constructor();
         icr.setData("7");
         final Node first = icr.createNode();
@@ -411,7 +414,7 @@ class ChildrenMapperTest {
         icr.setData("13");
         final Node third = icr.createNode();
         final Node[] mapping = new Node[2];
-        final boolean result = mapper.map(mapping, Arrays.asList(addition, third));
+        final boolean result = mapper.allocate(mapping, Arrays.asList(addition, third));
         Assertions.assertTrue(result);
         Assertions.assertEquals(addition, mapping[0]);
         Assertions.assertEquals(third, mapping[1]);
@@ -424,22 +427,22 @@ class ChildrenMapperTest {
     @Test
     void testMappingWithTwoLevelInheritance() {
         final List<ChildDescriptor> descriptors = Arrays.asList(
-            new ChildDescriptor(ChildrenMapperTest.ASSIGN_EXPR),
-            new ChildDescriptor(ChildrenMapperTest.EXPRESSION)
+            new ChildDescriptor(NodeAllocatorTest.ASSIGN_EXPR),
+            new ChildDescriptor(NodeAllocatorTest.EXPRESSION)
         );
-        final ChildrenMapper mapper = new ChildrenMapper(descriptors);
+        final NodeAllocator mapper = new NodeAllocator(descriptors);
         final Variable.Constructor ctor = new Variable.Constructor();
         ctor.setData("x");
         final Node left = ctor.createNode();
         ctor.setData("y");
         final Node right = ctor.createNode();
         final Node[] mapping = new Node[2];
-        final boolean result = mapper.map(mapping, Arrays.asList(left, right));
+        final boolean result = mapper.allocate(mapping, Arrays.asList(left, right));
         Assertions.assertTrue(result);
     }
 
     /**
-     * Common test for the {@link ChildrenMapper} class.
+     * Common test for the {@link NodeAllocator} class.
      * @param types The list of types
      * @param nodes The list of nodes
      * @param success If expected success mapping
@@ -456,8 +459,8 @@ class ChildrenMapperTest {
             children.add(ctor.createNode());
         }
         final Node[] mapping = new Node[types.size()];
-        final ChildrenMapper mapper = new ChildrenMapper(types);
-        boolean result = mapper.map(mapping, children);
+        final NodeAllocator mapper = new NodeAllocator(types);
+        boolean result = mapper.allocate(mapping, children);
         if (success && result) {
             for (int index = 0; index < mapping.length; index = index + 1) {
                 if (mapping[index] != null && Integer.parseInt(mapping[index].getData()) != index) {
