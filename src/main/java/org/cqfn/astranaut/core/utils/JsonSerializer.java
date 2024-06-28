@@ -28,6 +28,7 @@ import com.kniazkov.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
 
 /**
@@ -79,10 +80,10 @@ public final class JsonSerializer {
 
     /**
      * Constructor.
-     * @param root The root node
+     * @param tree The tree
      */
-    public JsonSerializer(final Node root) {
-        this.root = root;
+    public JsonSerializer(final Tree tree) {
+        this.root = tree.getRoot();
         this.language = "";
     }
 
