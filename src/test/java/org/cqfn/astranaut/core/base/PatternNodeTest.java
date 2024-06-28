@@ -28,26 +28,23 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests covering {@link PatternNode} class.
- *
  * @since 1.1.5
  */
 class PatternNodeTest {
     @Test
     void testBaseInterface() {
+        final Source source = new TestSource();
+        final Position begin = new TestPosition(source, 1);
+        final Position end = new TestPosition(source, 100);
         final Fragment fragment = new Fragment() {
             @Override
-            public Source getSource() {
-                return null;
-            }
-
-            @Override
             public Position getBegin() {
-                return () -> 0;
+                return begin;
             }
 
             @Override
             public Position getEnd() {
-                return () -> 100;
+                return end;
             }
         };
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
@@ -56,7 +53,59 @@ class PatternNodeTest {
         ctor.setData("test");
         final Node node = ctor.createNode();
         final PatternNode pattern = new PatternNode(new DiffNode(node));
-        Assertions.assertEquals(100, pattern.getFragment().getEnd().getIndex());
+        Assertions.assertEquals(100, pattern.getFragment().getEnd().getColumn());
         Assertions.assertEquals("X<\"test\">", pattern.toString());
+    }
+
+    /**
+     * Source implementation for test purposes.
+     * @since 1.1.5
+     */
+    private static class TestSource implements Source {
+        @Override
+        public String getFragmentAsString(Position start, Position end) {
+            return "";
+        }
+    }
+
+    /**
+     * Position implementation for test purposes.
+     * @since 1.1.5
+     */
+    private static class TestPosition implements Position {
+        /**
+         * Source.
+         */
+        private final Source source;
+
+        /**
+         * Column number.
+         */
+        private final int column;
+
+        /**
+         * Constructor.
+         * @param source Source
+         * @param column Column number
+         */
+        private TestPosition(final Source source, int column) {
+            this.source = source;
+            this.column = column;
+        }
+
+        @Override
+        public Source getSource() {
+            return this.source;
+        }
+
+        @Override
+        public int getRow() {
+            return 1;
+        }
+
+        @Override
+        public int getColumn() {
+            return this.column;
+        }
     }
 }

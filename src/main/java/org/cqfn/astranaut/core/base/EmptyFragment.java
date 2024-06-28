@@ -24,7 +24,9 @@
 package org.cqfn.astranaut.core.base;
 
 /**
- * The empty fragment.
+ * {@code EmptyFragment} is an implementation of {@link Fragment} representing an empty fragment.
+ *  It serves as a placeholder when a node does not have an associated fragment
+ *  preventing the need to return a null pointer.
  *
  * @since 1.0
  */
@@ -49,7 +51,17 @@ public final class EmptyFragment implements Fragment {
      */
     private static final Position POSITION = new Position() {
         @Override
-        public int getIndex() {
+        public Source getSource() {
+            return EmptyFragment.SOURCE;
+        }
+
+        @Override
+        public int getRow() {
+            return 0;
+        }
+
+        @Override
+        public int getColumn() {
             return 0;
         }
     };
@@ -58,11 +70,6 @@ public final class EmptyFragment implements Fragment {
      * Constructor.
      */
     private EmptyFragment() {
-    }
-
-    @Override
-    public Source getSource() {
-        return EmptyFragment.SOURCE;
     }
 
     @Override

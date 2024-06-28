@@ -24,14 +24,50 @@
 package org.cqfn.astranaut.core.base;
 
 /**
- * Represents a position in source code file.
+ * Represents a position in source code.
+ *  It provides methods to retrieve the source, row, and column of the position.
+ *  Positions are comparable based on their source, row, and column. If positions
+ *  have different sources, they are considered incomparable.
  *
  * @since 1.0
  */
-public interface Position {
+public interface Position extends Comparable<Position> {
+
     /**
-     * Returns absolute position (character index).
-     * @return The index
+     * Returns an object representing the source code that has this position.
+     * @return Object representing the source code
      */
-    int getIndex();
+    Source getSource();
+
+    /**
+     * Returns the row (line) number of this position.
+     * @return The row number
+     */
+    int getRow();
+
+    /**
+     * Returns the column number of this position.
+     * @return The column number
+     */
+    int getColumn();
+
+    /**
+     * Compares this position with the specified position for order.
+     * @param other The position to be compared
+     * @return A negative integer, zero, or a positive integer as this position is less than,
+     *  equal to, or greater than the specified position.
+     * @throws IllegalArgumentException If positions are from different sources and cannot
+     *  be compared
+     */
+    @Override
+    default int compareTo(final Position other) {
+        if (!this.getSource().equals(other.getSource())) {
+            throw new IllegalArgumentException();
+        }
+        int result = Integer.compare(this.getRow(), other.getRow());
+        if (result == 0) {
+            result = Integer.compare(this.getColumn(), other.getColumn());
+        }
+        return result;
+    }
 }

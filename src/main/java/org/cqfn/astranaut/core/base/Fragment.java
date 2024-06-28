@@ -30,12 +30,6 @@ package org.cqfn.astranaut.core.base;
  */
 public interface Fragment {
     /**
-     * Returns the source of the fragment.
-     * @return Source instance
-     */
-    Source getSource();
-
-    /**
      * Returns the first position of the fragment.
      * @return The first position.
      */
@@ -46,4 +40,12 @@ public interface Fragment {
      * @return The last position.
      */
     Position getEnd();
+
+    /**
+     * Returns a string representation of the fragment.
+     * @return String representation of the fragment
+     */
+    default String asString() {
+        return this.getBegin().getSource().getFragmentAsString(this.getBegin(), this.getEnd());
+    }
 }
