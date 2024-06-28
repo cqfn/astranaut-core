@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.utils;
 import com.kniazkov.json.Json;
 import com.kniazkov.json.JsonException;
 import org.cqfn.astranaut.core.base.EmptyTree;
-import org.cqfn.astranaut.core.base.FactorySelector;
+import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
@@ -70,5 +70,21 @@ public final class JsonDeserializer {
         } catch (final JsonException ignored) {
         }
         return result;
+    }
+
+    /**
+     * Interface for factories selection that selects a suitable factory
+     * for the specified programming language.
+     * In other words, it's a factory of factories.
+     *
+     * @since 1.0.2
+     */
+    public interface FactorySelector {
+        /**
+         * Selects a suitable factory for the specified programming language.
+         * @param language The language name
+         * @return A suitable factory
+         */
+        Factory select(String language);
     }
 }

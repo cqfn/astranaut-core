@@ -26,8 +26,8 @@ package org.cqfn.astranaut.core.utils.deserializer;
 import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
-import org.cqfn.astranaut.core.base.FactorySelector;
 import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.utils.JsonDeserializer;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.
@@ -57,7 +57,7 @@ public class TreeDescriptor {
      * @param selector The node factory selector
      * @return A root node
      */
-    public Tree convert(final FactorySelector selector) {
+    public Tree convert(final JsonDeserializer.FactorySelector selector) {
         Tree result = new Tree(EmptyTree.INSTANCE);
         final Factory factory = selector.select(this.language);
         if (factory != null) {
