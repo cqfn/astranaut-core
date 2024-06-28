@@ -39,17 +39,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link PatternMatcher} class.
+ * Testing {@link Matcher} class.
  *
  * @since 1.1.5
  */
-class PatternMatcherTest {
+class MatcherTest {
     @Test
     void findSubtreeInATree() {
         final Tree tree = Tree.createDraft("X(Y(A(B,C)),A(B,C),A(B,D))");
         final DiffNode subtree = new DiffNode(DraftNode.create("A(B,C)"));
         final Pattern pattern = new Pattern(new PatternNode(subtree));
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(2, found.size());
         for (final Node node : found) {
@@ -63,7 +63,7 @@ class PatternMatcherTest {
         final DiffNode subtree = new DiffNode(
             DraftNode.create("A(C(F),D)")
         );
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Pattern pattern = new Pattern(new PatternNode(subtree));
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
@@ -86,7 +86,7 @@ class PatternMatcherTest {
         );
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B),Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
@@ -101,7 +101,7 @@ class PatternMatcherTest {
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
@@ -116,7 +116,7 @@ class PatternMatcherTest {
         builder.deleteNode(nodes.get("B").iterator().next());
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
@@ -134,7 +134,7 @@ class PatternMatcherTest {
         Assertions.assertTrue(flag);
         final Pattern pattern = pbuilder.getPattern();
         final Tree tree = Tree.createDraft("X(Y,A(B,D<\"11\">),Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
         final Node node = found.iterator().next();
@@ -151,7 +151,7 @@ class PatternMatcherTest {
             )
         );
         final Tree tree = Tree.createDraft("X(Y, A(B<\"test\">), Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(1, found.size());
     }
@@ -166,7 +166,7 @@ class PatternMatcherTest {
             )
         );
         final Tree tree = Tree.createDraft("X(Y,A(B,C),Z)");
-        final PatternMatcher matcher = new PatternMatcher(tree);
+        final Matcher matcher = new Matcher(tree);
         final Set<Node> found = matcher.match(pattern);
         Assertions.assertEquals(0, found.size());
     }

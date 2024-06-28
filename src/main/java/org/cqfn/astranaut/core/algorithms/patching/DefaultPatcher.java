@@ -39,7 +39,7 @@ import org.cqfn.astranaut.core.base.Tree;
 public final class DefaultPatcher implements Patcher {
     @Override
     public Tree patch(final Tree source, final Pattern pattern) {
-        final PatternMatcher matcher = new PatternMatcher(source);
+        final Matcher matcher = new Matcher(source);
         final Set<Node> nodes = matcher.match(pattern);
         final Tree result;
         if (nodes.isEmpty()) {

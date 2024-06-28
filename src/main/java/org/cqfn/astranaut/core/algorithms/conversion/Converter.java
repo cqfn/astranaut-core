@@ -21,45 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
+package org.cqfn.astranaut.core.algorithms.conversion;
 
-import java.util.List;
-import java.util.Map;
-import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
+import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Matcher for the subtree returned by the 'js' language parser.
+ * Interface for converters that check one rule described in DSL
+ * and convert the initial AST built to the specified target format.
  *
  * @since 1.0
  */
-public final class Matcher2 implements Matcher {
+public interface Converter {
     /**
-     * The instance.
+     * Converts an initial AST to the target format.
+     *
+     * @param node The root of the AST to be converted
+     * @param factory The node factory
+     * @return A new node
      */
-    public static final Matcher INSTANCE = new Matcher2();
-
-    /**
-     * Expected number of child nodes.
-     */
-    private static final String EXPECTED_TYPE = "singleExpression";
-
-    /**
-     * Expected number of child nodes.
-     */
-    private static final int EXPECTED_COUNT = 1;
-
-    /**
-     * Constructor.
-     */
-    private Matcher2() {
-    }
-
-    @Override
-    public boolean match(final Node node, final Map<Integer, List<Node>> children,
-        final Map<Integer, String> data) {
-        return node.belongsToGroup(Matcher2.EXPECTED_TYPE)
-            && node.getChildCount() == Matcher2.EXPECTED_COUNT
-            && Matcher1.INSTANCE.match(node.getChild(0), children, data);
-    }
+    Node convert(Node node, Factory factory);
 }

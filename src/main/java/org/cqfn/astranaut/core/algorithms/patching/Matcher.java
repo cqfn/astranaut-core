@@ -44,7 +44,7 @@ import org.cqfn.astranaut.core.base.Tree;
  *
  * @since 1.1.5
  */
-class PatternMatcher {
+class Matcher {
     /**
      * Root node of the tree in which patterns are searched.
      */
@@ -59,7 +59,7 @@ class PatternMatcher {
      * Constructor.
      * @param tree The syntax tree in which patterns will be searched
      */
-    PatternMatcher(final Tree tree) {
+    Matcher(final Tree tree) {
         this.root = tree.getRoot();
         this.actions = new ActionList();
     }

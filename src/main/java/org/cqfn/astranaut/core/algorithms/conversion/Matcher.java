@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.List;
 import java.util.Map;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Checks if the node matches some structure and extracts the data or (and) children

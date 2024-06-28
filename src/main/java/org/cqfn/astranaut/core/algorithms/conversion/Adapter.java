@@ -21,10 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.base;
+package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.MutableNode;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Tree converter built on a set of rules described in DSL.

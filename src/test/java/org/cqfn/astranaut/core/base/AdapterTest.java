@@ -25,6 +25,8 @@ package org.cqfn.astranaut.core.base;
 
 import java.util.Arrays;
 import java.util.List;
+import org.cqfn.astranaut.core.algorithms.conversion.Adapter;
+import org.cqfn.astranaut.core.algorithms.conversion.Converter;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.example.javascript.rules.Rule0;
 import org.junit.jupiter.api.Assertions;

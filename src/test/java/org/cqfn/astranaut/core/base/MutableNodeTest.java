@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.0
  */
-class ConvertibleNodeTest {
+class MutableNodeTest {
     /**
      * Testing the transformation from 'typical' node to convertible.
      */

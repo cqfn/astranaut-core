@@ -34,7 +34,7 @@ import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
  *
  * @since 1.1.0
  */
-public class ActionList {
+public final class ActionList {
     /**
      * Collection of nodes to be inserted.
      */
