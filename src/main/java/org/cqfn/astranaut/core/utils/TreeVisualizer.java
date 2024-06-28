@@ -25,27 +25,26 @@ package org.cqfn.astranaut.core.utils;
 
 import java.io.File;
 import java.io.IOException;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
-import org.cqfn.astranaut.core.utils.visualizer.DotRender;
+import org.cqfn.astranaut.core.utils.visualizer.DotGenerator;
 import org.cqfn.astranaut.core.utils.visualizer.ImageRender;
 
 /**
  * Visualizer of trees.
- *
  * @since 1.0.2
  */
 public final class TreeVisualizer {
     /**
      * The tree to be visualized.
      */
-    private final Node tree;
+    private final Tree tree;
 
     /**
      * Constructor.
      * @param tree The tree to be visualized
      */
-    public TreeVisualizer(final Node tree) {
+    public TreeVisualizer(final Tree tree) {
         this.tree = tree;
     }
 
@@ -57,8 +56,8 @@ public final class TreeVisualizer {
      * @throws WrongFileExtension If an error during visualization occurs
      */
     public void visualize(final File file) throws IOException, WrongFileExtension {
-        final DotRender render = new DotRender(this.tree);
-        final String dot = render.render();
+        final DotGenerator render = new DotGenerator(this.tree);
+        final String dot = render.generate();
         final ImageRender image = new ImageRender(dot);
         image.render(file);
     }

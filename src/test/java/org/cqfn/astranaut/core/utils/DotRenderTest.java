@@ -29,12 +29,13 @@ import java.util.List;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.utils.visualizer.DotRender;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.utils.visualizer.DotGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link DotRender} class.
+ * Test for {@link DotGenerator} class.
  *
  * @since 1.0.2
  */
@@ -142,8 +143,8 @@ class DotRenderTest {
      * @param node A tree to be converted
      */
     private String renderDot(final Node node) {
-        final DotRender render = new DotRender(node);
-        return render.render();
+        final DotGenerator render = new DotGenerator(new Tree(node));
+        return render.generate();
     }
 
     /**

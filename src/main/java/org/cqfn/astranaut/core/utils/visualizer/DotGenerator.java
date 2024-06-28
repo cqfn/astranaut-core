@@ -23,16 +23,15 @@
  */
 package org.cqfn.astranaut.core.utils.visualizer;
 
-import java.util.Objects;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
- * Renders a DOT file from a tree.
- *
+ * Generates graph description in DOT format from a tree.
  * @since 1.0.2
  */
-public class DotRender {
+public class DotGenerator {
     /**
      * Node name start text.
      */
@@ -47,7 +46,7 @@ public class DotRender {
     /**
      * The tree to be converted.
      */
-    private final Node tree;
+    private final Tree tree;
 
     /**
      * Last index used for a node.
@@ -56,12 +55,11 @@ public class DotRender {
 
     /**
      * Constructor.
-     *
      * @param tree The tree to be converted
      */
-    public DotRender(final Node tree) {
+    public DotGenerator(final Tree tree) {
         this.builder = new StringBuilder();
-        this.tree = Objects.requireNonNull(tree);
+        this.tree = tree;
         this.index = 0;
     }
 
@@ -70,9 +68,9 @@ public class DotRender {
      *
      * @return A rendered DOT text as string
      */
-    public String render() {
+    public String generate() {
         this.appendStart();
-        this.processNode(this.tree);
+        this.processNode(this.tree.getRoot());
         this.appendEnd();
         return this.builder.toString();
     }
@@ -126,7 +124,7 @@ public class DotRender {
      * @param color A node color
      */
     private void appendNode(final String type, final String data, final String color) {
-        this.builder.append(DotRender.NODE).append(this.index).append(" [");
+        this.builder.append(DotGenerator.NODE).append(this.index).append(" [");
         this.builder.append("label=<").append(type);
         if (!data.isEmpty()) {
             this.builder.append("<br/><font color=\"blue\">");
@@ -145,7 +143,7 @@ public class DotRender {
      */
     private void appendNullNode() {
         this.builder
-            .append(DotRender.NODE)
+            .append(DotGenerator.NODE)
             .append(this.index)
             .append(" [label=<NULL>];\n");
     }
@@ -159,7 +157,7 @@ public class DotRender {
      */
     private void appendEdge(final int parent, final int child, final Integer label) {
         this.builder
-            .append(DotRender.NODE)
+            .append(DotGenerator.NODE)
             .append(parent)
             .append(" -> ")
             .append("node_")

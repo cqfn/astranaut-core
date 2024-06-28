@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.DummyNode;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,11 +47,8 @@ class TreeVisualizerTest {
      */
     @Test
     void testSingleNodeVisualization(@TempDir final Path temp) {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("TestNode");
-        ctor.setData("value");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = Tree.createDraft("TestNode<\"value\">");
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("node.png");
         boolean oops = false;
         try {
@@ -68,8 +65,8 @@ class TreeVisualizerTest {
      */
     @Test
     void testNullNodeVisualization(@TempDir final Path temp) {
-        final Node root = DummyNode.INSTANCE;
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = EmptyTree.INSTANCE;
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("null.png");
         boolean oops = false;
         try {
@@ -89,8 +86,8 @@ class TreeVisualizerTest {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("DataNode");
         ctor.setData("<va\'l&u\"e>");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = new Tree(ctor.createNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("data.png");
         boolean oops = false;
         try {
@@ -116,8 +113,8 @@ class TreeVisualizerTest {
         right.setName("DoubleLiteral");
         right.setData("3");
         addition.setChildrenList(Arrays.asList(left.createNode(), right.createNode()));
-        final Node root = addition.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = new Tree(addition.createNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("tree.svg");
         boolean oops = false;
         try {
@@ -134,10 +131,8 @@ class TreeVisualizerTest {
      */
     @Test
     void testWrongExtension(@TempDir final Path temp) {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("Exception");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = Tree.createDraft("Exception");
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("node.jpg");
         boolean oops = false;
         try {
