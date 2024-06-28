@@ -46,13 +46,6 @@ public class TreeDescriptor {
     private String language;
 
     /**
-     * Constructor.
-     */
-    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
-    public TreeDescriptor() {
-    }
-
-    /**
      * Converts tree into node.
      * @param selector The node factory selector
      * @return A root node

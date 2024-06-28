@@ -56,13 +56,6 @@ public class NodeDescriptor {
     private List<NodeDescriptor> children;
 
     /**
-     * Constructor.
-     */
-    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
-    public NodeDescriptor() {
-    }
-
-    /**
      * Converts descriptor into node.
      * @param factory The node factory
      * @param actions List of actions to be added to the tree after deserialization
