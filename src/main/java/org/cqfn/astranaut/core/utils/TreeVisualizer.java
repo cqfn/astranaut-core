@@ -26,9 +26,9 @@ package org.cqfn.astranaut.core.utils;
 import java.io.File;
 import java.io.IOException;
 import org.cqfn.astranaut.core.base.Tree;
-import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 import org.cqfn.astranaut.core.utils.visualizer.DotGenerator;
 import org.cqfn.astranaut.core.utils.visualizer.ImageRender;
+import org.cqfn.astranaut.core.utils.visualizer.WrongFileExtension;
 
 /**
  * Visualizer of trees.

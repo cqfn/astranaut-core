@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.utils;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.base.CoreException;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
@@ -34,7 +35,6 @@ import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
-import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -129,8 +129,8 @@ class JsonDeserializerTest {
         String source = "";
         try {
             source = new FilesReader(file).readAsString(
-                (FilesReader.CustomExceptionCreator<BaseException>) ()
-                    -> new BaseException() {
+                (FilesReader.CustomExceptionCreator<CoreException>) ()
+                    -> new CoreException() {
                         private static final long serialVersionUID = -6130330765091840343L;
 
                         @Override
@@ -147,7 +147,7 @@ class JsonDeserializerTest {
                         }
                     }
             );
-        } catch (final BaseException exception) {
+        } catch (final CoreException exception) {
             oops = true;
         }
         Assertions.assertFalse(oops);

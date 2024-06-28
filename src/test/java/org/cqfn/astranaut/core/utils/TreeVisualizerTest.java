@@ -30,7 +30,7 @@ import java.util.Arrays;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Tree;
-import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
+import org.cqfn.astranaut.core.utils.visualizer.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

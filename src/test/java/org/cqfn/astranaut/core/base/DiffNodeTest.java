@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
-import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.cqfn.astranaut.core.utils.FilesReader;
 import org.cqfn.astranaut.core.utils.JsonDeserializer;
 import org.junit.jupiter.api.Assertions;
@@ -223,8 +222,8 @@ class DiffNodeTest {
         String source = "";
         try {
             source = new FilesReader(file).readAsString(
-                (FilesReader.CustomExceptionCreator<BaseException>) ()
-                    -> new BaseException() {
+                (FilesReader.CustomExceptionCreator<CoreException>) ()
+                    -> new CoreException() {
                         private static final long serialVersionUID = -8921455132545245481L;
 
                         @Override
@@ -241,7 +240,7 @@ class DiffNodeTest {
                         }
                     }
             );
-        } catch (final BaseException exception) {
+        } catch (final CoreException exception) {
             oops = true;
         }
         Assertions.assertFalse(oops);

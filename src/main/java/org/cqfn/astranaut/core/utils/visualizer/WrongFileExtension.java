@@ -21,11 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.utils.visualizer;
+
+import org.cqfn.astranaut.core.base.CoreException;
 
 /**
- * This package contains a base helper class for custom exceptions and common exceptions
- * for projects that use the core as a dependency.
+ * Exception "The file extension must be .png or .svg".
  *
- * @since 1.0.3
+ * @since 1.0.2
  */
-package org.cqfn.astranaut.core.exceptions;
+public final class WrongFileExtension extends CoreException {
+    /**
+     * The instance.
+     */
+    public static final WrongFileExtension INSTANCE = new WrongFileExtension();
+
+    /**
+     * Version identifier.
+     */
+    private static final long serialVersionUID = -1;
+
+    @Override
+    public String getInitiator() {
+        return "Visualizer";
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return "The file extension must be .png or .svg";
+    }
+}
