@@ -32,7 +32,7 @@ import org.cqfn.astranaut.core.base.Node;
  *
  * @since 1.1.0
  */
-public final class Depth {
+public final class DepthCalculator {
     /**
      * A table with the calculated values.
      * Since nodes are immutable, depth calculated once for a node will never change.
@@ -42,7 +42,7 @@ public final class Depth {
     /**
      * Constructor.
      */
-    public Depth() {
+    public DepthCalculator() {
         this.calculated = new HashMap<>();
     }
 

@@ -34,18 +34,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link Subtree}.
+ * Test for {@link SubtreeBuilder}.
  *
  * @since 1.1.4
  */
-class SubtreeTest {
+class SubtreeBuilderTest {
     @Test
     void testSubtreeCreation() {
         final Node original = DraftNode.create("A(B,C(D,E,F))");
         final List<String> list = Arrays.asList("A", "C", "E", "F");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> list.contains(node.getTypeName()));
-        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.INCLUDE);
         final Node subtree = algorithm.create(selected);
         final Node expected = DraftNode.create("A(C(E,F))");
         Assertions.assertTrue(expected.deepCompare(subtree));
@@ -54,7 +54,7 @@ class SubtreeTest {
     @Test
     void testUsingOneSubtreeInstanceForCreatingTwoSubtrees() {
         final Node original = DraftNode.create("X(A,B,C,D,E)");
-        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.INCLUDE);
         final Node first = algorithm.create(
             new HashSet<>(
                 Arrays.asList(
@@ -86,7 +86,7 @@ class SubtreeTest {
                 DraftNode.create("E")
             )
         );
-        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.INCLUDE);
         final Node subtree = algorithm.create(set);
         Assertions.assertSame(subtree, DummyNode.INSTANCE);
     }
@@ -96,7 +96,7 @@ class SubtreeTest {
         final Node original = DraftNode.create("X(A,B,C,D(E,F))");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> true);
-        final Subtree algorithm = new Subtree(original, Subtree.INCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.INCLUDE);
         final Node subtree = algorithm.create(selected);
         Assertions.assertTrue(original.deepCompare(subtree));
     }
@@ -111,7 +111,7 @@ class SubtreeTest {
                     return name.equals("B") || name.equals("E");
                 }
             );
-        final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.EXCLUDE);
         final Node subtree = algorithm.create(selected);
         final Node expected = DraftNode.create("A(C(D,F))");
         Assertions.assertTrue(expected.deepCompare(subtree));
@@ -122,7 +122,7 @@ class SubtreeTest {
         final Node original = DraftNode.create("X(A,B,C(D,E))");
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> true);
-        final Subtree algorithm = new Subtree(original, Subtree.EXCLUDE);
+        final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.EXCLUDE);
         final Node subtree = algorithm.create(selected);
         Assertions.assertSame(subtree, DummyNode.INSTANCE);
     }

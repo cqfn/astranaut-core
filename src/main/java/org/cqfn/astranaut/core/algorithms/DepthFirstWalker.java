@@ -29,11 +29,11 @@ import java.util.Optional;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Performs a deep traversal of the syntax tree.
+ * Performs a depth-first traversal of the syntax tree.
  *
  * @since 1.1.5
  */
-public class DeepTraversal {
+public class DepthFirstWalker {
     /**
      * The root node of the tree being traversed.
      */
@@ -43,7 +43,7 @@ public class DeepTraversal {
      * Constructor.
      * @param root The root node of the tree being traversed
      */
-    public DeepTraversal(final Node root) {
+    public DepthFirstWalker(final Node root) {
         this.root = root;
     }
 
@@ -58,7 +58,7 @@ public class DeepTraversal {
      * @return Found node (optional)
      */
     public Optional<Node> findFirst(final Visitor visitor) {
-        return Optional.ofNullable(DeepTraversal.findFirst(this.root, visitor));
+        return Optional.ofNullable(DepthFirstWalker.findFirst(this.root, visitor));
     }
 
     /**
@@ -70,7 +70,7 @@ public class DeepTraversal {
      */
     public List<Node> findAll(final Visitor visitor) {
         final List<Node> list = new ArrayList<>(0);
-        DeepTraversal.findAll(this.root, visitor, list);
+        DepthFirstWalker.findAll(this.root, visitor, list);
         return list;
     }
 
@@ -88,7 +88,7 @@ public class DeepTraversal {
         } else {
             final int count = node.getChildCount();
             for (int index = 0; index < count && result == null; index = index + 1) {
-                result = DeepTraversal.findFirst(node.getChild(index), visitor);
+                result = DepthFirstWalker.findFirst(node.getChild(index), visitor);
             }
         }
         return result;
@@ -107,7 +107,7 @@ public class DeepTraversal {
         } else {
             final int count = node.getChildCount();
             for (int index = 0; index < count; index = index + 1) {
-                DeepTraversal.findAll(node.getChild(index), visitor, list);
+                DepthFirstWalker.findAll(node.getChild(index), visitor, list);
             }
         }
     }

@@ -31,15 +31,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link DeepTraversal} class.
+ * Testing {@link DepthFirstWalker} class.
  *
  * @since 1.1.5
  */
-class DeepTraversalTest {
+class DepthFirstWalkerTest {
     @Test
     void testFindFirst() {
         final Node root = DraftNode.create("A(B,C,D(E<\"eee\">,F<\"fff\">)))");
-        final DeepTraversal traversal = new DeepTraversal(root);
+        final DepthFirstWalker traversal = new DepthFirstWalker(root);
         final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertTrue(node.isPresent());
         Assertions.assertEquals("E", node.get().getTypeName());
@@ -48,7 +48,7 @@ class DeepTraversalTest {
     @Test
     void testNotFoundFirst() {
         final Node root = DraftNode.create("A(B,C,D)");
-        final DeepTraversal traversal = new DeepTraversal(root);
+        final DepthFirstWalker traversal = new DepthFirstWalker(root);
         final Optional<Node> node = traversal.findFirst(node1 -> !node1.getData().isEmpty());
         Assertions.assertFalse(node.isPresent());
     }
@@ -56,7 +56,7 @@ class DeepTraversalTest {
     @Test
     void testFindAll() {
         final Node root = DraftNode.create("A(B,C<\"ccc\">,D(E<\"eee\">)))");
-        final DeepTraversal traversal = new DeepTraversal(root);
+        final DepthFirstWalker traversal = new DepthFirstWalker(root);
         final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
         Assertions.assertNotNull(list);
         Assertions.assertEquals(2, list.size());
@@ -65,7 +65,7 @@ class DeepTraversalTest {
     @Test
     void testFindNothing() {
         final Node root = DraftNode.create("A(X,Y,Z)");
-        final DeepTraversal traversal = new DeepTraversal(root);
+        final DepthFirstWalker traversal = new DepthFirstWalker(root);
         final List<Node> list = traversal.findAll(node1 -> !node1.getData().isEmpty());
         Assertions.assertNotNull(list);
         Assertions.assertTrue(list.isEmpty());

@@ -38,7 +38,7 @@ import org.cqfn.astranaut.core.base.Type;
  *
  * @since 1.1.4
  */
-public class Subtree {
+public class SubtreeBuilder {
     /**
      * Algorithm that composes a subtree only from the nodes that are specified in the set.
      */
@@ -66,7 +66,7 @@ public class Subtree {
      * @param root The root node of the original tree
      * @param algorithm Algorithm that selects nodes based on some criteria
      */
-    public Subtree(final Node root, final Algorithm algorithm) {
+    public SubtreeBuilder(final Node root, final Algorithm algorithm) {
         this.root = root;
         this.algorithm = algorithm;
     }

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link ReplaceNode} class.
+ * Test for {@link NodeReplacer} class.
  *
  * @since 1.0
  */
@@ -73,7 +73,7 @@ class NodeReplacerTest {
                 )
             );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new ReplaceNode().replace(root, root, target);
+        final Pair<Node, Integer> result = new NodeReplacer().replace(root, root, target);
         Assertions.assertEquals(target, result.getKey());
         Assertions.assertEquals(-1, result.getValue());
     }
@@ -116,7 +116,7 @@ class NodeReplacerTest {
                 source
             );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
+        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
         Assertions.assertEquals(target, result.getKey().getChild(2));
         Assertions.assertEquals(2, result.getValue());
     }
@@ -157,7 +157,7 @@ class NodeReplacerTest {
             )
         );
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
+        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
         Assertions.assertEquals(target, result.getKey().getChild(2).getChild(0));
         Assertions.assertEquals(left, result.getKey().getChild(0));
         Assertions.assertEquals(mid, result.getKey().getChild(1));
@@ -178,7 +178,7 @@ class NodeReplacerTest {
         );
         final Node source = this.createNode("444", "");
         final Node target = this.createTargetTree();
-        final Pair<Node, Integer> result = new ReplaceNode().replace(root, source, target);
+        final Pair<Node, Integer> result = new NodeReplacer().replace(root, source, target);
         Assertions.assertEquals(DummyNode.INSTANCE, result.getKey());
         Assertions.assertEquals(-1, result.getValue());
     }

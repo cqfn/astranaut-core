@@ -29,15 +29,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing {@link Depth} class.
+ * Testing {@link DepthCalculator} class.
  *
  * @since 1.1.0
  */
-class DepthTest {
+class DepthCalculatorTest {
     @Test
     void test() {
         final DiffTree tree = LittleTrees.createTreeWithDeleteAction();
-        final Depth depth = new Depth();
+        final DepthCalculator depth = new DepthCalculator();
         int value = depth.calculate(tree.getRoot());
         Assertions.assertEquals(5, value);
         value = depth.calculate(tree.getRoot().getChild(0));

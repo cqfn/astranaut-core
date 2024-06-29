@@ -37,7 +37,7 @@ import org.cqfn.astranaut.core.base.Node;
  *
  * @since 1.1.5
  */
-public class Identical {
+public class IdenticalNodeFinder {
     /**
      * The root of the tree to search in.
      */
@@ -53,7 +53,7 @@ public class Identical {
      *
      * @param root The root of the tree to search in
      */
-    public Identical(final Node root) {
+    public IdenticalNodeFinder(final Node root) {
         this.root = root;
         this.hashes = new SimpleHash();
     }
@@ -63,7 +63,7 @@ public class Identical {
      *
      * @return The set of sets with identical nodes.
      */
-    public Set<Set<Node>> get() {
+    public Set<Set<Node>> find() {
         final Map<Integer, Set<Node>> result = new HashMap<>();
         this.search(this.root, result);
         return result.values()

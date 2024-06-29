@@ -35,7 +35,7 @@ import org.cqfn.astranaut.core.utils.Pair;
  *
  * @since 1.0
  */
-public class ReplaceNode {
+public class NodeReplacer {
     /**
      * Replaces a subtree of the initial tree with the newly created subtree.
      * @param tree The initial tree

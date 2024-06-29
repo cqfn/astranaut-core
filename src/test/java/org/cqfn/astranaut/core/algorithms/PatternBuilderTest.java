@@ -70,7 +70,7 @@ class PatternBuilderTest {
         builder.makeHole(first, 1);
         final Pattern pattern = builder.getPattern();
         Assertions.assertNotNull(pattern);
-        final DeepTraversal traversal = new DeepTraversal(pattern.getRoot());
+        final DepthFirstWalker traversal = new DepthFirstWalker(pattern.getRoot());
         final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
         Assertions.assertTrue(hole.isPresent());
         Assertions.assertEquals("#1",  hole.get().getData());

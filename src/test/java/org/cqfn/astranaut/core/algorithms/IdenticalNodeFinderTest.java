@@ -30,18 +30,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for {@link Identical} class.
+ * Tests for {@link IdenticalNodeFinder} class.
  *
  * @since 1.1.5
  */
-class IdenticalTest {
+class IdenticalNodeFinderTest {
     @Test
     void testIdenticalSets() {
         final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,T<\"b\">,T<\"a\">,F<\"a\">))"
         );
-        final Identical identical = new Identical(original);
-        final Set<Set<Node>> identicals = identical.get();
+        final IdenticalNodeFinder identical = new IdenticalNodeFinder(original);
+        final Set<Set<Node>> identicals = identical.find();
         Assertions.assertEquals(3, identicals.size());
     }
 
@@ -50,8 +50,8 @@ class IdenticalTest {
         final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,F<\"b\">,F<\"c\">,K<\"a\">))"
         );
-        final Identical identical = new Identical(original);
-        final Set<Set<Node>> identicals = identical.get();
+        final IdenticalNodeFinder identical = new IdenticalNodeFinder(original);
+        final Set<Set<Node>> identicals = identical.find();
         Assertions.assertEquals(0, identicals.size());
     }
 
@@ -60,8 +60,8 @@ class IdenticalTest {
         final Node original = DraftNode.create(
             "T<\"a\">(T<\"b\">,T<\"c\">(F<\"a\">,T<\"b\">,T<\"a\">,F,F,T))"
         );
-        final Identical identical = new Identical(original);
-        final Set<Set<Node>> identicals = identical.get();
+        final IdenticalNodeFinder identical = new IdenticalNodeFinder(original);
+        final Set<Set<Node>> identicals = identical.find();
         Assertions.assertEquals(2, identicals.size());
     }
 }

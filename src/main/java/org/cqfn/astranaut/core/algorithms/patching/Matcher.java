@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.cqfn.astranaut.core.algorithms.DeepTraversal;
+import org.cqfn.astranaut.core.algorithms.DepthFirstWalker;
 import org.cqfn.astranaut.core.base.Action;
 import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.Delete;
@@ -78,7 +78,7 @@ class Matcher {
      * @return Nodes that match the root node of the pattern
      */
     Set<Node> match(final Pattern pattern) {
-        final DeepTraversal deep = new DeepTraversal(this.root);
+        final DepthFirstWalker deep = new DepthFirstWalker(this.root);
         final PatternNode head = pattern.getRoot();
         final List<Node> preset = deep.findAll(
             node -> node.getTypeName().equals(head.getTypeName())
