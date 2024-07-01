@@ -54,6 +54,11 @@ public final class JsonSerializer {
     private static final String STR_TYPE = "type";
 
     /**
+     * The 'prototype' string.
+     */
+    private static final String STR_PROTOTYPE = "prototype";
+
+    /**
      * The 'data' string.
      */
     private static final String STR_DATA = "data";
@@ -136,7 +141,7 @@ public final class JsonSerializer {
      */
     private void convertNode(final Node node, final JsonObject result) {
         if (node instanceof Hole) {
-            JsonSerializer.convertHole((Hole) node, result);
+            this.convertHole((Hole) node, result);
         } else {
             this.convertOrdinaryNode(node, result);
         }
@@ -178,8 +183,10 @@ public final class JsonSerializer {
      * @param hole Hole
      * @param result Object to be filled with node data
      */
-    private static void convertHole(final Hole hole, final JsonObject result) {
+    private void convertHole(final Hole hole, final JsonObject result) {
         result.addString(JsonSerializer.STR_TYPE, JsonSerializer.STR_HOLE);
         result.addNumber(JsonSerializer.STR_NUMBER, hole.getNumber());
+        final JsonObject prototype = result.createObject(JsonSerializer.STR_PROTOTYPE);
+        this.convertOrdinaryNode(hole.getPrototype(), prototype);
     }
 }

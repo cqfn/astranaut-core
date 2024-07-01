@@ -31,11 +31,11 @@ import org.cqfn.astranaut.core.utils.MapUtils;
  *
  * @since 1.1.5
  */
-public final class Hole implements PatternItem {
+public final class Hole implements PatternItem, PrototypeBasedNode {
     /**
-     * The type of the hole.
+     * The prototype node, i.e., a node turned into hole.
      */
-    private final Type type;
+    private final Node prototype;
 
     /**
      * The number of the hole.
@@ -49,14 +49,14 @@ public final class Hole implements PatternItem {
 
     /**
      * Constructor.
-     * @param type The type of the hole
+     * @param prototype Prototype of a hole, i.e., a node turned into hole
      * @param number The number of the hole
      */
-    public Hole(final Type type, final int number) {
-        this.type = type;
+    public Hole(final Node prototype, final int number) {
+        this.prototype = prototype;
         this.number = number;
         this.properties = new MapUtils<String, String>()
-            .put(type.getProperties())
+            .put(prototype.getProperties())
             .put("color", "purple")
             .make();
     }
@@ -68,7 +68,7 @@ public final class Hole implements PatternItem {
 
     @Override
     public Type getType() {
-        return this.type;
+        return this.prototype.getType();
     }
 
     @Override
@@ -102,5 +102,10 @@ public final class Hole implements PatternItem {
     @Override
     public String toString() {
         return this.getData();
+    }
+
+    @Override
+    public Node getPrototype() {
+        return this.prototype;
     }
 }

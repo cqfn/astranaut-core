@@ -97,7 +97,7 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
         boolean result = false;
         final int index = this.findChildIndex(node);
         if (index >= 0) {
-            final Hole hole = new Hole(node.getType(), number);
+            final Hole hole = new Hole(node, number);
             this.children.set(index, hole);
             result = true;
         }

@@ -35,7 +35,10 @@ import org.junit.jupiter.api.Test;
 class HoleTest {
     @Test
     void testBaseInterface() {
-        final Hole hole = new Hole(IntegerLiteral.TYPE, 1);
+        final Builder builder = new IntegerLiteral.Constructor();
+        builder.setData("0");
+        final Node node = builder.createNode();
+        final Hole hole = new Hole(node, 1);
         Assertions.assertSame(EmptyFragment.INSTANCE, hole.getFragment());
         Assertions.assertEquals(0, hole.getChildCount());
         Assertions.assertNull(hole.getChild(0));
@@ -49,9 +52,6 @@ class HoleTest {
         Assertions.assertEquals(typename, type.getName());
         Assertions.assertEquals(typename, type.getHierarchy().get(0));
         Assertions.assertFalse(type.getProperties().containsKey("abracadabra"));
-        final Builder builder = type.createBuilder();
-        builder.setData("0");
-        final Node node = builder.createNode();
         Assertions.assertEquals(typename, node.getTypeName());
     }
 }

@@ -4,7 +4,11 @@
     "children": [
       {
         "type": "Hole",
-        "number": 0
+        "number": 0,
+        "prototype": {
+          "type": "Variable",
+          "data": "w"
+        }
       },
       {
         "type": "Replace",
