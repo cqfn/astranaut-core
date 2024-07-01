@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @since 1.0
  */
-public final class MutableNode implements Node {
+public final class MutableNode implements PrototypeBasedNode {
     /**
      * The parent convertible node.
      */
@@ -104,7 +104,7 @@ public final class MutableNode implements Node {
      * @param index Child index
      * @return Convertible node
      */
-    public MutableNode getConvertibleChild(final int index) {
+    public MutableNode getMutableChild(final int index) {
         final Node node = this.children.get(index);
         final MutableNode result;
         if (node instanceof MutableNode) {
@@ -138,8 +138,8 @@ public final class MutableNode implements Node {
     }
 
     /**
-     * Builds a non-convertible subtree from this node.
-     * @return The root of a non-convertible subtree
+     * Builds a non-mutable subtree from this node.
+     * @return The root of a non-mutable subtree
      */
     public Node rebuild() {
         final Builder builder = this.prototype.getType().createBuilder();
@@ -163,9 +163,14 @@ public final class MutableNode implements Node {
         return result;
     }
 
+    @Override
+    public Node getPrototype() {
+        return this.prototype;
+    }
+
     /**
      * Transforms children nodes to convertible ones.
-     * @return Array of convertible nodes
+     * @return List of mutable nodes
      */
     private List<Node> initChildrenList() {
         final int count = this.prototype.getChildCount();

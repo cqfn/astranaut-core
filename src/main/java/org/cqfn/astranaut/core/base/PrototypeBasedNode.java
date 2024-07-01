@@ -21,10 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.base;
 
 /**
- * This package contains structures and algorithms for converting a syntax tree
- *  to some other syntax tree.
- * @since 1.0
+ * Interface for nodes that are based on a prototype node.
+ *  Classes implementing this interface provide a method to retrieve their prototype node.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.algorithms.conversion;
+public interface PrototypeBasedNode extends Node {
+    /**
+     * Retrieves the prototype node.
+     * @return The prototype node
+     */
+    Node getPrototype();
+}

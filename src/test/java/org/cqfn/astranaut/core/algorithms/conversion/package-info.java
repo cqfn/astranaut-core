@@ -23,7 +23,7 @@
  */
 
 /**
- * This package contains structures and algorithms for converting a syntax tree
+ * This package contains tests for testing structures and algorithms for converting a syntax tree
  *  to some other syntax tree.
  * @since 1.0
  */

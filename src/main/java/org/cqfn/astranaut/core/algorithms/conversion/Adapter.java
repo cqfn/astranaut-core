@@ -167,7 +167,7 @@ public class Adapter {
             final List<MutableNode> nodes) {
             final int count = root.getChildCount();
             for (int index = 0; index < count; index = index + 1) {
-                NodeListBuilder.buildNodeList(root.getConvertibleChild(index), nodes);
+                NodeListBuilder.buildNodeList(root.getMutableChild(index), nodes);
             }
             nodes.add(root);
         }

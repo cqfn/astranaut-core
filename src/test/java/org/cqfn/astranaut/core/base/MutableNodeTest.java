@@ -52,7 +52,7 @@ class MutableNodeTest {
         final MutableNode convertible = new MutableNode(addition);
         Assertions.assertEquals("Addition", convertible.getType().getName());
         Assertions.assertEquals(2, convertible.getChildCount());
-        final MutableNode first = convertible.getConvertibleChild(0);
+        final MutableNode first = convertible.getMutableChild(0);
         Assertions.assertEquals(convertible, first.getParent());
         final Node second = convertible.getChild(1);
         icr = new IntegerLiteral.Constructor();

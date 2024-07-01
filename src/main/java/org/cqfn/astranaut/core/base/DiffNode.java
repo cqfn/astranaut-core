@@ -33,7 +33,7 @@ import java.util.ListIterator;
  *
  * @since 1.1.0
  */
-public final class DiffNode implements DiffTreeItem {
+public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
     /**
      * The parent node with action.
      */
@@ -76,10 +76,7 @@ public final class DiffNode implements DiffTreeItem {
         return this.parent;
     }
 
-    /**
-     * Returns the prototype node.
-     * @return The prototype node
-     */
+    @Override
     public Node getPrototype() {
         return this.prototype;
     }
