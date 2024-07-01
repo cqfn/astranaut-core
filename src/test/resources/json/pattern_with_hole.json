@@ -1,0 +1,24 @@
+{
+  "root": {
+    "type": "Addition",
+    "children": [
+      {
+        "type": "Hole",
+        "number": 0
+      },
+      {
+        "type": "Replace",
+        "children": [
+          {
+            "type": "IntegerLiteral",
+            "data": "1"
+          },
+          {
+            "type": "IntegerLiteral",
+            "data": "2"
+          }
+        ]
+      }
+    ]
+  }
+}

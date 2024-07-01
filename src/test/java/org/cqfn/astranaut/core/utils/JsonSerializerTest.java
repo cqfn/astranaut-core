@@ -89,10 +89,22 @@ class JsonSerializerTest {
      * Test for a tree serialization to a JSON string.
      */
     @Test
-    void testSerializationTreeWithAction() {
+    void testSerializationDiffTree() {
         final boolean result = this.serializeAndCompare(
             LittleTrees.createTreeWithDeleteAction(),
             "tree_containing_delete_action.json"
+        );
+        Assertions.assertTrue(result);
+    }
+
+    /**
+     * Test for a tree serialization to a JSON string.
+     */
+    @Test
+    void testSerializationPattern() {
+        final boolean result = this.serializeAndCompare(
+            LittleTrees.createPatternWithHole(),
+            "pattern_with_hole.json"
         );
         Assertions.assertTrue(result);
     }

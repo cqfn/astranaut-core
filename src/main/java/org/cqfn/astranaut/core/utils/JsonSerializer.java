@@ -27,6 +27,7 @@ import com.kniazkov.json.JsonArray;
 import com.kniazkov.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import org.cqfn.astranaut.core.base.Hole;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
@@ -56,6 +57,16 @@ public final class JsonSerializer {
      * The 'data' string.
      */
     private static final String STR_DATA = "data";
+
+    /**
+     * The 'hole' string.
+     */
+    private static final String STR_HOLE = "Hole";
+
+    /**
+     * The 'number' string.
+     */
+    private static final String STR_NUMBER = "number";
 
     /**
      * The 'children' string.
@@ -119,11 +130,24 @@ public final class JsonSerializer {
     }
 
     /**
-     * Converts the node to a JSON object.
-     * @param node The node
+     * Converts a node to a JSON object.
+     * @param node Node
      * @param result Object to be filled with node data
      */
     private void convertNode(final Node node, final JsonObject result) {
+        if (node instanceof Hole) {
+            JsonSerializer.convertHole((Hole) node, result);
+        } else {
+            this.convertOrdinaryNode(node, result);
+        }
+    }
+
+    /**
+     * Converts an 'ordinary' node to a JSON object.
+     * @param node Node
+     * @param result Object to be filled with node data
+     */
+    private void convertOrdinaryNode(final Node node, final JsonObject result) {
         final Type type = node.getType();
         result.addString(JsonSerializer.STR_TYPE, type.getName());
         final String data = node.getData();
@@ -147,5 +171,15 @@ public final class JsonSerializer {
                 this.language = property;
             }
         }
+    }
+
+    /**
+     * Converts a hole to a JSON object.
+     * @param hole Hole
+     * @param result Object to be filled with node data
+     */
+    private static void convertHole(final Hole hole, final JsonObject result) {
+        result.addString(JsonSerializer.STR_TYPE, JsonSerializer.STR_HOLE);
+        result.addNumber(JsonSerializer.STR_NUMBER, hole.getNumber());
     }
 }
