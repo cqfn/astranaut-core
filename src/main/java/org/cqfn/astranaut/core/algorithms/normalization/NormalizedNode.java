@@ -43,11 +43,17 @@ public final class NormalizedNode implements PrototypeBasedNode {
     private final Node original;
 
     /**
+     * List of properties.
+     */
+    private final Properties properties;
+
+    /**
      * Constructor.
      * @param original The original, non-normalized node.
      */
     public NormalizedNode(final Node original) {
         this.original = original;
+        this.properties = NormalizedNode.initProperties(original);
     }
 
     @Override
@@ -72,16 +78,43 @@ public final class NormalizedNode implements PrototypeBasedNode {
 
     @Override
     public int getChildCount() {
-        return 0;
+        int count = this.original.getChildCount();
+        if (this.properties != null) {
+            count = count + 1;
+        }
+        return count;
     }
 
     @Override
     public Node getChild(final int index) {
-        return null;
+        final Node node;
+        if (this.properties == null) {
+            node = this.original.getChild(index);
+        } else if (index == 0) {
+            node = this.properties;
+        } else {
+            node = this.original.getChild(index - 1);
+        }
+        return node;
     }
 
     @Override
     public Node getPrototype() {
         return this.original;
+    }
+
+    /**
+     * Initiates list of properties, extracted from original node.
+     * @param original Original node
+     * @return Node containing list of properties or {@code null} if the original node
+     *  does not contain any properties
+     */
+    private static Properties initProperties(final Node original) {
+        Properties object = null;
+        final Map<String, String> map = original.getProperties();
+        if (!map.isEmpty()) {
+            object = new Properties(map);
+        }
+        return object;
     }
 }
