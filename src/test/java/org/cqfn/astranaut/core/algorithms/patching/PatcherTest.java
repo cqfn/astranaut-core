@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
-import org.cqfn.astranaut.core.algorithms.PatternBuilder;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -38,6 +37,7 @@ import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
 import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -136,8 +136,8 @@ class PatcherTest {
         ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
+        final Pattern pattern = LittleTrees.createPatternWithHole();
         final Patcher patcher = new DefaultPatcher();
-        final Pattern pattern = PatcherTest.createPatternWithHole();
         final Tree patched = patcher.patch(new Tree(stmt), pattern);
         ctor = new Variable.Constructor();
         ctor.setData("a");
@@ -171,31 +171,5 @@ class PatcherTest {
         final Patcher patcher = new DefaultPatcher();
         final Tree result = patcher.patch(tree, pattern);
         Assertions.assertTrue(tree.deepCompare(result));
-    }
-
-    /**
-     * Creates pattern with a hole.
-     * @return A pattern
-     */
-    private static Pattern createPatternWithHole() {
-        Builder ctor = new Variable.Constructor();
-        ctor.setData("w");
-        final Node first = ctor.createNode();
-        ctor = new IntegerLiteral.Constructor();
-        ctor.setData("1");
-        final Node second = ctor.createNode();
-        ctor = new Addition.Constructor();
-        ctor.setChildrenList(Arrays.asList(first, second));
-        final Node addition = ctor.createNode();
-        ctor = new IntegerLiteral.Constructor();
-        ctor.setData("2");
-        final Node replacement = ctor.createNode();
-        final DiffTreeBuilder dtbld = new DiffTreeBuilder(addition);
-        dtbld.replaceNode(second, replacement);
-        final PatternBuilder pbld = new PatternBuilder(dtbld.getDiffTree().getRoot());
-        pbld.makeHole(first, 0);
-        final Pattern pattern = pbld.getPattern();
-        Assertions.assertNotNull(pattern);
-        return pattern;
     }
 }

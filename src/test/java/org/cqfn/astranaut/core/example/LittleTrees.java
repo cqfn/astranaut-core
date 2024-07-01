@@ -26,10 +26,13 @@ package org.cqfn.astranaut.core.example;
 import java.util.Arrays;
 import java.util.Collections;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -37,6 +40,7 @@ import org.cqfn.astranaut.core.example.green.Return;
 import org.cqfn.astranaut.core.example.green.SimpleAssignment;
 import org.cqfn.astranaut.core.example.green.StatementBlock;
 import org.cqfn.astranaut.core.example.green.Variable;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Little trees for testing purposes.
@@ -323,5 +327,31 @@ public final class LittleTrees {
         );
         builder.deleteNode(victim);
         return builder.getDiffTree();
+    }
+
+    /**
+     * Creates pattern with a hole.
+     * @return A pattern
+     */
+    public static Pattern createPatternWithHole() {
+        Builder ctor = new Variable.Constructor();
+        ctor.setData("w");
+        final Node first = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("1");
+        final Node second = ctor.createNode();
+        ctor = new Addition.Constructor();
+        ctor.setChildrenList(Arrays.asList(first, second));
+        final Node addition = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("2");
+        final Node replacement = ctor.createNode();
+        final DiffTreeBuilder dtbld = new DiffTreeBuilder(addition);
+        dtbld.replaceNode(second, replacement);
+        final PatternBuilder pbld = new PatternBuilder(dtbld.getDiffTree().getRoot());
+        pbld.makeHole(first, 0);
+        final Pattern pattern = pbld.getPattern();
+        Assertions.assertNotNull(pattern);
+        return pattern;
     }
 }
