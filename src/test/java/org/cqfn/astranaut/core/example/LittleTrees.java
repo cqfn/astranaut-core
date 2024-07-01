@@ -348,7 +348,7 @@ public final class LittleTrees {
         final Node replacement = ctor.createNode();
         final DiffTreeBuilder dtbld = new DiffTreeBuilder(addition);
         dtbld.replaceNode(second, replacement);
-        final PatternBuilder pbld = new PatternBuilder(dtbld.getDiffTree().getRoot());
+        final PatternBuilder pbld = new PatternBuilder(dtbld.getDiffTree());
         pbld.makeHole(first, 0);
         final Pattern pattern = pbld.getPattern();
         Assertions.assertNotNull(pattern);

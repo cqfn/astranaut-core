@@ -129,7 +129,7 @@ class MatcherTest {
         final Node prepattern = DraftNode.create("A(B, D<\"7\">)", nodes);
         final DiffTreeBuilder dtbuilder = new DiffTreeBuilder(prepattern);
         dtbuilder.deleteNode(nodes.get("B").iterator().next());
-        final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getDiffTree().getRoot());
+        final PatternBuilder pbuilder = new PatternBuilder(dtbuilder.getDiffTree());
         final boolean flag = pbuilder.makeHole(nodes.get("D").iterator().next(), 0);
         Assertions.assertTrue(flag);
         final Pattern pattern = pbuilder.getPattern();

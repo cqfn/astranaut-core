@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Hole;
 import org.cqfn.astranaut.core.base.Node;
@@ -66,7 +67,7 @@ class PatternBuilderTest {
         ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
-        final PatternBuilder builder = new PatternBuilder(new DiffNode(stmt));
+        final PatternBuilder builder = new PatternBuilder(new DiffTree(new DiffNode(stmt)));
         builder.makeHole(first, 1);
         final Pattern pattern = builder.getPattern();
         Assertions.assertNotNull(pattern);
@@ -79,8 +80,10 @@ class PatternBuilderTest {
     @Test
     void wrongHole() {
         final PatternBuilder builder = new PatternBuilder(
-            new DiffNode(
-                DraftNode.create("X")
+            new DiffTree(
+                new DiffNode(
+                    DraftNode.create("X")
+                )
             )
         );
         final boolean result = builder.makeHole(DraftNode.create("A"), 0);

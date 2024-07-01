@@ -119,6 +119,21 @@ class JsonDeserializerTest {
     }
 
     /**
+     * Testing the deserialization of a pattern that contains a hole.
+     */
+    @Test
+    void loadPatternWithHole() {
+        final String source = this.getFileContent("pattern_with_hole.json");
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> GreenFactory.INSTANCE
+        );
+        final Tree actual = deserializer.convert();
+        final Tree expected = LittleTrees.createPatternWithHole();
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
      * Returns content of the specified file.
      * @param name The name of the file
      * @return The file content
