@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A mapper that builds correspondences between two trees.

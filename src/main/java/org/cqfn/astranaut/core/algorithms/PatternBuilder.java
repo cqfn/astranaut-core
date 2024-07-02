@@ -25,9 +25,10 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
+import org.cqfn.astranaut.core.base.DiffTree;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.PatternNode;
 
 /**
  * Pattern builder.
@@ -54,10 +55,10 @@ public final class PatternBuilder {
 
     /**
      * Constructor.
-     * @param diff Node of the differential tree from which the pattern is built
+     * @param diff Differential tree from which the pattern is built
      */
-    public PatternBuilder(final DifferenceNode diff) {
-        this.root = new PatternNode(diff);
+    public PatternBuilder(final DiffTree diff) {
+        this.root = new PatternNode(diff.getRoot());
         this.info = PatternBuilder.buildNodeInfoMap(this.root);
     }
 
@@ -65,8 +66,8 @@ public final class PatternBuilder {
      * Returns root of resulting pattern.
      * @return Root node of pattern
      */
-    public PatternNode getRoot() {
-        return this.root;
+    public Pattern getPattern() {
+        return new Pattern(this.root);
     }
 
     /**
@@ -118,7 +119,7 @@ public final class PatternBuilder {
      * Some additional information about each node needed to make holes.
      * So far there's only a parent node here, but we may need something else.
      *
-     * @since 1.1.0
+     * @since 1.1.5
      */
     private static final class NodeInfo {
         /**

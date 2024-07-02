@@ -31,7 +31,6 @@ import guru.nidi.graphviz.parse.Parser;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
 
 /**
  * Renders an image from a tree using the external Graphviz tool.

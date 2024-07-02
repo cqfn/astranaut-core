@@ -23,10 +23,16 @@
  */
 package org.cqfn.astranaut.core.utils.deserializer;
 
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.FactorySelector;
-import org.cqfn.astranaut.core.Node;
+import java.util.HashMap;
+import java.util.Map;
+import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.DiffTree;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.utils.JsonDeserializer;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.
@@ -45,27 +51,34 @@ public class TreeDescriptor {
     private String language;
 
     /**
-     * Constructor.
-     */
-    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
-    public TreeDescriptor() {
-    }
-
-    /**
      * Converts tree into node.
      * @param selector The node factory selector
      * @return A root node
      */
-    public Node convert(final FactorySelector selector) {
-        Node result = EmptyTree.INSTANCE;
+    public Tree convert(final JsonDeserializer.FactorySelector selector) {
+        Tree result = EmptyTree.INSTANCE;
         final Factory factory = selector.select(this.language);
-        if (factory != null) {
-            final ActionList actions = new ActionList();
-            result = this.root.convert(factory, actions);
-            if (actions.hasActions()) {
-                result = actions.convertTreeToDifferenceTree(result);
+        do {
+            if (factory == null) {
+                break;
             }
-        }
+            final ActionList actions = new ActionList();
+            final Map<Node, Integer> holes = new HashMap<>();
+            result = new Tree(this.root.convert(factory, actions, holes));
+            if (holes.isEmpty() && !actions.hasActions()) {
+                break;
+            }
+            final DiffTree diff = actions.convertTreeToDiffTree(result);
+            result = diff;
+            if (holes.isEmpty()) {
+                break;
+            }
+            final PatternBuilder builder = new PatternBuilder(diff);
+            for (final Map.Entry<Node, Integer> pair : holes.entrySet()) {
+                builder.makeHole(pair.getKey(), pair.getValue());
+            }
+            result = builder.getPattern();
+        } while (false);
         return result;
     }
 }

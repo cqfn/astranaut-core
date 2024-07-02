@@ -30,17 +30,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.ChildrenMapper;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.algorithms.NodeAllocator;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.EmptyFragment;
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
- * Node that describes the 'SimpleAssignment' type..
+ * Node that describes the 'SimpleAssignment' type.
  *
  * @since 1.1.0
  */
@@ -201,8 +201,8 @@ public final class SimpleAssignment implements Assignment {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return TypeImpl.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return TypeImpl.PROPERTIES;
         }
 
         @Override
@@ -276,9 +276,9 @@ public final class SimpleAssignment implements Assignment {
         @Override
         public boolean setChildrenList(final List<Node> list) {
             final Node[] mapping = new Node[Constructor.MAX_NODE_COUNT];
-            final ChildrenMapper mapper =
-                new ChildrenMapper(SimpleAssignment.TYPE.getChildTypes());
-            final boolean result = mapper.map(mapping, list);
+            final NodeAllocator allocator =
+                new NodeAllocator(SimpleAssignment.TYPE.getChildTypes());
+            final boolean result = allocator.allocate(mapping, list);
             if (result) {
                 this.left = (AssignableExpression) mapping[Constructor.LEFT_POS];
                 this.right = (Expression) mapping[Constructor.RIGHT_POS];

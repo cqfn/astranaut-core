@@ -27,8 +27,10 @@ import com.kniazkov.json.JsonArray;
 import com.kniazkov.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.Hole;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Converts a tree to a string that contains JSON object.
@@ -52,9 +54,24 @@ public final class JsonSerializer {
     private static final String STR_TYPE = "type";
 
     /**
+     * The 'prototype' string.
+     */
+    private static final String STR_PROTOTYPE = "prototype";
+
+    /**
      * The 'data' string.
      */
     private static final String STR_DATA = "data";
+
+    /**
+     * The 'hole' string.
+     */
+    private static final String STR_HOLE = "Hole";
+
+    /**
+     * The 'number' string.
+     */
+    private static final String STR_NUMBER = "number";
 
     /**
      * The 'children' string.
@@ -79,10 +96,10 @@ public final class JsonSerializer {
 
     /**
      * Constructor.
-     * @param root The root node
+     * @param tree The tree
      */
-    public JsonSerializer(final Node root) {
-        this.root = root;
+    public JsonSerializer(final Tree tree) {
+        this.root = tree.getRoot();
         this.language = "";
     }
 
@@ -118,11 +135,24 @@ public final class JsonSerializer {
     }
 
     /**
-     * Converts the node to a JSON object.
-     * @param node The node
+     * Converts a node to a JSON object.
+     * @param node Node
      * @param result Object to be filled with node data
      */
     private void convertNode(final Node node, final JsonObject result) {
+        if (node instanceof Hole) {
+            this.convertHole((Hole) node, result);
+        } else {
+            this.convertOrdinaryNode(node, result);
+        }
+    }
+
+    /**
+     * Converts an 'ordinary' node to a JSON object.
+     * @param node Node
+     * @param result Object to be filled with node data
+     */
+    private void convertOrdinaryNode(final Node node, final JsonObject result) {
         final Type type = node.getType();
         result.addString(JsonSerializer.STR_TYPE, type.getName());
         final String data = node.getData();
@@ -138,10 +168,25 @@ public final class JsonSerializer {
             }
         }
         if (this.language.isEmpty()) {
-            final String property = type.getProperty(JsonSerializer.STR_LANGUAGE);
+            final String property = node.getProperties().getOrDefault(
+                JsonSerializer.STR_LANGUAGE,
+                ""
+            );
             if (!JsonSerializer.STR_COMMON.equals(property)) {
                 this.language = property;
             }
         }
+    }
+
+    /**
+     * Converts a hole to a JSON object.
+     * @param hole Hole
+     * @param result Object to be filled with node data
+     */
+    private void convertHole(final Hole hole, final JsonObject result) {
+        result.addString(JsonSerializer.STR_TYPE, JsonSerializer.STR_HOLE);
+        result.addNumber(JsonSerializer.STR_NUMBER, hole.getNumber());
+        final JsonObject prototype = result.createObject(JsonSerializer.STR_PROTOTYPE);
+        this.convertOrdinaryNode(hole.getPrototype(), prototype);
     }
 }

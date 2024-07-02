@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Top-down mapper.

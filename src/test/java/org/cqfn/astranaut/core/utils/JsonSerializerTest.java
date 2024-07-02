@@ -28,14 +28,16 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import java.util.Map;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.EmptyFragment;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.base.Type;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,10 +64,7 @@ class JsonSerializerTest {
      */
     @Test
     void testSerializationToString() {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("TestNode");
-        ctor.setData("value");
-        final Node tree = ctor.createNode();
+        final Tree tree = Tree.createDraft("TestNode<\"value\">");
         final boolean result = this.serializeAndCompare(
             tree,
             "serialization_to_string_expected.txt"
@@ -78,9 +77,9 @@ class JsonSerializerTest {
      */
     @Test
     void testSerializationWithLanguageSpecified() {
-        final Node root = new TestNodeWithTypeWithLanguage();
+        final Tree tree = new Tree(new TestNodeWithTypeWithLanguage());
         final boolean result = this.serializeAndCompare(
-            root,
+            tree,
             "serialization_language_specified.json"
         );
         Assertions.assertTrue(result);
@@ -90,10 +89,22 @@ class JsonSerializerTest {
      * Test for a tree serialization to a JSON string.
      */
     @Test
-    void testSerializationTreeWithAction() {
+    void testSerializationDiffTree() {
         final boolean result = this.serializeAndCompare(
             LittleTrees.createTreeWithDeleteAction(),
             "tree_containing_delete_action.json"
+        );
+        Assertions.assertTrue(result);
+    }
+
+    /**
+     * Test for a tree serialization to a JSON string.
+     */
+    @Test
+    void testSerializationPattern() {
+        final boolean result = this.serializeAndCompare(
+            LittleTrees.createPatternWithHole(),
+            "pattern_with_hole.json"
         );
         Assertions.assertTrue(result);
     }
@@ -104,7 +115,7 @@ class JsonSerializerTest {
      */
     @Test
     void testSerializationToFile(@TempDir final Path temp) {
-        final Node tree = this.createSampleTree();
+        final Tree tree = this.createSampleTree();
         final JsonSerializer serializer = new JsonSerializer(tree);
         boolean oops = false;
         String expected = "";
@@ -129,7 +140,7 @@ class JsonSerializerTest {
      */
     @Test
     void testFilesWriterException() {
-        final Node tree = EmptyTree.INSTANCE;
+        final Tree tree = EmptyTree.INSTANCE;
         final JsonSerializer serializer = new JsonSerializer(tree);
         final boolean result = serializer.serializeToFile("/");
         Assertions.assertFalse(result);
@@ -139,7 +150,7 @@ class JsonSerializerTest {
      * Create a simple tree for testing.
      * @return Tree
      */
-    private Node createSampleTree() {
+    private Tree createSampleTree() {
         final DraftNode.Constructor addition = new DraftNode.Constructor();
         addition.setName("Addition");
         final DraftNode.Constructor left = new DraftNode.Constructor();
@@ -149,17 +160,17 @@ class JsonSerializerTest {
         right.setName(JsonSerializerTest.INT_LITERAL);
         right.setData("3");
         addition.setChildrenList(Arrays.asList(left.createNode(), right.createNode()));
-        return addition.createNode();
+        return new Tree(addition.createNode());
     }
 
     /**
      * Serializes syntax tree and compares the result to some sample file.
-     * @param root Root node of the tree
+     * @param tree Syntax tree
      * @param filename File name
      * @return Checking result, {@code true} if the result is obtained and matches the sample
      */
-    private boolean serializeAndCompare(final Node root, final String filename) {
-        final JsonSerializer serializer = new JsonSerializer(root);
+    private boolean serializeAndCompare(final Tree tree, final String filename) {
+        final JsonSerializer serializer = new JsonSerializer(tree);
         final String result = serializer.serialize().replace("\r", "");
         boolean oops = false;
         String expected = "";
@@ -196,12 +207,8 @@ class JsonSerializerTest {
         }
 
         @Override
-        public String getProperty(final String name) {
-            String property = "";
-            if ("language".equals(name)) {
-                property = "elven";
-            }
-            return property;
+        public Map<String, String> getProperties() {
+            return new MapUtils<String, String>().put("language", "elven").make();
         }
 
         @Override

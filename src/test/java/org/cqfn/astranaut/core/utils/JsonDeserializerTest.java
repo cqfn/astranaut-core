@@ -26,14 +26,15 @@ package org.cqfn.astranaut.core.utils;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.CoreException;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.base.Type;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
-import org.cqfn.astranaut.core.exceptions.BaseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -71,15 +72,16 @@ class JsonDeserializerTest {
             source,
             language -> new Factory(types)
         );
-        final Node result = deserializer.convert();
-        Assertions.assertEquals(JsonDeserializerTest.ADD, result.getTypeName());
-        Assertions.assertEquals("", result.getData());
-        Assertions.assertEquals(2, result.getChildCount());
-        final Node first = result.getChild(0);
+        final Tree result = deserializer.convert();
+        final Node root = result.getRoot();
+        Assertions.assertEquals(JsonDeserializerTest.ADD, root.getTypeName());
+        Assertions.assertEquals("", root.getData());
+        Assertions.assertEquals(2, root.getChildCount());
+        final Node first = root.getChild(0);
         Assertions.assertEquals(JsonDeserializerTest.INT_LITERAL, first.getTypeName());
         Assertions.assertEquals("2", first.getData());
         Assertions.assertEquals(0, first.getChildCount());
-        final Node second = result.getChild(1);
+        final Node second = root.getChild(1);
         Assertions.assertEquals(JsonDeserializerTest.INT_LITERAL, second.getTypeName());
         Assertions.assertEquals("3", second.getData());
         Assertions.assertEquals(0, second.getChildCount());
@@ -96,9 +98,9 @@ class JsonDeserializerTest {
             source,
             language -> new Factory(Collections.emptyMap())
         );
-        final Node node = deserializer.convert();
-        Assertions.assertNotNull(node);
-        Assertions.assertEquals("Example", node.getTypeName());
+        final Tree tree = deserializer.convert();
+        Assertions.assertNotNull(tree);
+        Assertions.assertEquals("Example", tree.getRoot().getTypeName());
     }
 
     /**
@@ -111,8 +113,23 @@ class JsonDeserializerTest {
             source,
             language -> GreenFactory.INSTANCE
         );
-        final Node actual = deserializer.convert();
-        final Node expected = LittleTrees.createTreeWithDeleteAction();
+        final Tree actual = deserializer.convert();
+        final Tree expected = LittleTrees.createTreeWithDeleteAction();
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    /**
+     * Testing the deserialization of a pattern that contains a hole.
+     */
+    @Test
+    void loadPatternWithHole() {
+        final String source = this.getFileContent("pattern_with_hole.json");
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> GreenFactory.INSTANCE
+        );
+        final Tree actual = deserializer.convert();
+        final Tree expected = LittleTrees.createPatternWithHole();
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
@@ -127,8 +144,8 @@ class JsonDeserializerTest {
         String source = "";
         try {
             source = new FilesReader(file).readAsString(
-                (FilesReader.CustomExceptionCreator<BaseException>) ()
-                    -> new BaseException() {
+                (FilesReader.CustomExceptionCreator<CoreException>) ()
+                    -> new CoreException() {
                         private static final long serialVersionUID = -6130330765091840343L;
 
                         @Override
@@ -145,7 +162,7 @@ class JsonDeserializerTest {
                         }
                     }
             );
-        } catch (final BaseException exception) {
+        } catch (final CoreException exception) {
             oops = true;
         }
         Assertions.assertFalse(oops);
