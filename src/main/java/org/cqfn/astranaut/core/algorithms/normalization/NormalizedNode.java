@@ -23,7 +23,9 @@
  */
 package org.cqfn.astranaut.core.algorithms.normalization;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
@@ -43,6 +45,11 @@ public final class NormalizedNode implements PrototypeBasedNode {
     private final Node original;
 
     /**
+     * List of normalized child nodes.
+     */
+    private final List<NormalizedNode> children;
+
+    /**
      * List of properties.
      */
     private final Properties properties;
@@ -54,6 +61,7 @@ public final class NormalizedNode implements PrototypeBasedNode {
     public NormalizedNode(final Node original) {
         this.original = original;
         this.properties = NormalizedNode.initProperties(original);
+        this.children = NormalizedNode.initChildrenList(original);
     }
 
     @Override
@@ -78,7 +86,7 @@ public final class NormalizedNode implements PrototypeBasedNode {
 
     @Override
     public int getChildCount() {
-        int count = this.original.getChildCount();
+        int count = this.children.size();
         if (this.properties != null) {
             count = count + 1;
         }
@@ -89,11 +97,11 @@ public final class NormalizedNode implements PrototypeBasedNode {
     public Node getChild(final int index) {
         final Node node;
         if (this.properties == null) {
-            node = this.original.getChild(index);
+            node = this.children.get(index);
         } else if (index == 0) {
             node = this.properties;
         } else {
-            node = this.original.getChild(index - 1);
+            node = this.children.get(index - 1);
         }
         return node;
     }
@@ -116,5 +124,19 @@ public final class NormalizedNode implements PrototypeBasedNode {
             object = new Properties(map);
         }
         return object;
+    }
+
+    /**
+     * Prepares a list of child normalized nodes.
+     * @param original Original node
+     * @return List of child normalized nodes
+     */
+    private static List<NormalizedNode> initChildrenList(final Node original) {
+        final int count = original.getChildCount();
+        final List<NormalizedNode> list = new ArrayList<>(count);
+        for (int index = 0; index < count; index = index + 1) {
+            list.add(new NormalizedNode(original.getChild(index)));
+        }
+        return Collections.unmodifiableList(list);
     }
 }
