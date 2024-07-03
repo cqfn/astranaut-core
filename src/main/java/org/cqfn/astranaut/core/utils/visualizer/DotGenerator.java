@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.utils.visualizer;
 
+import java.util.Map;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
@@ -36,6 +37,16 @@ public class DotGenerator {
      * Node name start text.
      */
     private static final String NODE = "  node_";
+
+    /**
+     * The 'color' property.
+     */
+    private static final String PROP_COLOR = "color";
+
+    /**
+     * The 'bgcolor' property.
+     */
+    private static final String PROP_BGCOLOR = "bgcolor";
 
     /**
      * Stores the generated DOT text.
@@ -88,7 +99,7 @@ public class DotGenerator {
             this.appendNode(
                 node.getTypeName(),
                 node.getData(),
-                node.getProperties().getOrDefault("color", "")
+                node.getProperties()
             );
             final int parent = this.index;
             for (int idx = 0; idx < node.getChildCount(); idx += 1) {
@@ -119,11 +130,12 @@ public class DotGenerator {
     /**
      * Appends tree node text.
      *
-     * @param type A node type
-     * @param data A node data
-     * @param color A node color
+     * @param type Nde type
+     * @param data Node data
+     * @param properties Node properties
      */
-    private void appendNode(final String type, final String data, final String color) {
+    private void appendNode(final String type, final String data,
+        final Map<String, String> properties) {
         this.builder.append(DotGenerator.NODE).append(this.index).append(" [");
         this.builder.append("label=<").append(type);
         if (!data.isEmpty()) {
@@ -132,8 +144,12 @@ public class DotGenerator {
             this.builder.append("</font>");
         }
         this.builder.append('>');
-        if (!color.isEmpty()) {
-            this.builder.append(" color=").append(color);
+        if (properties.containsKey(DotGenerator.PROP_COLOR)) {
+            this.builder.append(" color=").append(properties.get(DotGenerator.PROP_COLOR));
+        }
+        if (properties.containsKey(DotGenerator.PROP_BGCOLOR)) {
+            this.builder.append(" style=\"filled,rounded\" fillcolor=")
+                .append(properties.get(DotGenerator.PROP_BGCOLOR));
         }
         this.builder.append("];\n");
     }
