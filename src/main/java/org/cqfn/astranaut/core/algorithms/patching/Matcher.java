@@ -36,6 +36,7 @@ import org.cqfn.astranaut.core.base.Insert;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.PrototypeBasedNode;
 import org.cqfn.astranaut.core.base.Replace;
 import org.cqfn.astranaut.core.base.Tree;
 
@@ -104,8 +105,9 @@ class Matcher {
     @SuppressWarnings("PMD.UnusedFormalParameter")
     private boolean checkNode(final Node node, final Node parent, final Node pattern) {
         final Node sample;
-        if (pattern instanceof Replace || pattern instanceof Delete) {
-            sample = ((Action) pattern).getBefore();
+        final Action action = Matcher.nodeToAction(pattern);
+        if (action instanceof Replace || action instanceof Delete) {
+            sample = action.getBefore();
         } else {
             sample = pattern;
         }
@@ -114,9 +116,9 @@ class Matcher {
             result = result && node.getData().equals(sample.getData());
             result = result && (node.getChildCount() == 0 || this.checkChildren(node, sample));
         }
-        if (result && pattern instanceof Replace) {
-            this.actions.replaceNode(node, ((Action) pattern).getAfter());
-        } else if (result & pattern instanceof Delete) {
+        if (result && action instanceof Replace) {
+            this.actions.replaceNode(node, action.getAfter());
+        } else if (result & action instanceof Delete) {
             this.actions.deleteNode(node);
         }
         return result;
@@ -140,8 +142,9 @@ class Matcher {
             Node current = null;
             while (result && offset < right && iterator.hasNext()) {
                 final Node child = iterator.next();
-                if (child instanceof Insert) {
-                    this.actions.insertNodeAfter(((Insert) child).getAfter(), node, current);
+                final Action action = Matcher.nodeToAction(child);
+                if (action instanceof Insert) {
+                    this.actions.insertNodeAfter(action.getAfter(), node, current);
                 } else if (index + offset >= left) {
                     result = false;
                 } else {
@@ -156,5 +159,23 @@ class Matcher {
             }
         }
         return result;
+    }
+
+    /**
+     * Converts a node reference to an action reference if the node is an action
+     *  or the node prototype is an action.
+     * @param node Node
+     * @return Action or {@code null} if the node is not an action
+     */
+    private static Action nodeToAction(final Node node) {
+        final Action action;
+        if (node instanceof Action) {
+            action = (Action) node;
+        } else if (node instanceof PrototypeBasedNode) {
+            action = Matcher.nodeToAction(((PrototypeBasedNode) node).getPrototype());
+        } else {
+            action = null;
+        }
+        return action;
     }
 }
