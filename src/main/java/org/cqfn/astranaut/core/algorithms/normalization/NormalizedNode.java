@@ -107,6 +107,11 @@ public final class NormalizedNode implements PrototypeBasedNode {
     }
 
     @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
+    @Override
     public Node getPrototype() {
         return this.original;
     }

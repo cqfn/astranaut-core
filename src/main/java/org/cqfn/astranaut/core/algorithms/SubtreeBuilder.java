@@ -175,6 +175,11 @@ public class SubtreeBuilder {
         }
 
         @Override
+        public Map<String, String> getProperties() {
+            return this.original.getProperties();
+        }
+
+        @Override
         public int getChildCount() {
             return this.children.length;
         }
@@ -193,6 +198,11 @@ public class SubtreeBuilder {
         @Override
         public Node getPrototype() {
             return this.original;
+        }
+
+        @Override
+        public String toString() {
+            return Node.toString(this);
         }
     }
 }

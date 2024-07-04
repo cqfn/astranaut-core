@@ -74,6 +74,11 @@ public final class Properties implements Node {
         return this.list.get(index);
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * Initiates list of property nodes.
      * @param map Map, containing properties from original node

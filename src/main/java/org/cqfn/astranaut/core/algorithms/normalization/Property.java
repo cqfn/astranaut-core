@@ -72,6 +72,11 @@ public final class Property implements Node {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * Type of property extracted from the original node.
      * @since 2.0.0

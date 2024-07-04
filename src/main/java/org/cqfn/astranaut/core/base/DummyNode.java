@@ -77,6 +77,11 @@ public final class DummyNode implements Node {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * The fake builder that only returns static reference.
      * @since 1.0
@@ -115,7 +120,7 @@ public final class DummyNode implements Node {
     private static class TypeImpl implements Type {
         @Override
         public String getName() {
-            return "<null>";
+            return "\u2205";
         }
 
         @Override

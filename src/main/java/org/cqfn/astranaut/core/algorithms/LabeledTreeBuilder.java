@@ -125,6 +125,11 @@ public class LabeledTreeBuilder {
         }
 
         @Override
+        public String toString() {
+            return Node.toString(this);
+        }
+
+        @Override
         public Node getPrototype() {
             return this.original;
         }

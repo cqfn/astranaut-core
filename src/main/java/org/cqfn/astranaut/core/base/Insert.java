@@ -95,6 +95,11 @@ public final class Insert implements Action {
         return node;
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * Type of 'Insert' action.
      *

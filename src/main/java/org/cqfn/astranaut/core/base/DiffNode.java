@@ -216,7 +216,7 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
 
     @Override
     public String toString() {
-        return this.prototype.toString();
+        return Node.toString(this);
     }
 
     /**

@@ -97,24 +97,7 @@ public final class DraftNode implements Node {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.type.getName());
-        if (!this.data.isEmpty()) {
-            builder.append("<\"").append(this.data).append("\">");
-        }
-        if (!this.children.isEmpty()) {
-            boolean flag = false;
-            builder.append('(');
-            for (final Node child : this.children) {
-                if (flag) {
-                    builder.append(", ");
-                }
-                flag = true;
-                builder.append(child.toString());
-            }
-            builder.append(')');
-        }
-        return builder.toString();
+        return Node.toString(this);
     }
 
     /**

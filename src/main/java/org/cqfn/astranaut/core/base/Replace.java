@@ -109,6 +109,11 @@ public final class Replace implements Action {
         return node;
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * Type of 'Replace' action.
      *

@@ -84,7 +84,7 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
 
     @Override
     public String toString() {
-        return this.prototype.toString();
+        return Node.toString(this);
     }
 
     /**

@@ -121,6 +121,11 @@ public final class MutableNode implements PrototypeBasedNode {
         return this.children;
     }
 
+    @Override
+    public String toString() {
+        return Node.toString(this);
+    }
+
     /**
      * Replaces a child node with another node.
      * @param child Child node
