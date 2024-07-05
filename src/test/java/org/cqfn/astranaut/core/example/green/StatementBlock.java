@@ -99,6 +99,15 @@ public final class StatementBlock implements Statement {
         return this.children.get(index);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append('{');
+        this.forEachChild(node -> builder.append(node.toString()));
+        builder.append('}');
+        return builder.toString();
+    }
+
     /**
      * Type descriptor of the 'StatementBlock' node.
      *

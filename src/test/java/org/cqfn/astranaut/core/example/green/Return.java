@@ -96,6 +96,11 @@ public final class Return implements Statement {
         return this.children.get(index);
     }
 
+    @Override
+    public String toString() {
+        return "return;";
+    }
+
     /**
      * Returns the child with the 'expression' tag.
      * @return The node

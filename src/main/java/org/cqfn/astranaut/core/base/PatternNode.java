@@ -45,11 +45,11 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
 
     /**
      * Constructor.
-     * @param diff Node of the differential tree from which the pattern is built
+     * @param original Original non-pattern node
      */
-    public PatternNode(final DiffNode diff) {
-        this.prototype = diff.getPrototype();
-        this.children = PatternNode.initChildrenList(diff);
+    public PatternNode(final Node original) {
+        this.prototype = original;
+        this.children = PatternNode.initChildrenList(original);
     }
 
     @Override
@@ -106,20 +106,22 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
 
     /**
      * Transforms children nodes of difference node to pattern items.
-     * @param diff Difference node
+     * @param original Difference node
      * @return List of pattern item
      */
-    private static List<PatternItem> initChildrenList(final DiffNode diff) {
-        final int count = diff.getChildCount();
+    private static List<PatternItem> initChildrenList(final Node original) {
+        final int count = original.getChildCount();
         final List<PatternItem> result = new ArrayList<>(count);
         for (int index = 0; index < count; index = index + 1) {
-            final Node child = diff.getChild(index);
+            final Node child = original.getChild(index);
             if (child instanceof DiffNode) {
                 result.add(
-                    new PatternNode((DiffNode) child)
+                    new PatternNode(((DiffNode) child).getPrototype())
                 );
             } else if (child instanceof Action) {
                 result.add((PatternItem) child);
+            } else {
+                result.add(new PatternNode(child));
             }
         }
         return result;
@@ -133,12 +135,20 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
     private int findChildIndex(final Node node) {
         int result = -1;
         final int count = this.children.size();
-        for (int index = 0; index < count; index = index + 1) {
+        for (int index = 0; result < 0 && index < count; index = index + 1) {
             final PatternItem child = this.children.get(index);
-            if (child instanceof PatternNode
-                && node == ((PatternNode) child).getPrototype()) {
-                result = index;
-                break;
+            if (child instanceof PatternNode) {
+                Node proto = ((PatternNode) child).getPrototype();
+                while (true) {
+                    if (node.equals(proto)) {
+                        result = index;
+                        break;
+                    } else if (proto instanceof PrototypeBasedNode) {
+                        proto = ((PrototypeBasedNode) proto).getPrototype();
+                    } else {
+                        break;
+                    }
+                }
             }
         }
         return result;

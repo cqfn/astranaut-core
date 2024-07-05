@@ -25,10 +25,11 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.PrototypeBasedNode;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Pattern builder.
@@ -55,10 +56,10 @@ public final class PatternBuilder {
 
     /**
      * Constructor.
-     * @param diff Differential tree from which the pattern is built
+     * @param tree Syntax tree from which the pattern is built
      */
-    public PatternBuilder(final DiffTree diff) {
-        this.root = new PatternNode(diff.getRoot());
+    public PatternBuilder(final Tree tree) {
+        this.root = new PatternNode(tree.getRoot());
         this.info = PatternBuilder.buildNodeInfoMap(this.root);
     }
 
@@ -104,11 +105,20 @@ public final class PatternBuilder {
      * @param parent Parent node
      */
     private static void buildNodeInfoMap(final Map<Node, NodeInfo> map, final PatternNode parent) {
+        final NodeInfo obj = new NodeInfo(parent);
         parent.forEachChild(
             child -> {
                 if (child instanceof PatternNode) {
                     final PatternNode node = (PatternNode) child;
-                    map.put(node.getPrototype(), new NodeInfo(parent));
+                    Node proto = node.getPrototype();
+                    while (true) {
+                        map.put(proto, obj);
+                        if (proto instanceof PrototypeBasedNode) {
+                            proto = ((PrototypeBasedNode) proto).getPrototype();
+                        } else {
+                            break;
+                        }
+                    }
                     PatternBuilder.buildNodeInfoMap(map, node);
                 }
             }

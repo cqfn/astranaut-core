@@ -101,7 +101,9 @@ public final class Hole implements PatternItem, PrototypeBasedNode {
 
     @Override
     public String toString() {
-        return Node.toString(this);
+        final StringBuilder builder = new StringBuilder();
+        builder.append(this.getTypeName()).append("<#").append(this.number).append('>');
+        return builder.toString();
     }
 
     @Override
