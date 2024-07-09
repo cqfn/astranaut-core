@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms;
 
+import java.util.Collections;
 import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.algorithms.hash.Hash;
 import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
@@ -30,6 +31,7 @@ import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.1.0
  */
-class DifferenceTreeBuilderTest {
+class DiffTreeBuilderTest {
     /**
      * Testing the construction of a difference tree with an inserted node.
      */
@@ -230,5 +232,38 @@ class DifferenceTreeBuilderTest {
         );
         final boolean result = builder.deleteNode(DraftNode.create("A"));
         Assertions.assertFalse(result);
+    }
+
+    @Test
+    void createDiffTreeFromSubtree() {
+        final Node literal = LittleTrees.createIntegerLiteral(1);
+        final Node replacement = LittleTrees.createIntegerLiteral(2);
+        final Node first = LittleTrees.wrapExpressionWithStatement(
+            LittleTrees.createAssignment(
+                LittleTrees.createVariable("x"),
+                literal
+            )
+        );
+        final Node second = LittleTrees.createReturnStatement(null);
+        final Node root = LittleTrees.createStatementBlock(first, second);
+        final Node subtree = new SubtreeBuilder(root, SubtreeBuilder.EXCLUDE).create(
+            Collections.singleton(second)
+        );
+        final DiffTreeBuilder builder = new DiffTreeBuilder(subtree);
+        final boolean flag = builder.replaceNode(literal, replacement);
+        Assertions.assertTrue(flag);
+        final DiffTree diff = builder.getDiffTree();
+        final Tree after = diff.getAfter();
+        final Tree expected = new Tree(
+            LittleTrees.createStatementBlock(
+                LittleTrees.wrapExpressionWithStatement(
+                    LittleTrees.createAssignment(
+                        LittleTrees.createVariable("x"),
+                        LittleTrees.createIntegerLiteral(2)
+                    )
+                )
+            )
+        );
+        Assertions.assertTrue(expected.deepCompare(after));
     }
 }
