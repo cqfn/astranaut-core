@@ -242,12 +242,20 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
     private int findChildIndex(final Node node) {
         int result = -1;
         final int count = this.children.size();
-        for (int index = 0; index < count; index = index + 1) {
+        for (int index = 0; result < 0 && index < count; index = index + 1) {
             final DiffTreeItem child = this.children.get(index);
-            if (child instanceof DiffNode
-                && node == ((DiffNode) child).getPrototype()) {
-                result = index;
-                break;
+            if (child instanceof DiffNode) {
+                Node proto = ((DiffNode) child).getPrototype();
+                while (true) {
+                    if (node.equals(proto)) {
+                        result = index;
+                        break;
+                    } else if (proto instanceof PrototypeBasedNode) {
+                        proto = ((PrototypeBasedNode) proto).getPrototype();
+                    } else {
+                        break;
+                    }
+                }
             }
         }
         return result;

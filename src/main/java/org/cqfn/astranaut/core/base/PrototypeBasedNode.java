@@ -26,6 +26,11 @@ package org.cqfn.astranaut.core.base;
 /**
  * Interface for nodes that are based on a prototype node.
  *  Classes implementing this interface provide a method to retrieve their prototype node.
+ *  Prototyping is an important and commonly used mechanism for representing nodes
+ *  based on already existing nodes. Typically, a derived node delegates the calls of almost
+ *  all methods to its prototype, except for one or two. This allows for minor necessary
+ *  modifications using some algorithm. The resulting node can, in turn, serve as a prototype
+ *  for another node, and so on.
  * @since 2.0.0
  */
 public interface PrototypeBasedNode extends Node {
