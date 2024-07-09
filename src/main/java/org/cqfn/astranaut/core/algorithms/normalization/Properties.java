@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Type;
 
@@ -44,7 +45,7 @@ public final class Properties implements Node {
     /**
      * List of properties.
      */
-    private final List<Property> list;
+    private List<Property> list;
 
     /**
      * Constructor.
@@ -85,11 +86,15 @@ public final class Properties implements Node {
      * @return List of nodes, each containing one property
      */
     private static List<Property> initList(final Map<String, String> map) {
-        final List<Property> list = new ArrayList<>(map.size());
-        for (final Map.Entry<String, String> property : map.entrySet()) {
-            list.add(new Property(property.getKey(), property.getValue()));
+        List<Property> result = Collections.emptyList();
+        if (map != null && !map.isEmpty()) {
+            final List<Property> list = new ArrayList<>(map.size());
+            for (final Map.Entry<String, String> property : map.entrySet()) {
+                list.add(new Property(property.getKey(), property.getValue()));
+            }
+            result = Collections.unmodifiableList(list);
         }
-        return Collections.unmodifiableList(list);
+        return result;
     }
 
     /**
@@ -104,7 +109,65 @@ public final class Properties implements Node {
 
         @Override
         public Builder createBuilder() {
-            throw new UnsupportedOperationException();
+            return new PropertiesBuilder();
+        }
+    }
+
+    /**
+     * Builder of node containing list of properties extracted from the original node.
+     * @since 2.0.0
+     */
+    private static final class PropertiesBuilder implements Builder {
+        /**
+         * List of properties.
+         */
+        private List<Property> children;
+
+        /**
+         * Constructor.
+         */
+        private PropertiesBuilder() {
+            this.children = Collections.emptyList();
+        }
+
+        @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
+        @Override
+        public void setFragment(final Fragment fragment) {
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            return str.isEmpty();
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            final List<Property> properties = new ArrayList<>(list.size());
+            boolean result = true;
+            for (final Node node : list) {
+                if (node instanceof Property) {
+                    properties.add((Property) node);
+                } else {
+                    result = false;
+                    break;
+                }
+            }
+            if (result) {
+                this.children = properties;
+            }
+            return result;
+        }
+
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
+        @Override
+        public Node createNode() {
+            final Properties node = new Properties(null);
+            node.list = this.children;
+            return node;
         }
     }
 }

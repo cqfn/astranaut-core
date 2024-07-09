@@ -23,7 +23,9 @@
  */
 package org.cqfn.astranaut.core.algorithms.normalization;
 
+import java.util.List;
 import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Type;
 
@@ -102,7 +104,62 @@ public final class Property implements Node {
 
         @Override
         public Builder createBuilder() {
-            throw new UnsupportedOperationException();
+            return new PropertyBuilder(this.name);
+        }
+    }
+
+    /**
+     * Builder of the property with the specified name.
+     * @since 2.0.0
+     */
+    private static final class PropertyBuilder implements Builder {
+        /**
+         * Property name.
+         */
+        private final String name;
+
+        /**
+         * Property value.
+         */
+        private String value;
+
+        /**
+         * Constructor.
+         * @param name Name
+         */
+        private PropertyBuilder(final String name) {
+            this.name = name;
+            this.value = "";
+        }
+
+        @SuppressWarnings("PMD.UncommentedEmptyMethodBody")
+        @Override
+        public void setFragment(final Fragment fragment) {
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            boolean result = false;
+            if (!str.isEmpty()) {
+                this.value = str;
+                result = true;
+            }
+            return result;
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            return list.isEmpty();
+        }
+
+        @Override
+        public boolean isValid() {
+            return !this.value.isEmpty();
+        }
+
+        @Override
+        public Node createNode() {
+            return new Property(this.name, this.value);
         }
     }
 }
