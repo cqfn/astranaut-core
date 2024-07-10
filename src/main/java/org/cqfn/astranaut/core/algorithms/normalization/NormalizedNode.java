@@ -60,9 +60,24 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
      * @param original The original, non-normalized node.
      */
     public NormalizedNode(final Node original) {
+        this(
+            original,
+            NormalizedNode.initProperties(original),
+            NormalizedNode.initChildrenList(original)
+        );
+    }
+
+    /**
+     * Private constructor (for internal usage).
+     * @param original The original, non-normalized node
+     * @param properties List of properties
+     * @param children List of normalized child nodes
+     */
+    private NormalizedNode(final Node original, final Properties properties,
+    final List<NormalizedNode> children) {
         this.original = original;
-        this.properties = NormalizedNode.initProperties(original);
-        this.children = NormalizedNode.initChildrenList(original);
+        this.properties = properties;
+        this.children = children;
     }
 
     @Override
@@ -167,11 +182,17 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
         private Properties properties;
 
         /**
+         * List of normalized child nodes.
+         */
+        private List<NormalizedNode> children;
+
+        /**
          * Constructor.
          * @param original Builder for original, non-normalized node
          */
         private NormalizerNodeBuilder(final Builder original) {
             this.original = original;
+            this.children = Collections.emptyList();
         }
 
         @Override
@@ -186,16 +207,32 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
 
         @Override
         public boolean setChildrenList(final List<Node> list) {
-            final boolean result;
-            Properties extracted = null;
-            if (list.isEmpty() || !(list.get(0) instanceof Properties)) {
-                result = this.original.setChildrenList(list);
+            final List<Node> nodes;
+            Properties props = null;
+            int size = list.size();
+            if (size > 0 && list.get(0) instanceof Properties) {
+                props = (Properties) list.get(0);
+                nodes = list.subList(1, size);
+                size = size - 1;
             } else {
-                extracted = (Properties) list.get(0);
-                result = this.original.setChildrenList(list.subList(1, list.size()));
+                nodes = list;
             }
+            final List<Node> originals = new ArrayList<>(size);
+            final List<NormalizedNode> normalized = new ArrayList<>(size);
+            for (final Node node : nodes) {
+                if (node instanceof NormalizedNode) {
+                    NormalizedNode child = (NormalizedNode) node;
+                    originals.add(child.original);
+                    normalized.add(child);
+                } else {
+                    originals.add(node);
+                    normalized.add(new NormalizedNode(node));
+                }
+            }
+            final boolean result = this.original.setChildrenList(originals);
             if (result) {
-                this.properties = extracted;
+                this.properties = props;
+                this.children = normalized;
             }
             return result;
         }
@@ -207,9 +244,12 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
 
         @Override
         public Node createNode() {
-            final NormalizedNode node = new NormalizedNode(this.original.createNode());
-            node.properties = this.properties;
-            return node;
+            return new NormalizedNode(
+                this.original.createNode(),
+                this.properties,
+                this.children
+            );
         }
     }
 }
+
