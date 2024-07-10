@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * Node containing child nodes, as well as actions on these nodes.
  *
  * @since 1.1.0
  */
-public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
+public final class DiffNode extends NodeAndType implements DiffTreeItem, PrototypeBasedNode {
     /**
      * The parent node with action.
      */
@@ -87,11 +88,6 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
     }
 
     @Override
-    public Type getType() {
-        return this.prototype.getType();
-    }
-
-    @Override
     public String getData() {
         return this.prototype.getData();
     }
@@ -107,6 +103,21 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
     }
 
     @Override
+    public String getName() {
+        return this.prototype.getTypeName();
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return this.prototype.getProperties();
+    }
+
+    @Override
+    public Builder createBuilder() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Node getBefore() {
         return this.getBranch(DiffTreeItem::getBefore);
     }
@@ -114,6 +125,11 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
     @Override
     public Node getAfter() {
         return this.getBranch(DiffTreeItem::getAfter);
+    }
+
+    @Override
+    public String toString() {
+        return Node.toString(this);
     }
 
     /**
@@ -212,11 +228,6 @@ public final class DiffNode implements DiffTreeItem, PrototypeBasedNode {
             result = this.deleteNode(index);
         }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return Node.toString(this);
     }
 
     /**

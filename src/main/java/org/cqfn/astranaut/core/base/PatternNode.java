@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.base;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A node that contains child nodes as well as actions on those nodes.
@@ -32,7 +33,7 @@ import java.util.List;
  *
  * @since 1.1.5
  */
-public final class PatternNode implements PatternItem, PrototypeBasedNode {
+public final class PatternNode extends NodeAndType implements PatternItem, PrototypeBasedNode {
     /**
      * The prototype node, i.e. 'ordinary', non-pattern original node.
      */
@@ -63,8 +64,18 @@ public final class PatternNode implements PatternItem, PrototypeBasedNode {
     }
 
     @Override
-    public Type getType() {
-        return this.prototype.getType();
+    public String getName() {
+        return this.prototype.getTypeName();
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return this.prototype.getProperties();
+    }
+
+    @Override
+    public Builder createBuilder() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

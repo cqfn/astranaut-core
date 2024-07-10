@@ -48,7 +48,7 @@ import java.util.function.Consumer;
 @SuppressWarnings("PMD.ExcessivePublicCount")
 public interface Node {
     /**
-     * Returns the fragment associated with the node.
+     * Returns the fragment of source code that is associated with the node.
      * @return The fragment
      */
     default Fragment getFragment() {

@@ -26,7 +26,6 @@ package org.cqfn.astranaut.core.base;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,21 +37,21 @@ import java.util.Set;
  * The DraftNode class implements the {@link Node} interface. This class serves as a "draft node",
  *  where no data consistency checks are performed. The constructor of this class allows
  *  the creation of any tree structure without validation, making it suitable for testing
- *  purposes and for displaying trees obtained from third-party parsers in the ASTranaut format.
+ *  purposes and for displaying trees obtained from third-party parsers in the ASTranaut
+ *  format.<br/>
  * DraftNode is designed to be immutable.
- *
  * @since 1.0
  */
-public final class DraftNode implements Node {
+public final class DraftNode extends NodeAndType {
     /**
      * The fragment associated with the node.
      */
     private Fragment fragment;
 
     /**
-     * The node type.
+     * The node name.
      */
-    private Type type;
+    private String name;
 
     /**
      * The node data.
@@ -76,8 +75,8 @@ public final class DraftNode implements Node {
     }
 
     @Override
-    public Type getType() {
-        return this.type;
+    public String getName() {
+        return this.name;
     }
 
     @Override
@@ -93,6 +92,13 @@ public final class DraftNode implements Node {
     @Override
     public Node getChild(final int index) {
         return this.children.get(index);
+    }
+
+    @Override
+    public Builder createBuilder() {
+        final Constructor ctor = new Constructor();
+        ctor.setName(this.name);
+        return ctor;
     }
 
     @Override
@@ -215,50 +221,7 @@ public final class DraftNode implements Node {
     }
 
     /**
-     * Type implementation for the draft node.
-     *
-     * @since 1.0
-     */
-    private static class DraftType implements Type {
-        /**
-         * The type name.
-         */
-        private final String name;
-
-        /**
-         * Constructor.
-         * @param name The type name
-         */
-        DraftType(final String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public List<ChildDescriptor> getChildTypes() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> getHierarchy() {
-            return Collections.singletonList(this.name);
-        }
-
-        @Override
-        public Builder createBuilder() {
-            final Constructor builder = new Constructor();
-            builder.setName(this.name);
-            return builder;
-        }
-    }
-
-    /**
      * The constructor class for draft node.
-     *
      * @since 1.0
      */
     public static final class Constructor implements Builder {
@@ -338,7 +301,7 @@ public final class DraftNode implements Node {
             }
             final DraftNode node = new DraftNode();
             node.fragment = this.fragment;
-            node.type = new DraftType(this.name);
+            node.name = this.name;
             node.data = this.data;
             node.children = new ArrayList<>(this.children);
             return node;

@@ -31,18 +31,13 @@ import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
+import org.cqfn.astranaut.core.base.NodeAndType;
 
 /**
  * List of properties extracted from the original node.
  * @since 2.0.0
  */
-public final class Properties implements Node {
-    /**
-     * Type of node containing list of properties extracted from the original node.
-     */
-    private static final Type TYPE = new PropertiesType();
-
+public final class Properties extends NodeAndType {
     /**
      * List of properties.
      */
@@ -54,11 +49,6 @@ public final class Properties implements Node {
      */
     public Properties(final Map<String, String> map) {
         this.list = Properties.initList(map);
-    }
-
-    @Override
-    public Type getType() {
-        return Properties.TYPE;
     }
 
     @Override
@@ -81,11 +71,21 @@ public final class Properties implements Node {
         return Node.toString(this);
     }
 
+    @Override
+    public String getName() {
+        return "Properties";
+    }
+
+    @Override
+    public Builder createBuilder() {
+        return new PropertiesBuilder();
+    }
+
     /**
      * Returns all properties as a collection.
      * @return Map containing properties
      */
-    public Map<String, String> getAllProperties() {
+    public Map<String, String> collectAllProperties() {
         final Map<String, String> map = new TreeMap<>();
         for (final Property property : this.list) {
             map.put(property.getTypeName(), property.getData());
@@ -108,22 +108,6 @@ public final class Properties implements Node {
             result = Collections.unmodifiableList(list);
         }
         return result;
-    }
-
-    /**
-     * Type of node containing list of properties extracted from the original node.
-     * @since 2.0.0
-     */
-    private static final class PropertiesType implements Type {
-        @Override
-        public String getName() {
-            return "Properties";
-        }
-
-        @Override
-        public Builder createBuilder() {
-            return new PropertiesBuilder();
-        }
     }
 
     /**

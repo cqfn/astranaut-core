@@ -31,7 +31,7 @@ import org.cqfn.astranaut.core.utils.MapUtils;
  *
  * @since 1.1.5
  */
-public final class Hole implements PatternItem, PrototypeBasedNode {
+public final class Hole extends NodeAndType implements PatternItem, PrototypeBasedNode {
     /**
      * The prototype node, i.e., a node turned into hole.
      */
@@ -67,8 +67,13 @@ public final class Hole implements PatternItem, PrototypeBasedNode {
     }
 
     @Override
-    public Type getType() {
-        return this.prototype.getType();
+    public String getName() {
+        return this.prototype.getTypeName();
+    }
+
+    @Override
+    public Builder createBuilder() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
