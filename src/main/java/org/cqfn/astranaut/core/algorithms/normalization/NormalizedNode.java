@@ -74,7 +74,7 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
      * @param children List of normalized child nodes
      */
     private NormalizedNode(final Node original, final Properties properties,
-    final List<NormalizedNode> children) {
+        final List<NormalizedNode> children) {
         this.original = original;
         this.properties = properties;
         this.children = children;
@@ -221,7 +221,7 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
             final List<NormalizedNode> normalized = new ArrayList<>(size);
             for (final Node node : nodes) {
                 if (node instanceof NormalizedNode) {
-                    NormalizedNode child = (NormalizedNode) node;
+                    final NormalizedNode child = (NormalizedNode) node;
                     originals.add(child.original);
                     normalized.add(child);
                 } else {
