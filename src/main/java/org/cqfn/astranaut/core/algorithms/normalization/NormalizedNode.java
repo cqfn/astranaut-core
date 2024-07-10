@@ -27,10 +27,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NodeAndType;
 import org.cqfn.astranaut.core.base.PrototypeBasedNode;
-import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Represents a normalized node.
@@ -38,7 +39,7 @@ import org.cqfn.astranaut.core.base.Type;
  *  are extracted into separate child nodes.
  * @since 2.0.0
  */
-public final class NormalizedNode implements PrototypeBasedNode {
+public final class NormalizedNode extends NodeAndType implements PrototypeBasedNode {
     /**
      * The original, non-normalized node.
      */
@@ -52,7 +53,7 @@ public final class NormalizedNode implements PrototypeBasedNode {
     /**
      * List of properties.
      */
-    private final Properties properties;
+    private Properties properties;
 
     /**
      * Constructor.
@@ -70,8 +71,8 @@ public final class NormalizedNode implements PrototypeBasedNode {
     }
 
     @Override
-    public Type getType() {
-        return this.original.getType();
+    public String getName() {
+        return this.original.getTypeName();
     }
 
     @Override
@@ -82,6 +83,11 @@ public final class NormalizedNode implements PrototypeBasedNode {
     @Override
     public Map<String, String> getProperties() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public Builder createBuilder() {
+        return new NormalizerNodeBuilder(this.original.getType().createBuilder());
     }
 
     @Override
@@ -143,5 +149,67 @@ public final class NormalizedNode implements PrototypeBasedNode {
             list.add(new NormalizedNode(original.getChild(index)));
         }
         return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * Builds a normalizer node.
+     * @since 2.0.0
+     */
+    private static final class NormalizerNodeBuilder implements Builder {
+        /**
+         * Builder for original, non-normalized node.
+         */
+        private final Builder original;
+
+        /**
+         * Properties extracted from the children list.
+         */
+        private Properties properties;
+
+        /**
+         * Constructor.
+         * @param original Builder for original, non-normalized node
+         */
+        private NormalizerNodeBuilder(final Builder original) {
+            this.original = original;
+        }
+
+        @Override
+        public void setFragment(final Fragment fragment) {
+            this.original.setFragment(fragment);
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            return this.original.setData(str);
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            final boolean result;
+            Properties extracted = null;
+            if (list.isEmpty() || !(list.get(0) instanceof Properties)) {
+                result = this.original.setChildrenList(list);
+            } else {
+                extracted = (Properties) list.get(0);
+                result = this.original.setChildrenList(list.subList(1, list.size()));
+            }
+            if (result) {
+                this.properties = extracted;
+            }
+            return result;
+        }
+
+        @Override
+        public boolean isValid() {
+            return this.original.isValid();
+        }
+
+        @Override
+        public Node createNode() {
+            final NormalizedNode node = new NormalizedNode(this.original.createNode());
+            node.properties = this.properties;
+            return node;
+        }
     }
 }
