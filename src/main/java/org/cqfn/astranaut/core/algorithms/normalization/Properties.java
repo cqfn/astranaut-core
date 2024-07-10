@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
@@ -78,6 +79,18 @@ public final class Properties implements Node {
     @Override
     public String toString() {
         return Node.toString(this);
+    }
+
+    /**
+     * Returns all properties as a collection.
+     * @return Map containing properties
+     */
+    public Map<String, String> getAllProperties() {
+        final Map<String, String> map = new TreeMap<>();
+        for (final Property property : this.list) {
+            map.put(property.getTypeName(), property.getData());
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     /**

@@ -27,20 +27,20 @@ import java.util.List;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Type;
+import org.cqfn.astranaut.core.base.NodeAndType;
 
 /**
  * Property extracted from the original node.
  * @since 2.0.0
  */
-public final class Property implements Node {
+public final class Property extends NodeAndType {
     /**
-     * The type of the property.
+     * Property name.
      */
-    private final Type type;
+    private final String name;
 
     /**
-     * The value of the property.
+     * Property value.
      */
     private final String value;
 
@@ -50,13 +50,8 @@ public final class Property implements Node {
      * @param value Property value
      */
     public Property(final String name, final String value) {
-        this.type = new PropertyType(name);
+        this.name = name;
         this.value = value;
-    }
-
-    @Override
-    public Type getType() {
-        return this.type;
     }
 
     @Override
@@ -79,33 +74,14 @@ public final class Property implements Node {
         return Node.toString(this);
     }
 
-    /**
-     * Type of property extracted from the original node.
-     * @since 2.0.0
-     */
-    private static final class PropertyType implements Type {
-        /**
-         * Property name.
-         */
-        private final String name;
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-        /**
-         * Constructor.
-         * @param name Property name
-         */
-        private PropertyType(final String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public Builder createBuilder() {
-            return new PropertyBuilder(this.name);
-        }
+    @Override
+    public Builder createBuilder() {
+        return new PropertyBuilder(this.name);
     }
 
     /**
