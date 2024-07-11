@@ -75,6 +75,16 @@ public class DepthFirstWalker {
     }
 
     /**
+     * Collects all nodes without criteria in the order corresponding to the traversal in depth.
+     * @return List of collected nodes (can't be empty)
+     */
+    public List<Node> collectAll() {
+        final List<Node> list = new ArrayList<>(1 + this.root.getChildCount());
+        DepthFirstWalker.collectAll(this.root, list);
+        return list;
+    }
+
+    /**
      * Recursive method that implements the "Find first starting from the root" algorithm.
      * @param node Current node to be processed
      * @param visitor Visitor that processes nodes
@@ -109,6 +119,19 @@ public class DepthFirstWalker {
             for (int index = 0; index < count; index = index + 1) {
                 DepthFirstWalker.findAll(node.getChild(index), visitor, list);
             }
+        }
+    }
+
+    /**
+     * Recursive method that implements the "Collect all starting from the root" algorithm.
+     * @param node Current node to be processed
+     * @param list List of found nodes
+     */
+    private static void collectAll(final Node node, final List<Node> list) {
+        list.add(node);
+        final int count = node.getChildCount();
+        for (int index = 0; index < count; index = index + 1) {
+            DepthFirstWalker.collectAll(node.getChild(index), list);
         }
     }
 
