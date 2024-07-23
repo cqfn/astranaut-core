@@ -111,7 +111,7 @@ class PatternBuilderTest {
         final Set<Node> exclude = new HashSet<>();
         exclude.add(ret);
         final Tree subtree = new Tree(
-            new SubtreeBuilder(tree.getRoot(), SubtreeBuilder.EXCLUDE).create(exclude)
+            new SubtreeBuilder(tree, SubtreeBuilder.EXCLUDE).create(exclude)
         );
         final PatternBuilder builder = new PatternBuilder(subtree);
         builder.makeHole(var, 1);

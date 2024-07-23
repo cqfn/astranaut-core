@@ -32,11 +32,11 @@ import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.PrototypeBasedNode;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Algorithm that produces a subtree from the original tree.
- *
  * @since 1.1.4
  */
 public class SubtreeBuilder {
@@ -63,13 +63,21 @@ public class SubtreeBuilder {
 
     /**
      * Constructor.
-     *
      * @param root The root node of the original tree
      * @param algorithm Algorithm that selects nodes based on some criteria
      */
     public SubtreeBuilder(final Node root, final Algorithm algorithm) {
         this.root = root;
         this.algorithm = algorithm;
+    }
+
+    /**
+     * Constructor.
+     * @param tree Original tree
+     * @param algorithm Algorithm that selects nodes based on some criteria
+     */
+    public SubtreeBuilder(final Tree tree, final Algorithm algorithm) {
+        this(tree.getRoot(), algorithm);
     }
 
     /**
@@ -112,7 +120,6 @@ public class SubtreeBuilder {
 
     /**
      * An algorithm that selects nodes based on some criteria.
-     *
      * @since 1.1.4
      */
     public interface Algorithm {
@@ -127,7 +134,6 @@ public class SubtreeBuilder {
 
     /**
      * A node created from the original node, but which has only children from the specified set.
-     *
      * @since 1.1.4
      */
     private static final class SubNode implements PrototypeBasedNode {
