@@ -34,8 +34,8 @@ class PatternNodeTest {
     @Test
     void testBaseInterface() {
         final Source source = new TestSource();
-        final Position begin = new TestPosition(source, 1);
-        final Position end = new TestPosition(source, 100);
+        final Position begin = new DefaultPosition(source, 1, 1);
+        final Position end = new DefaultPosition(source, 1, 100);
         final Fragment fragment = new Fragment() {
             @Override
             public Position getBegin() {
@@ -65,47 +65,6 @@ class PatternNodeTest {
         @Override
         public String getFragmentAsString(final Position start, final Position end) {
             return "";
-        }
-    }
-
-    /**
-     * Position implementation for test purposes.
-     * @since 1.1.5
-     */
-    private static final class TestPosition implements Position {
-        /**
-         * Source.
-         */
-        private final Source source;
-
-        /**
-         * Column number.
-         */
-        private final int column;
-
-        /**
-         * Constructor.
-         * @param source Source
-         * @param column Column number
-         */
-        private TestPosition(final Source source, final int column) {
-            this.source = source;
-            this.column = column;
-        }
-
-        @Override
-        public Source getSource() {
-            return this.source;
-        }
-
-        @Override
-        public int getRow() {
-            return 1;
-        }
-
-        @Override
-        public int getColumn() {
-            return this.column;
         }
     }
 }

@@ -32,6 +32,7 @@ import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.PrototypeBasedNode;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Builder of difference syntax tree, that is, one that stores changes between two trees.
@@ -63,6 +64,14 @@ public final class DiffTreeBuilder {
     public DiffTreeBuilder(final Node before) {
         this.root = new DiffNode(before);
         this.info = DiffTreeBuilder.buildNodeInfoMap(this.root);
+    }
+
+    /**
+     * Constructor.
+     * @param before Original 'ordinary', non-difference tree before the changes
+     */
+    public DiffTreeBuilder(final Tree before) {
+        this(before.getRoot());
     }
 
     /**
