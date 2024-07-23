@@ -36,17 +36,7 @@ class PatternNodeTest {
         final Source source = new TestSource();
         final Position begin = new DefaultPosition(source, 1, 1);
         final Position end = new DefaultPosition(source, 1, 100);
-        final Fragment fragment = new Fragment() {
-            @Override
-            public Position getBegin() {
-                return begin;
-            }
-
-            @Override
-            public Position getEnd() {
-                return end;
-            }
-        };
+        final Fragment fragment = new DefaultFragment(begin, end);
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setFragment(fragment);
         ctor.setName("X");

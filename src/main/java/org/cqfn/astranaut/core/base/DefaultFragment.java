@@ -27,46 +27,34 @@ package org.cqfn.astranaut.core.base;
  * Default implementation of the {@link Position} interface that fits in most cases.
  * @since 2.0.0
  */
-public final class DefaultPosition implements Position {
+public final class DefaultFragment implements Fragment {
     /**
-     * Object representing the source code that has this position.
+     * The first position of the fragment.
      */
-    private final Source source;
+    private final Position begin;
 
     /**
-     * The row (line) number of this position.
+     * The last position of the fragment.
      */
-    private final int row;
-
-    /**
-     * The column number of this position.
-     */
-    private final int column;
+    private final Position end;
 
     /**
      * Constructor.
-     * @param source Object representing the source code that has this position
-     * @param row The row (line) number of this position
-     * @param column The column number of this position
+     * @param begin The first position of the fragment
+     * @param end The last position of the fragment
      */
-    public DefaultPosition(final Source source, final int row, final int column) {
-        this.source = source;
-        this.row = row;
-        this.column = column;
+    public DefaultFragment(final Position begin, final Position end) {
+        this.begin = begin;
+        this.end = end;
     }
 
     @Override
-    public Source getSource() {
-        return this.source;
+    public Position getBegin() {
+        return this.begin;
     }
 
     @Override
-    public int getRow() {
-        return this.row;
-    }
-
-    @Override
-    public int getColumn() {
-        return this.column;
+    public Position getEnd() {
+        return this.end;
     }
 }
