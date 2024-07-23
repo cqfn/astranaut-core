@@ -23,11 +23,10 @@
  */
 package org.cqfn.astranaut.core.utils;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.CoreException;
-import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
@@ -70,7 +69,7 @@ class JsonDeserializerTest {
         types.put(JsonDeserializerTest.INT_LITERAL, IntegerLiteral.TYPE);
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> new Factory(types)
+            language -> new DefaultFactory(types)
         );
         final Tree result = deserializer.convert();
         final Node root = result.getRoot();
@@ -96,7 +95,7 @@ class JsonDeserializerTest {
         final String source = "{ \"root\": { \"type\": \"Example\" } }";
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> new Factory(Collections.emptyMap())
+            language -> DefaultFactory.EMPTY
         );
         final Tree tree = deserializer.convert();
         Assertions.assertNotNull(tree);

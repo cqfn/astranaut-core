@@ -23,61 +23,25 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import java.util.Map;
-
 /**
- * Factory class for creating and managing types and builders.
+ * Factory interface for creating and managing types and builders.
  * @since 1.0
  */
-public class Factory {
-    /**
-     * Map of types indexed by name.
-     */
-    private final Map<String, Type> types;
-
-    /**
-     * Constructs a Factory with the given set of types.
-     * @param types The map of types indexed by name
-     */
-    public Factory(final Map<String, Type> types) {
-        this.types = types;
-    }
-
+public interface Factory {
     /**
      * Retrieves the type associated with the given name.
      * @param name The name of the type to retrieve
      * @return The corresponding Type object, or {@code null} if not found
      */
-    public final Type getType(final String name) {
-        final Type type;
-        if (this.types.containsKey(name)) {
-            type = this.types.get(name);
-        } else {
-            switch (name) {
-                case "Insert":
-                    type = Insert.TYPE;
-                    break;
-                case "Replace":
-                    type = Replace.TYPE;
-                    break;
-                case "Delete":
-                    type = Delete.TYPE;
-                    break;
-                default:
-                    type = null;
-                    break;
-            }
-        }
-        return type;
-    }
+    Type getType(String name);
 
     /**
      * Creates a builder for the given type name.
      * @param name The name of the type to create a builder for
-     * @return A Builder instance corresponding to the type, or a default DraftNode builder
+     * @return A Builder instance corresponding to the type, or a default {@link DraftNode} builder
      *  if the type is not found
      */
-    public final Builder createBuilder(final String name) {
+    default Builder createBuilder(final String name) {
         final Builder builder;
         final Type type = this.getType(name);
         if (type == null) {

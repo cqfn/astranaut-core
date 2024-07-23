@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Type;
 
@@ -36,7 +37,7 @@ import org.cqfn.astranaut.core.base.Type;
  *
  * @since 1.0
  */
-public final class GreenFactory extends Factory {
+public final class GreenFactory extends DefaultFactory {
     /**
      * The instance.
      */
