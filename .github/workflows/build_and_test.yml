@@ -23,6 +23,6 @@ jobs:
       run: mvn -B clean verify
     - uses: codecov/codecov-action@v4.0.0-beta.3
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         name: Code coverage report
         fail_ci_if_error: false
-        token: ${{ secrets.CODECOV_TOKEN }}
