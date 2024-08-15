@@ -244,7 +244,7 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
 
         @Override
         public Node createNode() {
-            if (!isValid()) {
+            if (!this.isValid()) {
                 throw new IllegalStateException();
             }
             return new NormalizedNode(

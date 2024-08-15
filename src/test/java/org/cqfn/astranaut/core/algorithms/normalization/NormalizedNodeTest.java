@@ -95,7 +95,7 @@ class NormalizedNodeTest {
             final Node left =  original.getChild(index);
             final Node right = normalized.getChild(index);
             Assertions.assertTrue(
-            left.getTypeName().equals(right.getTypeName())
+                left.getTypeName().equals(right.getTypeName())
                     && left.getData().equals(right.getData())
             );
         }
@@ -128,7 +128,7 @@ class NormalizedNodeTest {
         final Properties properties = new Properties(map);
         Assertions.assertTrue(builder.setChildrenList(Arrays.asList(properties, left, right)));
         Assertions.assertTrue(builder.isValid());
-        Node created = builder.createNode();
+        final Node created = builder.createNode();
         Assertions.assertNotNull(created);
     }
 }
