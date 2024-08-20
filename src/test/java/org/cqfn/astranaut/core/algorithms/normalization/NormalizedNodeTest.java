@@ -120,6 +120,7 @@ class NormalizedNodeTest {
         }
         Assertions.assertTrue(oops);
         final Node left = LittleTrees.createIntegerLiteral(2);
+        Assertions.assertFalse(builder.setChildrenList(Collections.emptyList()));
         Assertions.assertFalse(builder.setChildrenList(Collections.singletonList(left)));
         final Node right = new NormalizedNode(LittleTrees.createIntegerLiteral(3));
         Assertions.assertTrue(builder.setChildrenList(Arrays.asList(left, right)));

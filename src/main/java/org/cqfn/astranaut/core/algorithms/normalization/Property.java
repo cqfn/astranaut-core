@@ -115,12 +115,8 @@ public final class Property extends NodeAndType {
 
         @Override
         public boolean setData(final String str) {
-            boolean result = false;
-            if (!str.isEmpty()) {
-                this.value = str;
-                result = true;
-            }
-            return result;
+            this.value = str;
+            return true;
         }
 
         @Override
@@ -130,7 +126,7 @@ public final class Property extends NodeAndType {
 
         @Override
         public boolean isValid() {
-            return !this.value.isEmpty();
+            return true;
         }
 
         @Override
