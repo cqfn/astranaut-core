@@ -23,38 +23,28 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests covering {@link DummyNode} class.
+ * Tests covering {@link Position} class.
  * @since 2.0.0
  */
-class DummyNodeTest {
+class PositionTest {
     @Test
     void testBaseInterface() {
-        final Node node = DummyNode.INSTANCE;
-        Assertions.assertSame(EmptyFragment.INSTANCE, node.getFragment());
-        Assertions.assertEquals(0, node.getChildCount());
-        Assertions.assertEquals("", node.getData());
+        final Source source = (start, end) -> "";
+        final Source another = (start, end) -> "";
+        final Position first = new DefaultPosition(source, 1, 1);
+        final Position second = new DefaultPosition(source, 1, 2);
+        Assertions.assertTrue(second.compareTo(first) > 0);
+        final Position third = new DefaultPosition(another, 1, 1);
         boolean oops = false;
         try {
-            node.getChild(0);
-        } catch (final IndexOutOfBoundsException ignored) {
+            first.compareTo(third);
+        } catch (final IllegalArgumentException ignored) {
             oops = true;
         }
         Assertions.assertTrue(oops);
-        Assertions.assertEquals("\u2205", node.toString());
-        final Type type = node.getType();
-        Assertions.assertEquals(0, type.getChildTypes().size());
-        Assertions.assertEquals(0, type.getHierarchy().size());
-        final Builder builder = type.createBuilder();
-        builder.setFragment(EmptyFragment.INSTANCE);
-        Assertions.assertFalse(builder.setData("abc"));
-        Assertions.assertFalse(builder.setChildrenList(Collections.emptyList()));
-        Assertions.assertFalse(builder.isValid());
-        final Node created = builder.createNode();
-        Assertions.assertSame(node, created);
     }
 }
