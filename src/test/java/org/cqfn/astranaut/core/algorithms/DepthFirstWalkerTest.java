@@ -63,6 +63,15 @@ class DepthFirstWalkerTest {
     }
 
     @Test
+    void testCollectAll() {
+        final Node root = DraftNode.create("A(B,C,D,E)");
+        final DepthFirstWalker traversal = new DepthFirstWalker(root);
+        final List<Node> list = traversal.collectAll();
+        Assertions.assertNotNull(list);
+        Assertions.assertEquals(5, list.size());
+    }
+
+    @Test
     void testFindNothing() {
         final Node root = DraftNode.create("A(X,Y,Z)");
         final DepthFirstWalker traversal = new DepthFirstWalker(root);
