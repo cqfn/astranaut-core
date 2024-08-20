@@ -84,6 +84,7 @@ class ActionTest {
             ActionTest.EXPECTED_COLOR,
             type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
+        Assertions.assertTrue(action.toString().startsWith(ActionTest.INSERT_TYPE));
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);
         Assertions.assertTrue(builder.setData(""));
@@ -122,6 +123,7 @@ class ActionTest {
             ActionTest.EXPECTED_COLOR,
             type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
+        Assertions.assertTrue(action.toString().startsWith(ActionTest.REPLACE_TYPE));
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);
         Assertions.assertTrue(builder.setData(""));
@@ -158,6 +160,7 @@ class ActionTest {
             ActionTest.EXPECTED_COLOR,
             type.getProperties().getOrDefault(ActionTest.COLOR_PROPERTY, "")
         );
+        Assertions.assertTrue(action.toString().startsWith(ActionTest.DELETE_TYPE));
         final Builder builder = type.createBuilder();
         builder.setFragment(EmptyFragment.INSTANCE);
         Assertions.assertTrue(builder.setData(""));
