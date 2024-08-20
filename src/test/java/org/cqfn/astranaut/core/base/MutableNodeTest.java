@@ -23,42 +23,40 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import java.util.Arrays;
-import org.cqfn.astranaut.core.example.green.Addition;
-import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link MutableNode} class.
- *
  * @since 1.0
  */
 class MutableNodeTest {
     /**
-     * Testing the transformation from 'typical' node to convertible.
+     * Testing the transformation from 'typical' node to mutable.
      */
     @Test
-    void transformation() {
-        IntegerLiteral.Constructor icr = new IntegerLiteral.Constructor();
-        icr.setData("7");
-        final Node left = icr.createNode();
-        icr = new IntegerLiteral.Constructor();
-        icr.setData("11");
-        final Node right = icr.createNode();
-        final Addition.Constructor acr = new Addition.Constructor();
-        acr.setChildrenList(Arrays.asList(left, right));
-        final Node addition = acr.createNode();
-        final MutableNode convertible = new MutableNode(addition);
-        Assertions.assertEquals("Addition", convertible.getType().getName());
-        Assertions.assertEquals(2, convertible.getChildCount());
-        final MutableNode first = convertible.getMutableChild(0);
-        Assertions.assertEquals(convertible, first.getParent());
-        final Node second = convertible.getChild(1);
-        icr = new IntegerLiteral.Constructor();
-        icr.setData("13");
-        final Node third = icr.createNode();
-        final boolean result = convertible.replaceChild(second, third);
-        Assertions.assertTrue(result);
+    void testBaseInterface() {
+        final Node left = LittleTrees.createVariable("x");
+        final Node right = LittleTrees.createVariable("y");
+        final Node original = LittleTrees.createAddition(left, right);
+        final MutableNode mutable = new MutableNode(original);
+        Assertions.assertTrue(mutable.deepCompare(original));
+        Assertions.assertSame(original, mutable.getPrototype());
+        Assertions.assertSame(mutable.getMutableChild(0).getParent(), mutable);
+        Assertions.assertSame(original.getFragment(), mutable.getFragment());
+        Assertions.assertEquals(right.getData(), mutable.getChildrenList().get(1).getData());
+        Assertions.assertTrue(mutable.toString().startsWith(original.getTypeName()));
+        Assertions.assertFalse(mutable.replaceChild(DummyNode.INSTANCE, DummyNode.INSTANCE));
+        final Node substitute = LittleTrees.createIntegerLiteral(3);
+        Assertions.assertTrue(mutable.replaceChild(right, substitute));
+        final Node after = mutable.getMutableChild(1);
+        Assertions.assertTrue(after.deepCompare(substitute));
+        Assertions.assertTrue(
+            mutable.replaceChild(left, LittleTrees.createIntegerLiteral(2))
+        );
+        final Node result = mutable.rebuild();
+        Assertions.assertFalse(result instanceof MutableNode);
+        Assertions.assertTrue(mutable.deepCompare(result));
     }
 }

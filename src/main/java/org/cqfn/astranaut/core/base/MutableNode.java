@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -118,7 +119,7 @@ public final class MutableNode implements PrototypeBasedNode {
 
     @Override
     public List<Node> getChildrenList() {
-        return this.children;
+        return Collections.unmodifiableList(this.children);
     }
 
     @Override
@@ -128,16 +129,20 @@ public final class MutableNode implements PrototypeBasedNode {
 
     /**
      * Replaces a child node with another node.
-     * @param child Child node
-     * @param substitute Substitute node
+     * @param before Existing child node (before changes)
+     * @param after Substitute node
      * @return Result of operation, {@code true} if replacement was successful
      */
-    public boolean replaceChild(final Node child, final Node substitute) {
+    public boolean replaceChild(final Node before, final Node after) {
         boolean result = false;
-        final int index = this.children.indexOf(child);
-        if (index >= 0) {
-            this.children.set(index, substitute);
-            result = true;
+        final int size = this.children.size();
+        for (int index = 0; !result && index < size; index = index + 1) {
+            final Node child = this.children.get(index);
+            if (child == before ||
+                (child instanceof MutableNode && ((MutableNode) child).getPrototype() == before)) {
+                this.children.set(index, after);
+                result = true;
+            }
         }
         return result;
     }
