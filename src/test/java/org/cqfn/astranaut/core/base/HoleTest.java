@@ -47,11 +47,19 @@ class HoleTest {
             hole.getProperties().getOrDefault("color", "")
         );
         Assertions.assertEquals(1, hole.getNumber());
+        Assertions.assertEquals("IntegerLiteral<#1>", hole.toString());
         final Type type = hole.getType();
         final String typename = "IntegerLiteral";
         Assertions.assertEquals(typename, type.getName());
         Assertions.assertEquals(typename, type.getHierarchy().get(0));
         Assertions.assertFalse(type.getProperties().containsKey("abracadabra"));
         Assertions.assertEquals(typename, node.getTypeName());
+        boolean oops = false;
+        try {
+            type.createBuilder();
+        } catch (final UnsupportedOperationException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
     }
 }

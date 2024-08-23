@@ -32,9 +32,6 @@ import org.junit.jupiter.api.Test;
  * @since 1.0
  */
 class MutableNodeTest {
-    /**
-     * Testing the transformation from 'typical' node to mutable.
-     */
     @Test
     void testBaseInterface() {
         final Node left = LittleTrees.createVariable("x");
@@ -58,5 +55,18 @@ class MutableNodeTest {
         final Node result = mutable.rebuild();
         Assertions.assertFalse(result instanceof MutableNode);
         Assertions.assertTrue(mutable.deepCompare(result));
+    }
+
+    @Test
+    void testBadTransformation() {
+        final Node left = LittleTrees.createIntegerLiteral(2);
+        final Node right = LittleTrees.createIntegerLiteral(3);
+        final Node original = LittleTrees.createAddition(left, right);
+        final MutableNode mutable = new MutableNode(original);
+        Assertions.assertTrue(
+            mutable.replaceChild(left, LittleTrees.createReturnStatement(null))
+        );
+        final Node result = mutable.rebuild();
+        Assertions.assertSame(DummyNode.INSTANCE, result);
     }
 }
