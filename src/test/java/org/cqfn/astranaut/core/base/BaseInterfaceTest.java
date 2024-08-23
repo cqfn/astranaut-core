@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.algorithms.LabeledTreeBuilder;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -96,6 +97,8 @@ class BaseInterfaceTest {
         this.testListModifiersByOne(list);
         this.testListModifiersByCollection(list);
         this.testListIterator(list);
+        this.testListIteratorExceptions(list);
+        this.testSublist(root, list);
         this.testListOtherMethods(root, list);
     }
 
@@ -185,9 +188,16 @@ class BaseInterfaceTest {
         while (cursor.hasNext()) {
             builder.append(cursor.next().getTypeName());
         }
+        boolean oops = false;
+        try {
+            cursor.next();
+        } catch (final NoSuchElementException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
         Assertions.assertEquals("DEF", builder.toString());
         cursor = list.listIterator(1);
-        boolean oops = false;
+        oops = false;
         try {
             cursor.remove();
         } catch (final UnsupportedOperationException ex) {
@@ -213,31 +223,33 @@ class BaseInterfaceTest {
         Assertions.assertTrue(cursor.hasPrevious());
         Assertions.assertEquals("D", cursor.previous().getTypeName());
         Assertions.assertFalse(cursor.hasPrevious());
+        oops = false;
+        try {
+            cursor.previous();
+        } catch (final NoSuchElementException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
     }
 
-    void testListOtherMethods(final Node root, final List<Node> list) {
-        Assertions.assertEquals(3, list.size());
-        Assertions.assertFalse(list.isEmpty());
-        Assertions.assertTrue(list.contains(root.getChild(1)));
-        final Node alien = DraftNode.create("G");
-        Assertions.assertFalse(list.contains(alien));
-        final Iterator<Node> iterator = list.iterator();
-        final StringBuilder builder = new StringBuilder();
-        while (iterator.hasNext()) {
-            builder.append(iterator.next().getTypeName());
+    void testListIteratorExceptions(final List<Node> list) {
+        boolean oops = false;
+        try {
+            list.listIterator(-1);
+        } catch (final IndexOutOfBoundsException ignored) {
+            oops = true;
         }
-        Assertions.assertEquals("DEF", builder.toString());
-        final Object[] objects = list.toArray();
-        Assertions.assertEquals(3, objects.length);
-        final Node[] array = new Node[2];
-        final Node[] same = list.toArray(array);
-        Assertions.assertSame(same, array);
-        Assertions.assertSame(root.getChild(0), array[0]);
-        Assertions.assertSame(root.getChild(1), array[1]);
-        Assertions.assertEquals(1, list.indexOf(root.getChild(1)));
-        Assertions.assertEquals(-1, list.indexOf(alien));
-        Assertions.assertEquals(1, list.lastIndexOf(root.getChild(1)));
-        Assertions.assertEquals(-1, list.lastIndexOf(alien));
+        Assertions.assertTrue(oops);
+        oops = false;
+        try {
+            list.listIterator(10);
+        } catch (final IndexOutOfBoundsException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
+    }
+
+    void testSublist(final Node root, final List<Node> list) {
         final List<Node> sub = list.subList(1, 3);
         Assertions.assertEquals(2, sub.size());
         Assertions.assertEquals(root.getChild(1), sub.get(0));
@@ -255,6 +267,59 @@ class BaseInterfaceTest {
             oops = true;
         }
         Assertions.assertTrue(oops);
+        oops = false;
+        try {
+            list.subList(2, 1);
+        } catch (final IndexOutOfBoundsException ex) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
+        oops = false;
+        try {
+            sub.get(10);
+        } catch (final IndexOutOfBoundsException ex) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
+    }
+
+    void testListOtherMethods(final Node root, final List<Node> list) {
+        Assertions.assertEquals(3, list.size());
+        Assertions.assertFalse(list.isEmpty());
+        Assertions.assertTrue(list.contains(root.getChild(1)));
+        final Node alien = DraftNode.create("G");
+        Assertions.assertFalse(list.contains(alien));
+        Assertions.assertTrue(list.containsAll(list));
+        Assertions.assertFalse(list.containsAll(Collections.singletonList(alien)));
+        final Iterator<Node> iterator = list.iterator();
+        final StringBuilder builder = new StringBuilder();
+        while (iterator.hasNext()) {
+            builder.append(iterator.next().getTypeName());
+        }
+        Assertions.assertEquals("DEF", builder.toString());
+        final Object[] objects = list.toArray();
+        Assertions.assertEquals(3, objects.length);
+        final Node[] smaller = new Node[2];
+        final Node[] same = list.toArray(smaller);
+        Assertions.assertSame(same, smaller);
+        Assertions.assertSame(root.getChild(0), smaller[0]);
+        Assertions.assertSame(root.getChild(1), smaller[1]);
+        final Node[] biggest = new Node[4];
+        list.toArray(biggest);
+        Assertions.assertSame(root.getChild(2), biggest[2]);
+        Assertions.assertNull(biggest[3]);
+        Assertions.assertEquals(1, list.indexOf(root.getChild(1)));
+        Assertions.assertEquals(-1, list.indexOf(alien));
+        Assertions.assertEquals(-1, list.indexOf(""));
+        Assertions.assertEquals(1, list.lastIndexOf(root.getChild(1)));
+        Assertions.assertEquals(-1, list.lastIndexOf(alien));
+        Assertions.assertEquals(-1, list.lastIndexOf(""));
+    }
+
+    @Test
+    void testEmptyChildrenList() {
+        final List<Node> list = DraftNode.create("X").getChildrenList();
+        Assertions.assertTrue(list.isEmpty());
     }
 
     @Test
@@ -285,6 +350,7 @@ class BaseInterfaceTest {
         Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,V,E,R<\"data\",T(Y))")));
         Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,W,E,R<\"test\",T(Y))")));
         Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,W,E,R,T(Y))")));
+        Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,W,E,R)")));
         final Node labeled = new LabeledTreeBuilder(node)
             .build(Collections.singleton(node), "color", "red")
             .getRoot();
