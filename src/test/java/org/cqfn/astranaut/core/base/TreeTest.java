@@ -23,16 +23,19 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import org.cqfn.astranaut.core.utils.MapUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
  * This test suite tests the {@link Tree} class.
- *
  * @since 2.0.0
  */
 class TreeTest {
@@ -48,6 +51,22 @@ class TreeTest {
         Assertions.assertEquals(description, tree.getRoot().toString());
         Assertions.assertEquals(description, tree.toString());
         Assertions.assertEquals(language, tree.getLanguage());
+    }
+
+    @Test
+    void testCreatingDraft() {
+        final String description = "A(B, C, D)";
+        final Set<String> expected = new TreeSet<>(Arrays.asList("A", "B", "C", "D"));
+        final Tree first = Tree.createDraft(description);
+        Assertions.assertEquals(description, first.toString());
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Tree second = Tree.createDraft(description, nodes);
+        Assertions.assertEquals(description, second.toString());
+        for (final Map.Entry<String, Set<Node>> entry : nodes.entrySet()) {
+            Assertions.assertTrue(expected.remove(entry.getKey()));
+            Assertions.assertEquals(1, entry.getValue().size());
+        }
+        Assertions.assertTrue(expected.isEmpty());
     }
 
     /**

@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,28 +34,29 @@ import org.junit.jupiter.api.Test;
 class PatternNodeTest {
     @Test
     void testBaseInterface() {
-        final Source source = new TestSource();
+        final Source source = (start, end) -> null;
         final Position begin = new DefaultPosition(source, 1, 1);
         final Position end = new DefaultPosition(source, 1, 100);
         final Fragment fragment = new DefaultFragment(begin, end);
+        final Node child = DraftNode.create("A");
+        final Node alien = DraftNode.create("B");
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setFragment(fragment);
         ctor.setName("X");
         ctor.setData("test");
+        ctor.setChildrenList(Collections.singletonList(child));
         final Node node = ctor.createNode();
         final PatternNode pattern = new PatternNode(new DiffNode(node));
         Assertions.assertEquals(100, pattern.getFragment().getEnd().getColumn());
-        Assertions.assertEquals("X<\"test\">", pattern.toString());
-    }
-
-    /**
-     * Source implementation for test purposes.
-     * @since 1.1.5
-     */
-    private static final class TestSource implements Source {
-        @Override
-        public String getFragmentAsString(final Position start, final Position end) {
-            return "";
+        Assertions.assertEquals("X<\"test\">(A)", pattern.toString());
+        boolean oops = false;
+        try {
+            pattern.getType().createBuilder();
+        } catch (final UnsupportedOperationException ignored) {
+            oops = true;
         }
+        Assertions.assertTrue(oops);
+        Assertions.assertFalse(pattern.makeHole(alien, 0));
+        Assertions.assertTrue(pattern.makeHole(child, 0));
     }
 }

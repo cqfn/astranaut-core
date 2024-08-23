@@ -133,6 +133,7 @@ class ActionTest {
         Assertions.assertEquals(DummyNode.INSTANCE, created);
         Assertions.assertTrue(builder.setChildrenList(Arrays.asList(before, after)));
         Assertions.assertFalse(builder.setChildrenList(Collections.singletonList(before)));
+        Assertions.assertTrue(builder.isValid());
         created = builder.createNode();
         Assertions.assertEquals(ActionTest.REPLACE_TYPE, created.getTypeName());
     }

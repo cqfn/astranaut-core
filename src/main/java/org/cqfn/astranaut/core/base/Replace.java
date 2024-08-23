@@ -235,7 +235,7 @@ public final class Replace implements Action {
 
         @Override
         public boolean isValid() {
-            return this.before != null && this.after != null;
+            return this.before != null;
         }
 
         @Override

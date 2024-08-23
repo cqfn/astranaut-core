@@ -53,11 +53,6 @@ public final class DummyNode implements Node {
     }
 
     @Override
-    public Fragment getFragment() {
-        return EmptyFragment.INSTANCE;
-    }
-
-    @Override
     public Type getType() {
         return DummyNode.TYPE;
     }

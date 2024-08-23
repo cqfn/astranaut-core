@@ -47,10 +47,18 @@ public class LabeledTreeBuilder {
 
     /**
      * Constructor.
+     * @param root Root node of the original not labeled tree
+     */
+    public LabeledTreeBuilder(final Node root) {
+        this.root = root;
+    }
+
+    /**
+     * Constructor.
      * @param tree Original not labeled tree
      */
     public LabeledTreeBuilder(final Tree tree) {
-        this.root = tree.getRoot();
+        this(tree.getRoot());
     }
 
     /**
@@ -126,7 +134,7 @@ public class LabeledTreeBuilder {
 
         @Override
         public String toString() {
-            return Node.toString(this);
+            return this.original.toString();
         }
 
         @Override

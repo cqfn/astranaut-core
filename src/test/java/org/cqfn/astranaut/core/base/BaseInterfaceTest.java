@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import org.cqfn.astranaut.core.algorithms.LabeledTreeBuilder;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.junit.jupiter.api.Assertions;
@@ -281,7 +282,14 @@ class BaseInterfaceTest {
         final Node node = DraftNode.create(description);
         Assertions.assertTrue(node.deepCompare(node));
         Assertions.assertTrue(node.deepCompare(DraftNode.create(description)));
+        Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,V,E,R<\"data\",T(Y))")));
+        Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,W,E,R<\"test\",T(Y))")));
         Assertions.assertFalse(node.deepCompare(DraftNode.create("X(Q,W,E,R,T(Y))")));
+        final Node labeled = new LabeledTreeBuilder(node)
+            .build(Collections.singleton(node), "color", "red")
+            .getRoot();
+        Assertions.assertEquals(labeled.toString(), node.toString());
+        Assertions.assertFalse(node.deepCompare(labeled));
     }
 
     @Test
