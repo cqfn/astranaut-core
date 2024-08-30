@@ -36,16 +36,6 @@ import org.junit.jupiter.api.Test;
  */
 class ListUtilsTest {
     /**
-     * The number "3".
-     */
-    private static final Integer THREE = 3;
-
-    /**
-     * The number "4".
-     */
-    private static final Integer FOUR = 4;
-
-    /**
      * Test adding items to a list that may be null and
      * creating an unmodifiable list from it.
      */
@@ -58,7 +48,7 @@ class ListUtilsTest {
         Assertions.assertEquals(expected, result);
         boolean oops = false;
         try {
-            result.add(ListUtilsTest.THREE);
+            result.add(3);
         } catch (final UnsupportedOperationException exception) {
             oops = true;
         }
@@ -70,12 +60,13 @@ class ListUtilsTest {
         final ListUtils<Integer> list = new ListUtils<>();
         list.add(1, 2);
         final List<Integer> second = Collections.unmodifiableList(
-            Arrays.asList(ListUtilsTest.THREE, ListUtilsTest.FOUR)
+            Arrays.asList(3, null, 4)
         );
+        list.merge(null);
         list.merge(second);
         final List<Integer> result = list.make();
         final List<Integer> expected = Arrays.asList(
-            1, 2, ListUtilsTest.THREE, ListUtilsTest.FOUR
+            1, 2, 3, 4
         );
         Assertions.assertEquals(expected, result);
     }

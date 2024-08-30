@@ -1,7 +1,7 @@
 # Astranaut Core
 
-![Build and test](https://github.com/unified-ast/astranaut-core/workflows/Build%20and%20test/badge.svg)
-[![Codecov](https://codecov.io/gh/unified-ast/astranaut-core/branch/master/graph/badge.svg)](https://codecov.io/gh/unified-ast/astranaut-core)
+![Build and test](https://github.com/cqfn/astranaut-core/workflows/Build%20and%20test/badge.svg)
+[![Codecov](https://codecov.io/gh/cqfn/astranaut-core/branch/master/graph/badge.svg)](https://codecov.io/gh/cqfn/astranaut-core)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/unified-ast//astranaut-core/blob/master/LICENSE.txt)
 ___
 
