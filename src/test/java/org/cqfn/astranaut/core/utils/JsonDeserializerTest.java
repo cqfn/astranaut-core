@@ -136,8 +136,8 @@ class JsonDeserializerTest {
     @Test
     void deserializeJsonWithWrongFormat() {
         final JsonDeserializer deserializer = new JsonDeserializer(
-                "null",
-                language -> DefaultFactory.EMPTY
+            "null",
+            language -> DefaultFactory.EMPTY
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(EmptyTree.INSTANCE, result);
@@ -146,8 +146,8 @@ class JsonDeserializerTest {
     @Test
     void deserializeWithNullFactory() {
         final JsonDeserializer deserializer = new JsonDeserializer(
-                JsonDeserializerTest.SMALL_TREE,
-                language -> null
+            JsonDeserializerTest.SMALL_TREE,
+            language -> null
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(EmptyTree.INSTANCE, result);
