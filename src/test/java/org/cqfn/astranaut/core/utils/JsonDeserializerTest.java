@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DefaultFactory;
+import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
@@ -68,9 +69,14 @@ class JsonDeserializerTest {
      */
     private static final String SMALL_TREE = "{ \"root\": { \"type\": \"Example\" } }";
 
+    /**
+     * Name of the file containing simple tree.
+     */
+    private static final String SIMPLE_TREE_NAME = "test_deserialization.json";
+
     @Test
     void testDeserialization() {
-        final String source = this.getFileContent("test_deserialization.json");
+        final String source = this.getFileContent(JsonDeserializerTest.SIMPLE_TREE_NAME);
         final Map<String, Type> types = new TreeMap<>();
         types.put(JsonDeserializerTest.ADD, Addition.TYPE);
         types.put(JsonDeserializerTest.INT_LITERAL, IntegerLiteral.TYPE);
@@ -223,6 +229,27 @@ class JsonDeserializerTest {
     }
 
     @Test
+    void deserializeWithFactoryThatProducesBuilderDoesNotAcceptChildren() {
+        final String source = this.getFileContent(JsonDeserializerTest.SIMPLE_TREE_NAME);
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> new Factory() {
+                @Override
+                public Type getType(final String name) {
+                    return null;
+                }
+
+                @Override
+                public Builder createBuilder(final String name) {
+                    return new BuilderDoesNotAcceptChildren(name);
+                }
+            }
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    @Test
     void deserializeInvalidHoleWithoutNumber() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             "{ \"root\": { \"type\": \"Hole\", \"prototype\": { \"type\": \"Node\" } } }",
@@ -255,6 +282,50 @@ class JsonDeserializerTest {
     }
 
     /**
+     * Builder that doesn't accept children, for testing purposes.
+     * @since 2.0.0
+     */
+    private static final class BuilderDoesNotAcceptChildren implements Builder {
+        /**
+         * Type name of node to be created.
+         */
+        private final String name;
+
+        /**
+         * Constructor.
+         * @param name Type name of node to be created
+         */
+        private BuilderDoesNotAcceptChildren(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void setFragment(final Fragment fragment) {
+            this.getClass();
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            return true;
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            return false;
+        }
+
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
+        @Override
+        public Node createNode() {
+            return DraftNode.create(this.name);
+        }
+    }
+
+    /**
      * Invalid builder for test purposes.
      * @since 2.0.0
      */
@@ -271,7 +342,7 @@ class JsonDeserializerTest {
 
         @Override
         public boolean setChildrenList(final List<Node> list) {
-            return false;
+            return true;
         }
 
         @Override
