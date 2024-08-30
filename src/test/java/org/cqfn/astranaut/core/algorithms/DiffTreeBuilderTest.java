@@ -49,7 +49,7 @@ class DiffTreeBuilderTest {
     void testTreeWithInsertedNode() {
         final Node before = LittleTrees.createStatementListWithTwoChildren();
         final Node after = LittleTrees.createStatementListWithThreeChildren(
-            LittleTrees.createIntegerLiteral(3)
+            LittleTrees.createIntegerLiteral(2)
         );
         final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);

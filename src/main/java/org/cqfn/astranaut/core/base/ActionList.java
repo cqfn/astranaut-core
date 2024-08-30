@@ -26,8 +26,10 @@ package org.cqfn.astranaut.core.base;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.utils.Promise;
 
 /**
  * List of actions to be added to the tree after deserialization to produce a difference tree.
@@ -64,7 +66,20 @@ public final class ActionList {
      * @return Checking result
      */
     public boolean hasActions() {
-        return  !this.insert.isEmpty() || !this.replace.isEmpty() || !this.delete.isEmpty();
+        return !this.insert.isEmpty() || !this.replace.isEmpty() || !this.delete.isEmpty();
+    }
+
+    /**
+     * Adds the node to the list of nodes to be inserted when the parent node is unknown.
+     * @param node Node to be inserted
+     * @param after Node after which to insert
+     * @return A promise to set a parent node to be fulfilled later.
+     */
+    @SuppressWarnings("PMD.UselessQualifiedThis")
+    public Promise<Node> insertNodeAfter(final Node node, final Node after) {
+        return new Promise<>(
+            into -> ActionList.this.insert.add(new Insertion(node, into, after))
+        );
     }
 
     /**
@@ -74,7 +89,7 @@ public final class ActionList {
      * @param after Node after which to insert
      */
     public void insertNodeAfter(final Node node, final Node into, final Node after) {
-        this.insert.add(new Insertion(node, into, after));
+        this.insert.add(new Insertion(node, Objects.requireNonNull(into), after));
     }
 
     /**

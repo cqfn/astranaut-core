@@ -208,7 +208,7 @@ public final class LittleTrees {
     }
 
     /**
-     * Creates a tree that has a "insert" action in it.
+     * Creates a tree that has an "insert" action in it.
      * @return Root node
      */
     public static DiffTree createTreeWithInsertAction() {
@@ -222,7 +222,7 @@ public final class LittleTrees {
         final Node inserted = wrapExpressionWithStatement(
             createAssignment(
                 createVariable("y"),
-                createIntegerLiteral(3)
+                createIntegerLiteral(2)
             )
         );
         final DiffTreeBuilder builder = new DiffTreeBuilder(
@@ -234,6 +234,36 @@ public final class LittleTrees {
             )
         );
         builder.insertNode(new Insertion(inserted, after));
+        return builder.getDiffTree();
+    }
+
+    /**
+     * Creates a tree that has an “insert” action, with insert as the very first child node.
+     * @return Root node
+     */
+    public static DiffTree createTreeWithInsertFirstAction() {
+        final Node inserted = wrapExpressionWithStatement(
+            createAssignment(
+                createVariable("y"),
+                createIntegerLiteral(2)
+            )
+        );
+        final Node second =
+            wrapExpressionWithStatement(
+                createAssignment(
+                    createVariable("x"),
+                    createIntegerLiteral(1)
+                )
+            );
+        final Node parent =
+            createStatementBlock(
+                second,
+                createReturnStatement(
+                    createVariable("x")
+                )
+            );
+        final DiffTreeBuilder builder = new DiffTreeBuilder(parent);
+        builder.insertNode(new Insertion(inserted, parent, null));
         return builder.getDiffTree();
     }
 

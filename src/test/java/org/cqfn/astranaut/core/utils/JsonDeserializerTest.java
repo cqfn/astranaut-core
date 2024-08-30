@@ -105,7 +105,31 @@ class JsonDeserializerTest {
     }
 
     @Test
-    void loadTreeWithActions() {
+    void loadTreeWithInsertAction() {
+        final String source = this.getFileContent("tree_containing_insert_action.json");
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> GreenFactory.INSTANCE
+        );
+        final Tree actual = deserializer.convert();
+        final Tree expected = LittleTrees.createTreeWithInsertAction();
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    @Test
+    void loadTreeWithInsertFirstAction() {
+        final String source = this.getFileContent("tree_containing_insert_first_action.json");
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            source,
+            language -> GreenFactory.INSTANCE
+        );
+        final Tree actual = deserializer.convert();
+        final Tree expected = LittleTrees.createTreeWithInsertFirstAction();
+        Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    @Test
+    void loadTreeWithDeleteAction() {
         final String source = this.getFileContent("tree_containing_delete_action.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
@@ -247,7 +271,7 @@ class JsonDeserializerTest {
 
         @Override
         public boolean setChildrenList(final List<Node> list) {
-            return true;
+            return false;
         }
 
         @Override
