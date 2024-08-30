@@ -54,8 +54,15 @@ class FilesReaderTest {
     }
 
     @Test
-    void testCustomException() {
+    void readWithoutException() {
         final FilesReader reader = new FilesReader("path.to.file.that.does.not.exist");
+        final String result = reader.readAsStringNoExcept();
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCustomException() {
+        final FilesReader reader = new FilesReader("path.to.another.file.that.does.not.exist");
         boolean oops = false;
         try {
             reader.readAsString(CustomException::new);
