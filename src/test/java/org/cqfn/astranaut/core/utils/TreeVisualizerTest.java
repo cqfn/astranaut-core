@@ -183,6 +183,7 @@ class TreeVisualizerTest {
 
     /**
      * Colored node for test purposes.
+     * @since 2.0.0
      */
     private static final class ColoredNode extends NodeAndType {
         @Override
@@ -206,16 +207,16 @@ class TreeVisualizerTest {
         }
 
         @Override
-        public Node getChild(int index) {
+        public Node getChild(final int index) {
             throw new IllegalStateException();
         }
 
         @Override
         public Map<String, String> getProperties() {
             return new MapUtils<String, String>()
-                    .put("color", "red")
-                    .put("bgcolor", "yellow")
-                    .make();
+                .put("color", "red")
+                .put("bgcolor", "yellow")
+                .make();
         }
     }
 }
