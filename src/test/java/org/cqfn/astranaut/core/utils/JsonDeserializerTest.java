@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.CoreException;
 import org.cqfn.astranaut.core.base.DefaultFactory;
+import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
@@ -39,7 +40,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link JsonDeserializer} class.
- *
  * @since 1.0.2
  */
 class JsonDeserializerTest {
@@ -59,8 +59,10 @@ class JsonDeserializerTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
-     * Test for a tree deserialization from a JSON string.
+     * Small syntax tree description.
      */
+    private static final String SMALL_TREE = "{ \"root\": { \"type\": \"Example\" } }";
+
     @Test
     void testDeserialization() {
         final String source = this.getFileContent("test_deserialization.json");
@@ -86,15 +88,10 @@ class JsonDeserializerTest {
         Assertions.assertEquals(0, second.getChildCount());
     }
 
-    /**
-     * Test deserialization of a JSON object that contains a tree not related
-     * to some language.
-     */
     @Test
     void loadIntoDraftNode() {
-        final String source = "{ \"root\": { \"type\": \"Example\" } }";
         final JsonDeserializer deserializer = new JsonDeserializer(
-            source,
+            JsonDeserializerTest.SMALL_TREE,
             language -> DefaultFactory.EMPTY
         );
         final Tree tree = deserializer.convert();
@@ -102,9 +99,6 @@ class JsonDeserializerTest {
         Assertions.assertEquals("Example", tree.getRoot().getTypeName());
     }
 
-    /**
-     * Testing the deserialization of a tree that contains actions.
-     */
     @Test
     void loadTreeWithActions() {
         final String source = this.getFileContent("tree_containing_delete_action.json");
@@ -117,9 +111,6 @@ class JsonDeserializerTest {
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
-    /**
-     * Testing the deserialization of a pattern that contains a hole.
-     */
     @Test
     void loadPatternWithHole() {
         final String source = this.getFileContent("pattern_with_hole.json");
@@ -130,6 +121,36 @@ class JsonDeserializerTest {
         final Tree actual = deserializer.convert();
         final Tree expected = LittleTrees.createPatternWithHole();
         Assertions.assertTrue(expected.deepCompare(actual));
+    }
+
+    @Test
+    void deserializeInvalidJson() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            ".[]test",
+            language -> DefaultFactory.EMPTY
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(EmptyTree.INSTANCE, result);
+    }
+
+    @Test
+    void deserializeJsonWithWrongFormat() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+                "null",
+                language -> DefaultFactory.EMPTY
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(EmptyTree.INSTANCE, result);
+    }
+
+    @Test
+    void deserializeWithNullFactory() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+                JsonDeserializerTest.SMALL_TREE,
+                language -> null
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(EmptyTree.INSTANCE, result);
     }
 
     /**
