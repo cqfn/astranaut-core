@@ -27,8 +27,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Map;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.CoreException;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NodeAndType;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.visualizer.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
@@ -133,13 +138,84 @@ class TreeVisualizerTest {
     void testWrongExtension(@TempDir final Path temp) {
         final Tree tree = Tree.createDraft("Exception");
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
-        final Path img = temp.resolve("node.jpg");
+        Path img = temp.resolve("node.jpg");
+        boolean oops = false;
+        try {
+            visualizer.visualize(new File(img.toString()));
+        } catch (final CoreException exception) {
+            oops = true;
+            Assertions.assertNotNull(exception.getInitiator());
+            Assertions.assertNotNull(exception.getErrorMessage());
+        } catch (final IOException ignored) {
+        }
+        Assertions.assertTrue(oops);
+        oops = false;
+        img = temp.resolve("node");
+        try {
+            visualizer.visualize(new File(img.toString()));
+        } catch (final CoreException | IOException ignored) {
+            oops = true;
+        }
+        Assertions.assertTrue(oops);
+    }
+
+    /**
+     * Test for a single node visualization.
+     * @param temp A temporary directory
+     */
+    @Test
+    void testColoredNodeVisualization(@TempDir final Path temp) {
+        final Tree tree = new Tree(new ColoredNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
+        final Path img = temp.resolve("node.svg");
         boolean oops = false;
         try {
             visualizer.visualize(new File(img.toString()));
         } catch (final WrongFileExtension | IOException exception) {
             oops = true;
         }
-        Assertions.assertTrue(oops);
+        Assertions.assertFalse(oops);
+        final FilesReader reader = new FilesReader(img.toString());
+        final String content = reader.readAsStringNoExcept();
+        Assertions.assertTrue(content.contains("fill=\"yellow\""));
+        Assertions.assertTrue(content.contains("stroke=\"red\""));
+    }
+
+    /**
+     * Colored node for test purposes.
+     */
+    private static final class ColoredNode extends NodeAndType {
+        @Override
+        public String getName() {
+            return "Colored";
+        }
+
+        @Override
+        public Builder createBuilder() {
+            return null;
+        }
+
+        @Override
+        public String getData() {
+            return "";
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public Node getChild(int index) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return new MapUtils<String, String>()
+                    .put("color", "red")
+                    .put("bgcolor", "yellow")
+                    .make();
+        }
     }
 }

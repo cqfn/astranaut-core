@@ -92,8 +92,7 @@ public class DotGenerator {
      * @param node A node.
      */
     private void processNode(final Node node) {
-        final boolean empty = node == null || node == DummyNode.INSTANCE;
-        if (empty) {
+        if (node == DummyNode.INSTANCE) {
             this.appendNullNode();
         } else {
             this.appendNode(
@@ -171,20 +170,17 @@ public class DotGenerator {
      * @param child A child node index
      * @param label An edge label
      */
-    private void appendEdge(final int parent, final int child, final Integer label) {
+    private void appendEdge(final int parent, final int child, final int label) {
         this.builder
             .append(DotGenerator.NODE)
             .append(parent)
             .append(" -> ")
             .append("node_")
-            .append(child);
-        if (label != null) {
-            this.builder
-                .append(" [label=\" ")
-                .append(label)
-                .append("\"]");
-        }
-        this.builder.append(";\n");
+            .append(child)
+            .append(" [label=\" ")
+            .append(label)
+            .append("\"]")
+            .append(";\n");
     }
 
     /**
