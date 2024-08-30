@@ -100,12 +100,11 @@ public class NodeDescriptor {
      */
     private Node convertHole(final Factory factory, final ActionList actions,
         final Map<Node, Integer> holes) {
-        assert this.number != null;
         Node original = DummyNode.INSTANCE;
-        if (this.prototype != null) {
+        if (this.prototype != null && this.number != null) {
             original = this.prototype.convert(factory, actions, holes);
+            holes.put(original, this.number);
         }
-        holes.put(original, this.number);
         return original;
     }
 

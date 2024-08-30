@@ -23,10 +23,15 @@
  */
 package org.cqfn.astranaut.core.utils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DefaultFactory;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
@@ -41,6 +46,7 @@ import org.junit.jupiter.api.Test;
  * Test for {@link JsonDeserializer} class.
  * @since 1.0.2
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class JsonDeserializerTest {
     /**
      * The "Addition" type.
@@ -152,6 +158,66 @@ class JsonDeserializerTest {
         Assertions.assertSame(EmptyTree.INSTANCE, result);
     }
 
+    @Test
+    void deserializeWithFactoryThatProducesNullBuilder() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            JsonDeserializerTest.SMALL_TREE,
+            language -> new Factory() {
+                @Override
+                public Type getType(final String name) {
+                    return null;
+                }
+
+                @Override
+                public Builder createBuilder(final String name) {
+                    return null;
+                }
+            }
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    @Test
+    void deserializeWithFactoryThatProducesInvalidBuilder() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            JsonDeserializerTest.SMALL_TREE,
+            language -> new Factory() {
+                @Override
+                public Type getType(final String name) {
+                    return null;
+                }
+
+                @Override
+                public Builder createBuilder(final String name) {
+                    return new InvalidBuilder();
+                }
+            }
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    @Test
+    void deserializeInvalidHoleWithoutNumber() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            "{ \"root\": { \"type\": \"Hole\", \"prototype\": { \"type\": \"Node\" } } }",
+            language -> DefaultFactory.EMPTY
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    @Test
+    void deserializeInvalidHoleWithoutPrototype() {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            "{ \"root\": { \"type\": \"Hole\", \"number\": 19 } } }",
+            language -> DefaultFactory.EMPTY
+        );
+        final Tree result = deserializer.convert();
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
     /**
      * Returns content of the specified file.
      * @param name The name of the file
@@ -162,5 +228,36 @@ class JsonDeserializerTest {
         final String source = new FilesReader(file).readAsStringNoExcept();
         Assertions.assertFalse(source.isEmpty());
         return source;
+    }
+
+    /**
+     * Invalid builder for test purposes.
+     * @since 2.0.0
+     */
+    private static final class InvalidBuilder implements Builder {
+        @Override
+        public void setFragment(final Fragment fragment) {
+            this.getClass();
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            return true;
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            return true;
+        }
+
+        @Override
+        public boolean isValid() {
+            return false;
+        }
+
+        @Override
+        public Node createNode() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
