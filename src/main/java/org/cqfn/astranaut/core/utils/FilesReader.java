@@ -66,6 +66,19 @@ public final class FilesReader {
     }
 
     /**
+     * Reads file content as a string. If the file can't be read, returns empty string.
+     * @return The file content
+     */
+    public String readAsStringNoExcept() {
+        String string = "";
+        try {
+            string = this.readAsString();
+        } catch (final IOException ignored) {
+        }
+        return string;
+    }
+
+    /**
      * Reads file content as string.
      * @param creator The exception creator
      * @param <T> The exception type

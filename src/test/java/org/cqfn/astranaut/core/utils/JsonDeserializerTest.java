@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.utils;
 
 import java.util.Map;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.base.CoreException;
 import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Node;
@@ -160,32 +159,8 @@ class JsonDeserializerTest {
      */
     private String getFileContent(final String name) {
         final String file = JsonDeserializerTest.TESTS_PATH.concat(name);
-        boolean oops = false;
-        String source = "";
-        try {
-            source = new FilesReader(file).readAsString(
-                (FilesReader.CustomExceptionCreator<CoreException>) ()
-                    -> new CoreException() {
-                        private static final long serialVersionUID = -6130330765091840343L;
-
-                        @Override
-                        public String getInitiator() {
-                            return "JsonDeserializerTest";
-                        }
-
-                        @Override
-                        public String getErrorMessage() {
-                            return String.format(
-                                "Could not read the file that contains source tree: %s",
-                                file
-                            );
-                        }
-                    }
-            );
-        } catch (final CoreException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        final String source = new FilesReader(file).readAsStringNoExcept();
+        Assertions.assertFalse(source.isEmpty());
         return source;
     }
 }
