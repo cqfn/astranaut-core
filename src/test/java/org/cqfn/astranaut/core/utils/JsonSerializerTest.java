@@ -27,17 +27,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.ChildDescriptor;
 import org.cqfn.astranaut.core.base.DraftNode;
-import org.cqfn.astranaut.core.base.EmptyFragment;
 import org.cqfn.astranaut.core.base.EmptyTree;
-import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NodeAndType;
 import org.cqfn.astranaut.core.base.Tree;
-import org.cqfn.astranaut.core.base.Type;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -60,6 +56,11 @@ class JsonSerializerTest {
     private static final String TESTS_PATH = "src/test/resources/json/";
 
     /**
+     * Test node with language.
+     */
+    private static final Node TEST_NODE_LANG = new TestNodeWithTypeWithLanguage();
+
+    /**
      * Test for a tree serialization to a JSON string.
      */
     @Test
@@ -77,10 +78,26 @@ class JsonSerializerTest {
      */
     @Test
     void testSerializationWithLanguageSpecified() {
-        final Tree tree = new Tree(new TestNodeWithTypeWithLanguage());
+        final Tree tree = new Tree(JsonSerializerTest.TEST_NODE_LANG);
         final boolean result = this.serializeAndCompare(
             tree,
             "serialization_language_specified.json"
+        );
+        Assertions.assertTrue(result);
+    }
+
+    /**
+     * Test for a tree serialization where language is specified.
+     */
+    @Test
+    void testSerializationNestedWithLanguageSpecified() {
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        ctor.setName("Root");
+        ctor.setChildrenList(Collections.singletonList(JsonSerializerTest.TEST_NODE_LANG));
+        final Tree tree = new Tree(ctor.createNode());
+        final boolean result = this.serializeAndCompare(
+            tree,
+            "serialization_nested_language_specified.json"
         );
         Assertions.assertTrue(result);
     }
@@ -186,51 +203,15 @@ class JsonSerializerTest {
     }
 
     /**
-     * Some type where language is specified.
-     *
-     * @since 1.1.0
-     */
-    private static class TestTypeWithLanguage implements Type {
-        @Override
-        public String getName() {
-            return "GandalfTheGrey";
-        }
-
-        @Override
-        public List<ChildDescriptor> getChildTypes() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public List<String> getHierarchy() {
-            return Collections.singletonList(this.getName());
-        }
-
-        @Override
-        public Map<String, String> getProperties() {
-            return new MapUtils<String, String>().put("language", "elven").make();
-        }
-
-        @Override
-        public Builder createBuilder() {
-            return null;
-        }
-    }
-
-    /**
      * Some node which has a type where language is specified.
      *
      * @since 1.1.0
      */
-    private static class TestNodeWithTypeWithLanguage implements Node {
-        @Override
-        public Fragment getFragment() {
-            return EmptyFragment.INSTANCE;
-        }
+    private static class TestNodeWithTypeWithLanguage extends NodeAndType {
 
         @Override
-        public Type getType() {
-            return new TestTypeWithLanguage();
+        public String getName() {
+            return "GandalfTheGrey";
         }
 
         @Override
@@ -245,6 +226,16 @@ class JsonSerializerTest {
 
         @Override
         public Node getChild(final int index) {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return new MapUtils<String, String>().put("language", "elven").make();
+        }
+
+        @Override
+        public Builder createBuilder() {
             return null;
         }
     }
