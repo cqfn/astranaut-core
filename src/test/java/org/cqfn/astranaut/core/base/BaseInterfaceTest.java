@@ -253,34 +253,11 @@ class BaseInterfaceTest {
         final List<Node> sub = list.subList(1, 3);
         Assertions.assertEquals(2, sub.size());
         Assertions.assertEquals(root.getChild(1), sub.get(0));
-        boolean oops = false;
-        try {
-            sub.get(3);
-        } catch (final IndexOutOfBoundsException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.subList(0, 4);
-        } catch (final IndexOutOfBoundsException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.subList(2, 1);
-        } catch (final IndexOutOfBoundsException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            sub.get(10);
-        } catch (final IndexOutOfBoundsException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> sub.get(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> sub.get(3));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> list.subList(-1, 0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> list.subList(0, 4));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> list.subList(2, 1));
     }
 
     void testListOtherMethods(final Node root, final List<Node> list) {
