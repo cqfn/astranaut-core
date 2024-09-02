@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.List;
+import jdk.internal.org.jline.utils.DiffHelper;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -228,8 +229,16 @@ class DiffNodeTest {
         );
         Assertions.assertSame(
             DummyNode.INSTANCE,
-            new DiffNode(new TestNode(TestCase.NULL_BUILDER)).getBefore()
+            new DiffNode(new TestNode(TestCase.INVALID_BUILDER)).getBefore()
         );
+    }
+
+    @Test
+    void deleteNonExistingNode() {
+        final DiffNode diff = new DiffNode(DraftNode.create("X"));
+        Assertions.assertFalse(diff.deleteNode(-1));
+        Assertions.assertFalse(diff.deleteNode(1));
+        Assertions.assertFalse(diff.deleteNode(DummyNode.INSTANCE));
     }
 
     /**
