@@ -24,7 +24,6 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.List;
-import jdk.internal.org.jline.utils.DiffHelper;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -37,6 +36,7 @@ import org.junit.jupiter.api.Test;
  *
  * @since 1.1.0
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class DiffNodeTest {
     /**
      * The folder with test resources.
