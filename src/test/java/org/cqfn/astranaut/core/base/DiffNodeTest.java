@@ -224,7 +224,7 @@ class DiffNodeTest {
             source = new FilesReader(file).readAsString(
                 (FilesReader.CustomExceptionCreator<CoreException>) ()
                     -> new CoreException() {
-                        private static final long serialVersionUID = -8921455132545245481L;
+                        private static final long serialVersionUID = -1;
 
                         @Override
                         public String getInitiator() {

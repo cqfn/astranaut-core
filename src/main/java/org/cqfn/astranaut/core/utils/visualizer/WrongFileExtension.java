@@ -27,7 +27,6 @@ import org.cqfn.astranaut.core.base.CoreException;
 
 /**
  * Exception "The file extension must be .png or .svg".
- *
  * @since 1.0.2
  */
 public final class WrongFileExtension extends CoreException {

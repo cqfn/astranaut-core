@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests covering {@link DraftNode} class.
- *
  * @since 1.1.0
  */
 class DraftNodeTest {
@@ -126,6 +125,18 @@ class DraftNodeTest {
     void wrongConstructionTest() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         Assertions.assertThrows(IllegalStateException.class, ctor::createNode);
+    }
+
+    @Test
+    void wrongChildrenListFormat() {
+        final Node node = DraftNode.create("A(B(C #D),E)");
+        Assertions.assertEquals("A(B(C), E)", node.toString());
+    }
+
+    @Test
+    void wrongDataFormat() {
+        final Node node = DraftNode.create("A<$>(B)");
+        Assertions.assertEquals("A(B)", node.toString());
     }
 
     /**

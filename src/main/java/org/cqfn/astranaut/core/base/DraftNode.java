@@ -178,7 +178,6 @@ public final class DraftNode extends NodeAndType {
      * @return Node data, extracted from description
      */
     private static String parseData(final CharacterIterator iterator) {
-        assert iterator.current() == '<';
         final StringBuilder data = new StringBuilder();
         char symbol = iterator.next();
         if (symbol == '\"') {
@@ -188,8 +187,13 @@ public final class DraftNode extends NodeAndType {
                 symbol = iterator.next();
             }
             symbol = iterator.next();
-        }
-        if (symbol == '>') {
+            if (symbol == '>') {
+                iterator.next();
+            }
+        } else {
+            do {
+                symbol = iterator.next();
+            } while (symbol != '>' && symbol != CharacterIterator.DONE);
             iterator.next();
         }
         return data.toString();
@@ -204,7 +208,6 @@ public final class DraftNode extends NodeAndType {
     private static List<Node> parseChildrenList(
         final CharacterIterator iterator,
         final Map<String, Set<Node>> nodes) {
-        assert iterator.current() == '(';
         final List<Node> children = new LinkedList<>();
         char next;
         do {
@@ -214,7 +217,11 @@ public final class DraftNode extends NodeAndType {
                 children.add(child);
             }
             next = iterator.current();
-            assert next == ')' || next == ',' || next == ' ';
+            if (next != ')' && next != ',' && next != ' ') {
+                do {
+                    next = iterator.next();
+                } while (next != ')' && next != CharacterIterator.DONE);
+            }
         } while (next != ')');
         iterator.next();
         return children;
