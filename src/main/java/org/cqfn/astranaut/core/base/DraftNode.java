@@ -221,6 +221,7 @@ public final class DraftNode extends NodeAndType {
                 do {
                     next = iterator.next();
                 } while (next != ')' && next != CharacterIterator.DONE);
+                break;
             }
         } while (next != ')');
         iterator.next();

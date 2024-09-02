@@ -129,14 +129,18 @@ class DraftNodeTest {
 
     @Test
     void wrongChildrenListFormat() {
-        final Node node = DraftNode.create("A(B(C #D),E)");
-        Assertions.assertEquals("A(B(C), E)", node.toString());
+        final Node first = DraftNode.create("A(B(C #D),E)");
+        Assertions.assertEquals("A(B(C), E)", first.toString());
+        final Node second = DraftNode.create("A(B");
+        Assertions.assertEquals("A(B)", second.toString());
     }
 
     @Test
     void wrongDataFormat() {
-        final Node node = DraftNode.create("A<$>(B)");
-        Assertions.assertEquals("A(B)", node.toString());
+        final Node first = DraftNode.create("A<$>(B)");
+        Assertions.assertEquals("A(B)", first.toString());
+        final Node second = DraftNode.create("A<$");
+        Assertions.assertEquals("A", second.toString());
     }
 
     /**
