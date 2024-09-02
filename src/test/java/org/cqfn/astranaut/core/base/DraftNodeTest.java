@@ -125,13 +125,7 @@ class DraftNodeTest {
     @Test
     void wrongConstructionTest() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        boolean oops = false;
-        try {
-            ctor.createNode();
-        } catch (final IllegalStateException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IllegalStateException.class, ctor::createNode);
     }
 
     /**

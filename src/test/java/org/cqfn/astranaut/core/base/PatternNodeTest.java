@@ -49,13 +49,10 @@ class PatternNodeTest {
         final PatternNode pattern = new PatternNode(new DiffNode(node));
         Assertions.assertEquals(100, pattern.getFragment().getEnd().getColumn());
         Assertions.assertEquals("X<\"test\">(A)", pattern.toString());
-        boolean oops = false;
-        try {
-            pattern.getType().createBuilder();
-        } catch (final UnsupportedOperationException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> pattern.getType().createBuilder()
+        );
         Assertions.assertFalse(pattern.makeHole(alien, 0));
         Assertions.assertTrue(pattern.makeHole(child, 0));
     }

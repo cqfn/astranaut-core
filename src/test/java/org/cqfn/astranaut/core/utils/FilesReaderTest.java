@@ -23,7 +23,6 @@
  */
 package org.cqfn.astranaut.core.utils;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
@@ -43,14 +42,12 @@ class FilesReaderTest {
         Assertions.assertTrue(flag);
         Assertions.assertTrue(Files.exists(path));
         final FilesReader reader = new FilesReader(path.toString());
-        boolean oops = false;
-        try {
-            final String result = reader.readAsString();
-            Assertions.assertEquals("test string", result);
-        } catch (final IOException ignored) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                final String result = reader.readAsString();
+                Assertions.assertEquals("test string", result);
+            }
+        );
     }
 
     @Test
@@ -63,13 +60,10 @@ class FilesReaderTest {
     @Test
     void testCustomException() {
         final FilesReader reader = new FilesReader("path.to.another.file.that.does.not.exist");
-        boolean oops = false;
-        try {
-            reader.readAsString(CustomException::new);
-        } catch (final CustomException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(
+            CustomException.class,
+            () -> reader.readAsString(CustomException::new)
+        );
     }
 
     /**

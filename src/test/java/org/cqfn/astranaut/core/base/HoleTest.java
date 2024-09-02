@@ -54,12 +54,6 @@ class HoleTest {
         Assertions.assertEquals(typename, type.getHierarchy().get(0));
         Assertions.assertFalse(type.getProperties().containsKey("abracadabra"));
         Assertions.assertEquals(typename, node.getTypeName());
-        boolean oops = false;
-        try {
-            type.createBuilder();
-        } catch (final UnsupportedOperationException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(UnsupportedOperationException.class, type::createBuilder);
     }
 }

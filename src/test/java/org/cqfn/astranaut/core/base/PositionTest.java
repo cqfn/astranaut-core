@@ -41,12 +41,6 @@ class PositionTest {
         final Position third = new DefaultPosition(source, 2, 1);
         Assertions.assertTrue(third.compareTo(first) > 0);
         final Position alien = new DefaultPosition(another, 1, 1);
-        boolean oops = false;
-        try {
-            first.compareTo(alien);
-        } catch (final IllegalArgumentException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> first.compareTo(alien));
     }
 }

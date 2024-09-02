@@ -112,13 +112,7 @@ class NormalizedNodeTest {
         builder.setFragment(EmptyFragment.INSTANCE);
         Assertions.assertTrue(builder.setData(""));
         Assertions.assertFalse(builder.isValid());
-        boolean oops = false;
-        try {
-            builder.createNode();
-        } catch (final IllegalStateException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IllegalStateException.class, builder::createNode);
         final Node left = LittleTrees.createIntegerLiteral(2);
         Assertions.assertFalse(builder.setChildrenList(Collections.emptyList()));
         Assertions.assertFalse(builder.setChildrenList(Collections.singletonList(left)));

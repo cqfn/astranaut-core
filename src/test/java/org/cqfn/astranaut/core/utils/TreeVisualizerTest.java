@@ -35,7 +35,6 @@ import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.NodeAndType;
 import org.cqfn.astranaut.core.base.Tree;
-import org.cqfn.astranaut.core.utils.visualizer.WrongFileExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -55,13 +54,11 @@ class TreeVisualizerTest {
         final Tree tree = Tree.createDraft("TestNode<\"value\">");
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("node.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -73,13 +70,11 @@ class TreeVisualizerTest {
         final Tree tree = EmptyTree.INSTANCE;
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("null.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -94,13 +89,11 @@ class TreeVisualizerTest {
         final Tree tree = new Tree(ctor.createNode());
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("data.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -121,13 +114,11 @@ class TreeVisualizerTest {
         final Tree tree = new Tree(addition.createNode());
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("tree.svg");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -149,8 +140,8 @@ class TreeVisualizerTest {
         } catch (final IOException ignored) {
         }
         Assertions.assertTrue(oops);
-        oops = false;
         img = temp.resolve("node");
+        oops = false;
         try {
             visualizer.visualize(new File(img.toString()));
         } catch (final CoreException | IOException ignored) {
@@ -168,13 +159,11 @@ class TreeVisualizerTest {
         final Tree tree = new Tree(new ColoredNode());
         final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("node.svg");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
         final FilesReader reader = new FilesReader(img.toString());
         final String content = reader.readAsStringNoExcept();
         Assertions.assertTrue(content.contains("fill=\"yellow\""));

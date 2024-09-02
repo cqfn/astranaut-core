@@ -46,13 +46,7 @@ class ListUtilsTest {
         final List<Integer> result = list.make();
         final List<Integer> expected = Arrays.asList(1, 2);
         Assertions.assertEquals(expected, result);
-        boolean oops = false;
-        try {
-            result.add(3);
-        } catch (final UnsupportedOperationException exception) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->  result.add(3));
     }
 
     @Test

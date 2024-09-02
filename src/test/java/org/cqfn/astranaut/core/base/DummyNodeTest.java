@@ -38,13 +38,7 @@ class DummyNodeTest {
         Assertions.assertSame(EmptyFragment.INSTANCE, node.getFragment());
         Assertions.assertEquals(0, node.getChildCount());
         Assertions.assertEquals("", node.getData());
-        boolean oops = false;
-        try {
-            node.getChild(0);
-        } catch (final IndexOutOfBoundsException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> node.getChild(0));
         Assertions.assertEquals("\u2205", node.toString());
         final Type type = node.getType();
         Assertions.assertEquals(0, type.getChildTypes().size());
