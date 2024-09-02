@@ -137,9 +137,9 @@ class DraftNodeTest {
 
     @Test
     void wrongDataFormat() {
-        final Node first = DraftNode.create("A<$>(B)");
+        final Node first = DraftNode.create("A<$ >(B)");
         Assertions.assertEquals("A(B)", first.toString());
-        final Node second = DraftNode.create("A<$");
+        final Node second = DraftNode.create("A<$ ");
         Assertions.assertEquals("A", second.toString());
     }
 
