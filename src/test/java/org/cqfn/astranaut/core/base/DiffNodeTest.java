@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.List;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -211,6 +212,26 @@ class DiffNodeTest {
         Assertions.assertEquals(description, root.toString());
     }
 
+    @Test
+    void getBranchFromBadNode() {
+        Assertions.assertSame(
+            DummyNode.INSTANCE,
+            new DiffNode(new TestNode(TestCase.NULL_BUILDER)).getBefore()
+        );
+        Assertions.assertSame(
+            DummyNode.INSTANCE,
+            new DiffNode(new TestNode(TestCase.BAD_DATA)).getBefore()
+        );
+        Assertions.assertSame(
+            DummyNode.INSTANCE,
+            new DiffNode(new TestNode(TestCase.BAD_CHILDREN)).getBefore()
+        );
+        Assertions.assertSame(
+            DummyNode.INSTANCE,
+            new DiffNode(new TestNode(TestCase.NULL_BUILDER)).getBefore()
+        );
+    }
+
     /**
      * Returns content of the specified file.
      * @param name The name of the file
@@ -218,32 +239,8 @@ class DiffNodeTest {
      */
     private String getFileContent(final String name) {
         final String file = DiffNodeTest.TESTS_PATH.concat(name);
-        boolean oops = false;
-        String source = "";
-        try {
-            source = new FilesReader(file).readAsString(
-                (FilesReader.CustomExceptionCreator<CoreException>) ()
-                    -> new CoreException() {
-                        private static final long serialVersionUID = -1;
-
-                        @Override
-                        public String getInitiator() {
-                            return "DifferenceNodeTest";
-                        }
-
-                        @Override
-                        public String getErrorMessage() {
-                            return String.format(
-                                "Could not read the file that contains source tree: %s",
-                                file
-                            );
-                        }
-                    }
-            );
-        } catch (final CoreException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        final String source = new FilesReader(file).readAsStringNoExcept();
+        Assertions.assertFalse(source.isEmpty());
         return source;
     }
 
@@ -262,5 +259,125 @@ class DiffNodeTest {
         final Node root = tree.getRoot();
         Assertions.assertNotEquals(DummyNode.INSTANCE, root);
         return root;
+    }
+
+    /**
+     * List of test cases.
+     * @since 2.0.0
+     */
+    private enum TestCase {
+        /**
+         * Case: node does not have a builder.
+         */
+        NULL_BUILDER,
+
+        /**
+         * Case: builder is not accepting data.
+         */
+        BAD_DATA,
+
+        /**
+         * Case: builder won't accept children.
+         */
+        BAD_CHILDREN,
+
+        /**
+         * Case: builder is not valid.
+         */
+        INVALID_BUILDER
+    }
+
+    /**
+     * Custom node for test purposes.
+     * @since 2.0.0
+     */
+    private static final class TestNode extends NodeAndType {
+        /**
+         * Test case.
+         */
+        private final TestCase test;
+
+        /**
+         * Constructor.
+         * @param test Test case
+         */
+        private TestNode(final TestCase test) {
+            this.test = test;
+        }
+
+        @Override
+        public String getData() {
+            return "";
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public Node getChild(final int index) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        @Override
+        public String getName() {
+            return "Test";
+        }
+
+        @Override
+        public Builder createBuilder() {
+            final Builder builder;
+            if (this.test == TestCase.NULL_BUILDER) {
+                builder = null;
+            } else {
+                builder = new TestBuilder(this.test);
+            }
+            return builder;
+        }
+    }
+
+    /**
+     * Custom builder for test purposes.
+     * @since 2.0.0
+     */
+    private static final class TestBuilder implements Builder {
+        /**
+         * Test case.
+         */
+        private final TestCase test;
+
+        /**
+         * Constructor.
+         * @param test Test case
+         */
+        private TestBuilder(final TestCase test) {
+            this.test = test;
+        }
+
+        @Override
+        public void setFragment(final Fragment fragment) {
+            this.getClass();
+        }
+
+        @Override
+        public boolean setData(final String str) {
+            return this.test != TestCase.BAD_DATA;
+        }
+
+        @Override
+        public boolean setChildrenList(final List<Node> list) {
+            return this.test != TestCase.BAD_CHILDREN;
+        }
+
+        @Override
+        public boolean isValid() {
+            return this.test != TestCase.INVALID_BUILDER;
+        }
+
+        @Override
+        public Node createNode() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
