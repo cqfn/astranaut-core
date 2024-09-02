@@ -103,48 +103,30 @@ class BaseInterfaceTest {
     }
 
     void testListModifiersByOne(final List<Node> list) {
-        boolean oops = false;
-        try {
-            list.add(DraftNode.create("H"));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.remove(list.get(0));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.clear();
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.set(1, DraftNode.create("K"));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.add(1, DraftNode.create("L"));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.remove(1);
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.add(DraftNode.create("H"))
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.remove(list.get(0))
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.clear()
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.set(1, DraftNode.create("K"))
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.add(1, DraftNode.create("L"))
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.remove(1)
+        );
     }
 
     void testListModifiersByCollection(final List<Node> list) {
@@ -152,101 +134,53 @@ class BaseInterfaceTest {
             DraftNode.create("I"),
             DraftNode.create("J")
         );
-        boolean oops = false;
-        try {
-            list.addAll(collection);
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.addAll(1, collection);
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.removeAll(collection);
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.retainAll(collection);
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.addAll(collection)
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.addAll(1, collection)
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.removeAll(collection)
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> list.retainAll(collection)
+        );
     }
 
     void testListIterator(final List<Node> list) {
-        ListIterator<Node> cursor = list.listIterator();
+        final ListIterator<Node> first = list.listIterator();
         final StringBuilder builder = new StringBuilder();
-        while (cursor.hasNext()) {
-            builder.append(cursor.next().getTypeName());
+        while (first.hasNext()) {
+            builder.append(first.next().getTypeName());
         }
-        boolean oops = false;
-        try {
-            cursor.next();
-        } catch (final NoSuchElementException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(NoSuchElementException.class, first::next);
         Assertions.assertEquals("DEF", builder.toString());
-        cursor = list.listIterator(1);
-        oops = false;
-        try {
-            cursor.remove();
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            cursor.set(DraftNode.create("M"));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            cursor.add(DraftNode.create("N"));
-        } catch (final UnsupportedOperationException ex) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        Assertions.assertEquals(1, cursor.nextIndex());
-        Assertions.assertEquals(0, cursor.previousIndex());
-        Assertions.assertTrue(cursor.hasPrevious());
-        Assertions.assertEquals("D", cursor.previous().getTypeName());
-        Assertions.assertFalse(cursor.hasPrevious());
-        oops = false;
-        try {
-            cursor.previous();
-        } catch (final NoSuchElementException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        final ListIterator<Node> second = list.listIterator(1);
+        Assertions.assertThrows(UnsupportedOperationException.class, second::remove);
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> second.set(DraftNode.create("M"))
+        );
+        Assertions.assertThrows(
+            UnsupportedOperationException.class,
+            () -> second.add(DraftNode.create("N"))
+        );
+        Assertions.assertEquals(1, second.nextIndex());
+        Assertions.assertEquals(0, second.previousIndex());
+        Assertions.assertTrue(second.hasPrevious());
+        Assertions.assertEquals("D", second.previous().getTypeName());
+        Assertions.assertFalse(second.hasPrevious());
+        Assertions.assertThrows(NoSuchElementException.class, second::previous);
     }
 
     void testListIteratorExceptions(final List<Node> list) {
-        boolean oops = false;
-        try {
-            list.listIterator(-1);
-        } catch (final IndexOutOfBoundsException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
-        oops = false;
-        try {
-            list.listIterator(10);
-        } catch (final IndexOutOfBoundsException ignored) {
-            oops = true;
-        }
-        Assertions.assertTrue(oops);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> list.listIterator(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> list.listIterator(10));
     }
 
     void testSublist(final Node root, final List<Node> list) {
