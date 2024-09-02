@@ -24,6 +24,9 @@
 package org.cqfn.astranaut.core.base;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.cqfn.astranaut.core.utils.FilesReader;
@@ -78,9 +81,17 @@ class DiffNodeTest {
      */
     private static final String TREE_WITH_DELETE = "tree_containing_delete_action.json";
 
-    /**
-     * Testing {@link  DiffNode#getBefore()} method with inserted node.
-     */
+    @Test
+    void testBaseInterface() {
+        final Node original = DraftNode.create("A<\"test\">(B,C,D,E,F)");
+        final DiffNode diff = new DiffNode(original);
+        Assertions.assertSame(diff.getPrototype(), original);
+        Assertions.assertSame(diff.getFragment(), original.getFragment());
+        Assertions.assertEquals(diff.getData(), original.getData());
+        Assertions.assertEquals(diff.getChildCount(), original.getChildCount());
+        Assertions.assertThrows(UnsupportedOperationException.class, diff::createBuilder);
+    }
+
     @Test
     void testInsertGetBefore() {
         final Node root = this.loadTree(DiffNodeTest.TREE_WITH_INSERT);
@@ -92,9 +103,6 @@ class DiffNodeTest {
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
-    /**
-     * Testing {@link  DiffNode#getAfter()} method with inserted node.
-     */
     @Test
     void testInsertGetAfter() {
         final Node root = this.loadTree(DiffNodeTest.TREE_WITH_INSERT);
@@ -106,9 +114,6 @@ class DiffNodeTest {
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
-    /**
-     * Testing tree loading / composing with replaced node.
-     */
     @Test
     void testReplace() {
         final Node root = this.loadTree(DiffNodeTest.TREE_WITH_REPLACE);
@@ -126,9 +131,6 @@ class DiffNodeTest {
         );
     }
 
-    /**
-     * Testing {@link  DiffNode#getBefore()} method with deleted node.
-     */
     @Test
     void testDeleteGetBefore() {
         final Node root = this.loadTree(DiffNodeTest.TREE_WITH_DELETE);
@@ -140,9 +142,6 @@ class DiffNodeTest {
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
-    /**
-     * Testing {@link  DiffNode#getAfter()} method with deleted node.
-     */
     @Test
     void testDeleteGetAfter() {
         final Node root = this.loadTree(DiffNodeTest.TREE_WITH_DELETE);
@@ -154,9 +153,6 @@ class DiffNodeTest {
         Assertions.assertTrue(expected.deepCompare(actual));
     }
 
-    /**
-     * Tests the case where a node is inserted at the start position of the child list.
-     */
     @Test
     void testInsertNodeFirst() {
         final Node first = LittleTrees.createReturnStatement(null);
@@ -175,9 +171,17 @@ class DiffNodeTest {
         Assertions.assertTrue(after.deepCompare(diff.getAfter()));
     }
 
-    /**
-     * Tests the case where an attempt to insert a node fails.
-     */
+    @Test
+    void insertAndDelete() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final DiffNode diff = new DiffNode(DraftNode.create("A(B,C,D)", nodes));
+        Assertions.assertTrue(diff.deleteNode(nodes.get("B").iterator().next()));
+        Assertions.assertTrue(
+            diff.insertNodeAfter(DraftNode.create("E"), nodes.get("C").iterator().next())
+        );
+        Assertions.assertEquals("A(C, E, D)", diff.getAfter().toString());
+    }
+
     @Test
     void testInsertNodeFails() {
         final DiffNode diff = new DiffNode(
@@ -192,9 +196,6 @@ class DiffNodeTest {
         Assertions.assertFalse(result);
     }
 
-    /**
-     * Tests {@link DiffNode#getParent()} method.
-     */
     @Test
     void testParentReference() {
         final DiffNode root = new DiffNode(DraftNode.create("A(B,C)"));
@@ -203,9 +204,6 @@ class DiffNodeTest {
         Assertions.assertSame(((DiffNode) child).getParent(), root);
     }
 
-    /**
-     * Tests {@link DiffNode#getParent()} method.
-     */
     @Test
     void testDiffNodeAsString() {
         final String description = "X(Y, Z)";
