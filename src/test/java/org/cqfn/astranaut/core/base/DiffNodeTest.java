@@ -234,11 +234,33 @@ class DiffNodeTest {
     }
 
     @Test
+    void replaceNonExistingNode() {
+        final DiffNode diff = new DiffNode(DraftNode.create("X"));
+        Assertions.assertFalse(diff.replaceNode(-1, DummyNode.INSTANCE));
+        Assertions.assertFalse(diff.replaceNode(1, DummyNode.INSTANCE));
+        Assertions.assertFalse(diff.replaceNode(DummyNode.INSTANCE, DummyNode.INSTANCE));
+    }
+
+    @Test
+    void replaceAlreadyReplacedNode() {
+        final DiffNode diff = new DiffNode(DraftNode.create("X(A)"));
+        Assertions.assertTrue(diff.replaceNode(0, DraftNode.create("B")));
+        Assertions.assertFalse(diff.replaceNode(0, DraftNode.create("C")));
+    }
+
+    @Test
     void deleteNonExistingNode() {
         final DiffNode diff = new DiffNode(DraftNode.create("X"));
         Assertions.assertFalse(diff.deleteNode(-1));
         Assertions.assertFalse(diff.deleteNode(1));
         Assertions.assertFalse(diff.deleteNode(DummyNode.INSTANCE));
+    }
+
+    @Test
+    void deleteAlreadyDeletedNode() {
+        final DiffNode diff = new DiffNode(DraftNode.create("X(A)"));
+        Assertions.assertTrue(diff.deleteNode(0));
+        Assertions.assertFalse(diff.deleteNode(0));
     }
 
     /**
