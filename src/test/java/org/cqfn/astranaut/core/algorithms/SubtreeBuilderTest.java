@@ -46,9 +46,14 @@ class SubtreeBuilderTest {
         final Set<Node> selected =
             new NodeSelector(original).select((node, parents) -> list.contains(node.getTypeName()));
         final SubtreeBuilder algorithm = new SubtreeBuilder(original, SubtreeBuilder.INCLUDE);
-        final Node subtree = algorithm.create(selected);
+        final Node first = algorithm.create(selected);
         final Node expected = DraftNode.create("A(C(E,F))");
-        Assertions.assertTrue(expected.deepCompare(subtree));
+        Assertions.assertTrue(expected.deepCompare(first));
+        final Node second = algorithm.create(selected);
+        Assertions.assertTrue(first.deepCompare(second));
+        Assertions.assertNotSame(first, second);
+        final String description = first.toString();
+        Assertions.assertTrue(expected.deepCompare(DraftNode.create(description)));
     }
 
     @Test
