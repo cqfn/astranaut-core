@@ -389,6 +389,16 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
+    @Test
+    void testEmptyChildrenList() {
+        final boolean result = this.testMapping(
+            Collections.singletonList(new ChildDescriptor("A", true)),
+            Collections.emptyList(),
+            true
+        );
+        Assertions.assertTrue(result);
+    }
+
     /**
      * Common test for the {@link NodeAllocator} class.
      * @param types The list of types
