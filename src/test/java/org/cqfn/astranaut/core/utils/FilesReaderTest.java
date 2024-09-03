@@ -42,10 +42,17 @@ class FilesReaderTest {
         Assertions.assertTrue(flag);
         Assertions.assertTrue(Files.exists(path));
         final FilesReader reader = new FilesReader(path.toString());
+        final String expected = "test string";
         Assertions.assertDoesNotThrow(
             () -> {
                 final String result = reader.readAsString();
-                Assertions.assertEquals("test string", result);
+                Assertions.assertEquals(expected, result);
+            }
+        );
+        Assertions.assertDoesNotThrow(
+            () -> {
+                final String result = reader.readAsString(CustomException::new);
+                Assertions.assertEquals(expected, result);
             }
         );
     }
