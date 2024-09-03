@@ -25,6 +25,7 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.cqfn.astranaut.core.base.ChildDescriptor;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -37,7 +38,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link NodeAllocator} class.
- *
  * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")
@@ -52,9 +52,6 @@ class NodeAllocatorTest {
      */
     private static final String EXPRESSION = "Expression";
 
-    /**
-     * Testing mapping with all obligatory children.
-     */
     @Test
     void testAllNonOptionalChildrenMapping() {
         final boolean result = this.testMapping(
@@ -71,9 +68,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the mapper with a list of nodes in which the order is mixed up.
-     */
     @Test
     void testIncorrectOrderChildren() {
         final boolean result = this.testMapping(
@@ -93,9 +87,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the mapper with one node that should be not mapped.
-     */
     @Test
     void testOneNodeNotMapped() {
         final boolean result = this.testMapping(
@@ -110,10 +101,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the mapper with complex variant of children,
-     * where some children are obligatory, some - not.
-     */
     @Test
     void testAllVariousChildrenMapping() {
         final boolean result = this.testMapping(
@@ -134,10 +121,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case when the descriptor contains two children of the same type, and one
-     * of them is optional, but the list of nodes contains only one child of this type.
-     */
     @Test
     void testOnlyNonOptionalFromVariousChildrenMapping() {
         final boolean result = this.testMapping(
@@ -158,9 +141,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Another complex test case.
-     */
     @Test
     void testNonOptionalAndOptionalFromVariousChildrenMapping() {
         final boolean result = this.testMapping(
@@ -182,11 +162,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test the case where the descriptor contains two mandatory nodes of the same type
-     * and another optional node. However, the node list contains only two nodes of this type.
-     * Therefore, these nodes must be distributed to the correct cells.
-     */
     @Test
     void testNonOptionalAndOptionalOfSameTypeMapping() {
         final boolean result = this.testMapping(
@@ -206,10 +181,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case where a descriptor contains several pairs of nodes, one required
-     * and one optional node of each type.
-     */
     @Test
     void testNonOptionalOfSameTypeAsOptionalMapping() {
         final boolean result = this.testMapping(
@@ -230,9 +201,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case where missed a non-optional child.
-     */
     @Test
     void testMissingNonOptionalChildMapping() {
         final boolean result = this.testMapping(
@@ -251,9 +219,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case where the node list has one extra child.
-     */
     @Test
     void testExtraChildMapping() {
         final boolean result = this.testMapping(
@@ -272,10 +237,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case where the node list has one node
-     * that does not match with descriptors list.
-     */
     @Test
     void testOneNotMatchedNode() {
         final boolean result = this.testMapping(
@@ -296,10 +257,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case when there are two optional nodes of the same type,
-     * accordingly the mapper cannot make the right choice.
-     */
     @Test
     void testSideBySideControversialOptionalNodes() {
         final boolean result = this.testMapping(
@@ -319,10 +276,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case when there are three optional nodes of the same type,
-     * accordingly the mapper cannot make the right choice.
-     */
     @Test
     void testThreeControversialOptionalNodes() {
         final boolean result = this.testMapping(
@@ -344,10 +297,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case when there are several separated optional nodes of the same type,
-     * accordingly the mapper cannot make the right choice.
-     */
     @Test
     void testSeparatedControversialOptionalNodes() {
         final boolean result = this.testMapping(
@@ -370,9 +319,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Testing the case when the node list has more records than the descriptors list.
-     */
     @Test
     void testIncorrectNumberOfChildren() {
         final boolean result = this.testMapping(
@@ -390,10 +336,6 @@ class NodeAllocatorTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Mapper testing when nodes in the list have a type that is inherited
-     * from the type specified in the descriptor.
-     */
     @Test
     void testMappingWithInheritance() {
         final List<ChildDescriptor> descriptors = Arrays.asList(
@@ -420,10 +362,6 @@ class NodeAllocatorTest {
         Assertions.assertEquals(third, mapping[1]);
     }
 
-    /**
-     * Mapper testing when nodes in the list have a type that is inherited
-     * from the type that is inherited from another type specified in the descriptor.
-     */
     @Test
     void testMappingWithTwoLevelInheritance() {
         final List<ChildDescriptor> descriptors = Arrays.asList(
@@ -438,6 +376,16 @@ class NodeAllocatorTest {
         final Node right = ctor.createNode();
         final Node[] mapping = new Node[2];
         final boolean result = mapper.allocate(mapping, Arrays.asList(left, right));
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testEmptyInput() {
+        final boolean result = this.testMapping(
+            Collections.emptyList(),
+            Collections.emptyList(),
+            true
+        );
         Assertions.assertTrue(result);
     }
 
