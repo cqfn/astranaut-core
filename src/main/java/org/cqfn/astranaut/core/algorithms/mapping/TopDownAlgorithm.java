@@ -230,7 +230,8 @@ final class TopDownAlgorithm {
     private Child findFirstUnmappedChild(final Node node) {
         final int count = node.getChildCount();
         Child result = null;
-        for (int index = 0; index < count; index = index + 1) {
+        int index = 0;
+        do {
             final Node child = node.getChild(index);
             if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
                 Node before = null;
@@ -242,9 +243,9 @@ final class TopDownAlgorithm {
                     after = node.getChild(index + 1);
                 }
                 result = new Child(child, before, after);
-                break;
             }
-        }
+            index = index + 1;
+        } while (result == null);
         return result;
     }
 
@@ -275,14 +276,14 @@ final class TopDownAlgorithm {
     private Node findLastUnmappedChild(final Node node) {
         final int count = node.getChildCount();
         Node result = null;
-        for (int index = count - 1; index >= 0; index = index - 1) {
+        int index = count - 1;
+        do {
             final Node child = node.getChild(index);
             if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
                 result = child;
-                break;
             }
-        }
-        assert result != null;
+            index = index - 1;
+        } while (result == null);
         return result;
     }
 
