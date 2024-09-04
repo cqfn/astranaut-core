@@ -92,8 +92,9 @@ public class NodeAllocator {
         final int count = source.size();
         if (capacity == 0 && count == 0) {
             result = true;
+        } else if (destination.length < capacity) {
+            throw new IllegalArgumentException();
         } else if (capacity >= count) {
-            assert destination.length == capacity;
             this.required = new PositionSet(false);
             this.required.init();
             if (count >= this.required.getCount()) {
@@ -128,7 +129,8 @@ public class NodeAllocator {
                 result = this.required.getCount() == 0;
                 break;
             }
-            result = this.bindAllNodes(destination, array) && this.required.getCount() == 0;
+            result = this.bindAllNodes(destination, array);
+            assert !result || this.required.getCount() == 0;
         } while (false);
         return result;
     }

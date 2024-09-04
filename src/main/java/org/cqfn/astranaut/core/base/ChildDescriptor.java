@@ -23,9 +23,12 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This class describes child node within type descriptor.
- *
  * @since 1.0
  */
 public final class ChildDescriptor {
@@ -35,7 +38,8 @@ public final class ChildDescriptor {
     private final String type;
 
     /**
-     * Flag that states that the child is optional.
+     * Flag that states that the child is optional, that is, one that can be in the list
+     *  of child nodes but is not required.
      */
     private final boolean optional;
 
@@ -73,6 +77,15 @@ public final class ChildDescriptor {
         return this.optional;
     }
 
+    /**
+     * Creates constructor that helps build lists of descriptors.
+     * @return Constructor that helps build lists of descriptors
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Constructor create() {
+        return new Constructor();
+    }
+
     @Override
     public String toString() {
         final String result;
@@ -86,5 +99,52 @@ public final class ChildDescriptor {
             result = this.type;
         }
         return result;
+    }
+
+    /**
+     * Constructor that helps build lists of descriptors.
+     * @since 2.0.0
+     */
+    public static final class Constructor {
+        /**
+         * Internal list.
+         */
+        private final List<ChildDescriptor> list;
+
+        /**
+         * Constructor.
+         */
+        private Constructor() {
+            this.list = new ArrayList<>(2);
+        }
+
+        /**
+         * Adds a descriptor for a node that must be in the list of child nodes.
+         * @param type Type name of child node
+         * @return The constructor itself for the continuation of the chain
+         */
+        public Constructor required(final String type) {
+            this.list.add(new ChildDescriptor(type, false));
+            return this;
+        }
+
+        /**
+         * Adds a descriptor for an optional node, that is, one that can be in the list
+         *  of child nodes but is not required.
+         * @param type Type name of child node
+         * @return The constructor itself for the continuation of the chain
+         */
+        public Constructor optional(final String type) {
+            this.list.add(new ChildDescriptor(type, true));
+            return this;
+        }
+
+        /**
+         * Constructs a list of descriptors.
+         * @return Unmodifiable list of descriptors.
+         */
+        public List<ChildDescriptor> build() {
+            return Collections.unmodifiableList(this.list);
+        }
     }
 }

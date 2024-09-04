@@ -71,12 +71,9 @@ class NodeAllocatorTest {
     @Test
     void testIncorrectOrderChildren() {
         final boolean result = this.testMapping(
-            Arrays.asList(
-                new ChildDescriptor("A", false),
-                new ChildDescriptor("B", false),
-                new ChildDescriptor("C", true),
-                new ChildDescriptor("D", true)
-            ),
+            ChildDescriptor.create()
+                .required("A").required("B").optional("C").optional("D")
+                .build(),
             Arrays.asList(
                 new NodeDescriptor("D", 3),
                 new NodeDescriptor("B", 1),
@@ -407,6 +404,19 @@ class NodeAllocatorTest {
             false
         );
         Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testBadDestination() {
+        final List<ChildDescriptor> descriptors = Arrays.asList(
+            new ChildDescriptor("A"),
+            new ChildDescriptor("B")
+        );
+        final NodeAllocator allocator = new NodeAllocator(descriptors);
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> allocator.allocate(new Node[1], Collections.emptyList())
+        );
     }
 
     /**
