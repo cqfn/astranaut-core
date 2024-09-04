@@ -162,14 +162,28 @@ class PatcherTest {
 
     @Test
     void patchWithPatternThatDoesNotMatch() {
-        final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.create("E(B,D)", nodes);
-        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
-        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,K(B,D),Z)");
         final Patcher patcher = new DefaultPatcher();
-        final Tree result = patcher.patch(tree, pattern);
+        Map<String, Set<Node>> nodes = new TreeMap<>();
+        Node prepattern = DraftNode.create("E(B,D)", nodes);
+        DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern first = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        Tree result = patcher.patch(tree, first);
+        Assertions.assertTrue(tree.deepCompare(result));
+        nodes = new TreeMap<>();
+        prepattern = DraftNode.create("K<\"a\">(B,D)", nodes);
+        builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern second = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        result = patcher.patch(tree, second);
+        Assertions.assertTrue(tree.deepCompare(result));
+        nodes = new TreeMap<>();
+        prepattern = DraftNode.create("K(B<\"a\">,D)", nodes);
+        builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern third = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        result = patcher.patch(tree, third);
         Assertions.assertTrue(tree.deepCompare(result));
     }
 }
