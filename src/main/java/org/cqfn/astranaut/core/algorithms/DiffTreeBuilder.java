@@ -180,20 +180,18 @@ public final class DiffTreeBuilder {
         final DiffNode parent) {
         parent.forEachChild(
             child -> {
-                if (child instanceof DiffNode) {
-                    final DiffNode node = (DiffNode) child;
-                    final NodeInfo obj = new NodeInfo(node, parent);
-                    Node proto = node.getPrototype();
-                    while (true) {
-                        map.put(proto, obj);
-                        if (proto instanceof PrototypeBasedNode) {
-                            proto = ((PrototypeBasedNode) proto).getPrototype();
-                        } else {
-                            break;
-                        }
+                final DiffNode node = (DiffNode) child;
+                final NodeInfo obj = new NodeInfo(node, parent);
+                Node proto = node.getPrototype();
+                while (true) {
+                    map.put(proto, obj);
+                    if (proto instanceof PrototypeBasedNode) {
+                        proto = ((PrototypeBasedNode) proto).getPrototype();
+                    } else {
+                        break;
                     }
-                    DiffTreeBuilder.buildNodeInfoMap(map, node);
                 }
+                DiffTreeBuilder.buildNodeInfoMap(map, node);
             }
         );
     }

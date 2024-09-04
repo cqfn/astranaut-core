@@ -191,7 +191,7 @@ class DiffTreeBuilderTest {
     void testComplexCase() {
         final Node before = DraftNode.create("X(A,B,Y(C,D,E,F,J,K))");
         final Node after = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
-        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(new Tree(before));
         final boolean result = builder.build(after, TopDownMapper.INSTANCE);
         Assertions.assertTrue(result);
         final DiffTree diff = builder.getDiffTree();
