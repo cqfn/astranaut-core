@@ -448,11 +448,7 @@ final class TopDownAlgorithm {
          */
         void nodeWasDeleted() {
             this.left = this.left - 1;
-            if (this.delete > 0) {
-                this.delete = this.delete - 1;
-            } else {
-                this.add = this.add + 1;
-            }
+            this.delete = this.delete - 1;
         }
 
         /**
@@ -496,11 +492,6 @@ final class TopDownAlgorithm {
             this.node = node;
             this.before = before;
             this.after = after;
-        }
-
-        @Override
-        public String toString() {
-            return this.node.toString();
         }
     }
 }
