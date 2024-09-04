@@ -420,7 +420,7 @@ final class TopDownAlgorithm {
          * @return Checking result, {@code true} if we can only add nodes
          */
         boolean onlyActionIsToInsertNodes() {
-            return this.left == 0 && this.add == this.right;
+            return this.left == 0;
         }
 
         /**
@@ -428,14 +428,13 @@ final class TopDownAlgorithm {
          * @return Checking result, {@code true} if we can only delete nodes
          */
         boolean onlyActionIsToDeleteNodes() {
-            return this.right == 0 && this.delete == this.left;
+            return this.right == 0;
         }
 
         /**
          * Notes that some child node of the right node has been recognized as an inserted node.
          */
         void nodeWasInserted() {
-            assert this.right > 0;
             this.right = this.right - 1;
             if (this.add > 0) {
                 this.add = this.add - 1;
@@ -448,7 +447,6 @@ final class TopDownAlgorithm {
          * Notes that some child node of the right node has been recognized as a deleted node.
          */
         void nodeWasDeleted() {
-            assert this.left > 0;
             this.left = this.left - 1;
             if (this.delete > 0) {
                 this.delete = this.delete - 1;
@@ -464,8 +462,6 @@ final class TopDownAlgorithm {
         void removeOnePair() {
             this.left = this.left - 1;
             this.right = this.right - 1;
-            assert this.right >= this.add;
-            assert this.left >= this.delete;
         }
     }
 
