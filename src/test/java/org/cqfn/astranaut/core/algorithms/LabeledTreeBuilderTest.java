@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.algorithms;
 import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.PrototypeBasedNode;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
@@ -51,5 +52,8 @@ class LabeledTreeBuilderTest {
             .findFirst(node -> node.getTypeName().equals(target.getTypeName()));
         Assertions.assertTrue(colored.isPresent());
         Assertions.assertEquals(colored.get().getProperties().get(name), value);
+        final Node root = labeled.getRoot();
+        Assertions.assertTrue(root instanceof PrototypeBasedNode);
+        Assertions.assertSame(((PrototypeBasedNode) root).getPrototype(), original);
     }
 }

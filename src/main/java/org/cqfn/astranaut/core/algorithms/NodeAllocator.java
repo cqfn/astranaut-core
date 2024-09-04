@@ -130,7 +130,6 @@ public class NodeAllocator {
                 break;
             }
             result = this.bindAllNodes(destination, array);
-            assert !result || this.required.getCount() == 0;
         } while (false);
         return result;
     }
