@@ -29,13 +29,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link AbsoluteHash} class.
- * @since 1.0
+ * Test for {@link SimpleHash} class.
+ * @since 2.0.0
  */
-class AbsoluteHashTest {
+class SimpleHashTest {
     @Test
     void testingEqualityFeature() {
-        final Hash hash = new AbsoluteHash();
+        final Hash hash = new SimpleHash();
         final DiffTree first = LittleTrees.createTreeWithDeleteAction();
         final DiffTree second = LittleTrees.createTreeWithDeleteAction();
         int expected = hash.calculate(first);

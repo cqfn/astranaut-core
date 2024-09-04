@@ -63,7 +63,7 @@ class PatcherTest {
                 )
             )
         );
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree result = patcher.patch(source, pattern);
         Assertions.assertTrue(source.deepCompare(result));
     }
@@ -82,7 +82,7 @@ class PatcherTest {
         );
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B),Z)");
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree result = patcher.patch(tree, pattern);
         final Tree expected = Tree.createDraft("X(Y,A(B,C),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
@@ -96,7 +96,7 @@ class PatcherTest {
         builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree result = patcher.patch(tree, pattern);
         final Tree expected = Tree.createDraft("X(Y,A(C,D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
@@ -110,7 +110,7 @@ class PatcherTest {
         builder.deleteNode(nodes.get("B").iterator().next());
         final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree result = patcher.patch(tree, pattern);
         final Tree expected = Tree.createDraft("X(Y,A(D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
@@ -137,7 +137,7 @@ class PatcherTest {
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
         final Pattern pattern = LittleTrees.createPatternWithHole();
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree patched = patcher.patch(new Tree(stmt), pattern);
         ctor = new Variable.Constructor();
         ctor.setData("a");
@@ -163,7 +163,7 @@ class PatcherTest {
     @Test
     void patchWithPatternThatDoesNotMatch() {
         final Tree tree = Tree.createDraft("X(Y,K(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
         Map<String, Set<Node>> nodes = new TreeMap<>();
         Node prepattern = DraftNode.create("E(B,D)", nodes);
         DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);

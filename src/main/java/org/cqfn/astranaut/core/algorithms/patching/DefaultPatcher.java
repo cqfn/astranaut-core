@@ -37,6 +37,17 @@ import org.cqfn.astranaut.core.base.Tree;
  * @since 1.1.5
  */
 public final class DefaultPatcher implements Patcher {
+    /**
+     * The instance.
+     */
+    public static final Patcher INSTANCE = new DefaultPatcher();
+
+    /**
+     * Private constructor.
+     */
+    private DefaultPatcher() {
+    }
+
     @Override
     public Tree patch(final Tree source, final Pattern pattern) {
         final Matcher matcher = new Matcher(source);
