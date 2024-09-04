@@ -318,13 +318,19 @@ class AdapterTest {
             DraftNode.create(
                 AdapterTest.STR_ADDITION,
                 "",
-                DraftNode.create(AdapterTest.STR_NUM_LITERAL, "3"),
-                DraftNode.create(AdapterTest.STR_NUM_LITERAL, "2")
+                DraftNode.create(AdapterTest.STR_INT_LITERAL, "3"),
+                DraftNode.create(AdapterTest.STR_INT_LITERAL, "2")
             ),
-            DraftNode.create(AdapterTest.STR_NUM_LITERAL, "1")
+            DraftNode.create(AdapterTest.STR_INT_LITERAL, "1")
         );
         final int count = adapter.calculateConversions(original);
         Assertions.assertEquals(2, count);
+        final Node first = adapter.partialConvert(0, original);
+        Assertions.assertEquals(AdapterTest.STR_ADDITION, first.getTypeName());
+        Assertions.assertEquals(AdapterTest.STR_SUBTRACTION, first.getChild(0).getTypeName());
+        final Node second = adapter.partialConvert(1, original);
+        Assertions.assertEquals(AdapterTest.STR_SUBTRACTION, second.getTypeName());
+        Assertions.assertEquals(AdapterTest.STR_ADDITION, second.getChild(0).getTypeName());
     }
 
     /**
