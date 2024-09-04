@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.base;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -132,6 +133,22 @@ public final class DraftNode extends NodeAndType {
     public static Node create(final String description, final Map<String, Set<Node>> nodes) {
         final CharacterIterator iterator = new StringCharacterIterator(description);
         return DraftNode.create(iterator, nodes);
+    }
+
+    /**
+     * Creates a node from the type name, data, and existing child nodes..
+     * @param type The type name
+     * @param data The data (in a textual format)
+     * @param children The list of children
+     * @return A new node
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    public static Node create(final String type, final String data, final Node... children) {
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        ctor.setName(type);
+        ctor.setData(data);
+        ctor.setChildrenList(Arrays.asList(children));
+        return ctor.createNode();
     }
 
     /**

@@ -24,8 +24,10 @@
 package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
@@ -37,7 +39,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link Adapter} class.
- *
  * @since 1.0
  */
 class AdapterTest {
@@ -55,6 +56,11 @@ class AdapterTest {
      * The 'Addition' string constant.
      */
     private static final String STR_ADDITION = "Addition";
+
+    /**
+     * The 'Subtraction' string constant.
+     */
+    private static final String STR_SUBTRACTION = "Subtraction";
 
     /**
      * The 'singleExpression' string constant.
@@ -81,34 +87,31 @@ class AdapterTest {
      */
     private static final String STR_NUM_LITERAL = "numericLiteral";
 
-    /**
-     * Testing tree converter.
-     */
     @Test
     void testTreeConverter() {
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_SINGLE_EXPR,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_IDENTIFIER,
                     "",
-                    this.createNode(AdapterTest.STR_LITERAL, "x")
+                    DraftNode.create(AdapterTest.STR_LITERAL, "x")
                 )
             ),
-            this.createNode(AdapterTest.STR_LITERAL, "+"),
-            this.createNode(
+            DraftNode.create(AdapterTest.STR_LITERAL, "+"),
+            DraftNode.create(
                 AdapterTest.STR_SINGLE_EXPR,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_LITERAL,
                     "",
-                    this.createNode(
+                    DraftNode.create(
                         AdapterTest.STR_NUM_LITERAL,
                         "",
-                        this.createNode(AdapterTest.STR_LITERAL, "0")
+                        DraftNode.create(AdapterTest.STR_LITERAL, "0")
                     )
                 )
             )
@@ -135,55 +138,52 @@ class AdapterTest {
         Assertions.assertEquals(converted.getChild(1).getData(), "0");
     }
 
-    /**
-     * Testing tree converter (complex case).
-     */
     @Test
     void testTreeConverterComplexCase() {
-        final Node subtree = this.createNode(
+        final Node subtree = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_SINGLE_EXPR,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_LITERAL,
                     "",
-                    this.createNode(
+                    DraftNode.create(
                         AdapterTest.STR_NUM_LITERAL,
                         "",
-                        this.createNode(AdapterTest.STR_LITERAL, "2")
+                        DraftNode.create(AdapterTest.STR_LITERAL, "2")
                     )
                 )
             ),
-            this.createNode(AdapterTest.STR_LITERAL, "+"),
-            this.createNode(
+            DraftNode.create(AdapterTest.STR_LITERAL, "+"),
+            DraftNode.create(
                 AdapterTest.STR_SINGLE_EXPR,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_LITERAL,
                     "",
-                    this.createNode(
+                    DraftNode.create(
                         AdapterTest.STR_NUM_LITERAL,
                         "",
-                        this.createNode(AdapterTest.STR_LITERAL, "3")
+                        DraftNode.create(AdapterTest.STR_LITERAL, "3")
                     )
                 )
             )
         );
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_SINGLE_EXPR,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_IDENTIFIER,
                     "",
-                    this.createNode(AdapterTest.STR_LITERAL, "x")
+                    DraftNode.create(AdapterTest.STR_LITERAL, "x")
                 )
             ),
-            this.createNode(AdapterTest.STR_LITERAL, "+"),
+            DraftNode.create(AdapterTest.STR_LITERAL, "+"),
             subtree
         );
         final List<Converter> converters = Arrays.asList(
@@ -201,20 +201,17 @@ class AdapterTest {
         Assertions.assertEquals(converted.getChild(1).getTypeName(), AdapterTest.STR_ADDITION);
     }
 
-    /**
-     * Test covering the variable converter.
-     */
     @Test
-    void variableConverterTest() {
+    void testVariableConverter() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new VariableConverter();
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_IDENTIFIER,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_LITERAL,
                     "x"
                 )
@@ -225,16 +222,16 @@ class AdapterTest {
         Assertions.assertEquals(converted.getChildCount(), 0);
         Assertions.assertEquals(converted.getData(), "x");
         Assertions.assertTrue(converted.belongsToGroup(AdapterTest.STR_EXPRESSION));
-        final Node bad = this.createNode(
+        final Node bad = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_LITERAL,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_NUM_LITERAL,
                     "",
-                    this.createNode(AdapterTest.STR_LITERAL, "0")
+                    DraftNode.create(AdapterTest.STR_LITERAL, "0")
                 )
             )
         );
@@ -242,20 +239,17 @@ class AdapterTest {
         Assertions.assertEquals(empty, DummyNode.INSTANCE);
     }
 
-    /**
-     * Test covering the variable converter created as an example for generation.
-     */
     @Test
-    void exampleVariableConverterTest() {
+    void testAnotherVariableConversion() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = Rule0.INSTANCE;
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_IDENTIFIER,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_LITERAL,
                     "Z"
                 )
@@ -268,23 +262,20 @@ class AdapterTest {
         Assertions.assertTrue(converted.belongsToGroup(AdapterTest.STR_EXPRESSION));
     }
 
-    /**
-     * Test covering the numeric literal converter.
-     */
     @Test
-    void numericConverterTest() {
+    void testNumericConverter() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new NumericConverter();
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
-            this.createNode(
+            DraftNode.create(
                 AdapterTest.STR_LITERAL,
                 "",
-                this.createNode(
+                DraftNode.create(
                     AdapterTest.STR_NUM_LITERAL,
                     "",
-                    this.createNode(AdapterTest.STR_LITERAL, "0")
+                    DraftNode.create(AdapterTest.STR_LITERAL, "0")
                 )
             )
         );
@@ -295,22 +286,19 @@ class AdapterTest {
         Assertions.assertTrue(converted.belongsToGroup(AdapterTest.STR_EXPRESSION));
     }
 
-    /**
-     * Test covering the addition operators converter.
-     */
     @Test
-    void additionConverterTest() {
+    void testAdditionConverter() {
         final Factory factory = GreenFactory.INSTANCE;
         final Converter converter = new AdditionConverter();
         final Builder left = factory.createBuilder(AdapterTest.STR_VARIABLE);
         left.setData("x");
         final Builder right = factory.createBuilder(AdapterTest.STR_INT_LITERAL);
         right.setData("0");
-        final Node original = this.createNode(
+        final Node original = DraftNode.create(
             AdapterTest.STR_SINGLE_EXPR,
             "",
             left.createNode(),
-            this.createNode(AdapterTest.STR_LITERAL, "+"),
+            DraftNode.create(AdapterTest.STR_LITERAL, "+"),
             right.createNode()
         );
         final Node converted = converter.convert(original, factory);
@@ -319,19 +307,24 @@ class AdapterTest {
         Assertions.assertTrue(converted.belongsToGroup(AdapterTest.STR_EXPRESSION));
     }
 
-    /**
-     * Creates node for test purposes.
-     * @param type The type name
-     * @param data The data (in a textual format)
-     * @param children The list of children
-     * @return A new node
-     */
-    private Node createNode(final String type, final String data, final Node... children) {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName(type);
-        ctor.setData(data);
-        ctor.setChildrenList(Arrays.asList(children));
-        return ctor.createNode();
+    @Test
+    void testPartialConversion() {
+        final Factory factory = new DefaultFactory(Collections.emptyMap());
+        final Converter converter = new AdditionToSubtractionConverter();
+        final Adapter adapter = new Adapter(Collections.singletonList(converter), factory);
+        final Node original = DraftNode.create(
+            AdapterTest.STR_ADDITION,
+            "",
+            DraftNode.create(
+                AdapterTest.STR_ADDITION,
+                "",
+                DraftNode.create(AdapterTest.STR_NUM_LITERAL, "3"),
+                DraftNode.create(AdapterTest.STR_NUM_LITERAL, "2")
+            ),
+            DraftNode.create(AdapterTest.STR_NUM_LITERAL, "1")
+        );
+        final int count = adapter.calculateConversions(original);
+        Assertions.assertEquals(2, count);
     }
 
     /**
@@ -469,6 +462,23 @@ class AdapterTest {
                     builder.setChildrenList(Arrays.asList(first, third));
                     result = builder.createNode();
                 }
+            }
+            return result;
+        }
+    }
+
+    /**
+     * Converter that performs addition operation to subtraction operation.
+     * @since 2.0.0
+     */
+    private static class AdditionToSubtractionConverter implements Converter {
+        @Override
+        public Node convert(final Node root, final Factory factory) {
+            Node result = DummyNode.INSTANCE;
+            if (root.belongsToGroup(AdapterTest.STR_ADDITION) && root.getChildCount() == 2) {
+                final Builder builder = factory.createBuilder(AdapterTest.STR_SUBTRACTION);
+                builder.setChildrenList(root.getChildrenList());
+                result = builder.createNode();
             }
             return result;
         }

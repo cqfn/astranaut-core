@@ -32,7 +32,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Tree converter built on a set of rules described in DSL.
- *
  * @since 1.0
  */
 public class Adapter {
@@ -62,10 +61,10 @@ public class Adapter {
      * @return A converted tree or empty tree if the conversion is impossible
      */
     public Node convert(final Node root) {
-        final MutableNode convertible = new MutableNode(root);
-        Node result = convertible;
+        final MutableNode mutable = new MutableNode(root);
+        Node result = mutable;
         final List<MutableNode> nodes = new ArrayList<>(0);
-        NodeListBuilder.buildNodeList(convertible, nodes);
+        NodeListBuilder.buildNodeList(mutable, nodes);
         for (final MutableNode original : nodes) {
             boolean converted = false;
             for (final Converter converter : this.converters) {
@@ -92,10 +91,10 @@ public class Adapter {
      */
     public Node partialConvert(final int variant, final Node root) {
         int conversions = 0;
-        final MutableNode convertible = new MutableNode(root);
-        Node result = convertible;
+        final MutableNode mutable = new MutableNode(root);
+        Node result = mutable;
         final List<MutableNode> nodes = new ArrayList<>(0);
-        NodeListBuilder.buildNodeList(convertible, nodes);
+        NodeListBuilder.buildNodeList(mutable, nodes);
         for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
@@ -118,9 +117,9 @@ public class Adapter {
      */
     public int calculateConversions(final Node root) {
         int conversions = 0;
-        final MutableNode convertible = new MutableNode(root);
+        final MutableNode mutable = new MutableNode(root);
         final List<MutableNode> nodes = new ArrayList<>(0);
-        NodeListBuilder.buildNodeList(convertible, nodes);
+        NodeListBuilder.buildNodeList(mutable, nodes);
         for (final MutableNode original : nodes) {
             final Converter converter = this.converters.get(0);
             final Node transformed = converter.convert(original, this.factory);
@@ -154,7 +153,6 @@ public class Adapter {
      * Creates a list from nodes.
      * The list is sorted in descending order of nodes depth in the tree.
      * Leaf nodes are at the beginning of the list, and the last element is the root.
-     *
      * @since 0.2.2
      */
     private static class NodeListBuilder {
