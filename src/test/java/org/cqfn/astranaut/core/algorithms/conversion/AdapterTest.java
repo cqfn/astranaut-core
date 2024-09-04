@@ -323,7 +323,7 @@ class AdapterTest {
             ),
             DraftNode.create(AdapterTest.STR_INT_LITERAL, "1")
         );
-        final int count = adapter.calculateConversions(original);
+        int count = adapter.calculateConversions(original);
         Assertions.assertEquals(2, count);
         final Node first = adapter.partialConvert(0, original);
         Assertions.assertEquals(AdapterTest.STR_ADDITION, first.getTypeName());
@@ -331,6 +331,11 @@ class AdapterTest {
         final Node second = adapter.partialConvert(1, original);
         Assertions.assertEquals(AdapterTest.STR_SUBTRACTION, second.getTypeName());
         Assertions.assertEquals(AdapterTest.STR_ADDITION, second.getChild(0).getTypeName());
+        final Node bad = DraftNode.create(AdapterTest.STR_INT_LITERAL, "0");
+        count = adapter.calculateConversions(bad);
+        Assertions.assertEquals(0, count);
+        final Node third = adapter.partialConvert(0, bad);
+        Assertions.assertEquals(AdapterTest.STR_INT_LITERAL, third.getTypeName());
     }
 
     /**
