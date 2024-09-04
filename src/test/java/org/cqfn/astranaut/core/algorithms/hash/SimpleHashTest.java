@@ -41,6 +41,8 @@ class SimpleHashTest {
         int expected = hash.calculate(first);
         int actual = hash.calculate(second);
         Assertions.assertEquals(expected, actual);
+        actual = hash.calculate(second);
+        Assertions.assertEquals(expected, actual);
         expected = hash.calculate(first.getRoot().getChild(0));
         actual = hash.calculate(second.getRoot().getChild(0));
         Assertions.assertEquals(expected, actual);
