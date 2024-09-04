@@ -121,7 +121,6 @@ final class TopDownAlgorithm {
      * @param right Related node to the left node
      */
     private void mapSubtreesWithTheSameHash(final Node left, final Node right) {
-        assert this.hashes.calculate(left) == this.hashes.calculate(right);
         this.ltr.put(left, right);
         this.rtl.put(right, left);
         final int count = left.getChildCount();
@@ -139,7 +138,6 @@ final class TopDownAlgorithm {
      */
     private void mapSubtreesWithDifferentHashes(final Node left, final Node right) {
         final Unprocessed unprocessed = new Unprocessed(left, right);
-        assert unprocessed.hasNodes();
         do {
             if (unprocessed.onlyActionIsToInsertNodes()) {
                 this.insertAllNotYetMappedNodes(left, right);
@@ -247,7 +245,6 @@ final class TopDownAlgorithm {
                 break;
             }
         }
-        assert result != null;
         return result;
     }
 
