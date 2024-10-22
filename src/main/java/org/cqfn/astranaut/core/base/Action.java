@@ -25,9 +25,26 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * A node that represents an action that can be performed on another node.
- * This type of nodes is necessary for the construction of difference trees.
- *
+ *  This type of nodes is necessary for the construction of difference trees.
  * @since 1.1.0
  */
+@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
 public interface Action extends DiffTreeItem, PatternItem {
+    /**
+     * Converts a node reference to an action reference if the node is an action
+     *  or the node prototype is an action.
+     * @param node Node
+     * @return Action or {@code null} if the node is not an action
+     */
+    static Action toAction(final Node node) {
+        final Action action;
+        if (node instanceof Action) {
+            action = (Action) node;
+        } else if (node instanceof PrototypeBasedNode) {
+            action = Action.toAction(((PrototypeBasedNode) node).getPrototype());
+        } else {
+            action = null;
+        }
+        return action;
+    }
 }

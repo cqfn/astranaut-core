@@ -105,7 +105,7 @@ class Matcher {
     @SuppressWarnings("PMD.UnusedFormalParameter")
     private boolean checkNode(final Node node, final Node parent, final Node pattern) {
         final Node sample;
-        final Action action = Matcher.nodeToAction(pattern);
+        final Action action = Action.toAction(pattern);
         if (action instanceof Replace || action instanceof Delete) {
             sample = action.getBefore();
         } else {
@@ -142,7 +142,7 @@ class Matcher {
             Node current = null;
             while (result && offset < right && iterator.hasNext()) {
                 final Node child = iterator.next();
-                final Action action = Matcher.nodeToAction(child);
+                final Action action = Action.toAction(child);
                 if (action instanceof Insert) {
                     this.actions.insertNodeAfter(action.getAfter(), node, current);
                 } else if (index + offset >= left) {
@@ -159,23 +159,5 @@ class Matcher {
             }
         }
         return result;
-    }
-
-    /**
-     * Converts a node reference to an action reference if the node is an action
-     *  or the node prototype is an action.
-     * @param node Node
-     * @return Action or {@code null} if the node is not an action
-     */
-    private static Action nodeToAction(final Node node) {
-        final Action action;
-        if (node instanceof Action) {
-            action = (Action) node;
-        } else if (node instanceof PrototypeBasedNode) {
-            action = Matcher.nodeToAction(((PrototypeBasedNode) node).getPrototype());
-        } else {
-            action = null;
-        }
-        return action;
     }
 }

@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core;
 
 /**
  * This class provides static information about the library, such as the version.
- *
  * @since 1.0.6
  */
 public final class Info {
