@@ -36,7 +36,6 @@ import org.cqfn.astranaut.core.base.Insert;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Pattern;
 import org.cqfn.astranaut.core.base.PatternNode;
-import org.cqfn.astranaut.core.base.PrototypeBasedNode;
 import org.cqfn.astranaut.core.base.Replace;
 import org.cqfn.astranaut.core.base.Tree;
 
