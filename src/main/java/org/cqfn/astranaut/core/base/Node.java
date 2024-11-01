@@ -100,6 +100,16 @@ public interface Node {
     }
 
     /**
+     * Calculates the local hash of the node.
+     *  Nodes with the same type and the same data (but possibly different children)
+     *  will have the same local hash.
+     * @return Local hash of the node
+     */
+    default int getLocalHash() {
+        return this.getTypeName().hashCode() * 31 + this.getData().hashCode();
+    }
+
+    /**
      * Checks whether the node type belongs to group.
      * @param type The type name
      * @return Checking result, {@code true} if the type belongs to the group

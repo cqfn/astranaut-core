@@ -28,13 +28,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.cqfn.astranaut.core.algorithms.hash.SimpleHash;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A class which finds and returns identical nodes in a tree.
- * The nodes are identical if their data is not empty, and their {@link SimpleHash} equals.
- *
+ *  Nodes are listed if they have data and their hashes match.
  * @since 1.1.5
  */
 public class IdenticalNodeFinder {
@@ -44,18 +42,12 @@ public class IdenticalNodeFinder {
     private final Node root;
 
     /**
-     * The {@link SimpleHash} storage for the tree nodes.
-     */
-    private final SimpleHash hashes;
-
-    /**
      * Constructor.
      *
      * @param root The root of the tree to search in
      */
     public IdenticalNodeFinder(final Node root) {
         this.root = root;
-        this.hashes = new SimpleHash();
     }
 
     /**
@@ -73,7 +65,7 @@ public class IdenticalNodeFinder {
     }
 
     /**
-     * Calculates {@link SimpleHash} recursively for all nodes with non-empty data and
+     * Calculates hash recursively for all nodes with non-empty data and
      * adds entries to the resulting map.
      *
      * @param node The current node to process
@@ -82,7 +74,7 @@ public class IdenticalNodeFinder {
     private void search(final Node node, final Map<Integer, Set<Node>> result) {
         if (!node.getData().isEmpty()) {
             result.computeIfAbsent(
-                this.hashes.calculate(node),
+                node.getLocalHash(),
                 s -> new HashSet<>()
             ).add(node);
         }
