@@ -171,6 +171,10 @@ final class TopDownAlgorithm {
         final Child second = this.findFirstUnmappedChild(right);
         boolean result;
         do {
+            result = this.matchTwoIdenticalNodesOrRightNeighbors(left, first, second, unprocessed);
+            if (result) {
+                break;
+            }
             result = this.execute(first.node, second.node);
             if (result) {
                 unprocessed.removeOnePair();
@@ -198,6 +202,42 @@ final class TopDownAlgorithm {
                 break;
             }
         } while (false);
+        return result;
+    }
+
+    /**
+     * Checks whether a node can be related to another node or a node to the right neighbor
+     *  of a node because they are identical.
+     * @param first First node with neighbors
+     * @param second Second node with neighbors
+     * @param unprocessed Number of unprocessed nodes
+     * @return Mapping result, {@code true} if nodes were mapped
+     */
+    private boolean matchTwoIdenticalNodesOrRightNeighbors(final Node parent, final Child first, final Child second,
+        final Unprocessed unprocessed) {
+        final boolean result;
+        if (first.getHash() == second.getHash()) {
+            this.mapSubtreesWithTheSameHash(first.node, second.node);
+            unprocessed.removeOnePair();
+            result = true;
+        } else if (second.after != null && first.getHash() == second.getHashAfter()) {
+            this.mapSubtreesWithTheSameHash(first.node, second.after);
+            unprocessed.removeOnePair();
+            final Insertion insertion = new Insertion(second.node, parent, first.before);
+            this.inserted.add(insertion);
+            this.rtl.put(second.node, null);
+            unprocessed.nodeWasInserted();
+            result = true;
+        } else if (first.after != null && first.getHashAfter() == second.getHash()) {
+            this.mapSubtreesWithTheSameHash(first.after, second.node);
+            unprocessed.removeOnePair();
+            this.deleted.add(first.node);
+            this.ltr.put(first.node, null);
+            unprocessed.nodeWasDeleted();
+            result = true;
+        } else {
+            result = false;
+        }
         return result;
     }
 
@@ -467,7 +507,7 @@ final class TopDownAlgorithm {
      *
      * @since 1.1.0
      */
-    private static class Child {
+    private class Child {
         /**
          * Child node itself.
          */
@@ -494,6 +534,29 @@ final class TopDownAlgorithm {
             this.before = before;
             this.after = after;
         }
+
+        /**
+         * Calculates hash of child node.
+         * @return Absolute hash
+         */
+        int getHash() {
+            return TopDownAlgorithm.this.hashes.calculate(this.node);
+        }
+
+        /**
+         * Calculates hash of previous child node.
+         * @return Absolute hash
+         */
+        int getHashBefore() {
+            return TopDownAlgorithm.this.hashes.calculate(this.before);
+        }
+
+        /**
+         * Calculates hash of next child node.
+         * @return Absolute hash
+         */
+        int getHashAfter() {
+            return TopDownAlgorithm.this.hashes.calculate(this.after);
+        }
     }
 }
-

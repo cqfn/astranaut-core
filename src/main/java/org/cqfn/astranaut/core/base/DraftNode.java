@@ -110,8 +110,8 @@ public final class DraftNode extends NodeAndType {
     /**
      * Creates a tree from draft nodes based on description.
      *  Description format: A(B&lt;"data"&gt;,C(...),...) where 'A' is the type name
-     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
-     *  separated by commas.
+     *  (it consists only of letters and digits, first symbol is letter only) followed by
+     *  child nodes (in the same format) in parentheses separated by commas.
      * @param description Description
      * @return Root node of the tree created by description
      */
@@ -123,8 +123,8 @@ public final class DraftNode extends NodeAndType {
     /**
      * Creates a tree from draft nodes based on description.
      *  Description format: A(B&lt;"data"&gt;,C(...),...) where 'A' is the type name
-     *  (it consists only of letters) followed by child nodes (in the same format) in parentheses
-     *  separated by commas.
+     *  (it consists only of letters and digits, first symbol is letter only) followed by
+     *  child nodes (in the same format) in parentheses separated by commas.
      * @param description Description
      * @param nodes Collection in which to place the nodes to be created, sorted by type name
      * @return Root node of the tree created by description
@@ -160,10 +160,14 @@ public final class DraftNode extends NodeAndType {
     private static Node create(
         final CharacterIterator iterator,
         final Map<String, Set<Node>> nodes) {
-        char symbol = iterator.current();
         final Node result;
         final StringBuilder name = new StringBuilder();
-        while (symbol >= 'A' && symbol <= 'Z' || symbol >= 'a' && symbol <= 'z') {
+        char symbol = iterator.current();
+        if (Character.isLetter(symbol)) {
+            name.append(symbol);
+            symbol = iterator.next();
+        }
+        while (Character.isLetterOrDigit(symbol)) {
             name.append(symbol);
             symbol = iterator.next();
         }
@@ -197,9 +201,10 @@ public final class DraftNode extends NodeAndType {
     private static String parseData(final CharacterIterator iterator) {
         final StringBuilder data = new StringBuilder();
         char symbol = iterator.next();
-        if (symbol == '\"') {
+        if (symbol == '\"' || symbol == '\'') {
+            final char quote = symbol;
             symbol = iterator.next();
-            while (symbol != '\"') {
+            while (symbol != quote) {
                 data.append(symbol);
                 symbol = iterator.next();
             }

@@ -220,4 +220,23 @@ class TopDownMapperTest {
             );
         }
     }
+
+    @Test
+    void testAddOneAndReplaceOneInDepth() {
+        final Node first = DraftNode.create(
+            "A(B1,B2,B3,B4(C1,C2(X(R),D1,D2(E1,E2<'aaa'>,E3)),C3),B5)"
+        );
+        final Node second = DraftNode.create(
+            "A(B1,B2,B3,B4(C1,C2(X(Q1,Q2,Q3),X(R),D1,D2(E1,E2<'bbb'>,E3)),C3),B5)"
+        );
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertEquals("X", inserted.iterator().next().getNode().getTypeName());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(0, deleted.size());
+    }
 }
