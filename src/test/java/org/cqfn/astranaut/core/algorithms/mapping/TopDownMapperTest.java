@@ -249,4 +249,36 @@ class TopDownMapperTest {
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(1, replaced.size());
     }
+
+    @Test
+    void testInsertedFirstWhileSecondHasActions() {
+        final Node first = DraftNode.create("X(A(X),D,E)");
+        final Node second = DraftNode.create("X(B,A(Y),D,E)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> entry = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("X", entry.getKey().getTypeName());
+        Assertions.assertEquals("Y", entry.getValue().getTypeName());
+    }
+
+    @Test
+    void testDeletedFirstWhileSecondHasActions() {
+        final Node first = DraftNode.create("X(B,A(X),D,E)");
+        final Node second = DraftNode.create("X(A(Y),D,E)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        Assertions.assertEquals("B", deleted.iterator().next().getTypeName());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> entry = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("X", entry.getKey().getTypeName());
+        Assertions.assertEquals("Y", entry.getValue().getTypeName());
+    }
 }
