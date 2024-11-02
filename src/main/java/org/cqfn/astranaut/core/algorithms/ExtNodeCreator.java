@@ -30,10 +30,10 @@ import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Type;
 
 /**
- * Builds extended nodes ({@link ExtNode}) from “regular” nodes ({@link Node}).
+ * Creates extended nodes ({@link ExtNode}) from 'regular' nodes ({@link Node}).
  * @since 2.0.0
  */
-public final class ExtNodeBuilder {
+public final class ExtNodeCreator {
     /**
      * Set of node hashes.
      */
@@ -42,7 +42,7 @@ public final class ExtNodeBuilder {
     /**
      * Constructor.
      */
-    public ExtNodeBuilder() {
+    public ExtNodeCreator() {
         this.hashes = new AbsoluteHash();
     }
 

@@ -94,7 +94,7 @@ public interface ExtNode extends PrototypeBasedNode {
      */
     default Node getRightPrototype() {
         final Node node;
-        final ExtNode right = this.getLeft();
+        final ExtNode right = this.getRight();
         if (right == null) {
             node = null;
         } else {

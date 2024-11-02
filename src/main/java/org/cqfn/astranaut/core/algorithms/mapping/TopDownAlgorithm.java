@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.cqfn.astranaut.core.algorithms.ExtNodeBuilder;
+import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
 import org.cqfn.astranaut.core.base.ExtNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -84,7 +84,7 @@ final class TopDownAlgorithm {
      * @param right Root node of the 'right' tree
      */
     void execute(final Node left, final Node right) {
-        final ExtNodeBuilder builder = new ExtNodeBuilder();
+        final ExtNodeCreator builder = new ExtNodeCreator();
         final ExtNode first = builder.create(left);
         final ExtNode second = builder.create(right);
         final boolean result = this.execute(builder.create(left), builder.create(right));
