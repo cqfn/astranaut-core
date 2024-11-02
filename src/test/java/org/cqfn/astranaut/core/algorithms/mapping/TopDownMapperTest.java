@@ -239,4 +239,14 @@ class TopDownMapperTest {
         final Set<Node> deleted = mapping.getDeleted();
         Assertions.assertEquals(0, deleted.size());
     }
+
+    @Test
+    void testsTwoCompletelyDifferentNodes() {
+        final Node first = DraftNode.create("A(B,C)");
+        final Node second = DraftNode.create("D(E,F)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+    }
 }

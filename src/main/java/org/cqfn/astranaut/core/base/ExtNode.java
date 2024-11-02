@@ -40,6 +40,22 @@ public interface ExtNode extends PrototypeBasedNode {
     ExtNode getParent();
 
     /**
+     * Returns the prototype of the parent node, that is, a reference to the original
+     *  non-extended node that contains the prototype of this node in the list of its child nodes.
+     * @return The prototype node of the parent node, or {@code null} if this node is a root node
+     */
+    default Node getParentPrototype() {
+        final Node node;
+        final ExtNode parent = this.getParent();
+        if (parent == null) {
+            node = null;
+        } else {
+            node = parent.getPrototype();
+        }
+        return node;
+    }
+
+    /**
      * Returns the left neighbor node of this node, which is the node whose index in the parent
      *  node is one less than the index of this node.
      * @return The left neighbor node, or {@code null} if this node is first (has no left neighbor)
@@ -47,11 +63,45 @@ public interface ExtNode extends PrototypeBasedNode {
     ExtNode getLeft();
 
     /**
+     * Returns the prototype of the left node, that is, the original non-extended node
+     *  that is to the left of the prototype of this node.
+     * @return The original left neighbor node, or {@code null} if this node is first
+     *  (has no left neighbor)
+     */
+    default Node getLeftPrototype() {
+        final Node node;
+        final ExtNode left = this.getLeft();
+        if (left == null) {
+            node = null;
+        } else {
+            node = left.getPrototype();
+        }
+        return node;
+    }
+
+    /**
      * Returns the right neighbor node of this node, which is the node whose index in the parent
      *  node is one greater than the index of this node.
      * @return The right neighbor node, or {@code null} if this node is last (has no right neighbor)
      */
     ExtNode getRight();
+
+    /**
+     * Returns the prototype of the right node, that is, the original non-extended node
+     *  that is to the right of the prototype of this node.
+     * @return The original right neighbor node, or {@code null} if this node is last
+     *  (has no right neighbor)
+     */
+    default Node getRightPrototype() {
+        final Node node;
+        final ExtNode right = this.getLeft();
+        if (right == null) {
+            node = null;
+        } else {
+            node = right.getPrototype();
+        }
+        return node;
+    }
 
     /**
      * Returns a child node at its index as an extended node.
