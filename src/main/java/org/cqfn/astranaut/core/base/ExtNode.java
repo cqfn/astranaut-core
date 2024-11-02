@@ -54,6 +54,13 @@ public interface ExtNode extends PrototypeBasedNode {
     ExtNode getRight();
 
     /**
+     * Returns a child node at its index as an extended node.
+     * @param index Node index
+     * @return Child node wrapped in the interface of the extended node.
+     */
+    ExtNode getExtChild(int index);
+
+    /**
      * Computes and returns the absolute hash of this node.
      *  The absolute hash is calculated based on the data of this node as well as all its
      *  descendant nodes. If two nodes have identical absolute hashes, their entire subtrees

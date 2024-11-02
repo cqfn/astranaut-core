@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.algorithms.LabeledTreeBuilder;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.junit.jupiter.api.Assertions;
@@ -302,5 +303,17 @@ class BaseInterfaceTest {
         Assertions.assertTrue(third.isValid());
         final Node addition = third.createNode();
         Assertions.assertNotNull(addition);
+    }
+
+    @Test
+    void testLocalHash() {
+        final DiffTree first = LittleTrees.createTreeWithDeleteAction();
+        final DiffTree second = LittleTrees.createTreeWithDeleteAction();
+        int expected = first.getRoot().getLocalHash();
+        int actual = second.getRoot().getLocalHash();
+        Assertions.assertEquals(expected, actual);
+        expected = first.getRoot().getChild(0).getLocalHash();
+        actual = second.getRoot().getChild(0).getLocalHash();
+        Assertions.assertEquals(expected, actual);
     }
 }
