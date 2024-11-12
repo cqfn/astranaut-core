@@ -30,9 +30,9 @@ import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.FactoryProvider;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
-import org.cqfn.astranaut.core.utils.JsonDeserializer;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.
@@ -52,12 +52,12 @@ public class TreeDescriptor {
 
     /**
      * Converts tree into node.
-     * @param selector The node factory selector
+     * @param provider The node factory provider
      * @return A root node
      */
-    public Tree convert(final JsonDeserializer.FactorySelector selector) {
+    public Tree convert(final FactoryProvider provider) {
         Tree result = EmptyTree.INSTANCE;
-        final Factory factory = selector.select(this.language);
+        final Factory factory = provider.getFactory(this.language);
         do {
             if (factory == null) {
                 break;

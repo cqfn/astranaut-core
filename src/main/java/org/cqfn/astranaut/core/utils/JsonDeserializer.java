@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.utils;
 import com.kniazkov.json.Json;
 import com.kniazkov.json.JsonException;
 import org.cqfn.astranaut.core.base.EmptyTree;
-import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.FactoryProvider;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
@@ -42,18 +42,18 @@ public final class JsonDeserializer {
     private final String source;
 
     /**
-     * The factory selector.
+     * The factory provider.
      */
-    private final FactorySelector selector;
+    private final FactoryProvider provider;
 
     /**
      * Constructor.
      * @param source String that contains JSON object
-     * @param selector The factory selector
+     * @param provider The factory provider
      */
-    public JsonDeserializer(final String source, final FactorySelector selector) {
+    public JsonDeserializer(final String source, final FactoryProvider provider) {
         this.source = source;
-        this.selector = selector;
+        this.provider = provider;
     }
 
     /**
@@ -65,26 +65,10 @@ public final class JsonDeserializer {
         try {
             final TreeDescriptor tree = Json.parse(this.source, TreeDescriptor.class);
             if (tree != null) {
-                result = tree.convert(this.selector);
+                result = tree.convert(this.provider);
             }
         } catch (final JsonException ignored) {
         }
         return result;
-    }
-
-    /**
-     * Interface for factories selection that selects a suitable factory
-     * for the specified programming language.
-     * In other words, it's a factory of factories.
-     *
-     * @since 1.0.2
-     */
-    public interface FactorySelector {
-        /**
-         * Selects a suitable factory for the specified programming language.
-         * @param language The language name
-         * @return A suitable factory
-         */
-        Factory select(String language);
     }
 }
