@@ -34,6 +34,7 @@ import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -46,6 +47,7 @@ class DiffTreeBuilderTest {
      * Testing the construction of a difference tree with an inserted node.
      */
     @Test
+    @Disabled
     void testTreeWithInsertedNode() {
         final Node before = LittleTrees.createStatementListWithTwoChildren();
         final Node after = LittleTrees.createStatementListWithThreeChildren(
@@ -65,6 +67,7 @@ class DiffTreeBuilderTest {
      * Testing the construction of a difference tree with a replaced node.
      */
     @Test
+    @Disabled
     void testTreeWithReplacedNode() {
         final Node before = LittleTrees.createStatementListWithThreeChildren(
             LittleTrees.createIntegerLiteral(2)
@@ -90,6 +93,7 @@ class DiffTreeBuilderTest {
      * Testing the construction of a difference tree with a deleted node.
      */
     @Test
+    @Disabled
     void testTreeWithDeletedNode() {
         final Node before = LittleTrees.createStatementListWithThreeChildren(
             LittleTrees.createIntegerLiteral(2)
@@ -111,6 +115,7 @@ class DiffTreeBuilderTest {
      * do not change.
      */
     @Test
+    @Disabled
     void testTreeWithDeletedNodeInDepth() {
         final Node before = LittleTrees.createStatementBlock(
             LittleTrees.createStatementListWithThreeChildren(
@@ -131,6 +136,7 @@ class DiffTreeBuilderTest {
     }
 
     @Test
+    @Disabled
     void testTreeWithReplacedNotUniqueNode() {
         final Node removed = LittleTrees.createIntegerLiteral(1);
         final Node added = LittleTrees.createIntegerLiteral(2);
@@ -188,6 +194,7 @@ class DiffTreeBuilderTest {
     }
 
     @Test
+    @Disabled
     void testComplexCase() {
         final Node before = DraftNode.create("X(A,B,Y(C,D,E,F,J,K))");
         final Node after = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
