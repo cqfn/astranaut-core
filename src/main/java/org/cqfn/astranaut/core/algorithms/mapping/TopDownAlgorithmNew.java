@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.utils.Pair;
 
 /**
@@ -210,9 +211,11 @@ final class TopDownAlgorithmNew {
                 this.deleteAllNodes(left);
                 break;
             }
-            NodePairFinder finder = new NodePairFinder();
+            final Unprocessed unprocessed = new Unprocessed(left, right);
+            final NodePairFinder finder = new NodePairFinder();
             finder.fill(left, right);
-            return;
+            boolean flag = this.mapAllIdenticalChildren(finder, unprocessed);
+            this.mapAllUnmappedNodes(left, right, unprocessed);
         } while(false);
     }
 
@@ -240,6 +243,75 @@ final class TopDownAlgorithmNew {
             final ExtNode child = node.getExtChild(index);
             this.deleted.add(child);
             this.ltr.put(child, null);
+        }
+    }
+
+    /**
+     * Mapped all child nodes with the same absolute hash.
+     * @param finder Algorithm that finds the most matching pairs of nodes
+     * @param unprocessed Unprocessed nodes
+     * @return Operation result, {@code true} if at least one such pair of nodes was mapped
+     */
+    private boolean mapAllIdenticalChildren(final NodePairFinder finder,
+        final Unprocessed unprocessed) {
+        final  boolean result;
+        Pair<ExtNode, ExtNode> identical = finder.getBestPairOfIdenticalNodes();
+        if (identical != null) {
+            while (identical != null) {
+                unprocessed.markAsMapped(
+                    identical.getKey().getIndex(),
+                    identical.getValue().getIndex()
+                );
+                this.mapSubtreesWithTheSameAbsoluteHash(identical.getKey(), identical.getValue());
+                identical = finder.getRightPairOfIdenticalNodes(identical);
+            }
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Maps all nodes that have not yet been mapped.
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
+     * @param unprocessed Unprocessed nodes
+     */
+    private void mapAllUnmappedNodes(final ExtNode left, final ExtNode right,
+        final Unprocessed unprocessed) {
+        while (unprocessed.hasAtLeastOneNode()) {
+            if (!unprocessed.hasAtLeastOneLeftNode() && unprocessed.hasAtLeastOneRightNode()) {
+                this.insertAllUnmappedNodes(left, right, unprocessed);
+                break;
+            }
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Inserts all nodes that have not yet been processed from the right subtree
+     *  into the left subtree.
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
+     * @param unprocessed Unprocessed nodes
+     */
+    private void insertAllUnmappedNodes(final ExtNode left, final ExtNode right,
+        final Unprocessed unprocessed) {
+        int index = unprocessed.getFirstUnprocessedRightIndex();
+        int previous = index - 1;
+        ExtNode after = null;
+        while (index >= 0) {
+            final ExtNode child = right.getExtChild(index);
+            if (index > previous + 1 || after == null) {
+                after = child.getLeft();
+            }
+            this.inserted.add(new ExtInsertion(child, left, after));
+            this.rtl.put(child, null);
+            unprocessed.markAsInserted(index);
+            previous = index;
+            after = child;
+            index = unprocessed.getFirstUnprocessedRightIndex();
         }
     }
 }

@@ -82,7 +82,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testPairOfTreesWhereOneAndOneInserted() {
         final Node first = DraftNode.create("X(A)");
         final Node second = DraftNode.create("X(A,B)");
@@ -94,7 +93,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testPairOfTreesWhereTwoAndOneInserted() {
         final Node first = DraftNode.create("X(A,C)");
         final Node second = DraftNode.create("X(A,B,C)");
@@ -106,7 +104,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testNodeInsertedAmongIdenticalNodes() {
         final Node first = DraftNode.create("X(A,A,A,A,C)");
         final Node second = DraftNode.create("X(A,A,A,B,A,C)");

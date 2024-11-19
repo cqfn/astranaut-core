@@ -39,13 +39,20 @@ class NodePairFinder {
      * A list of nodes and matching paired (with the same absolute hash) nodes
      *  with index differences.
      */
-    final List<Pair<ExtNode, List<Pair<ExtNode, Integer>>>> absolute;
+    private final List<Pair<ExtNode, List<Pair<ExtNode, Integer>>>> absolute;
+
+    /**
+     * A list of nodes and matching paired (with the same local hash) nodes
+     *  with index differences.
+     */
+    private final List<Pair<ExtNode, List<Pair<ExtNode, Integer>>>> local;
 
     /**
      * Constructor.
      */
     NodePairFinder() {
         this.absolute = new ArrayList<>(0);
+        this.local = new ArrayList<>(0);
     }
 
     /**
@@ -55,15 +62,64 @@ class NodePairFinder {
      */
     void fill(final ExtNode left, final ExtNode right) {
         for (int first = 0; first < left.getChildCount(); first = first + 1) {
-            final List<Pair<ExtNode, Integer>> list = new ArrayList<>(0);
+            final List<Pair<ExtNode, Integer>> abspairs = new ArrayList<>(0);
+            final List<Pair<ExtNode, Integer>> localpairs = new ArrayList<>(0);
             final ExtNode child = left.getExtChild(first);
-            this.absolute.add(new Pair<>(child, list));
+            this.absolute.add(new Pair<>(child, abspairs));
+            this.local.add(new Pair<>(child, localpairs));
             for (int second = 0; second < right.getChildCount(); second = second + 1) {
                 final ExtNode applicant = right.getExtChild(second);
                 if (child.getAbsoluteHash() == applicant.getAbsoluteHash()) {
-                    list.add(new Pair<>(applicant, second - first));
+                    abspairs.add(new Pair<>(applicant, Math.abs(second - first)));
+                } else if (child.getLocalHash() == applicant.getLocalHash()) {
+                    localpairs.add(new Pair<>(applicant, Math.abs(second - first)));
                 }
             }
         }
+    }
+
+    /**
+     * Returns a pair of nodes such that their absolute hash matches
+     *  and the difference in indices is minimal.
+     * @return A pair of nodes or {@code null} if there is no such pair
+     */
+    Pair<ExtNode, ExtNode> getBestPairOfIdenticalNodes() {
+        Pair<ExtNode, ExtNode> result = null;
+        int min = 0;
+        for (final Pair<ExtNode, List<Pair<ExtNode, Integer>>> entry : this.absolute) {
+            final ExtNode left = entry.getKey();
+            for (final Pair<ExtNode, Integer> pair : entry.getValue()) {
+                if (result == null || min > pair.getValue()) {
+                    result = new Pair<>(left, pair.getKey());
+                    min = pair.getValue();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a pair of nodes such that their absolute hashes match, the difference in indices
+     *  is minimal, and this pair is to the right of the reference (already mapped) pair.
+     * @param reference Reference pair
+     * @return A pair of nodes or {@code null} if there is no such pair
+     */
+    Pair<ExtNode, ExtNode> getRightPairOfIdenticalNodes(final Pair<ExtNode, ExtNode> reference) {
+        Pair<ExtNode, ExtNode> result = null;
+        int min = 0;
+        for (int index = reference.getKey().getIndex() + 1;
+            index < this.absolute.size(); index = index + 1) {
+            final Pair<ExtNode, List<Pair<ExtNode, Integer>>> entry = this.absolute.get(index);
+            final ExtNode left = entry.getKey();
+            for (final Pair<ExtNode, Integer> pair : entry.getValue()) {
+                final ExtNode right = pair.getKey();
+                if ((result == null || min > pair.getValue())
+                    && reference.getValue().getIndex() < right.getIndex()) {
+                    result = new Pair<>(left, right);
+                    min = pair.getValue();
+                }
+            }
+        }
+        return result;
     }
 }
