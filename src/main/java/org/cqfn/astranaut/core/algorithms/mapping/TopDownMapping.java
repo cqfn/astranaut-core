@@ -37,7 +37,7 @@ import org.cqfn.astranaut.core.base.Node;
  * Result of top-down mapping algorithm.
  * @since 2.0.0
  */
-public final class TopDownMapping implements Mapping {
+final class TopDownMapping implements Mapping {
     /**
      * Left-to-right mapping.
      */

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Top-down mapping algorithm.
@@ -80,6 +81,12 @@ final class TopDownAlgorithmNew {
      * @param right Root node of the 'right' tree
      */
     void execute(final ExtNode left, final ExtNode right) {
+        final boolean result = this.mapSubtrees(left, right);
+        if (!result) {
+            this.replaced.put(left, right);
+            this.skipLeftSubtree(left);
+            this.skipRightSubtree(right);
+        }
     }
 
     /**
@@ -126,6 +133,27 @@ final class TopDownAlgorithmNew {
     }
 
     /**
+     * Performs a mapping of two subtrees.
+     * @param left Root node of the left subtree
+     * @param right Root node of the right subtree
+     * @return Mapping result {@code true} if mapping was performed, {@code false} if subtrees
+     *  can't be mapped
+     */
+    private boolean mapSubtrees(final ExtNode left, final ExtNode right) {
+        final boolean result;
+        if (left.getAbsoluteHash() == right.getAbsoluteHash()) {
+            this.mapSubtreesWithTheSameAbsoluteHash(left, right);
+            result = true;
+        } else if (left.getLocalHash() == right.getLocalHash()) {
+            this.mapSubtreesWithTheSameLocalHash(left, right);
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
      * Skips the left subtree, considering that all its nodes cannot be matched.
      * @param node Root node of the subtree
      */
@@ -148,16 +176,70 @@ final class TopDownAlgorithmNew {
     }
 
     /**
-     * Maps subtrees with the same hash, adding the corresponding nodes to the resulting
+     * Maps subtrees with the same absolute hash, adding the corresponding nodes to the resulting
      *  collections.
-     * @param left Left node
+     * @param left Left node (root node of the left subtree)
      * @param right Related node to the left node
      */
-    private void mapSubtreesWithTheSameHash(final ExtNode left, final ExtNode right) {
+    private void mapSubtreesWithTheSameAbsoluteHash(final ExtNode left, final ExtNode right) {
         this.ltr.put(left, right);
         this.rtl.put(right, left);
         for (int index = 0; index < left.getChildCount(); index = index + 1) {
-            this.mapSubtreesWithTheSameHash(left.getExtChild(index), right.getExtChild(index));
+            this.mapSubtreesWithTheSameAbsoluteHash(
+                left.getExtChild(index),
+                right.getExtChild(index)
+            );
+        }
+    }
+
+    /**
+     * Maps subtrees with the same local hash, adding the corresponding nodes to the resulting
+     *  collections.
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
+     */
+    private void mapSubtreesWithTheSameLocalHash(final ExtNode left, final ExtNode right) {
+        this.ltr.put(left, right);
+        this.rtl.put(right, left);
+        do {
+            if (left.getChildCount() == 0) {
+                this.insertAllNodes(left, right);
+                break;
+            }
+            if (right.getChildCount() == 0) {
+                this.deleteAllNodes(left);
+                break;
+            }
+            NodePairFinder finder = new NodePairFinder();
+            finder.fill(left, right);
+            return;
+        } while(false);
+    }
+
+    /**
+     * Inserts all nodes from the right subtree into the left subtree
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
+     */
+    private void insertAllNodes(final ExtNode left, final ExtNode right) {
+        ExtNode after = null;
+        for (int index = 0; index < right.getChildCount(); index = index + 1) {
+            final ExtNode child = right.getExtChild(index);
+            this.inserted.add(new ExtInsertion(child, left, after));
+            this.rtl.put(child, null);
+            after = child;
+        }
+    }
+
+    /**
+     * Marks all child nodes as deleted.
+     * @param node A node whose child nodes are deleted
+     */
+    private void deleteAllNodes(final ExtNode node) {
+        for (int index = 0; index < node.getChildCount(); index = index + 1) {
+            final ExtNode child = node.getExtChild(index);
+            this.deleted.add(child);
+            this.ltr.put(child, null);
         }
     }
 }
