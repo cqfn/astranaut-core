@@ -32,6 +32,7 @@ import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -280,5 +281,24 @@ class TopDownMapperTest {
         final Map.Entry<Node, Node> entry = replaced.entrySet().iterator().next();
         Assertions.assertEquals("X", entry.getKey().getTypeName());
         Assertions.assertEquals("Y", entry.getValue().getTypeName());
+    }
+
+    @Test
+    @Disabled
+    void testComplexInsertion() {
+        final Node first = DraftNode.create(
+            "A(X(Y<'2'>),X(Y<'4'>))"
+        );
+        final Node second = DraftNode.create(
+            "A(X(Y<'0'>),X(Y<'1'>),X(Y<'2'>),X(Y<'3'>),X(Y<'4'>))"
+        );
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Set<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(3, inserted.size());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(0, deleted.size());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(0, replaced.size());
     }
 }
