@@ -26,6 +26,7 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -476,7 +477,7 @@ final class TopDownAlgorithm {
         /**
          * Set containing inserted nodes.
          */
-        private final Set<Insertion> inserted;
+        private final List<Insertion> inserted;
 
         /**
          * Map containing replaces nodes.
@@ -495,10 +496,10 @@ final class TopDownAlgorithm {
         private Result(final TopDownAlgorithm data) {
             this.ltr = Result.convert(data.ltr);
             this.rtl = Result.convert(data.rtl);
-            this.inserted = Collections.unmodifiableSet(
+            this.inserted = Collections.unmodifiableList(
                 data.inserted.stream()
                     .map(ExtInsertion::toInsertion)
-                    .collect(Collectors.toSet())
+                    .collect(Collectors.toList())
             );
             this.replaced = Result.convert(data.replaced);
             this.deleted = Collections.unmodifiableSet(
@@ -519,7 +520,7 @@ final class TopDownAlgorithm {
         }
 
         @Override
-        public Set<Insertion> getInserted() {
+        public List<Insertion> getInserted() {
             return this.inserted;
         }
 

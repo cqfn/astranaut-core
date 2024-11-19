@@ -60,8 +60,8 @@ class TopDownMapperTest {
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
         final List<String> inserted = Arrays.asList("A", "B");
-        final Set<Insertion> set = mapping.getInserted();
-        for (final Insertion insertion : set) {
+        final List<Insertion> list = mapping.getInserted();
+        for (final Insertion insertion : list) {
             final String name = insertion.getNode().getTypeName();
             Assertions.assertTrue(inserted.contains(name));
         }
@@ -73,7 +73,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,B)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
@@ -84,7 +84,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,B,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
@@ -95,7 +95,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,A,A,B,A,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
         Assertions.assertEquals(second.getChild(0), mapping.getRight(first.getChild(0)));
@@ -134,7 +134,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,Y(B,C,F,E))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> added = mapping.getInserted();
+        final List<Insertion> added = mapping.getInserted();
         Assertions.assertEquals(1, added.size());
         Assertions.assertEquals("B", added.iterator().next().getNode().getTypeName());
         final Map<Node, Node> replaced = mapping.getReplaced();
@@ -166,7 +166,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,Y(B,E,F,D,F))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> insertions = mapping.getInserted();
+        final List<Insertion> insertions = mapping.getInserted();
         Assertions.assertEquals(2, insertions.size());
         for (final Insertion insertion : insertions) {
             Assertions.assertEquals("F", insertion.getNode().getTypeName());
@@ -202,7 +202,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,G,Y(H,C,I,E,J,K))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("H", inserted.iterator().next().getNode().getTypeName());
         final Set<Node> deleted = mapping.getDeleted();
@@ -232,7 +232,7 @@ class TopDownMapperTest {
         );
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("X", inserted.iterator().next().getNode().getTypeName());
         final Map<Node, Node> replaced = mapping.getReplaced();
@@ -257,7 +257,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(B,A(Y),D,E)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
         final Map<Node, Node> replaced = mapping.getReplaced();
@@ -294,7 +294,7 @@ class TopDownMapperTest {
         );
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Set<Insertion> inserted = mapping.getInserted();
+        final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(3, inserted.size());
         final Set<Node> deleted = mapping.getDeleted();
         Assertions.assertEquals(0, deleted.size());
