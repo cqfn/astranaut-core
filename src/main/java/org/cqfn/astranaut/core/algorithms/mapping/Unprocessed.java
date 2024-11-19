@@ -39,7 +39,7 @@ class Unprocessed {
     /**
      * Number of left nodes that have not yet been mapped.
      */
-    private int removed;
+    private int deleted;
 
     /**
      * Array of node flags of the left subtree, {@code true} means the node is processed
@@ -61,9 +61,21 @@ class Unprocessed {
      */
     Unprocessed(final ExtNode left, final ExtNode right) {
         this.inserted = right.getChildCount();
-        this.removed = left.getChildCount();
-        this.left = new boolean[this.removed];
+        this.deleted = left.getChildCount();
+        this.left = new boolean[this.deleted];
         this.right = new boolean[this.inserted];
+    }
+
+    /**
+     * Marks node as inserted.
+     * @param index Index of the node
+     */
+    void markAsInserted(int index) {
+        if (this.right[index]) {
+            throw new IllegalStateException();
+        }
+        this.inserted = this.inserted - 1;
+        this.right[index] = true;
     }
 
     /**
@@ -76,17 +88,21 @@ class Unprocessed {
             throw new IllegalStateException();
         }
         this.inserted = this.inserted - 1;
-        this.removed = this.removed - 1;
+        this.deleted = this.deleted - 1;
         this.left[first] = true;
         this.right[second] = true;
     }
 
-    void markAsInserted(int index) {
-        if (this.right[index]) {
+    /**
+     * Marks node as deleted.
+     * @param index Index of the node
+     */
+    void markAsDeleted(int index) {
+        if (this.left[index]) {
             throw new IllegalStateException();
         }
-        this.inserted = this.inserted - 1;
-        this.right[index] = true;
+        this.deleted = this.deleted - 1;
+        this.left[index] = true;
     }
 
     /**
@@ -94,7 +110,7 @@ class Unprocessed {
      * @return Flag, {@code true} if there is at least one unmapped left node
      */
     boolean hasAtLeastOneLeftNode() {
-        return this.removed > 0;
+        return this.deleted > 0;
     }
 
     /**
@@ -110,7 +126,22 @@ class Unprocessed {
      * @return Flag, {@code true} if there is at least one unmapped right node
      */
     boolean hasAtLeastOneNode() {
-        return this.inserted > 0 || this.removed > 0;
+        return this.inserted > 0 || this.deleted > 0;
+    }
+
+    /**
+     * Returns the index of the first unprocessed right node.
+     * @return Index or -1 if all nodes have been processed
+     */
+    int getFirstUnprocessedLeftIndex() {
+        int result = -1;
+        for (int index = 0; index < this.left.length; index = index + 1) {
+            if (!this.left[index]) {
+                result = index;
+                break;
+            }
+        }
+        return result;
     }
 
     /**

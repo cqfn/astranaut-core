@@ -119,7 +119,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testPairOfTreesWhereTwoAndOneDeleted() {
         final Node first = DraftNode.create("X(A,B)");
         final Node second = DraftNode.create("X(A)");
@@ -131,7 +130,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testPairOfTreesWhereThreeAndOneReplaced() {
         final Node first = DraftNode.create("X(A,B,C)");
         final Node second = DraftNode.create("X(A,D,C)");
@@ -145,7 +143,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testPairOfTreesWhereOneAddedAndOneReplaced() {
         final Node first = DraftNode.create("X(A,Y(C,D,E))");
         final Node second = DraftNode.create("X(A,Y(B,C,F,E))");
@@ -264,7 +261,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testsTwoCompletelyDifferentNodes() {
         final Node first = DraftNode.create("A(B,C)");
         final Node second = DraftNode.create("D(E,F)");

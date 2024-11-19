@@ -285,7 +285,11 @@ final class TopDownAlgorithmNew {
                 this.insertAllUnmappedNodes(left, right, unprocessed);
                 break;
             }
-            throw new IllegalStateException();
+            if (!unprocessed.hasAtLeastOneRightNode() && unprocessed.hasAtLeastOneLeftNode()) {
+                this.deleteAllUnmappedNodes(left, unprocessed);
+                break;
+            }
+            this.replaceTwoFirstUnmappedNodes(left, right, unprocessed);
         }
     }
 
@@ -313,5 +317,42 @@ final class TopDownAlgorithmNew {
             after = child;
             index = unprocessed.getFirstUnprocessedRightIndex();
         }
+    }
+
+    /**
+     * Marks all child nodes that have not yet been processed as deleted nodes.
+     * @param node A node whose child nodes are deleted
+     * @param unprocessed Unprocessed nodes
+     */
+    private void deleteAllUnmappedNodes(final ExtNode node, final Unprocessed unprocessed) {
+        int index = unprocessed.getFirstUnprocessedLeftIndex();
+        while (index >= 0) {
+            final ExtNode child = node.getExtChild(index);
+            this.deleted.add(child);
+            this.ltr.put(child, null);
+            unprocessed.markAsDeleted(index);
+            index = unprocessed.getFirstUnprocessedLeftIndex();
+        }
+    }
+
+    /**
+     * Replaces the first two unprocessed nodes. This is a “dangerous” operation, as such
+     *  replacement may not be optimal. More optimal algorithms should have to work out
+     *  before calling this method. However, we still use this method as it will allow the
+     *  mapping algorithm to terminate (not loop) in any case.
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
+     * @param unprocessed Unprocessed nodes
+     */
+    private void replaceTwoFirstUnmappedNodes(final ExtNode left, final ExtNode right,
+        final Unprocessed unprocessed) {
+        final int leftidx = unprocessed.getFirstUnprocessedLeftIndex();
+        final ExtNode first = left.getExtChild(leftidx);
+        final int rightidx = unprocessed.getFirstUnprocessedRightIndex();
+        final ExtNode second = right.getExtChild(rightidx);
+        this.replaced.put(first, second);
+        this.ltr.put(first, second);
+        this.rtl.put(second, first);
+        unprocessed.markAsMapped(leftidx, rightidx);
     }
 }
