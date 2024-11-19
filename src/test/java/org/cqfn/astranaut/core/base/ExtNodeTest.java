@@ -47,12 +47,14 @@ class ExtNodeTest {
         Assertions.assertTrue(ext.deepCompare(original));
         Assertions.assertSame(alpha, ext.getPrototype());
         Assertions.assertNull(ext.getParent());
+        Assertions.assertEquals(-1, ext.getIndex());
         Assertions.assertNull(ext.getParentPrototype());
         Assertions.assertSame(ext, ext.getExtChild(0).getParent());
         Assertions.assertSame(alpha, ext.getExtChild(1).getParentPrototype());
         Assertions.assertNull(ext.getExtChild(0).getLeft());
         Assertions.assertNull(ext.getExtChild(0).getLeftPrototype());
         Assertions.assertSame(ext.getExtChild(0), ext.getExtChild(1).getLeft());
+        Assertions.assertEquals(1, ext.getExtChild(1).getIndex());
         Assertions.assertSame(gamma, ext.getExtChild(1).getPrototype());
         Assertions.assertSame(beta, ext.getExtChild(1).getLeftPrototype());
         Assertions.assertSame(ext.getExtChild(2), ext.getExtChild(1).getRight());
