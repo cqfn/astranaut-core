@@ -23,7 +23,6 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import com.kitfox.svg.A;
 import java.util.List;
 import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -49,5 +48,36 @@ class SectionTest {
         Assertions.assertTrue(section.hasNode(first.getExtChild(1)));
         Assertions.assertTrue(section.hasNode(second.getExtChild(1)));
         Assertions.assertFalse(section.hasNode(first));
+    }
+
+    @Test
+    void removeNode() {
+        final ExtNodeCreator creator = new ExtNodeCreator();
+        final ExtNode left = creator.create(DraftNode.create("A(E,F)"));
+        final ExtNode right = creator.create(DraftNode.create("A(G,H,I)"));
+        final Section initial = new Section(left, right);
+        final Section same = initial.removeNode(left);
+        Assertions.assertSame(initial, same);
+        Section section = initial.removeNode(right.getExtChild(1));
+        Assertions.assertFalse(section.hasNode(right.getExtChild(1)));
+        Assertions.assertEquals(4, section.getLeft().size() + section.getRight().size());
+        section = section.removeNode(left.getExtChild(0));
+        Assertions.assertFalse(section.hasNode(left.getExtChild(0)));
+        Assertions.assertEquals(3, section.getLeft().size() + section.getRight().size());
+        section = section.removeNode(left.getExtChild(1));
+        Assertions.assertFalse(section.hasNode(left.getExtChild(1)));
+        Assertions.assertEquals(2, section.getLeft().size() + section.getRight().size());
+        section = section.removeNode(right.getExtChild(0));
+        Assertions.assertFalse(section.hasNode(right.getExtChild(0)));
+        Assertions.assertEquals(1, section.getLeft().size() + section.getRight().size());
+        section = section.removeNode(right.getExtChild(2));
+        Assertions.assertNull(section);
+        section = initial.removeNode(right.getExtChild(0));
+        section = section.removeNode(right.getExtChild(1));
+        section = section.removeNode(right.getExtChild(2));
+        Assertions.assertTrue(section.getRight().isEmpty());
+        section = section.removeNode(left.getExtChild(0));
+        section = section.removeNode(left.getExtChild(1));
+        Assertions.assertNull(section);
     }
 }

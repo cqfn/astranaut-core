@@ -23,7 +23,6 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +55,7 @@ class Section {
     }
 
     /**
-     * Сonstructor that constructs a section from a complete set of child nodes
+     * Constructor that constructs a section from a complete set of child nodes
      *  (when no node has been processed yet).
      * @param left First (left) node
      * @param right Second (right) node whose child nodes will be mapped with the child
@@ -67,7 +66,7 @@ class Section {
     }
 
     /**
-     * Returns the subset of the child nodes of the first (left) node
+     * Returns the subset of the child nodes of the first (left) node.
      * @return Ordered list on nodes
      */
     List<ExtNode> getLeft() {
@@ -75,7 +74,7 @@ class Section {
     }
 
     /**
-     * Returns the subset of the child nodes of the second (right) node
+     * Returns the subset of the child nodes of the second (right) node.
      * @return Ordered list on nodes
      */
     List<ExtNode> getRight() {
@@ -89,6 +88,87 @@ class Section {
      */
     boolean hasNode(final ExtNode node) {
         return this.left.contains(node) || this.right.contains(node);
+    }
+
+    /**
+     * Creates a new section with the specified node removed from both left and right subsets.
+     * If the node is not present in either subset, the original section is returned.
+     * If this removal results in both subsets becoming empty, returns null.
+     * @param node Node to be removed
+     * @return A new section instance without the specified node, or null if the result is empty
+     */
+    Section removeNode(final ExtNode node) {
+        final Section result;
+        do {
+            int index = this.left.indexOf(node);
+            if (index >= 0) {
+                result = this.removeLeftNode(index);
+                break;
+            }
+            index = this.right.indexOf(node);
+            if (index >= 0) {
+                result = this.removeRightNode(index);
+                break;
+            }
+            result = this;
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Creates a new section with the specified node removed from the left subset.
+     * @param index Node index
+     * @return A new section instance without the specified node, or null if the result is empty
+     */
+    private Section removeLeftNode(final int index) {
+        final Section result;
+        do {
+            final int size = this.left.size();
+            if (size == 1 && this.right.isEmpty()) {
+                result = null;
+                break;
+            }
+            if (size == 1) {
+                result = new Section(Collections.emptyList(), this.right);
+                break;
+            }
+            final List<ExtNode> list = new ArrayList<>(size - 1);
+            for (int elem = 0; elem < size; elem = elem + 1) {
+                if (elem != index) {
+                    list.add(this.left.get(elem));
+                }
+            }
+            result = new Section(Collections.unmodifiableList(list), this.right);
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Creates a new section with the specified node removed from the right subset.
+     * @param index Node index
+     * @return A new section instance without the specified node, or null if the result is empty
+     */
+    private Section removeRightNode(final int index) {
+        final Section result;
+        do {
+            final int size = this.right.size();
+            if (size == 1 && this.left.isEmpty()) {
+                result = null;
+                break;
+            }
+            if (size == 1) {
+                result = new Section(this.left, Collections.emptyList());
+                break;
+            }
+            final List<ExtNode> list = new ArrayList<>(size - 1);
+            for (int elem = 0; elem < size; elem = elem + 1) {
+                if (elem != index) {
+                    list.add(this.right.get(elem));
+                }
+            }
+            result = new Section(this.left, Collections.unmodifiableList(list));
+        } while (false);
+        return result;
     }
 
     /**
