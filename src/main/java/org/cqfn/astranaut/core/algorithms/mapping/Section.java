@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Auxiliary structure for mapping child nodes. Contains a subset of child nodes of one node
@@ -116,6 +117,42 @@ class Section {
     }
 
     /**
+     * Divides the section into two, each of which does not contain the specified nodes.
+     *  The first section contains subsets of nodes that are to the left of the nodes
+     *  to be deleted. If there are no nodes to the left, the section will be null.
+     *  The second section, accordingly, contains subsets of nodes that are to the right
+     *  of the nodes to be deleted. If there are no nodes to the right, the section will be null.
+     * The point of this action is that when two nodes are mapped, they are removed from the list
+     *  of unprocessed nodes, while the remaining nodes are divided into two parts that must
+     *  be considered separately, since it is “physically” impossible to map a node from the
+     *  first part to a node from the second part. Thus the mapping task is divided into two
+     *  smaller similar tasks. By successive division of unmapped sections, the mapping
+     *  of the entire initial list of nodes is achieved.
+     * @param node The node to be deleted from the left subset
+     * @param corresponding The node to be deleted from the right subset,
+     *  corresponding to the left node
+     * @return Set of new sections, containing two, one or zero sections.
+     */
+    Pair<Section, Section> removeNodes(final ExtNode node, final ExtNode corresponding) {
+        final Pair<List<ExtNode>, List<ExtNode>> xleft = Section.splitSubset(this.left, node);
+        final Pair<List<ExtNode>, List<ExtNode>> xright =
+            Section.splitSubset(this.right, corresponding);
+        final Section first;
+        if (xleft.getKey().isEmpty() && xright.getKey().isEmpty()) {
+            first = null;
+        } else {
+            first = new Section(xleft.getKey(), xright.getKey());
+        }
+        final Section second;
+        if (xleft.getValue().isEmpty() && xright.getValue().isEmpty()) {
+            second = null;
+        } else {
+            second = new Section(xleft.getValue(), xright.getValue());
+        }
+        return new Pair<>(first, second);
+    }
+
+    /**
      * Creates a new section with the specified node removed from the left subset.
      * @param index Node index
      * @return A new section instance without the specified node, or null if the result is empty
@@ -183,5 +220,31 @@ class Section {
             list.add(node.getExtChild(index));
         }
         return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * Splits a list of nodes into two using the specified node as a delimiter.
+     * The delimiter is not included in either set.
+     * @param list List of nodes
+     * @param node Delimiter node
+     * @return Pair of resulting lists
+     */
+    private static Pair<List<ExtNode>, List<ExtNode>> splitSubset(final List<ExtNode> list,
+        final ExtNode node) {
+        final Pair<List<ExtNode>, List<ExtNode>> result;
+        final int size = list.size();
+        final int index = list.indexOf(node);
+        if (index < 0) {
+            result = new Pair<>(Collections.emptyList(), list);
+        } else if (index == 0 && size == 1) {
+            result = new Pair<>(Collections.emptyList(), Collections.emptyList());
+        } else if (index == 0) {
+            result = new Pair<>(Collections.emptyList(), list.subList(1, size));
+        } else if (index == size - 1) {
+            result = new Pair<>(list.subList(0, index), Collections.emptyList());
+        } else {
+            result = new Pair<>(list.subList(0, index), list.subList(index + 1, size));
+        }
+        return result;
     }
 }

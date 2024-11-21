@@ -27,6 +27,7 @@ import java.util.List;
 import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -79,5 +80,40 @@ class SectionTest {
         section = section.removeNode(left.getExtChild(0));
         section = section.removeNode(left.getExtChild(1));
         Assertions.assertNull(section);
+    }
+
+    @Test
+    void removeNodes() {
+        final ExtNodeCreator creator = new ExtNodeCreator();
+        ExtNode left = creator.create(DraftNode.create("A(J,K,L)"));
+        ExtNode right = creator.create(DraftNode.create("A(M,N,O)"));
+        Section section = new Section(left, right);
+        Pair<Section, Section> pair = section.removeNodes(left, right);
+        Assertions.assertNull(pair.getKey());
+        Assertions.assertEquals(
+            6,
+            pair.getValue().getLeft().size() + pair.getValue().getRight().size()
+        );
+        pair = section.removeNodes(left.getExtChild(1), right.getExtChild(1));
+        Assertions.assertEquals(
+            2,
+            pair.getKey().getLeft().size() + pair.getKey().getRight().size()
+        );
+        Assertions.assertSame(pair.getKey().getLeft().get(0), left.getExtChild(0));
+        Assertions.assertSame(pair.getKey().getRight().get(0), right.getExtChild(0));
+        Assertions.assertEquals(
+            2,
+            pair.getValue().getLeft().size() + pair.getValue().getRight().size()
+        );
+        Assertions.assertSame(pair.getValue().getLeft().get(0), left.getExtChild(2));
+        Assertions.assertSame(pair.getValue().getRight().get(0), right.getExtChild(2));
+        pair = pair.getKey().removeNodes(left.getExtChild(0), right.getExtChild(0));
+        Assertions.assertNull(pair.getKey());
+        Assertions.assertNull(pair.getValue());
+        pair = section.removeNodes(left.getExtChild(0), right.getExtChild(2));
+        Assertions.assertTrue(pair.getKey().getLeft().isEmpty());
+        Assertions.assertEquals(2, pair.getKey().getRight().size());
+        Assertions.assertEquals(2, pair.getValue().getLeft().size());
+        Assertions.assertTrue(pair.getValue().getRight().isEmpty());
     }
 }
