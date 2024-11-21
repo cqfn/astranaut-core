@@ -99,24 +99,22 @@ class NodePairFinder {
     }
 
     /**
-     * Returns a pair of nodes such that their absolute hashes match, the difference in indices
-     *  is minimal, and this pair is to the right of the reference (already mapped) pair.
+     * Returns a pair of nodes such that their absolute hashes match and this pair is to the
+     *  right of the reference (already mapped) pair.
      * @param reference Reference pair
      * @return A pair of nodes or {@code null} if there is no such pair
      */
     Pair<ExtNode, ExtNode> getRightPairOfIdenticalNodes(final Pair<ExtNode, ExtNode> reference) {
         Pair<ExtNode, ExtNode> result = null;
-        int min = 0;
         for (int index = reference.getKey().getIndex() + 1;
-            index < this.absolute.size(); index = index + 1) {
+            result == null && index < this.absolute.size(); index = index + 1) {
             final Pair<ExtNode, List<Pair<ExtNode, Integer>>> entry = this.absolute.get(index);
             final ExtNode left = entry.getKey();
             for (final Pair<ExtNode, Integer> pair : entry.getValue()) {
                 final ExtNode right = pair.getKey();
-                if ((result == null || min > pair.getValue())
-                    && reference.getValue().getIndex() < right.getIndex()) {
+                if (reference.getValue().getIndex() < right.getIndex()) {
                     result = new Pair<>(left, right);
-                    min = pair.getValue();
+                    break;
                 }
             }
         }

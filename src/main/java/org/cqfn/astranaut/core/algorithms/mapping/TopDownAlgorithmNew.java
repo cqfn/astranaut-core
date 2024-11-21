@@ -289,6 +289,7 @@ final class TopDownAlgorithmNew {
                 this.deleteAllUnmappedNodes(left, unprocessed);
                 break;
             }
+
             this.replaceTwoFirstUnmappedNodes(left, right, unprocessed);
         }
     }

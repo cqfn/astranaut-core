@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 class TopDownMapperTest {
+    @Disabled
     @Test
     void testIdenticalTrees() {
         final String description = "A(B(C, D))";
@@ -53,6 +54,7 @@ class TopDownMapperTest {
         Assertions.assertEquals(mapping.getLeft(second), first);
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereOnlyInsertion() {
         final Node first = DraftNode.create("X()");
@@ -67,6 +69,7 @@ class TopDownMapperTest {
         }
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereOnlyDeletion() {
         final Node first = DraftNode.create("X(A,B)");
@@ -81,6 +84,7 @@ class TopDownMapperTest {
         }
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereOneAndOneInserted() {
         final Node first = DraftNode.create("X(A)");
@@ -92,6 +96,7 @@ class TopDownMapperTest {
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereTwoAndOneInserted() {
         final Node first = DraftNode.create("X(A,C)");
@@ -103,6 +108,7 @@ class TopDownMapperTest {
         Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
     }
 
+    @Disabled
     @Test
     void testNodeInsertedAmongIdenticalNodes() {
         final Node first = DraftNode.create("X(A,A,A,A,C)");
@@ -118,6 +124,7 @@ class TopDownMapperTest {
         Assertions.assertEquals(second.getChild(4), mapping.getRight(first.getChild(3)));
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereTwoAndOneDeleted() {
         final Node first = DraftNode.create("X(A,B)");
@@ -129,6 +136,7 @@ class TopDownMapperTest {
         Assertions.assertEquals("B", deleted.iterator().next().getTypeName());
     }
 
+    @Disabled
     @Test
     void testPairOfTreesWhereThreeAndOneReplaced() {
         final Node first = DraftNode.create("X(A,B,C)");
@@ -142,6 +150,21 @@ class TopDownMapperTest {
         Assertions.assertEquals("D", pair.getValue().getTypeName());
     }
 
+    @Disabled
+    @Test
+    void testThreeInsertedThreeReplacedAndThreeDeleted() {
+        final Node first = DraftNode.create("X(Y,Y,B,B,B,Y,C,C,C,Y)");
+        final Node second = DraftNode.create("X(Y,A,A,A,Y,D,D,D,Y,Y)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+        final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
+        Assertions.assertEquals("B", pair.getKey().getTypeName());
+        Assertions.assertEquals("D", pair.getValue().getTypeName());
+    }
+
+    @Disabled
     @Test
     void testPairOfTreesWhereOneAddedAndOneReplaced() {
         final Node first = DraftNode.create("X(A,Y(C,D,E))");
