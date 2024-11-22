@@ -226,7 +226,7 @@ final class TopDownAlgorithmNew {
      */
     private void insertAllNodes(final Unprocessed unprocessed, final ExtNode node,
         final Section section) {
-        ExtNode after = null;
+        ExtNode after = section.getPrevious();
         for (final ExtNode child : section.getRight()) {
             this.inserted.add(new ExtInsertion(child, node, after));
             this.rtl.put(child, null);

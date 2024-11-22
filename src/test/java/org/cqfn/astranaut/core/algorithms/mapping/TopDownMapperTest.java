@@ -24,6 +24,7 @@
 package org.cqfn.astranaut.core.algorithms.mapping;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,7 @@ class TopDownMapperTest {
         final Mapping mapping = mapper.map(first, second);
         Assertions.assertEquals(mapping.getRight(first), second);
         Assertions.assertEquals(mapping.getLeft(second), first);
+        Assertions.assertEquals(0, mapping.getNumberOfActions());
     }
 
     @Test
@@ -59,12 +61,16 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,B)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final List<String> inserted = Arrays.asList("A", "B");
-        final List<Insertion> list = mapping.getInserted();
-        for (final Insertion insertion : list) {
-            final String name = insertion.getNode().getTypeName();
-            Assertions.assertTrue(inserted.contains(name));
-        }
+        Assertions.assertEquals(2, mapping.getNumberOfActions());
+        final Iterator<Insertion> insertions = mapping.getInserted().iterator();
+        Insertion insertion = insertions.next();
+        Assertions.assertEquals("A", insertion.getNode().getTypeName());
+        Assertions.assertNull(insertion.getAfter());
+        Assertions.assertSame(first, insertion.getInto());
+        insertion = insertions.next();
+        Assertions.assertEquals("B", insertion.getNode().getTypeName());
+        Assertions.assertEquals("A", insertion.getAfter().getTypeName());
+        Assertions.assertFalse(insertions.hasNext());
     }
 
     @Test
@@ -73,6 +79,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X()");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(2, mapping.getNumberOfActions());
         final List<String> deleted = Arrays.asList("A", "B");
         final Set<Node> set = mapping.getDeleted();
         for (final Node node : set) {
@@ -87,40 +94,49 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A,B)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(1, mapping.getNumberOfActions());
         final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
-        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+        final Insertion insertion = inserted.get(0);
+        Assertions.assertEquals("B", insertion.getNode().getTypeName());
+        Assertions.assertEquals("A", insertion.getAfter().getTypeName());
+        Assertions.assertSame(first, insertion.getInto());
     }
 
-    @Disabled
     @Test
     void testPairOfTreesWhereTwoAndOneInserted() {
         final Node first = DraftNode.create("X(A,C)");
         final Node second = DraftNode.create("X(A,B,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(1, mapping.getNumberOfActions());
         final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
-        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+        final Insertion insertion = inserted.get(0);
+        Assertions.assertEquals("B", insertion.getNode().getTypeName());
+        Assertions.assertEquals("A", insertion.getAfter().getTypeName());
+        Assertions.assertSame(first, insertion.getInto());
     }
 
-    @Disabled
     @Test
     void testNodeInsertedAmongIdenticalNodes() {
         final Node first = DraftNode.create("X(A,A,A,A,C)");
         final Node second = DraftNode.create("X(A,A,A,B,A,C)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(1, mapping.getNumberOfActions());
         final List<Insertion> inserted = mapping.getInserted();
         Assertions.assertEquals(1, inserted.size());
-        Assertions.assertEquals("B", inserted.iterator().next().getNode().getTypeName());
+        Assertions.assertSame(second.getChild(3), inserted.get(0).getNode());
+        Assertions.assertSame(first.getChild(2), inserted.get(0).getAfter());
+        Assertions.assertSame(first, inserted.get(0).getInto());
         Assertions.assertEquals(second.getChild(0), mapping.getRight(first.getChild(0)));
         Assertions.assertEquals(second.getChild(1), mapping.getRight(first.getChild(1)));
         Assertions.assertEquals(second.getChild(2), mapping.getRight(first.getChild(2)));
         Assertions.assertEquals(second.getChild(4), mapping.getRight(first.getChild(3)));
+        Assertions.assertEquals(second.getChild(5), mapping.getRight(first.getChild(4)));
     }
 
-    @Disabled
     @Test
     void testPairOfTreesWhereTwoAndOneDeleted() {
         final Node first = DraftNode.create("X(A,B)");

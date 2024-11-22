@@ -36,6 +36,12 @@ import org.cqfn.astranaut.core.utils.Pair;
  */
 class Section {
     /**
+     * Node on the left of the first element of the subset of child nodes
+     *  of the first (left) node.
+     */
+    private final ExtNode previous;
+
+    /**
      * Subset of the child nodes of the first (left) node.
      */
     private final List<ExtNode> left;
@@ -47,10 +53,12 @@ class Section {
 
     /**
      * Constructor.
+     * @param previous Node before the first element of the first (left) subset
      * @param left Subset of the child nodes of the first (left) node
      * @param right Subset of the child nodes of the second (right) node.
      */
-    Section(final List<ExtNode> left, final List<ExtNode> right) {
+    Section(final ExtNode previous, final List<ExtNode> left, final List<ExtNode> right) {
+        this.previous = previous;
         this.left = left;
         this.right = right;
     }
@@ -63,7 +71,15 @@ class Section {
      *  nodes of the first node.
      */
     Section(final ExtNode left, final ExtNode right) {
-        this(Section.createChildrenList(left), Section.createChildrenList(right));
+        this(null, Section.createChildrenList(left), Section.createChildrenList(right));
+    }
+
+    /**
+     * Returns node before the first element of the first (left) subset.
+     * @return A node or {@code null} if no node before left subset
+     */
+    ExtNode getPrevious() {
+        return this.previous;
     }
 
     /**
@@ -142,13 +158,13 @@ class Section {
         if (xleft.getKey().isEmpty() && xright.getKey().isEmpty()) {
             first = null;
         } else {
-            first = new Section(xleft.getKey(), xright.getKey());
+            first = new Section(this.previous, xleft.getKey(), xright.getKey());
         }
         final Section second;
         if (xleft.getValue().isEmpty() && xright.getValue().isEmpty()) {
             second = null;
         } else {
-            second = new Section(xleft.getValue(), xright.getValue());
+            second = new Section(node, xleft.getValue(), xright.getValue());
         }
         return new Pair<>(first, second);
     }
@@ -167,7 +183,7 @@ class Section {
                 break;
             }
             if (size == 1) {
-                result = new Section(Collections.emptyList(), this.right);
+                result = new Section(this.left.get(0), Collections.emptyList(), this.right);
                 break;
             }
             final List<ExtNode> list = new ArrayList<>(size - 1);
@@ -176,7 +192,13 @@ class Section {
                     list.add(this.left.get(elem));
                 }
             }
-            result = new Section(Collections.unmodifiableList(list), this.right);
+            final ExtNode before;
+            if (index > 0) {
+                before = this.previous;
+            } else {
+                before = this.left.get(0);
+            }
+            result = new Section(before, Collections.unmodifiableList(list), this.right);
         } while (false);
         return result;
     }
@@ -195,7 +217,7 @@ class Section {
                 break;
             }
             if (size == 1) {
-                result = new Section(this.left, Collections.emptyList());
+                result = new Section(this.previous, this.left, Collections.emptyList());
                 break;
             }
             final List<ExtNode> list = new ArrayList<>(size - 1);
@@ -204,7 +226,7 @@ class Section {
                     list.add(this.right.get(elem));
                 }
             }
-            result = new Section(this.left, Collections.unmodifiableList(list));
+            result = new Section(this.previous, this.left, Collections.unmodifiableList(list));
         } while (false);
         return result;
     }

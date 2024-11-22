@@ -31,8 +31,7 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A mapping from one syntactic tree ('left') to another ('right'), i.e.,
- * set of correspondences between the nodes of one tree and the nodes of another tree.
- *
+ *  set of correspondences between the nodes of one tree and the nodes of another tree.
  * @since 1.1.0
  */
 public interface Mapping {
@@ -73,4 +72,13 @@ public interface Mapping {
      * @return The set of deleted nodes
      */
     Set<Node> getDeleted();
+
+    /**
+     * Returns the total number of actions to be done on the 'left' tree to transform it
+     *  to a 'right' tree.
+     * @return Total number of actions
+     */
+    default int getNumberOfActions() {
+        return this.getInserted().size() + this.getReplaced().size() + this.getDeleted().size();
+    }
 }

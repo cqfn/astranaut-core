@@ -64,6 +64,7 @@ class SectionTest {
         Assertions.assertEquals(4, section.getLeft().size() + section.getRight().size());
         section = section.removeNode(left.getExtChild(0));
         Assertions.assertFalse(section.hasNode(left.getExtChild(0)));
+        Assertions.assertSame(left.getExtChild(0), section.getPrevious());
         Assertions.assertEquals(3, section.getLeft().size() + section.getRight().size());
         section = section.removeNode(left.getExtChild(1));
         Assertions.assertFalse(section.hasNode(left.getExtChild(1)));
@@ -107,6 +108,7 @@ class SectionTest {
         );
         Assertions.assertSame(pair.getValue().getLeft().get(0), left.getExtChild(2));
         Assertions.assertSame(pair.getValue().getRight().get(0), right.getExtChild(2));
+        Assertions.assertSame(left.getExtChild(1), pair.getValue().getPrevious());
         pair = pair.getKey().removeNodes(left.getExtChild(0), right.getExtChild(0));
         Assertions.assertNull(pair.getKey());
         Assertions.assertNull(pair.getValue());
