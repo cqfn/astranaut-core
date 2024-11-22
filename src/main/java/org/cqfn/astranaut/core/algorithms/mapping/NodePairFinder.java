@@ -31,11 +31,17 @@ import org.cqfn.astranaut.core.base.ExtNode;
  *  Matching is determined by some criterion, usually hash equality.
  * @since 2.0.0
  */
-class NodePairFinder {
+final  class NodePairFinder {
     /**
      * Converter that takes the absolute hash of a node.
      */
     static final Converter ABSOLUTE_HASH = ExtNode::getAbsoluteHash;
+
+    /**
+     * Significant difference between node indices, that is, if the node indices
+     *  differ by more than this number, we consider it to be a lot and look for more variants.
+     */
+    private static final int SIGNIFICANT_DIFF = 3;
 
     /**
      * Representing the left side of the unprocessed node section as an array of numbers.
@@ -70,6 +76,17 @@ class NodePairFinder {
             seq = this.findMatchingSequence(size);
             size = size - 1;
         }
+        while (size > 0 && seq.getOffsetDiff() > NodePairFinder.SIGNIFICANT_DIFF) {
+            Result other = null;
+            while (size > 0 && other == null) {
+                other = this.findMatchingSequence(size);
+                size = size - 1;
+            }
+            if (other != null
+                && seq.getOffsetDiff() - other.getOffsetDiff() > NodePairFinder.SIGNIFICANT_DIFF) {
+                seq = other;
+            }
+        }
         if (seq == null) {
             seq = new Result();
             seq.left = -1;
@@ -86,9 +103,11 @@ class NodePairFinder {
      */
     private Result findMatchingSequence(final int size) {
         Result seq = null;
-        int min = 0;
-        for (int loffset = 0; loffset <= this.left.length - size; loffset = loffset + 1) {
-            for (int roffset = 0; roffset <= this.right.length - size; roffset = roffset + 1) {
+        int min = Integer.MAX_VALUE;
+        for (int loffset = 0; min > 0 && loffset <= this.left.length - size;
+            loffset = loffset + 1) {
+            for (int roffset = 0; min > 0 && roffset <= this.right.length - size;
+                roffset = roffset + 1) {
                 final boolean matches = this.compareSegments(loffset, roffset, size);
                 if (!matches) {
                     continue;
@@ -146,7 +165,7 @@ class NodePairFinder {
      * Matching result.
      * @since 2.0.0
      */
-    static class Result {
+    static final class Result {
         /**
          * Index of the first matched element from the left array.
          */
@@ -184,6 +203,14 @@ class NodePairFinder {
          */
         int getCount() {
             return this.count;
+        }
+
+        /**
+         * Returns the difference between the indexes of the first elements.
+         * @return Difference between the indexes
+         */
+        private int getOffsetDiff() {
+            return Math.abs(this.left - this.right);
         }
     }
 }

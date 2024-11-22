@@ -35,7 +35,7 @@ import org.cqfn.astranaut.core.utils.Pair;
  *  child nodes of one node and a corresponding but unmapped subset of child nodes of another node.
  * @since 2.0.0
  */
-class Unprocessed {
+final class Unprocessed {
     /**
      * Sections of nodes that have not yet been processed.
      */

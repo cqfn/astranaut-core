@@ -143,6 +143,7 @@ class TopDownMapperTest {
         final Node second = DraftNode.create("X(A)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
+        Assertions.assertEquals(1, mapping.getNumberOfActions());
         final Set<Node> deleted = mapping.getDeleted();
         Assertions.assertEquals(1, deleted.size());
         Assertions.assertEquals("B", deleted.iterator().next().getTypeName());
@@ -162,18 +163,19 @@ class TopDownMapperTest {
         Assertions.assertEquals("D", pair.getValue().getTypeName());
     }
 
-    @Disabled
     @Test
-    void testThreeInsertedThreeReplacedAndThreeDeleted() {
-        final Node first = DraftNode.create("X(Y,Y,B,B,B,Y,C,C,C,Y)");
-        final Node second = DraftNode.create("X(Y,A,A,A,Y,D,D,D,Y,Y)");
+    void testThreeInsertedAndThreeDeleted() {
+        final Node first = DraftNode.create("X(Y,Y,B,B,B,Y)");
+        final Node second = DraftNode.create("X(Y,A,A,A,Y,Y)");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final Mapping mapping = mapper.map(first, second);
-        final Map<Node, Node> replaced = mapping.getReplaced();
-        Assertions.assertEquals(1, replaced.size());
-        final Map.Entry<Node, Node> pair = replaced.entrySet().iterator().next();
-        Assertions.assertEquals("B", pair.getKey().getTypeName());
-        Assertions.assertEquals("D", pair.getValue().getTypeName());
+        Assertions.assertEquals(6, mapping.getNumberOfActions());
+        for (final Insertion insertion : mapping.getInserted()) {
+            Assertions.assertEquals("A", insertion.getNode().getTypeName());
+        }
+        for (final Node deletion : mapping.getDeleted()) {
+            Assertions.assertEquals("B", deletion.getTypeName());
+        }
     }
 
     @Disabled

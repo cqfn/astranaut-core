@@ -34,7 +34,7 @@ import org.cqfn.astranaut.core.utils.Pair;
  *  and a corresponding but unmapped subset of child nodes of another node.
  * @since 2.0.0
  */
-class Section {
+final class Section {
     /**
      * Node on the left of the first element of the subset of child nodes
      *  of the first (left) node.
