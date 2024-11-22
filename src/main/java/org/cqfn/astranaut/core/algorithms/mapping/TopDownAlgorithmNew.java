@@ -203,18 +203,24 @@ final class TopDownAlgorithmNew {
         final Unprocessed unprocessed = new Unprocessed(left, right);
         for (Section section = unprocessed.getFirstSection(); section != null;
             section = unprocessed.getFirstSection()) {
-            if (section.getLeft().isEmpty() && !section.getRight().isEmpty()) {
+            final int lsize = section.getLeft().size();
+            final int rsize = section.getRight().size();
+            if (lsize == 0 && rsize > 0) {
                 this.insertAllNodes(unprocessed, left, section);
                 continue;
             }
-            if (!section.getLeft().isEmpty() && section.getRight().isEmpty()) {
+            if (lsize > 0 && rsize == 0) {
                 this.deleteAllNodes(unprocessed, section);
+                continue;
+            }
+            if (lsize == 1 && rsize == 1) {
+                this.processSectionWithOnePair(unprocessed, section);
                 continue;
             }
             if (this.mapIdenticalNodes(unprocessed, section)) {
                 continue;
             }
-            throw new IllegalStateException();
+            replaceFirstNodes(unprocessed, section);
         }
     }
 
@@ -229,7 +235,7 @@ final class TopDownAlgorithmNew {
         ExtNode after = section.getPrevious();
         for (final ExtNode child : section.getRight()) {
             this.inserted.add(new ExtInsertion(child, node, after));
-            this.rtl.put(child, null);
+            this.skipRightSubtree(child);
             unprocessed.removeNode(child);
             after = child;
         }
@@ -243,9 +249,23 @@ final class TopDownAlgorithmNew {
     private void deleteAllNodes(final Unprocessed unprocessed, final Section section) {
         for (final ExtNode child : section.getLeft()) {
             this.deleted.add(child);
-            this.ltr.put(child, null);
+            this.skipLeftSubtree(child);
             unprocessed.removeNode(child);
         }
+    }
+
+    /**
+     * Processes a section that contains only one pair of elements, that is, one element
+     *  on the left and one on the right. This is a frequent special case, such processing
+     *  will allow not to run more complex mapping algorithms.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     */
+    private void processSectionWithOnePair(final Unprocessed unprocessed, final Section section) {
+        final ExtNode left = section.getLeft().get(0);
+        final ExtNode right = section.getRight().get(0);
+        this.execute(left, right);
+        unprocessed.removeNodes(left, right);
     }
 
     /**
@@ -269,5 +289,24 @@ final class TopDownAlgorithmNew {
             }
         }
         return result;
+    }
+
+    /**
+     * Marks that the first node from the left subset is replaced by the first node
+     *  from the right subset. Accordingly, both subsets are reduced by one node.
+     *  This is a “dangerous” operation, as such a replacement may not be optimal, however,
+     *  sequential execution of this operation (if there are no other options) will let
+     *  the mapping algorithm terminate anyway, as all nodes will be mapped as a result.
+     *  This operation is therefore performed last.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     */
+    private void replaceFirstNodes(final Unprocessed unprocessed, final Section section) {
+        final ExtNode left = section.getLeft().get(0);
+        final ExtNode right = section.getRight().get(0);
+        this.replaced.put(left, right);
+        this.skipLeftSubtree(left);
+        this.skipRightSubtree(right);
+        unprocessed.removeNodes(left, right);
     }
 }

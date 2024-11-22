@@ -32,7 +32,7 @@ import org.cqfn.astranaut.core.base.Node;
  * Insertion descriptor like {@link Insertion}, but working with extended nodes.
  * @since 2.0.0
  */
-class ExtInsertion {
+final class ExtInsertion {
     /**
      * Node being inserted.
      */
