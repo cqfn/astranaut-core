@@ -220,7 +220,7 @@ final class TopDownAlgorithmNew {
             if (this.mapIdenticalNodes(unprocessed, section)) {
                 continue;
             }
-            replaceFirstNodes(unprocessed, section);
+            this.replaceFirstNodes(unprocessed, section);
         }
     }
 
