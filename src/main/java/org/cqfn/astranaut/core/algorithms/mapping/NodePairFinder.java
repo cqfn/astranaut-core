@@ -166,7 +166,7 @@ class NodePairFinder {
          * Returns the index of the first matched element from the left array.
          * @return Index
          */
-        int getLeftIndex() {
+        int getLeftOffset() {
             return this.left;
         }
 
@@ -174,7 +174,7 @@ class NodePairFinder {
          * Returns the index of the first matched element from the right array.
          * @return Index
          */
-        int getRightIndex() {
+        int getRightOffset() {
             return this.right;
         }
 

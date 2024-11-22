@@ -26,8 +26,6 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.ExtNode;
-import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,24 +38,32 @@ class NodePairFinderTest {
     void matchNothing() {
         final NodePairFinder.Result result = this.match("A(B,C)", "A(D,E,F)");
         Assertions.assertEquals(0, result.getCount());
-        Assertions.assertEquals(-1, result.getLeftIndex());
-        Assertions.assertEquals(-1, result.getRightIndex());
+        Assertions.assertEquals(-1, result.getLeftOffset());
+        Assertions.assertEquals(-1, result.getRightOffset());
     }
 
     @Test
     void matchOneFromSeven() {
         final NodePairFinder.Result result = this.match("A(B,C,D,E,F,G,H)", "A(I,J,F,K)");
         Assertions.assertEquals(1, result.getCount());
-        Assertions.assertEquals(4, result.getLeftIndex());
-        Assertions.assertEquals(2, result.getRightIndex());
+        Assertions.assertEquals(4, result.getLeftOffset());
+        Assertions.assertEquals(2, result.getRightOffset());
     }
 
     @Test
     void matchTwoFromFour() {
         final NodePairFinder.Result result = this.match("A(B,B,C,B)", "A(D,B,B,B)");
         Assertions.assertEquals(2, result.getCount());
-        Assertions.assertEquals(0, result.getLeftIndex());
-        Assertions.assertEquals(1, result.getRightIndex());
+        Assertions.assertEquals(0, result.getLeftOffset());
+        Assertions.assertEquals(1, result.getRightOffset());
+    }
+
+    @Test
+    void matchThreeFromNine() {
+        final NodePairFinder.Result result = this.match("A(C,C,B,B,B,C,C)", "A(B,B,B,B,B,B,B,B,B)");
+        Assertions.assertEquals(3, result.getCount());
+        Assertions.assertEquals(2, result.getLeftOffset());
+        Assertions.assertEquals(2, result.getRightOffset());
     }
 
     /**

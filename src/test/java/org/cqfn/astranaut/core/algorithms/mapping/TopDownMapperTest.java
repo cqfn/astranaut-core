@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Test;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 class TopDownMapperTest {
-    @Disabled
     @Test
     void testIdenticalTrees() {
         final String description = "A(B(C, D))";
@@ -54,7 +53,6 @@ class TopDownMapperTest {
         Assertions.assertEquals(mapping.getLeft(second), first);
     }
 
-    @Disabled
     @Test
     void testPairOfTreesWhereOnlyInsertion() {
         final Node first = DraftNode.create("X()");
@@ -69,7 +67,6 @@ class TopDownMapperTest {
         }
     }
 
-    @Disabled
     @Test
     void testPairOfTreesWhereOnlyDeletion() {
         final Node first = DraftNode.create("X(A,B)");
@@ -84,7 +81,6 @@ class TopDownMapperTest {
         }
     }
 
-    @Disabled
     @Test
     void testPairOfTreesWhereOneAndOneInserted() {
         final Node first = DraftNode.create("X(A)");
