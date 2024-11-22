@@ -85,9 +85,9 @@ class SectionTest {
     @Test
     void removeNodes() {
         final ExtNodeCreator creator = new ExtNodeCreator();
-        ExtNode left = creator.create(DraftNode.create("A(J,K,L)"));
-        ExtNode right = creator.create(DraftNode.create("A(M,N,O)"));
-        Section section = new Section(left, right);
+        final ExtNode left = creator.create(DraftNode.create("A(J,K,L)"));
+        final ExtNode right = creator.create(DraftNode.create("A(M,N,O)"));
+        final Section section = new Section(left, right);
         Pair<Section, Section> pair = section.removeNodes(left, right);
         Assertions.assertNull(pair.getKey());
         Assertions.assertEquals(

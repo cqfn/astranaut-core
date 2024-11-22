@@ -23,101 +23,167 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.cqfn.astranaut.core.base.ExtNode;
-import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Auxiliary algorithm for top-down mapping.
- * Finds the most matching pairs of nodes. Only nodes with the same hash are pairs.
- *  The best pair is two nodes with minimal index difference.
+ *  Finds pairs of matching nodes.
+ *  Matching is determined by some criterion, usually hash equality.
  * @since 2.0.0
  */
 class NodePairFinder {
     /**
-     * A list of nodes and matching paired (with the same absolute hash) nodes
-     *  with index differences.
+     * Converter that takes the absolute hash of a node.
      */
-    private final List<Pair<ExtNode, List<Pair<ExtNode, Integer>>>> absolute;
+    static final Converter ABSOLUTE_HASH = ExtNode::getAbsoluteHash;
 
     /**
-     * A list of nodes and matching paired (with the same local hash) nodes
-     *  with index differences.
+     * Representing the left side of the unprocessed node section as an array of numbers.
      */
-    private final List<Pair<ExtNode, List<Pair<ExtNode, Integer>>>> local;
+    private final int[] left;
+
+    /**
+     * Representing the left side of the unprocessed node section as an array of numbers.
+     */
+    private final int[] right;
 
     /**
      * Constructor.
+     * @param section Section containing unprocessed nodes
+     * @param converter Converter than converts nodes to numbers
      */
-    NodePairFinder() {
-        this.absolute = new ArrayList<>(0);
-        this.local = new ArrayList<>(0);
+    NodePairFinder(final Section section, final Converter converter) {
+        this.left = section.getLeft().stream().mapToInt(converter::convertNode).toArray();
+        this.right = section.getRight().stream().mapToInt(converter::convertNode).toArray();
     }
 
     /**
-     * Fills structures by finding all pairs and calculating index differences.
-     * @param left Root node of the left subtree
-     * @param right Root node of the right subtree
+     * Finds the best sequence of matching elements. The selection criterion is the sequence
+     *  with the largest number of consecutive matched elements, such that the difference
+     *  between the indices of the left and right matched elements is minimal.
+     * @return Result containing indices of found elements
      */
-    void fill(final ExtNode left, final ExtNode right) {
-        for (int first = 0; first < left.getChildCount(); first = first + 1) {
-            final List<Pair<ExtNode, Integer>> abspairs = new ArrayList<>(0);
-            final List<Pair<ExtNode, Integer>> localpairs = new ArrayList<>(0);
-            final ExtNode child = left.getExtChild(first);
-            this.absolute.add(new Pair<>(child, abspairs));
-            this.local.add(new Pair<>(child, localpairs));
-            for (int second = 0; second < right.getChildCount(); second = second + 1) {
-                final ExtNode applicant = right.getExtChild(second);
-                if (child.getAbsoluteHash() == applicant.getAbsoluteHash()) {
-                    abspairs.add(new Pair<>(applicant, Math.abs(second - first)));
-                } else if (child.getLocalHash() == applicant.getLocalHash()) {
-                    localpairs.add(new Pair<>(applicant, Math.abs(second - first)));
-                }
-            }
+    Result findMatchingSequence() {
+        int size = Math.min(this.left.length, this.right.length);
+        Result seq = null;
+        while (size > 0 && seq == null) {
+            seq = this.findMatchingSequence(size);
+            size = size - 1;
         }
+        if (seq == null) {
+            seq = new Result();
+            seq.left = -1;
+            seq.right = -1;
+        }
+        return seq;
     }
 
     /**
-     * Returns a pair of nodes such that their absolute hash matches
-     *  and the difference in indices is minimal.
-     * @return A pair of nodes or {@code null} if there is no such pair
+     * Find a matching sequence of a specific size.
+     * @param size Size of sequence
+     * @return Result containing indices of found elements or {@code null} if no sequence
+     *  of that size is found
      */
-    Pair<ExtNode, ExtNode> getBestPairOfIdenticalNodes() {
-        Pair<ExtNode, ExtNode> result = null;
+    private Result findMatchingSequence(final int size) {
+        Result seq = null;
         int min = 0;
-        for (final Pair<ExtNode, List<Pair<ExtNode, Integer>>> entry : this.absolute) {
-            final ExtNode left = entry.getKey();
-            for (final Pair<ExtNode, Integer> pair : entry.getValue()) {
-                if (result == null || min > pair.getValue()) {
-                    result = new Pair<>(left, pair.getKey());
-                    min = pair.getValue();
+        for (int loffset = 0; loffset <= this.left.length - size; loffset = loffset + 1) {
+            for (int roffset = 0; roffset <= this.right.length - size; roffset = roffset + 1) {
+                final boolean matches = this.compareSegments(loffset, roffset, size);
+                if (!matches) {
+                    continue;
+                }
+                final int diff = Math.abs(loffset - roffset);
+                if (seq == null) {
+                    seq = new Result();
+                    seq.left = loffset;
+                    seq.right = roffset;
+                    seq.count = size;
+                    min = diff;
+                } else if (min > diff) {
+                    seq.left = loffset;
+                    seq.right = roffset;
+                    min = diff;
                 }
             }
         }
-        return result;
+        return seq;
     }
 
     /**
-     * Returns a pair of nodes such that their absolute hashes match and this pair is to the
-     *  right of the reference (already mapped) pair.
-     * @param reference Reference pair
-     * @return A pair of nodes or {@code null} if there is no such pair
+     * Compares segments of arrays.
+     * @param loffset Index of the first compared element of the left array
+     * @param roffset Index of the first compared element of the right array
+     * @param count Number of elements to be compared
+     * @return Comparison result, {@code true} if all segment elements are equal
      */
-    Pair<ExtNode, ExtNode> getRightPairOfIdenticalNodes(final Pair<ExtNode, ExtNode> reference) {
-        Pair<ExtNode, ExtNode> result = null;
-        for (int index = reference.getKey().getIndex() + 1;
-            result == null && index < this.absolute.size(); index = index + 1) {
-            final Pair<ExtNode, List<Pair<ExtNode, Integer>>> entry = this.absolute.get(index);
-            final ExtNode left = entry.getKey();
-            for (final Pair<ExtNode, Integer> pair : entry.getValue()) {
-                final ExtNode right = pair.getKey();
-                if (reference.getValue().getIndex() < right.getIndex()) {
-                    result = new Pair<>(left, right);
-                    break;
-                }
+    private boolean compareSegments(final int loffset, final int roffset, final int count) {
+        boolean equals = true;
+        for (int index = 0; index < count; index = index + 1) {
+            if (this.left[index + loffset] != this.right[index + roffset]) {
+                equals = false;
+                break;
             }
         }
-        return result;
+        return equals;
+    }
+
+    /**
+     * Converts a node to a number.
+     *  This number will be used when comparing nodes and finding matches.
+     * @since 2.0.0
+     */
+    interface Converter {
+        /**
+         * Converts node to a number.
+         * @param node Node
+         * @return A number
+         */
+        int convertNode(ExtNode node);
+    }
+
+    /**
+     * Matching result.
+     * @since 2.0.0
+     */
+    static class Result {
+        /**
+         * Index of the first matched element from the left array.
+         */
+        private int left;
+
+        /**
+         * Index of the first matched element from the right array.
+         */
+        private int right;
+
+        /**
+         * Number of matched pairs arranged sequentially.
+         */
+        private int count;
+
+        /**
+         * Returns the index of the first matched element from the left array.
+         * @return Index
+         */
+        int getLeftIndex() {
+            return this.left;
+        }
+
+        /**
+         * Returns the index of the first matched element from the right array.
+         * @return Index
+         */
+        int getRightIndex() {
+            return this.right;
+        }
+
+        /**
+         * Returns the number of matched pairs arranged sequentially.
+         * @return Number of matched pairs
+         */
+        int getCount() {
+            return this.count;
+        }
     }
 }

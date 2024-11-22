@@ -96,7 +96,8 @@ class Section {
      * If the node is not present in either subset, the original section is returned.
      * If this removal results in both subsets becoming empty, returns null.
      * @param node Node to be removed
-     * @return A new section instance without the specified node, or null if the result is empty
+     * @return A new section instance without the specified node, or {@code null} if the result
+     *  is empty
      */
     Section removeNode(final ExtNode node) {
         final Section result;
