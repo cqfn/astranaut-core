@@ -96,11 +96,8 @@ final class Unprocessed {
                 break;
             }
             final Section section = found.removeNode(node);
-            final boolean diff = !found.equals(section);
-            if (diff) {
-                iterator.remove();
-            }
-            if (section != null && diff) {
+            iterator.remove();
+            if (section != null) {
                 iterator.add(section);
             }
         } while (false);
