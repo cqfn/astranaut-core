@@ -82,13 +82,9 @@ final  class NodePairFinder {
             size = size - 1;
         }
         while (size > 0 && seq.getOffsetDiff() > NodePairFinder.SIGNIFICANT_DIFF) {
-            Result other = null;
-            while (size > 0 && other == null) {
-                other = this.findMatchingSequence(size);
-                size = size - 1;
-            }
-            if (other != null
-                && seq.getOffsetDiff() - other.getOffsetDiff() > NodePairFinder.SIGNIFICANT_DIFF) {
+            final Result other = this.findMatchingSequence(size);
+            size = size - 1;
+            if (seq.getOffsetDiff() - other.getOffsetDiff() > NodePairFinder.SIGNIFICANT_DIFF) {
                 seq = other;
             }
         }
