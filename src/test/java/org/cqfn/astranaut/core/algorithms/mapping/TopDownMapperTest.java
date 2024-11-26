@@ -33,7 +33,6 @@ import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -321,7 +320,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testInsertedFirstWhileSecondHasActions() {
         final Node first = DraftNode.create("X(A(X),D,E)");
         final Node second = DraftNode.create("X(B,A(Y),D,E)");
@@ -354,9 +352,9 @@ class TopDownMapperTest {
     }
 
     @Test
-    void testComplexInsertion() {
+    void testSubtreeInsertion() {
         final Node first = DraftNode.create(
-            "A(X(Y<'2'>),X(Y<'4'>))"
+            "A(                    X(Y<'2'>),          X(Y<'4'>))"
         );
         final Node second = DraftNode.create(
             "A(X(Y<'0'>),X(Y<'1'>),X(Y<'2'>),X(Y<'3'>),X(Y<'4'>))"
@@ -369,5 +367,26 @@ class TopDownMapperTest {
         Assertions.assertEquals(0, deleted.size());
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(0, replaced.size());
+    }
+
+    @Test
+    void firstTestComplexChanges() {
+        final Node first = DraftNode.create(
+            "A(     X(Y<'1'>,Z,A),X(A,D,C  ))"
+        );
+        final Node second = DraftNode.create(
+            "A(X(Q),X(Y<'2'>,Z,B),X(A,  C,E))"
+        );
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final List<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(2, inserted.size());
+        Assertions.assertEquals("E", inserted.get(0).getNode().toString());
+        Assertions.assertEquals("X(Q)", inserted.get(1).getNode().toString());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals("D", deleted.iterator().next().toString());
+        Assertions.assertEquals(1, deleted.size());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(2, replaced.size());
     }
 }

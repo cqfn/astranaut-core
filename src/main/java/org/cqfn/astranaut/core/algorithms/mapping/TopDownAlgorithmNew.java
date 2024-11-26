@@ -26,10 +26,12 @@ package org.cqfn.astranaut.core.algorithms.mapping;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Top-down mapping algorithm.
@@ -47,6 +49,11 @@ final class TopDownAlgorithmNew {
      * Right-to-left mapping.
      */
     private final Map<ExtNode, ExtNode> rtl;
+
+    /**
+     * The number of pairs of identical nodes from the left and right trees.
+     */
+    private int identical;
 
     /**
      * Set containing inserted nodes.
@@ -69,6 +76,7 @@ final class TopDownAlgorithmNew {
     TopDownAlgorithmNew() {
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
+        this.identical = 0;
         this.inserted = new ArrayList<>(0);
         this.replaced = new HashMap<>();
         this.deleted = new HashSet<>();
@@ -183,6 +191,7 @@ final class TopDownAlgorithmNew {
     private void mapSubtreesWithTheSameAbsoluteHash(final ExtNode left, final ExtNode right) {
         this.ltr.put(left, right);
         this.rtl.put(right, left);
+        this.identical = this.identical + 1;
         for (int index = 0; index < left.getChildCount(); index = index + 1) {
             this.mapSubtreesWithTheSameAbsoluteHash(
                 left.getExtChild(index),
@@ -280,14 +289,14 @@ final class TopDownAlgorithmNew {
     private boolean mapIdenticalNodes(final Unprocessed unprocessed, final Section section) {
         boolean result = false;
         do {
-            if (section.isFlagSet(Section.FLAG_NO_ABSOLUTE)) {
+            if (section.isFlagSet(Section.FLAG_NO_IDENTICAL)) {
                 break;
             }
             final NodePairFinder.Result mapping =
                 new NodePairFinder(section, NodePairFinder.ABSOLUTE_HASH).findMatchingSequence();
             final int count = mapping.getCount();
             if (count == 0) {
-                section.setFlag(Section.FLAG_NO_ABSOLUTE);
+                section.setFlag(Section.FLAG_NO_IDENTICAL);
                 break;
             }
             result = true;
@@ -309,19 +318,99 @@ final class TopDownAlgorithmNew {
      */
     private boolean mapSimilarNodes(final Unprocessed unprocessed, final Section section) {
         boolean result = false;
-        final NodePairFinder.Result mapping =
-            new NodePairFinder(section, NodePairFinder.LOCAL_HASH).findMatchingSequence();
-        final int count = mapping.getCount();
-        if (count > 0) {
+        do {
+            if (section.isFlagSet(Section.FLAG_NO_SIMILAR)) {
+                break;
+            }
+            final NodePairFinder.Result mapping =
+                new NodePairFinder(section, NodePairFinder.LOCAL_HASH).findMatchingSequence();
+            final int count = mapping.getCount();
+            if (count == 0) {
+                section.setFlag(Section.FLAG_NO_SIMILAR);
+                break;
+            }
             result = true;
-            for (int index = 0; index < count; index = index + 1) {
-                final ExtNode left = section.getLeft().get(mapping.getLeftOffset() + index);
-                final ExtNode right = section.getRight().get(mapping.getRightOffset() + index);
-                this.mapSubtreesWithTheSameLocalHash(left, right);
-                unprocessed.removeNodes(left, right);
+            final List<ExtNode> left = TopDownAlgorithmNew.getNodeWithNeighbors(
+                section.getLeft(),
+                mapping.getLeftOffset()
+            );
+            final List<ExtNode> right = TopDownAlgorithmNew.getNodeWithNeighbors(
+                section.getRight(),
+                mapping.getRightOffset()
+            );
+            if (left.size() == 1 && right.size() == 1) {
+                this.mapSubtreesWithTheSameLocalHash(left.get(0), right.get(0));
+                unprocessed.removeNodes(left.get(0), right.get(0));
+                break;
+            }
+            this.mapTheBestPairOfSimilarNodes(unprocessed, left, right);
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Gets node from a list, as well as its neighbors with the same local hash.
+     * @param list Original list of nodes
+     * @param index Node index
+     * @return Resulting list of nodes, including the node and its neighbors
+     */
+    private static List<ExtNode> getNodeWithNeighbors(final List<ExtNode> list, final int index) {
+        final List<ExtNode> result = new LinkedList<>();
+        final ExtNode node = list.get(index);
+        result.add(node);
+        final int hash = node.getLocalHash();
+        for (int leftidx = index - 1; leftidx >= 0; leftidx = index - 1) {
+            final ExtNode previous = list.get(leftidx);
+            if (hash == previous.getLocalHash()) {
+                result.add(0, previous);
+            } else {
+                break;
+            }
+        }
+        for (int rightidx = index + 1; rightidx < list.size(); rightidx = rightidx + 1) {
+            final ExtNode next = list.get(rightidx);
+            if (hash == next.getLocalHash()) {
+                result.add(next);
+            } else {
+                break;
             }
         }
         return result;
+    }
+
+    /**
+     * At this stage, we have one or more child nodes with the same local hash from the left
+     *  node and one or more child nodes from the right node, and thus several options
+     *  on how to map them. The best match is the one in which we could find as many identical
+     *  nodes as possible, which means that such subtrees are the most similar to each other.
+     *  So all possible variants are tried here. This algorithm has the highest computational
+     *  complexity, and we call it only as a last resort when all other possibilities
+     *  have been exhausted.
+     * @param unprocessed All unprocessed nodes
+     * @param left Subset of the child nodes of the left node
+     * @param right Subset of the child nodes of the right node
+     */
+    private void mapTheBestPairOfSimilarNodes(final Unprocessed unprocessed,
+        final List<ExtNode> left, final List<ExtNode> right) {
+        TopDownAlgorithmNew best = null;
+        Pair<ExtNode, ExtNode> pair = null;
+        for (final ExtNode first : left) {
+            for (final ExtNode second : right) {
+                final TopDownAlgorithmNew mapping = new TopDownAlgorithmNew();
+                mapping.mapSubtreesWithTheSameLocalHash(first, second);
+                if (best == null || mapping.identical > best.identical) {
+                    best = mapping;
+                    pair = new Pair<>(first, second);
+                }
+            }
+        }
+        this.ltr.putAll(best.ltr);
+        this.rtl.putAll(best.rtl);
+        this.identical = this.identical + best.identical;
+        this.inserted.addAll(best.inserted);
+        this.replaced.putAll(best.replaced);
+        this.deleted.addAll(best.deleted);
+        unprocessed.removeNodes(pair.getKey(), pair.getValue());
     }
 
     /**

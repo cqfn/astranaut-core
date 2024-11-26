@@ -38,7 +38,12 @@ final class Section {
     /**
      * Index of the flag that indicates that there are no absolute matches in the section.
      */
-    static final int FLAG_NO_ABSOLUTE = 0;
+    static final int FLAG_NO_IDENTICAL = 0;
+
+    /**
+     * Index of the flag that indicates that there are no local matches in the section.
+     */
+    static final int FLAG_NO_SIMILAR = 1;
 
     /**
      * Node on the left of the first element of the subset of child nodes
