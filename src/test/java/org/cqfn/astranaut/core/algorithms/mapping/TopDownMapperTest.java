@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link TopDownMapper} class.
- *
  * @since 1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")

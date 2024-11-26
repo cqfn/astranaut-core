@@ -23,18 +23,15 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
 import org.cqfn.astranaut.core.base.ExtNode;
-import org.cqfn.astranaut.core.base.Insertion;
-import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Top-down mapping algorithm.
@@ -54,9 +51,14 @@ final class TopDownAlgorithm {
     private final Map<ExtNode, ExtNode> rtl;
 
     /**
+     * The number of pairs of identical nodes from the left and right trees.
+     */
+    private int identical;
+
+    /**
      * Set containing inserted nodes.
      */
-    private final Set<ExtInsertion> inserted;
+    private final List<ExtInsertion> inserted;
 
     /**
      * Map containing replaces nodes.
@@ -74,7 +76,8 @@ final class TopDownAlgorithm {
     TopDownAlgorithm() {
         this.ltr = new HashMap<>();
         this.rtl = new HashMap<>();
-        this.inserted = new HashSet<>();
+        this.identical = 0;
+        this.inserted = new ArrayList<>(0);
         this.replaced = new HashMap<>();
         this.deleted = new HashSet<>();
     }
@@ -84,24 +87,77 @@ final class TopDownAlgorithm {
      * @param left Root node of the 'left' tree
      * @param right Root node of the 'right' tree
      */
-    void execute(final Node left, final Node right) {
-        final ExtNodeCreator builder = new ExtNodeCreator();
-        final ExtNode first = builder.create(left);
-        final ExtNode second = builder.create(right);
-        final boolean result = this.execute(builder.create(left), builder.create(right));
+    void execute(final ExtNode left, final ExtNode right) {
+        final boolean result = this.mapSubtrees(left, right);
         if (!result) {
-            this.replaced.put(first, second);
-            this.skipLeftSubtree(first);
-            this.skipRightSubtree(second);
+            this.replaced.put(left, right);
+            this.skipLeftSubtree(left);
+            this.skipRightSubtree(right);
         }
     }
 
     /**
-     * Returns result of mapping.
-     * @return Result of mapping
+     * Returns left-to-right mapping.
+     * @return Collection containing nodes from the left tree and corresponding nodes
+     *  from the right tree
      */
-    Mapping getResult() {
-        return new Result(this);
+    Map<ExtNode, ExtNode> getLeftToRight() {
+        return this.ltr;
+    }
+
+    /**
+     * Returns right-to-left mapping.
+     * @return Collection containing nodes from the right tree and corresponding nodes
+     *  from the left tree
+     */
+    Map<ExtNode, ExtNode> getRightToLeft() {
+        return this.rtl;
+    }
+
+    /**
+     * Returns inserted nodes.
+     * @return Ordered list of insertions
+     */
+    List<ExtInsertion> getInserted() {
+        return this.inserted;
+    }
+
+    /**
+     * Returns replaces nodes.
+     * @return Collection containing replaced nodes (key - node before replacement,
+     *  value - after replacement)
+     */
+    Map<ExtNode, ExtNode> getReplaced() {
+        return this.replaced;
+    }
+
+    /**
+     * Returns deleted nodes.
+     * @return Set of deleted nodes
+     */
+    Set<ExtNode> getDeleted() {
+        return this.deleted;
+    }
+
+    /**
+     * Performs a mapping of two subtrees.
+     * @param left Root node of the left subtree
+     * @param right Root node of the right subtree
+     * @return Mapping result {@code true} if mapping was performed, {@code false} if subtrees
+     *  can't be mapped
+     */
+    private boolean mapSubtrees(final ExtNode left, final ExtNode right) {
+        final boolean result;
+        if (left.getAbsoluteHash() == right.getAbsoluteHash()) {
+            this.mapSubtreesWithTheSameAbsoluteHash(left, right);
+            result = true;
+        } else if (left.getLocalHash() == right.getLocalHash()) {
+            this.mapSubtreesWithTheSameLocalHash(left, right);
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -127,519 +183,252 @@ final class TopDownAlgorithm {
     }
 
     /**
-     * Performs the mapping (private method).
-     * @param left Extended root node of the 'left' tree
-     * @param right Extended root node of the 'right' tree
-     * @return Mapping result ({@code true} if two nodes and their children have been mapped)
-     */
-    private boolean execute(final ExtNode left, final ExtNode right) {
-        final boolean result;
-        if (left.getAbsoluteHash() == right.getAbsoluteHash()) {
-            this.mapSubtreesWithTheSameHash(left, right);
-            result = true;
-        } else {
-            result = left.getTypeName().equals(right.getTypeName())
-                && left.getData().equals(right.getData());
-            if (result) {
-                this.ltr.put(left, right);
-                this.rtl.put(right, left);
-                this.mapSubtreesWithDifferentHashes(left, right);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Maps subtrees with the same hash, adding the corresponding nodes to the resulting
+     * Maps subtrees with the same absolute hash, adding the corresponding nodes to the resulting
      *  collections.
-     * @param left Left node
+     * @param left Left node (root node of the left subtree)
      * @param right Related node to the left node
      */
-    private void mapSubtreesWithTheSameHash(final ExtNode left, final ExtNode right) {
+    private void mapSubtreesWithTheSameAbsoluteHash(final ExtNode left, final ExtNode right) {
         this.ltr.put(left, right);
         this.rtl.put(right, left);
+        this.identical = this.identical + 1;
         for (int index = 0; index < left.getChildCount(); index = index + 1) {
-            this.mapSubtreesWithTheSameHash(left.getExtChild(index), right.getExtChild(index));
-        }
-    }
-
-    /**
-     * Maps subtrees with different hashes.
-     * @param left Left node
-     * @param right Related node to the left node
-     */
-    private void mapSubtreesWithDifferentHashes(final ExtNode left, final ExtNode right) {
-        final Unprocessed unprocessed = new Unprocessed(left, right);
-        do {
-            if (unprocessed.onlyActionIsToInsertNodes()) {
-                this.insertAllNotYetMappedNodes(left, right);
-                break;
-            }
-            if (unprocessed.onlyActionIsToDeleteNodes()) {
-                this.deleteAllNotYetMappedNodes(left);
-                break;
-            }
-            if (this.mapTwoFirstUnmappedNodes(left, right, unprocessed)) {
-                continue;
-            }
-            if (this.mapTwoLastUnmappedNodes(left, right, unprocessed)) {
-                continue;
-            }
-            this.replaceTwoFirstUnmappedNodes(left, right, unprocessed);
-        } while (unprocessed.hasNodes());
-    }
-
-    /**
-     * Finds the first unmapped child of the left node and the first unmapped child
-     *  of the right node and tries to map them.
-     * @param left Left node
-     * @param right Related node to the left node
-     * @param unprocessed Number of unprocessed nodes
-     * @return Mapping result, {@code true} if such nodes were found and mapped
-     */
-    private boolean mapTwoFirstUnmappedNodes(final ExtNode left, final ExtNode right,
-        final Unprocessed unprocessed) {
-        final ExtNode first = this.findFirstUnmappedChild(left);
-        final ExtNode second = this.findFirstUnmappedChild(right);
-        boolean result = this.matchTwoIdenticalNodesOrRightNeighbors(first, second, unprocessed);
-        if (!result) {
-            result = this.matchTwoDifferenceNodesOrRightNeighbors(first, second, unprocessed);
-        }
-        return result;
-    }
-
-    /**
-     * Checks if a node can be associated with another node or with a node's right neighbor
-     *  because some of them are identical.
-     * @param first First node
-     * @param second Second node
-     * @param unprocessed Number of unprocessed nodes
-     * @return Mapping result, {@code true} if nodes were mapped
-     */
-    private boolean matchTwoIdenticalNodesOrRightNeighbors(final ExtNode first,
-        final ExtNode second, final Unprocessed unprocessed) {
-        final boolean result;
-        if (first.getAbsoluteHash() == second.getAbsoluteHash()) {
-            this.mapSubtreesWithTheSameHash(first, second);
-            unprocessed.removeOnePair();
-            result = true;
-        } else if (second.getRight() != null
-            && first.getAbsoluteHash() == second.getRight().getAbsoluteHash()) {
-            this.mapSubtreesWithTheSameHash(first, second.getRight());
-            unprocessed.removeOnePair();
-            final ExtInsertion insertion = new ExtInsertion(
-                second,
-                first.getParent(),
-                first.getLeft()
+            this.mapSubtreesWithTheSameAbsoluteHash(
+                left.getExtChild(index),
+                right.getExtChild(index)
             );
-            this.inserted.add(insertion);
-            this.skipRightSubtree(second);
-            unprocessed.nodeWasInserted();
-            result = true;
-        } else if (first.getRight() != null
-            && first.getRight().getAbsoluteHash() == second.getAbsoluteHash()) {
-            this.mapSubtreesWithTheSameHash(first.getRight(), second);
-            unprocessed.removeOnePair();
-            this.deleted.add(first);
-            this.skipLeftSubtree(first);
-            unprocessed.nodeWasDeleted();
-            result = true;
-        } else {
-            result = false;
         }
-        return result;
     }
 
     /**
-     * Checks if a node can be related to another node or to the right neighbor of a node,
-     *  since children of some nodes can be related, although all these nodes are not
-     *  absolutely identical.
-     * @param first First node
-     * @param second Second node
-     * @param unprocessed Number of unprocessed nodes
-     * @return Mapping result, {@code true} if nodes were mapped
+     * Maps subtrees with the same local hash, adding the corresponding nodes to the resulting
+     *  collections.
+     * @param left Left node (root node of the left subtree)
+     * @param right Related node to the left node
      */
-    private boolean matchTwoDifferenceNodesOrRightNeighbors(final ExtNode first,
-        final ExtNode second, final Unprocessed unprocessed) {
-        boolean result;
+    private void mapSubtreesWithTheSameLocalHash(final ExtNode left, final ExtNode right) {
+        this.ltr.put(left, right);
+        this.rtl.put(right, left);
+        final Unprocessed unprocessed = new Unprocessed(left, right);
+        for (Section section = unprocessed.getFirstSection(); section != null;
+            section = unprocessed.getFirstSection()) {
+            final int lsize = section.getLeft().size();
+            final int rsize = section.getRight().size();
+            if (lsize == 0 && rsize > 0) {
+                this.insertAllNodes(unprocessed, left, section);
+                continue;
+            }
+            if (lsize > 0 && rsize == 0) {
+                this.deleteAllNodes(unprocessed, section);
+                continue;
+            }
+            if (lsize == 1 && rsize == 1) {
+                this.processSectionWithOnePair(unprocessed, section);
+                continue;
+            }
+            if (this.mapIdenticalNodes(unprocessed, section)) {
+                continue;
+            }
+            if (this.mapSimilarNodes(unprocessed, section)) {
+                continue;
+            }
+            this.replaceFirstNodes(unprocessed, section);
+        }
+    }
+
+    /**
+     * Marks all child nodes from section as inserted.
+     * @param unprocessed All unprocessed nodes
+     * @param node Node where the child nodes will be inserted
+     * @param section Section containing unprocessed nodes
+     */
+    private void insertAllNodes(final Unprocessed unprocessed, final ExtNode node,
+        final Section section) {
+        ExtNode after = section.getPrevious();
+        for (final ExtNode child : section.getRight()) {
+            this.inserted.add(new ExtInsertion(child, node, after));
+            this.skipRightSubtree(child);
+            unprocessed.removeNode(child);
+            after = child;
+        }
+    }
+
+    /**
+     * Marks all child nodes from section as deleted.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     */
+    private void deleteAllNodes(final Unprocessed unprocessed, final Section section) {
+        for (final ExtNode child : section.getLeft()) {
+            this.deleted.add(child);
+            this.skipLeftSubtree(child);
+            unprocessed.removeNode(child);
+        }
+    }
+
+    /**
+     * Processes a section that contains only one pair of elements, that is, one element
+     *  on the left and one on the right. This is a frequent special case, such processing
+     *  will allow not to run more complex mapping algorithms.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     */
+    private void processSectionWithOnePair(final Unprocessed unprocessed, final Section section) {
+        final ExtNode left = section.getLeft().get(0);
+        final ExtNode right = section.getRight().get(0);
+        this.execute(left, right);
+        unprocessed.removeNodes(left, right);
+    }
+
+    /**
+     * Tries to find and map identical nodes.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     * @return Mapping result, {@code true} if at least one pair of nodes has been matched
+     */
+    private boolean mapIdenticalNodes(final Unprocessed unprocessed, final Section section) {
+        boolean result = false;
         do {
-            result = this.execute(first, second);
-            if (result) {
-                unprocessed.removeOnePair();
+            if (section.isFlagSet(Section.FLAG_NO_IDENTICAL)) {
                 break;
             }
-            if (second.getRight() != null) {
-                result = this.execute(first, second.getRight());
-            }
-            if (result) {
-                unprocessed.removeOnePair();
-                final ExtInsertion insertion = new ExtInsertion(
-                    second,
-                    first.getParent(),
-                    first.getLeft()
-                );
-                this.inserted.add(insertion);
-                this.skipRightSubtree(second);
-                unprocessed.nodeWasInserted();
+            final NodePairFinder.Result mapping =
+                new NodePairFinder(section, NodePairFinder.ABSOLUTE_HASH).findMatchingSequence();
+            final int count = mapping.getCount();
+            if (count == 0) {
+                section.setFlag(Section.FLAG_NO_IDENTICAL);
                 break;
             }
-            if (first.getRight() != null) {
-                result = this.execute(first.getRight(), second);
-            }
-            if (result) {
-                unprocessed.removeOnePair();
-                this.deleted.add(first);
-                this.skipLeftSubtree(first);
-                unprocessed.nodeWasDeleted();
-                break;
+            result = true;
+            for (int index = 0; index < count; index = index + 1) {
+                final ExtNode left = section.getLeft().get(mapping.getLeftOffset() + index);
+                final ExtNode right = section.getRight().get(mapping.getRightOffset() + index);
+                this.mapSubtreesWithTheSameAbsoluteHash(left, right);
+                unprocessed.removeNodes(left, right);
             }
         } while (false);
         return result;
     }
 
     /**
-     * Finds the first unmapped child of the left node and the first unmapped child
-     *  of the right node and adds a 'Replace' operation for them.
-     * This is a universal operation because it reduces the number of unprocessed pairs,
-     *  and sooner or later there will be no nodes left and the algorithm will inevitably
-     *  terminate with some result. This is fate. However, this operation may produce
-     *  suboptimal results, and should therefore be used last.
-     * @param left Left node
-     * @param right Related node to the left node
-     * @param unprocessed Number of unprocessed nodes
+     * Tries to find and map similar (but not identical) nodes that have matching local hashes.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     * @return Mapping result, {@code true} if at least one pair of nodes has been matched
      */
-    private void replaceTwoFirstUnmappedNodes(final ExtNode left, final ExtNode right,
-        final Unprocessed unprocessed) {
-        final ExtNode first = this.findFirstUnmappedChild(left);
-        final ExtNode second = this.findFirstUnmappedChild(right);
-        this.replaced.put(first, second);
-        this.ltr.put(first, second);
-        this.rtl.put(second, first);
-        unprocessed.removeOnePair();
-    }
-
-    /**
-     * Finds the first child node that has not yet been mapped.
-     * @param node Parent node
-     * @return First child node that has not yet been mapped
-     */
-    private ExtNode findFirstUnmappedChild(final ExtNode node) {
-        ExtNode result = null;
-        int index = 0;
+    private boolean mapSimilarNodes(final Unprocessed unprocessed, final Section section) {
+        boolean result = false;
         do {
-            final ExtNode child = node.getExtChild(index);
-            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
-                result = child;
+            if (section.isFlagSet(Section.FLAG_NO_SIMILAR)) {
+                break;
             }
-            index = index + 1;
-        } while (result == null);
-        return result;
-    }
-
-    /**
-     * Finds the last unmapped child of the left node and the last unmapped child
-     *  of the right node and tries to map them.
-     * @param left Left node
-     * @param right Related node to the left node
-     * @param unprocessed Number of unprocessed nodes
-     * @return Mapping result, {@code true} if such nodes were found and mapped
-     */
-    private boolean mapTwoLastUnmappedNodes(final ExtNode left, final ExtNode right,
-        final Unprocessed unprocessed) {
-        final ExtNode first = this.findLastUnmappedChild(left);
-        final ExtNode second = this.findLastUnmappedChild(right);
-        final boolean result = this.execute(first, second);
-        if (result) {
-            unprocessed.removeOnePair();
-        }
-        return result;
-    }
-
-    /**
-     * Finds the last child node that has not yet been mapped.
-     * @param node Parent node
-     * @return Last child node that has not yet been mapped
-     */
-    private ExtNode findLastUnmappedChild(final ExtNode node) {
-        final int count = node.getChildCount();
-        ExtNode result = null;
-        int index = count - 1;
-        do {
-            final ExtNode child = node.getExtChild(index);
-            if (!this.ltr.containsKey(child) && !this.rtl.containsKey(child)) {
-                result = child;
+            final NodePairFinder.Result mapping =
+                new NodePairFinder(section, NodePairFinder.LOCAL_HASH).findMatchingSequence();
+            final int count = mapping.getCount();
+            if (count == 0) {
+                section.setFlag(Section.FLAG_NO_SIMILAR);
+                break;
             }
-            index = index - 1;
-        } while (result == null);
-        return result;
-    }
-
-    /**
-     * For all child nodes of the right node that are not yet mapped, performs
-     *  the 'Insert' operation.
-     * @param left Left node
-     * @param right Related node to the left node
-     */
-    private void insertAllNotYetMappedNodes(final ExtNode left, final ExtNode right) {
-        final int count = right.getChildCount();
-        ExtNode after = null;
-        for (int index = 0; index < count; index = index + 1) {
-            final ExtNode node = right.getExtChild(index);
-            if (this.rtl.containsKey(node)) {
-                after = this.rtl.get(node);
-            } else {
-                final ExtInsertion insertion = new ExtInsertion(node, left, after);
-                this.inserted.add(insertion);
-                this.skipRightSubtree(node);
-                after = node;
-            }
-        }
-    }
-
-    /**
-     * For all child nodes of the left node that are not yet mapped, performs
-     *  the 'Delete' operation.
-     * @param left Left node
-     */
-    private void deleteAllNotYetMappedNodes(final ExtNode left) {
-        final int count = left.getChildCount();
-        for (int index = 0; index < count; index = index + 1) {
-            final ExtNode node = left.getExtChild(index);
-            if (!this.ltr.containsKey(node)) {
-                this.deleted.add(node);
-                this.ltr.put(node, null);
-            }
-        }
-    }
-
-    /**
-     * Insertion descriptor like {@link Insertion}, but working with extended nodes.
-     * @since 2.0.0
-     */
-    private static final class ExtInsertion {
-        /**
-         * Node being inserted.
-         */
-        private final ExtNode inserted;
-
-        /**
-         * Parent node into which the child node will be inserted.
-         */
-        private final ExtNode into;
-
-        /**
-         * Child node after which to insert.
-         */
-        private final ExtNode after;
-
-        /**
-         * Constructor.
-         * @param inserted Node being inserted
-         * @param into Parent node into which the child node will be inserted
-         * @param after Child node after which to insert
-         */
-        ExtInsertion(final ExtNode inserted, final ExtNode into, final ExtNode after) {
-            this.inserted = Objects.requireNonNull(inserted);
-            this.into = into;
-            this.after = after;
-        }
-
-        /**
-         * Converts the descriptor to a 'classic' {@link Insertion}.
-         * @return An insertion descriptor that uses non-extended nodes
-         */
-        public Insertion toInsertion() {
-            final Node third;
-            if (this.after == null) {
-                third = null;
-            } else {
-                third = this.after.getPrototype();
-            }
-            return new Insertion(this.inserted.getPrototype(), this.into.getPrototype(), third);
-        }
-    }
-
-    /**
-     * Mapping result.
-     * @since 1.1.0
-     */
-    private static final class Result implements Mapping {
-        /**
-         * Left-to-right mapping.
-         */
-        private final Map<Node, Node> ltr;
-
-        /**
-         * Right-to-left mapping.
-         */
-        private final Map<Node, Node> rtl;
-
-        /**
-         * Set containing inserted nodes.
-         */
-        private final List<Insertion> inserted;
-
-        /**
-         * Map containing replaces nodes.
-         */
-        private final Map<Node, Node> replaced;
-
-        /**
-         * Set of deleted nodes.
-         */
-        private final Set<Node> deleted;
-
-        /**
-         * Constructor.
-         * @param data Structure from which the mapping results can be taken
-         */
-        private Result(final TopDownAlgorithm data) {
-            this.ltr = Result.convert(data.ltr);
-            this.rtl = Result.convert(data.rtl);
-            this.inserted = Collections.unmodifiableList(
-                data.inserted.stream()
-                    .map(ExtInsertion::toInsertion)
-                    .collect(Collectors.toList())
+            result = true;
+            final List<ExtNode> left = TopDownAlgorithm.getNodeWithNeighbors(
+                section.getLeft(),
+                mapping.getLeftOffset()
             );
-            this.replaced = Result.convert(data.replaced);
-            this.deleted = Collections.unmodifiableSet(
-                data.deleted.stream()
-                    .map(ExtNode::getPrototype)
-                    .collect(Collectors.toSet())
+            final List<ExtNode> right = TopDownAlgorithm.getNodeWithNeighbors(
+                section.getRight(),
+                mapping.getRightOffset()
             );
-        }
+            if (left.size() == 1 && right.size() == 1) {
+                this.mapSubtreesWithTheSameLocalHash(left.get(0), right.get(0));
+                unprocessed.removeNodes(left.get(0), right.get(0));
+                break;
+            }
+            this.mapTheBestPairOfSimilarNodes(unprocessed, left, right);
+        } while (false);
+        return result;
+    }
 
-        @Override
-        public Node getRight(final Node node) {
-            return this.ltr.get(node);
+    /**
+     * Gets node from a list, as well as its neighbors with the same local hash.
+     * @param list Original list of nodes
+     * @param index Node index
+     * @return Resulting list of nodes, including the node and its neighbors
+     */
+    private static List<ExtNode> getNodeWithNeighbors(final List<ExtNode> list, final int index) {
+        final List<ExtNode> result = new LinkedList<>();
+        final ExtNode node = list.get(index);
+        result.add(node);
+        final int hash = node.getLocalHash();
+        for (int leftidx = index - 1; leftidx >= 0; leftidx = index - 1) {
+            final ExtNode previous = list.get(leftidx);
+            if (hash == previous.getLocalHash()) {
+                result.add(0, previous);
+            } else {
+                break;
+            }
         }
-
-        @Override
-        public Node getLeft(final Node node) {
-            return this.rtl.get(node);
+        for (int rightidx = index + 1; rightidx < list.size(); rightidx = rightidx + 1) {
+            final ExtNode next = list.get(rightidx);
+            if (hash == next.getLocalHash()) {
+                result.add(next);
+            } else {
+                break;
+            }
         }
+        return result;
+    }
 
-        @Override
-        public List<Insertion> getInserted() {
-            return this.inserted;
-        }
-
-        @Override
-        public Map<Node, Node> getReplaced() {
-            return this.replaced;
-        }
-
-        @Override
-        public Set<Node> getDeleted() {
-            return this.deleted;
-        }
-
-        /**
-         * Converts a collection (map) of extended nodes to a collection of their prototypes.
-         * @param original Original collection
-         * @return Resulting collection
-         */
-        private static Map<Node, Node> convert(final Map<ExtNode, ExtNode> original) {
-            final Map<Node, Node> result = new HashMap<>();
-            for (final Map.Entry<ExtNode, ExtNode> entry : original.entrySet()) {
-                Node value = null;
-                if (entry.getValue() != null) {
-                    value = entry.getValue().getPrototype();
+    /**
+     * At this stage, we have one or more child nodes with the same local hash from the left
+     *  node and one or more child nodes from the right node, and thus several options
+     *  on how to map them. The best match is the one in which we could find as many identical
+     *  nodes as possible, which means that such subtrees are the most similar to each other.
+     *  So all possible variants are tried here. This algorithm has the highest computational
+     *  complexity, and we call it only as a last resort when all other possibilities
+     *  have been exhausted.
+     * @param unprocessed All unprocessed nodes
+     * @param left Subset of the child nodes of the left node
+     * @param right Subset of the child nodes of the right node
+     */
+    private void mapTheBestPairOfSimilarNodes(final Unprocessed unprocessed,
+        final List<ExtNode> left, final List<ExtNode> right) {
+        TopDownAlgorithm best = null;
+        Pair<ExtNode, ExtNode> pair = null;
+        for (final ExtNode first : left) {
+            for (final ExtNode second : right) {
+                final TopDownAlgorithm mapping = new TopDownAlgorithm();
+                mapping.mapSubtreesWithTheSameLocalHash(first, second);
+                if (best == null || mapping.identical > best.identical) {
+                    best = mapping;
+                    pair = new Pair<>(first, second);
                 }
-                result.put(entry.getKey().getPrototype(), value);
             }
-            return Collections.unmodifiableMap(result);
         }
+        this.ltr.putAll(best.ltr);
+        this.rtl.putAll(best.rtl);
+        this.identical = this.identical + best.identical;
+        this.inserted.addAll(best.inserted);
+        this.replaced.putAll(best.replaced);
+        this.deleted.addAll(best.deleted);
+        unprocessed.removeNodes(pair.getKey(), pair.getValue());
     }
 
     /**
-     * Number of unprocessed child nodes.
-     * @since 1.1.0
+     * Marks that the first node from the left subset is replaced by the first node
+     *  from the right subset. Accordingly, both subsets are reduced by one node.
+     *  This is a “dangerous” operation, as such a replacement may not be optimal, however,
+     *  sequential execution of this operation (if there are no other options) will let
+     *  the mapping algorithm terminate anyway, as all nodes will be mapped as a result.
+     *  This operation is therefore performed last.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
      */
-    private static class Unprocessed {
-        /**
-         * Number of unprocessed children of left node.
-         */
-        private int left;
-
-        /**
-         * Number of unprocessed children of right node.
-         */
-        private int right;
-
-        /**
-         * Number of nodes to be added.
-         */
-        private int add;
-
-        /**
-         * Number of nodes to be deleted.
-         */
-        private int delete;
-
-        /**
-         * Constructor.
-         * @param left Left node whose children will be analyzed
-         * @param right Right node
-         */
-        Unprocessed(final Node left, final Node right) {
-            this.left = left.getChildCount();
-            this.right = right.getChildCount();
-            this.add = Math.max(this.right - this.left, 0);
-            this.delete = Math.max(this.left - this.right, 0);
-        }
-
-        /**
-         * Checks are there still unprocessed nodes.
-         * @return Checking result ({@code true} if yes)
-         */
-        boolean hasNodes() {
-            return this.left > 0 || this.right > 0;
-        }
-
-        /**
-         * Analyzes a case where the only actions that are allowed are insertions.
-         * @return Checking result, {@code true} if we can only add nodes
-         */
-        boolean onlyActionIsToInsertNodes() {
-            return this.left == 0;
-        }
-
-        /**
-         * Analyzes a case where the only actions that are allowed are deletions.
-         * @return Checking result, {@code true} if we can only delete nodes
-         */
-        boolean onlyActionIsToDeleteNodes() {
-            return this.right == 0;
-        }
-
-        /**
-         * Notes that some child node of the right node has been recognized as an inserted node.
-         */
-        void nodeWasInserted() {
-            this.right = this.right - 1;
-            if (this.add > 0) {
-                this.add = this.add - 1;
-            } else {
-                this.delete = this.delete + 1;
-            }
-        }
-
-        /**
-         * Notes that some child node of the right node has been recognized as a deleted node.
-         */
-        void nodeWasDeleted() {
-            this.left = this.left - 1;
-            this.delete = this.delete - 1;
-        }
-
-        /**
-         * Marks that some child of the left node has been mapped or replaced by a child
-         * of the right node.
-         */
-        void removeOnePair() {
-            this.left = this.left - 1;
-            this.right = this.right - 1;
-        }
+    private void replaceFirstNodes(final Unprocessed unprocessed, final Section section) {
+        final ExtNode left = section.getLeft().get(0);
+        final ExtNode right = section.getRight().get(0);
+        this.replaced.put(left, right);
+        this.skipLeftSubtree(left);
+        this.skipRightSubtree(right);
+        unprocessed.removeNodes(left, right);
     }
 }

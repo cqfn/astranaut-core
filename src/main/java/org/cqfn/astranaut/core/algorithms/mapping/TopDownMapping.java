@@ -67,7 +67,7 @@ final class TopDownMapping implements Mapping {
      * Constructor.
      * @param algorithm Structure from which the mapping results can be taken
      */
-    TopDownMapping(final TopDownAlgorithmNew algorithm) {
+    TopDownMapping(final TopDownAlgorithm algorithm) {
         this.ltr = TopDownMapping.convert(algorithm.getLeftToRight());
         this.rtl = TopDownMapping.convert(algorithm.getRightToLeft());
         this.inserted = Collections.unmodifiableList(

@@ -46,7 +46,7 @@ public final class TopDownMapper implements Mapper {
 
     @Override
     public Mapping map(final Node left, final Node right) {
-        final TopDownAlgorithmNew algorithm = new TopDownAlgorithmNew();
+        final TopDownAlgorithm algorithm = new TopDownAlgorithm();
         final ExtNodeCreator builder = new ExtNodeCreator();
         final ExtNode first = builder.create(left);
         final ExtNode second = builder.create(right);
