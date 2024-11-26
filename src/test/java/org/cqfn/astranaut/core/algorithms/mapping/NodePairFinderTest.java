@@ -66,6 +66,17 @@ class NodePairFinderTest {
         Assertions.assertEquals(2, result.getRightOffset());
     }
 
+    @Test
+    void matchShorterButBetter() {
+        final NodePairFinder.Result result = this.match(
+            "A(D,F,F,D,E,E,E,D,C,C,C,C)",
+            "A(B,B,F,F,B,B,B,B,B,E,E,E,B,B,B,B,B,C,C,C,C)"
+        );
+        Assertions.assertEquals(2, result.getCount());
+        Assertions.assertEquals(1, result.getLeftOffset());
+        Assertions.assertEquals(2, result.getRightOffset());
+    }
+
     /**
      * Matches a pair of nodes and finds the best sequence of matching child nodes.
      * @param first Description of the first node
