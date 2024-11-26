@@ -339,7 +339,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testDeletedFirstWhileSecondHasActions() {
         final Node first = DraftNode.create("X(B,A(X),D,E)");
         final Node second = DraftNode.create("X(A(Y),D,E)");
@@ -356,7 +355,6 @@ class TopDownMapperTest {
     }
 
     @Test
-    @Disabled
     void testComplexInsertion() {
         final Node first = DraftNode.create(
             "A(X(Y<'2'>),X(Y<'4'>))"

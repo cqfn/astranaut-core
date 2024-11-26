@@ -38,6 +38,11 @@ final  class NodePairFinder {
     static final Converter ABSOLUTE_HASH = ExtNode::getAbsoluteHash;
 
     /**
+     * Converter that takes the local hash of a node.
+     */
+    static final Converter LOCAL_HASH = ExtNode::getLocalHash;
+
+    /**
      * Significant difference between node indices, that is, if the node indices
      *  differ by more than this number, we consider it to be a lot and look for more variants.
      */

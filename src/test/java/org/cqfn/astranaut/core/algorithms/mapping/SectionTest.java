@@ -59,6 +59,7 @@ class SectionTest {
         final Section initial = new Section(left, right);
         final Section same = initial.removeNode(left);
         Assertions.assertSame(initial, same);
+        initial.setFlag(Section.FLAG_NO_ABSOLUTE);
         Section section = initial.removeNode(right.getExtChild(1));
         Assertions.assertFalse(section.hasNode(right.getExtChild(1)));
         Assertions.assertEquals(4, section.getLeft().size() + section.getRight().size());
@@ -72,6 +73,7 @@ class SectionTest {
         section = section.removeNode(right.getExtChild(0));
         Assertions.assertFalse(section.hasNode(right.getExtChild(0)));
         Assertions.assertEquals(1, section.getLeft().size() + section.getRight().size());
+        Assertions.assertTrue(section.isFlagSet(Section.FLAG_NO_ABSOLUTE));
         section = section.removeNode(right.getExtChild(2));
         Assertions.assertNull(section);
         section = initial.removeNode(right.getExtChild(0));
@@ -95,11 +97,14 @@ class SectionTest {
             6,
             pair.getValue().getLeft().size() + pair.getValue().getRight().size()
         );
+        section.setFlag(Section.FLAG_NO_ABSOLUTE);
         pair = section.removeNodes(left.getExtChild(1), right.getExtChild(1));
         Assertions.assertEquals(
             2,
             pair.getKey().getLeft().size() + pair.getKey().getRight().size()
         );
+        Assertions.assertTrue(pair.getKey().isFlagSet(Section.FLAG_NO_ABSOLUTE));
+        Assertions.assertTrue(pair.getValue().isFlagSet(Section.FLAG_NO_ABSOLUTE));
         Assertions.assertSame(pair.getKey().getLeft().get(0), left.getExtChild(0));
         Assertions.assertSame(pair.getKey().getRight().get(0), right.getExtChild(0));
         Assertions.assertEquals(

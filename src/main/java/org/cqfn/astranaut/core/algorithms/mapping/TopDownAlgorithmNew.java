@@ -220,6 +220,9 @@ final class TopDownAlgorithmNew {
             if (this.mapIdenticalNodes(unprocessed, section)) {
                 continue;
             }
+            if (this.mapSimilarNodes(unprocessed, section)) {
+                continue;
+            }
             this.replaceFirstNodes(unprocessed, section);
         }
     }
@@ -276,15 +279,45 @@ final class TopDownAlgorithmNew {
      */
     private boolean mapIdenticalNodes(final Unprocessed unprocessed, final Section section) {
         boolean result = false;
+        do {
+            if (section.isFlagSet(Section.FLAG_NO_ABSOLUTE)) {
+                break;
+            }
+            final NodePairFinder.Result mapping =
+                new NodePairFinder(section, NodePairFinder.ABSOLUTE_HASH).findMatchingSequence();
+            final int count = mapping.getCount();
+            if (count == 0) {
+                section.setFlag(Section.FLAG_NO_ABSOLUTE);
+                break;
+            }
+            result = true;
+            for (int index = 0; index < count; index = index + 1) {
+                final ExtNode left = section.getLeft().get(mapping.getLeftOffset() + index);
+                final ExtNode right = section.getRight().get(mapping.getRightOffset() + index);
+                this.mapSubtreesWithTheSameAbsoluteHash(left, right);
+                unprocessed.removeNodes(left, right);
+            }
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Tries to find and map similar (but not identical) nodes that have matching local hashes.
+     * @param unprocessed All unprocessed nodes
+     * @param section Current section containing unprocessed nodes
+     * @return Mapping result, {@code true} if at least one pair of nodes has been matched
+     */
+    private boolean mapSimilarNodes(final Unprocessed unprocessed, final Section section) {
+        boolean result = false;
         final NodePairFinder.Result mapping =
-            new NodePairFinder(section, NodePairFinder.ABSOLUTE_HASH).findMatchingSequence();
+            new NodePairFinder(section, NodePairFinder.LOCAL_HASH).findMatchingSequence();
         final int count = mapping.getCount();
         if (count > 0) {
             result = true;
             for (int index = 0; index < count; index = index + 1) {
                 final ExtNode left = section.getLeft().get(mapping.getLeftOffset() + index);
                 final ExtNode right = section.getRight().get(mapping.getRightOffset() + index);
-                this.mapSubtreesWithTheSameAbsoluteHash(left, right);
+                this.mapSubtreesWithTheSameLocalHash(left, right);
                 unprocessed.removeNodes(left, right);
             }
         }

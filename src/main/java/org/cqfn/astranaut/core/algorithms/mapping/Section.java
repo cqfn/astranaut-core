@@ -36,6 +36,11 @@ import org.cqfn.astranaut.core.utils.Pair;
  */
 final class Section {
     /**
+     * Index of the flag that indicates that there are no absolute matches in the section.
+     */
+    static final int FLAG_NO_ABSOLUTE = 0;
+
+    /**
      * Node on the left of the first element of the subset of child nodes
      *  of the first (left) node.
      */
@@ -50,6 +55,11 @@ final class Section {
      * Subset of the child nodes of the second (right) node.
      */
     private final List<ExtNode> right;
+
+    /**
+     * Various flags that help optimize the algorithm.
+     */
+    private int flags;
 
     /**
      * Constructor.
@@ -99,7 +109,7 @@ final class Section {
     }
 
     /**
-     * Checks if the section contains a node.
+     * Checks if the section contains specific node.
      * @param node Node
      * @return Checking result
      */
@@ -159,14 +169,33 @@ final class Section {
             first = null;
         } else {
             first = new Section(this.previous, xleft.getKey(), xright.getKey());
+            first.flags = this.flags;
         }
         final Section second;
         if (xleft.getValue().isEmpty() && xright.getValue().isEmpty()) {
             second = null;
         } else {
             second = new Section(node, xleft.getValue(), xright.getValue());
+            second.flags = this.flags;
         }
         return new Pair<>(first, second);
+    }
+
+    /**
+     * Returns whether the flag is set.
+     * @param index Index of the flag
+     * @return Value of the flag
+     */
+    boolean isFlagSet(final int index) {
+        return (this.flags & (1 << index)) > 0;
+    }
+
+    /**
+     * Sets the flag.
+     * @param index Index of the flag
+     */
+    void setFlag(final int index) {
+        this.flags = this.flags | (1 << index);
     }
 
     /**
@@ -200,6 +229,9 @@ final class Section {
             }
             result = new Section(before, Collections.unmodifiableList(list), this.right);
         } while (false);
+        if (result != null) {
+            result.flags = this.flags;
+        }
         return result;
     }
 
@@ -228,6 +260,9 @@ final class Section {
             }
             result = new Section(this.previous, this.left, Collections.unmodifiableList(list));
         } while (false);
+        if (result != null) {
+            result.flags = this.flags;
+        }
         return result;
     }
 
