@@ -54,7 +54,7 @@ class SectionTest {
     @Test
     void removeNode() {
         final ExtNodeCreator creator = new ExtNodeCreator();
-        final ExtNode left = creator.create(DraftNode.create("A(E,F)"));
+        final ExtNode left = creator.create(DraftNode.create("A(E,F,Q)"));
         final ExtNode right = creator.create(DraftNode.create("A(G,H,I)"));
         final Section initial = new Section(left, right);
         final Section same = initial.removeNode(left);
@@ -62,9 +62,13 @@ class SectionTest {
         initial.setFlag(Section.FLAG_NO_IDENTICAL);
         Section section = initial.removeNode(right.getExtChild(1));
         Assertions.assertFalse(section.hasNode(right.getExtChild(1)));
-        Assertions.assertEquals(4, section.getLeft().size() + section.getRight().size());
+        Assertions.assertEquals(5, section.getLeft().size() + section.getRight().size());
         section = section.removeNode(left.getExtChild(0));
         Assertions.assertFalse(section.hasNode(left.getExtChild(0)));
+        Assertions.assertSame(left.getExtChild(0), section.getPrevious());
+        Assertions.assertEquals(4, section.getLeft().size() + section.getRight().size());
+        section = section.removeNode(left.getExtChild(2));
+        Assertions.assertFalse(section.hasNode(left.getExtChild(2)));
         Assertions.assertSame(left.getExtChild(0), section.getPrevious());
         Assertions.assertEquals(3, section.getLeft().size() + section.getRight().size());
         section = section.removeNode(left.getExtChild(1));
@@ -82,6 +86,7 @@ class SectionTest {
         Assertions.assertTrue(section.getRight().isEmpty());
         section = section.removeNode(left.getExtChild(0));
         section = section.removeNode(left.getExtChild(1));
+        section = section.removeNode(left.getExtChild(2));
         Assertions.assertNull(section);
     }
 
