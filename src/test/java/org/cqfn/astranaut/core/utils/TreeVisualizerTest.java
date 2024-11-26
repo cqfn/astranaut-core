@@ -27,10 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.exceptions.WrongFileExtension;
+import java.util.Map;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.CoreException;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.EmptyTree;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NodeAndType;
+import org.cqfn.astranaut.core.base.Tree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -47,19 +51,14 @@ class TreeVisualizerTest {
      */
     @Test
     void testSingleNodeVisualization(@TempDir final Path temp) {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("TestNode");
-        ctor.setData("value");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = Tree.createDraft("TestNode<\"value\">");
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("node.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -68,16 +67,14 @@ class TreeVisualizerTest {
      */
     @Test
     void testNullNodeVisualization(@TempDir final Path temp) {
-        final Node root = EmptyTree.INSTANCE;
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = EmptyTree.INSTANCE;
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("null.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -89,16 +86,14 @@ class TreeVisualizerTest {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
         ctor.setName("DataNode");
         ctor.setData("<va\'l&u\"e>");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = new Tree(ctor.createNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("data.png");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -116,16 +111,14 @@ class TreeVisualizerTest {
         right.setName("DoubleLiteral");
         right.setData("3");
         addition.setChildrenList(Arrays.asList(left.createNode(), right.createNode()));
-        final Node root = addition.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
+        final Tree tree = new Tree(addition.createNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
         final Path img = temp.resolve("tree.svg");
-        boolean oops = false;
-        try {
-            visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
-            oops = true;
-        }
-        Assertions.assertFalse(oops);
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
     }
 
     /**
@@ -134,17 +127,85 @@ class TreeVisualizerTest {
      */
     @Test
     void testWrongExtension(@TempDir final Path temp) {
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("Exception");
-        final Node root = ctor.createNode();
-        final TreeVisualizer visualizer = new TreeVisualizer(root);
-        final Path img = temp.resolve("node.jpg");
+        final Tree tree = Tree.createDraft("Exception");
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
+        Path img = temp.resolve("node.jpg");
         boolean oops = false;
         try {
             visualizer.visualize(new File(img.toString()));
-        } catch (final WrongFileExtension | IOException exception) {
+        } catch (final CoreException exception) {
+            oops = true;
+            Assertions.assertNotNull(exception.getInitiator());
+            Assertions.assertNotNull(exception.getErrorMessage());
+        } catch (final IOException ignored) {
+        }
+        Assertions.assertTrue(oops);
+        img = temp.resolve("node");
+        oops = false;
+        try {
+            visualizer.visualize(new File(img.toString()));
+        } catch (final CoreException | IOException ignored) {
             oops = true;
         }
         Assertions.assertTrue(oops);
+    }
+
+    /**
+     * Test for a single node visualization.
+     * @param temp A temporary directory
+     */
+    @Test
+    void testColoredNodeVisualization(@TempDir final Path temp) {
+        final Tree tree = new Tree(new ColoredNode());
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
+        final Path img = temp.resolve("node.svg");
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
+        final FilesReader reader = new FilesReader(img.toString());
+        final String content = reader.readAsStringNoExcept();
+        Assertions.assertTrue(content.contains("fill=\"yellow\""));
+        Assertions.assertTrue(content.contains("stroke=\"red\""));
+    }
+
+    /**
+     * Colored node for test purposes.
+     * @since 2.0.0
+     */
+    private static final class ColoredNode extends NodeAndType {
+        @Override
+        public String getName() {
+            return "Colored";
+        }
+
+        @Override
+        public Builder createBuilder() {
+            return null;
+        }
+
+        @Override
+        public String getData() {
+            return "";
+        }
+
+        @Override
+        public int getChildCount() {
+            return 0;
+        }
+
+        @Override
+        public Node getChild(final int index) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public Map<String, String> getProperties() {
+            return new MapUtils<String, String>()
+                .put("color", "red")
+                .put("bgcolor", "yellow")
+                .make();
+        }
     }
 }

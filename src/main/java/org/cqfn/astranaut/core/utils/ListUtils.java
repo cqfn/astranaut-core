@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -38,13 +37,13 @@ public final class ListUtils<T> {
     /**
      * List being built.
      */
-    private final List<T> result;
+    private final List<T> list;
 
     /**
      * Constructor.
      */
     public ListUtils() {
-        this.result = new LinkedList<>();
+        this.list = new ArrayList<>(0);
     }
 
     /**
@@ -56,7 +55,7 @@ public final class ListUtils<T> {
     public final ListUtils<T> add(final T... items) {
         for (final T item : items) {
             if (item != null) {
-                this.result.add(item);
+                this.list.add(item);
             }
         }
         return this;
@@ -64,13 +63,13 @@ public final class ListUtils<T> {
 
     /**
      * Merges another list with the result. Null items are skipped.
-     * @param list Another list
+     * @param other Another list
      */
-    public void merge(final List<T> list) {
-        if (list != null) {
-            for (final T item : list) {
+    public void merge(final List<T> other) {
+        if (other != null) {
+            for (final T item : other) {
                 if (item != null) {
-                    this.result.add(item);
+                    this.list.add(item);
                 }
             }
         }
@@ -81,6 +80,6 @@ public final class ListUtils<T> {
      * @return A list
      */
     public List<T> make() {
-        return Collections.unmodifiableList(new ArrayList<>(this.result));
+        return Collections.unmodifiableList(this.list);
     }
 }

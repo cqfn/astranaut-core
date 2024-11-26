@@ -25,17 +25,23 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Hole;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
+import java.util.Set;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Hole;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
+import org.cqfn.astranaut.core.example.green.Return;
 import org.cqfn.astranaut.core.example.green.SimpleAssignment;
+import org.cqfn.astranaut.core.example.green.StatementBlock;
 import org.cqfn.astranaut.core.example.green.Variable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,12 +56,12 @@ class PatternBuilderTest {
     void creatingPatternWithHole() {
         Builder ctor = new Variable.Constructor();
         ctor.setData("a");
-        final Node first = ctor.createNode();
+        final Node var = ctor.createNode();
         ctor = new IntegerLiteral.Constructor();
         ctor.setData("1");
         final Node second = ctor.createNode();
         ctor = new Addition.Constructor();
-        ctor.setChildrenList(Arrays.asList(first, second));
+        ctor.setChildrenList(Arrays.asList(var, second));
         final Node addition = ctor.createNode();
         ctor = new Variable.Constructor();
         ctor.setData("x");
@@ -66,11 +72,52 @@ class PatternBuilderTest {
         ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
-        final PatternBuilder builder = new PatternBuilder(new DifferenceNode(stmt));
-        builder.makeHole(first, 1);
-        final PatternNode pattern = builder.getRoot();
+        final PatternBuilder builder = new PatternBuilder(new Tree(stmt));
+        builder.makeHole(var, 1);
+        final Pattern pattern = builder.getPattern();
         Assertions.assertNotNull(pattern);
-        final DeepTraversal traversal = new DeepTraversal(pattern);
+        final DepthFirstWalker traversal = new DepthFirstWalker(pattern.getRoot());
+        final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
+        Assertions.assertTrue(hole.isPresent());
+        Assertions.assertEquals("#1",  hole.get().getData());
+    }
+
+    @Test
+    void creatingPatternFromSubtree() {
+        Builder ctor = new Variable.Constructor();
+        ctor.setData("a");
+        final Node var = ctor.createNode();
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("1");
+        final Node second = ctor.createNode();
+        ctor = new Addition.Constructor();
+        ctor.setChildrenList(Arrays.asList(var, second));
+        final Node addition = ctor.createNode();
+        ctor = new Variable.Constructor();
+        ctor.setData("x");
+        final Node variable = ctor.createNode();
+        ctor = new SimpleAssignment.Constructor();
+        ctor.setChildrenList(Arrays.asList(variable, addition));
+        final Node assignment = ctor.createNode();
+        ctor = new ExpressionStatement.Constructor();
+        ctor.setChildrenList(Collections.singletonList(assignment));
+        final Node stmt = ctor.createNode();
+        ctor = new Return.Constructor();
+        final Node ret = ctor.createNode();
+        ctor = new StatementBlock.Constructor();
+        ctor.setChildrenList(Arrays.asList(stmt, ret));
+        final Node block = ctor.createNode();
+        final Tree tree = new Tree(block);
+        final Set<Node> exclude = new HashSet<>();
+        exclude.add(ret);
+        final Tree subtree = new Tree(
+            new SubtreeBuilder(tree, SubtreeBuilder.EXCLUDE).create(exclude)
+        );
+        final PatternBuilder builder = new PatternBuilder(subtree);
+        builder.makeHole(var, 1);
+        final Pattern pattern = builder.getPattern();
+        Assertions.assertNotNull(pattern);
+        final DepthFirstWalker traversal = new DepthFirstWalker(pattern.getRoot());
         final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
         Assertions.assertTrue(hole.isPresent());
         Assertions.assertEquals("#1",  hole.get().getData());
@@ -79,11 +126,13 @@ class PatternBuilderTest {
     @Test
     void wrongHole() {
         final PatternBuilder builder = new PatternBuilder(
-            new DifferenceNode(
-                DraftNode.createByDescription("X")
+            new DiffTree(
+                new DiffNode(
+                    DraftNode.create("X")
+                )
             )
         );
-        final boolean result = builder.makeHole(DraftNode.createByDescription("A"), 0);
+        final boolean result = builder.makeHole(DraftNode.create("A"), 0);
         Assertions.assertFalse(result);
     }
 }

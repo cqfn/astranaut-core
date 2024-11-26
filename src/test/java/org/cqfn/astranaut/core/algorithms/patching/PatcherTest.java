@@ -28,14 +28,16 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.Insertion;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
-import org.cqfn.astranaut.core.algorithms.DifferenceTreeBuilder;
-import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Insertion;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
 import org.cqfn.astranaut.core.example.green.IntegerLiteral;
@@ -52,62 +54,65 @@ import org.junit.jupiter.api.Test;
 class PatcherTest {
     @Test
     void patchingByPatternThatDoesNotMatch() {
-        final Node source = DraftNode.createByDescription("A(B,C,D)");
-        final PatternNode pattern = new PatternNode(
-            new DifferenceNode(
-                DraftNode.createByDescription("D")
+        final Tree source = Tree.createDraft("A(B,C,D)");
+        final Pattern pattern =
+            new Pattern(
+                new PatternNode(
+                    new DiffNode(
+                        DraftNode.create("E")
+                )
             )
         );
-        final Patcher patcher = new DefaultPatcher();
-        final Node result = patcher.patch(source, pattern);
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree result = patcher.patch(source, pattern);
         Assertions.assertTrue(source.deepCompare(result));
     }
 
     @Test
     void patchPatternWithInsertion() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        final Node prepattern = DraftNode.create("A(B)", nodes);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.insertNode(
             new Insertion(
-                DraftNode.createByDescription("C"),
+                DraftNode.create("C"),
                 prepattern,
                 nodes.get("B").iterator().next()
             )
         );
-        final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B),Z)");
-        final Patcher patcher = new DefaultPatcher();
-        final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(B,C),Z)");
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        final Tree tree = Tree.createDraft("X(Y,A(B),Z)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree result = patcher.patch(tree, pattern);
+        final Tree expected = Tree.createDraft("X(Y,A(B,C),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
     @Test
     void patchPatternWithReplacement() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
-        final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
-        final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(C,D),Z)");
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree result = patcher.patch(tree, pattern);
+        final Tree expected = Tree.createDraft("X(Y,A(C,D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
     @Test
     void patchPatternWithDeletion() {
         final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("A(B, D)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
+        final Node prepattern = DraftNode.create("A(B, D)", nodes);
+        final DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
         builder.deleteNode(nodes.get("B").iterator().next());
-        final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,A(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
-        final Node result = patcher.patch(tree, pattern);
-        final Node expected = DraftNode.createByDescription("X(Y,A(D),Z)");
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        final Tree tree = Tree.createDraft("X(Y,A(B,D),Z)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree result = patcher.patch(tree, pattern);
+        final Tree expected = Tree.createDraft("X(Y,A(D),Z)");
         Assertions.assertTrue(expected.deepCompare(result));
     }
 
@@ -131,9 +136,9 @@ class PatcherTest {
         ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node stmt = ctor.createNode();
-        final Patcher patcher = new DefaultPatcher();
-        final PatternNode pattern = PatcherTest.createPatternWithHole();
-        final Node patched = patcher.patch(stmt, pattern);
+        final Pattern pattern = LittleTrees.createPatternWithHole();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(new Tree(stmt), pattern);
         ctor = new Variable.Constructor();
         ctor.setData("a");
         first = ctor.createNode();
@@ -152,45 +157,33 @@ class PatcherTest {
         ctor = new ExpressionStatement.Constructor();
         ctor.setChildrenList(Collections.singletonList(assignment));
         final Node expected = ctor.createNode();
-        Assertions.assertTrue(expected.deepCompare(patched));
+        Assertions.assertTrue(expected.deepCompare(patched.getRoot()));
     }
 
     @Test
     void patchWithPatternThatDoesNotMatch() {
-        final Map<String, Set<Node>> nodes = new TreeMap<>();
-        final Node prepattern = DraftNode.createByDescription("E(B,D)", nodes);
-        final DifferenceTreeBuilder builder = new DifferenceTreeBuilder(prepattern);
-        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.createByDescription("C"));
-        final PatternNode pattern = new PatternNode(builder.getRoot());
-        final Node tree = DraftNode.createByDescription("X(Y,K(B,D),Z)");
-        final Patcher patcher = new DefaultPatcher();
-        final Node result = patcher.patch(tree, pattern);
+        final Tree tree = Tree.createDraft("X(Y,K(B,D),Z)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        Map<String, Set<Node>> nodes = new TreeMap<>();
+        Node prepattern = DraftNode.create("E(B,D)", nodes);
+        DiffTreeBuilder builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern first = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        Tree result = patcher.patch(tree, first);
         Assertions.assertTrue(tree.deepCompare(result));
-    }
-
-    /**
-     * Creates pattern with a hole.
-     * @return A pattern
-     */
-    private static PatternNode createPatternWithHole() {
-        Builder ctor = new Variable.Constructor();
-        ctor.setData("w");
-        final Node first = ctor.createNode();
-        ctor = new IntegerLiteral.Constructor();
-        ctor.setData("1");
-        final Node second = ctor.createNode();
-        ctor = new Addition.Constructor();
-        ctor.setChildrenList(Arrays.asList(first, second));
-        final Node addition = ctor.createNode();
-        ctor = new IntegerLiteral.Constructor();
-        ctor.setData("2");
-        final Node replacement = ctor.createNode();
-        final DifferenceTreeBuilder dtbld = new DifferenceTreeBuilder(addition);
-        dtbld.replaceNode(second, replacement);
-        final PatternBuilder pbld = new PatternBuilder(dtbld.getRoot());
-        pbld.makeHole(first, 0);
-        final PatternNode pattern = pbld.getRoot();
-        Assertions.assertNotNull(pattern);
-        return pattern;
+        nodes = new TreeMap<>();
+        prepattern = DraftNode.create("K<\"a\">(B,D)", nodes);
+        builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern second = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        result = patcher.patch(tree, second);
+        Assertions.assertTrue(tree.deepCompare(result));
+        nodes = new TreeMap<>();
+        prepattern = DraftNode.create("K(B<\"a\">,D)", nodes);
+        builder = new DiffTreeBuilder(prepattern);
+        builder.replaceNode(nodes.get("B").iterator().next(), DraftNode.create("C"));
+        final Pattern third = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        result = patcher.patch(tree, third);
+        Assertions.assertTrue(tree.deepCompare(result));
     }
 }

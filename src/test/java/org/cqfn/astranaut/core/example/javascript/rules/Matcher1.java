@@ -25,8 +25,8 @@ package org.cqfn.astranaut.core.example.javascript.rules;
 
 import java.util.List;
 import java.util.Map;
-import org.cqfn.astranaut.core.Matcher;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Matcher for the subtree returned by the 'js' language parser.

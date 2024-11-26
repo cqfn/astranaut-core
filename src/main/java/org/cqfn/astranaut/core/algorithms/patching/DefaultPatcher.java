@@ -24,10 +24,11 @@
 package org.cqfn.astranaut.core.algorithms.patching;
 
 import java.util.Set;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
-import org.cqfn.astranaut.core.utils.deserializer.ActionList;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.DiffTree;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Default algorithm that applies patches, i.e. makes some changes in the syntax tree
@@ -36,16 +37,27 @@ import org.cqfn.astranaut.core.utils.deserializer.ActionList;
  * @since 1.1.5
  */
 public final class DefaultPatcher implements Patcher {
+    /**
+     * The instance.
+     */
+    public static final Patcher INSTANCE = new DefaultPatcher();
+
+    /**
+     * Private constructor.
+     */
+    private DefaultPatcher() {
+    }
+
     @Override
-    public Node patch(final Node source, final PatternNode pattern) {
-        final PatternMatcher matcher = new PatternMatcher(source);
+    public Tree patch(final Tree source, final Pattern pattern) {
+        final Matcher matcher = new Matcher(source);
         final Set<Node> nodes = matcher.match(pattern);
-        final Node result;
+        final Tree result;
         if (nodes.isEmpty()) {
             result = source;
         } else {
             final ActionList actions = matcher.getActionList();
-            final DifferenceNode diff = actions.convertTreeToDifferenceTree(source);
+            final DiffTree diff = actions.convertTreeToDiffTree(source);
             result = diff.getAfter();
         }
         return result;

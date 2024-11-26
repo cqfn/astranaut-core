@@ -23,12 +23,13 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.algorithms.ExtNodeCreator;
+import org.cqfn.astranaut.core.base.ExtNode;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Top-down mapper.
- * Compares root nodes first and then children in depth.
- *
+ *  Compares root nodes first and then children in depth.
  * @since 1.1.0
  */
 public final class TopDownMapper implements Mapper {
@@ -46,7 +47,10 @@ public final class TopDownMapper implements Mapper {
     @Override
     public Mapping map(final Node left, final Node right) {
         final TopDownAlgorithm algorithm = new TopDownAlgorithm();
-        algorithm.execute(left, right);
-        return algorithm.getResult();
+        final ExtNodeCreator builder = new ExtNodeCreator();
+        final ExtNode first = builder.create(left);
+        final ExtNode second = builder.create(right);
+        algorithm.execute(first, second);
+        return new TopDownMapping(algorithm);
     }
 }

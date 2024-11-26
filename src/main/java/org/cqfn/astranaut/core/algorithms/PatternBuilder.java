@@ -25,9 +25,11 @@ package org.cqfn.astranaut.core.algorithms;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.DifferenceNode;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.PatternNode;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.PatternNode;
+import org.cqfn.astranaut.core.base.PrototypeBasedNode;
+import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Pattern builder.
@@ -54,10 +56,10 @@ public final class PatternBuilder {
 
     /**
      * Constructor.
-     * @param diff Node of the differential tree from which the pattern is built
+     * @param tree Syntax tree from which the pattern is built
      */
-    public PatternBuilder(final DifferenceNode diff) {
-        this.root = new PatternNode(diff);
+    public PatternBuilder(final Tree tree) {
+        this.root = new PatternNode(tree.getRoot());
         this.info = PatternBuilder.buildNodeInfoMap(this.root);
     }
 
@@ -65,8 +67,8 @@ public final class PatternBuilder {
      * Returns root of resulting pattern.
      * @return Root node of pattern
      */
-    public PatternNode getRoot() {
-        return this.root;
+    public Pattern getPattern() {
+        return new Pattern(this.root);
     }
 
     /**
@@ -103,11 +105,20 @@ public final class PatternBuilder {
      * @param parent Parent node
      */
     private static void buildNodeInfoMap(final Map<Node, NodeInfo> map, final PatternNode parent) {
+        final NodeInfo obj = new NodeInfo(parent);
         parent.forEachChild(
             child -> {
                 if (child instanceof PatternNode) {
                     final PatternNode node = (PatternNode) child;
-                    map.put(node.getPrototype(), new NodeInfo(parent));
+                    Node proto = node.getPrototype();
+                    while (true) {
+                        map.put(proto, obj);
+                        if (proto instanceof PrototypeBasedNode) {
+                            proto = ((PrototypeBasedNode) proto).getPrototype();
+                        } else {
+                            break;
+                        }
+                    }
                     PatternBuilder.buildNodeInfoMap(map, node);
                 }
             }
@@ -118,7 +129,7 @@ public final class PatternBuilder {
      * Some additional information about each node needed to make holes.
      * So far there's only a parent node here, but we may need something else.
      *
-     * @since 1.1.0
+     * @since 1.1.5
      */
     private static final class NodeInfo {
         /**

@@ -1,0 +1,12 @@
+{
+  "root": {
+    "type": "Root",
+    "children": [
+      {
+        "type": "GandalfTheGrey",
+        "data": "Abracadabra"
+      }
+    ]
+  },
+  "language": "elven"
+}

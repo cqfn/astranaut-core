@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.ChildDescriptor;
-import org.cqfn.astranaut.core.EmptyFragment;
-import org.cqfn.astranaut.core.Fragment;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Type;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.ChildDescriptor;
+import org.cqfn.astranaut.core.base.EmptyFragment;
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Node that describes the 'StatementBlock' type.
@@ -97,6 +97,15 @@ public final class StatementBlock implements Statement {
     @Override
     public Node getChild(final int index) {
         return this.children.get(index);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append('{');
+        this.forEachChild(node -> builder.append(node.toString()));
+        builder.append('}');
+        return builder.toString();
     }
 
     /**
@@ -168,8 +177,8 @@ public final class StatementBlock implements Statement {
         }
 
         @Override
-        public String getProperty(final String name) {
-            return TypeImpl.PROPERTIES.getOrDefault(name, "");
+        public Map<String, String> getProperties() {
+            return TypeImpl.PROPERTIES;
         }
 
         @Override

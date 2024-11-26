@@ -26,15 +26,16 @@ package org.cqfn.astranaut.core.utils;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.cqfn.astranaut.core.DraftNode;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.utils.visualizer.DotRender;
+import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.utils.visualizer.DotGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link DotRender} class.
+ * Test for {@link DotGenerator} class.
  *
  * @since 1.0.2
  */
@@ -127,7 +128,7 @@ class DotRenderTest {
     void testNodeWithNullChild() throws IOException {
         final List<Node> children = new LinkedList<>();
         children.add(this.createNode("Child"));
-        children.add(EmptyTree.INSTANCE);
+        children.add(DummyNode.INSTANCE);
         final Node root = this.createNode("TestNode", children);
         final String expected = new FilesReader(
             DotRenderTest.DIR.concat("testNodeWithNullChild.dot")
@@ -142,8 +143,8 @@ class DotRenderTest {
      * @param node A tree to be converted
      */
     private String renderDot(final Node node) {
-        final DotRender render = new DotRender(node);
-        return render.render();
+        final DotGenerator render = new DotGenerator(new Tree(node));
+        return render.generate();
     }
 
     /**

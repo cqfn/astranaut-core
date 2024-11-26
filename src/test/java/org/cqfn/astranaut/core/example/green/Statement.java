@@ -23,7 +23,7 @@
  */
 package org.cqfn.astranaut.core.example.green;
 
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Node that describes the 'Statement' type.

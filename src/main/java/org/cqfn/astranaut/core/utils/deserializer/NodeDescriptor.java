@@ -25,13 +25,16 @@ package org.cqfn.astranaut.core.utils.deserializer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.cqfn.astranaut.core.Builder;
-import org.cqfn.astranaut.core.Delete;
-import org.cqfn.astranaut.core.EmptyTree;
-import org.cqfn.astranaut.core.Factory;
-import org.cqfn.astranaut.core.Insert;
-import org.cqfn.astranaut.core.Node;
-import org.cqfn.astranaut.core.Replace;
+import java.util.Map;
+import org.cqfn.astranaut.core.base.ActionList;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.Delete;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.base.Insert;
+import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Replace;
+import org.cqfn.astranaut.core.utils.Promise;
 
 /**
  * Node descriptor represented as it is stored in the JSON file.
@@ -39,6 +42,11 @@ import org.cqfn.astranaut.core.Replace;
  * @since 1.1.0
  */
 public class NodeDescriptor {
+    /**
+     * The 'hole' string.
+     */
+    private static final String STR_HOLE = "Hole";
+
     /**
      * The node type.
      */
@@ -55,69 +63,155 @@ public class NodeDescriptor {
     private List<NodeDescriptor> children;
 
     /**
-     * Constructor.
+     * The number (for holes only).
      */
-    @SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.UncommentedEmptyConstructor"})
-    public NodeDescriptor() {
-    }
+    private Integer number;
+
+    /**
+     * The prototype descriptor (for holes only).
+     */
+    private NodeDescriptor prototype;
 
     /**
      * Converts descriptor into node.
      * @param factory The node factory
-     * @param actions List of actions to be added to the tree after deserialization
-     *  to produce a difference tree
+     * @param actions List of actions to be added to the tree after deserialization to produce
+     *  a difference tree
+     * @param holes Set of nodes that need to be replaced with holes
      * @return A node
      */
-    public Node convert(final Factory factory, final ActionList actions) {
-        Node result = EmptyTree.INSTANCE;
-        final Builder builder = factory.createBuilder(this.type);
-        if (builder != null) {
-            if (this.data != null) {
-                builder.setData(this.data);
-            }
-            boolean filled = true;
-            if (this.children != null) {
-                filled = builder.setChildrenList(this.convertChildren(factory, actions));
-            }
-            if (filled && builder.isValid()) {
-                result = builder.createNode();
-            }
-        }
-        return result;
+    public Node convert(final Factory factory,
+        final ActionList actions, final Map<Node, Integer> holes) {
+        final Converter converter = new Converter(factory, actions, holes);
+        return converter.convert(this);
     }
 
     /**
-     * Converts child descriptors to a list of nodes.
-     * @param factory The node factory
-     * @param actions List of actions to be added to the tree after deserialization
-     *  to produce a difference tree
-     * @return List of child nodes
+     * Converter that converts descriptors into nodes.
+     * @since 2.0.0
      */
-    private List<Node> convertChildren(final Factory factory, final ActionList actions) {
-        final List<Node> list = new ArrayList<>(this.children.size());
-        for (final NodeDescriptor child : this.children) {
-            final Node converted = child.convert(factory, actions);
-            if (converted instanceof Insert) {
-                final Node node = ((Insert) converted).getAfter();
-                Node after = null;
-                final int size = list.size();
-                if (size > 0) {
-                    after = list.get(size - 1);
-                }
-                actions.insertNodeAfter(node, null, after);
-            } else if (converted instanceof Replace) {
-                final Replace action = (Replace) converted;
-                final Node node = action.getBefore();
-                list.add(node);
-                actions.replaceNode(node, action.getAfter());
-            } else if (converted instanceof Delete) {
-                final Node node = ((Delete) converted).getBefore();
-                list.add(node);
-                actions.deleteNode(node);
-            } else {
-                list.add(converted);
-            }
+    private static final class Converter {
+        /**
+         * The node factory.
+         */
+        private final Factory factory;
+
+        /**
+         * List of actions to be added to the tree after deserialization to produce
+         * a difference tree.
+         */
+        private final ActionList actions;
+
+        /**
+         * Set of nodes that need to be replaced with holes.
+         */
+        private final Map<Node, Integer> holes;
+
+        /**
+         * Constructor.
+         * @param factory The node factory
+         * @param actions List of actions to be added to the tree after deserialization to produce
+         *  a difference tree
+         * @param holes Set of nodes that need to be replaced with holes
+         */
+        private Converter(final Factory factory,
+            final ActionList actions, final Map<Node, Integer> holes) {
+            this.factory = factory;
+            this.actions = actions;
+            this.holes = holes;
         }
-        return list;
+
+        /**
+         * Converts descriptor into node.
+         * @param descriptor A descriptor that describes a node
+         * @return A node
+         */
+        public Node convert(final NodeDescriptor descriptor) {
+            final Node result;
+            if (descriptor.type.equals(NodeDescriptor.STR_HOLE)) {
+                result = this.convertHole(descriptor);
+            } else {
+                result = this.convertUsingBuilder(descriptor);
+            }
+            return result;
+        }
+
+        /**
+         * Converts descriptor into hole.
+         * @param descriptor A descriptor that describes a node
+         * @return Prototype of a hole, i.e., a node turned into hole
+         */
+        private Node convertHole(final NodeDescriptor descriptor) {
+            Node original = DummyNode.INSTANCE;
+            if (descriptor.prototype != null && descriptor.number != null) {
+                original = this.convert(descriptor.prototype);
+                this.holes.put(original, descriptor.number);
+            }
+            return original;
+        }
+
+        /**
+         * Converts descriptor into node using {@link Builder} interface.
+         * @param descriptor A descriptor that describes a node
+         * @return A node
+         */
+        private Node convertUsingBuilder(final NodeDescriptor descriptor) {
+            Node result = DummyNode.INSTANCE;
+            final Builder builder = this.factory.createBuilder(descriptor.type);
+            if (builder != null) {
+                Promise<Node> parent = null;
+                if (descriptor.data != null) {
+                    builder.setData(descriptor.data);
+                }
+                boolean filled = true;
+                if (descriptor.children != null) {
+                    final List<Node> list = new ArrayList<>(descriptor.children.size());
+                    parent = this.convertChildren(descriptor, list);
+                    filled = builder.setChildrenList(list);
+                }
+                if (filled && builder.isValid()) {
+                    result = builder.createNode();
+                }
+                if (parent != null) {
+                    parent.set(result);
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Converts child descriptors to a list of nodes.
+         * @param descriptor A descriptor that describes a node
+         * @param list Resulting list of converted nodes
+         * @return List of child nodes
+         */
+        private Promise<Node> convertChildren(final NodeDescriptor descriptor,
+            final List<Node> list) {
+            Promise<Node> parent = null;
+            for (final NodeDescriptor child : descriptor.children) {
+                final Node converted = this.convert(child);
+                if (converted instanceof Insert) {
+                    final Node node = ((Insert) converted).getAfter();
+                    Node after = null;
+                    final int size = list.size();
+                    if (size > 0) {
+                        after = list.get(size - 1);
+                    }
+                    parent = this.actions.insertNodeAfter(node, after);
+                } else if (converted instanceof Replace) {
+                    final Replace action = (Replace) converted;
+                    final Node node = action.getBefore();
+                    list.add(node);
+                    this.actions.replaceNode(node, action.getAfter());
+                } else if (converted instanceof Delete) {
+                    final Node node = ((Delete) converted).getBefore();
+                    list.add(node);
+                    this.actions.deleteNode(node);
+                } else {
+                    list.add(converted);
+                }
+            }
+            return parent;
+        }
     }
 }

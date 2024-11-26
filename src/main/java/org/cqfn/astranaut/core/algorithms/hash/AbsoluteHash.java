@@ -25,14 +25,13 @@ package org.cqfn.astranaut.core.algorithms.hash;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.cqfn.astranaut.core.Node;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Computes the absolute hash of a node, that is, a hash that is computed from both the data
- * of node itself and the data of all children of node.
- * The main feature: if subtrees match, the absolute hashes of their roots are equal.
- * This feature allows us to quickly compare trees and find a subtree in a tree.
- *
+ *  of node itself and the data of all children of node.
+ *  The main feature: if subtrees match, the absolute hashes of their roots are equal.
+ *  This feature allows us to quickly compare trees and find a subtree in a tree.
  * @since 1.1.0
  */
 public final class AbsoluteHash implements Hash {
