@@ -56,6 +56,13 @@ public interface ExtNode extends PrototypeBasedNode {
     }
 
     /**
+     * Returns the index (sequence number) of this node in the list of children
+     *  of this node's parent.
+     * @return Index of this node
+     */
+    int getIndex();
+
+    /**
      * Returns the left neighbor node of this node, which is the node whose index in the parent
      *  node is one less than the index of this node.
      * @return The left neighbor node, or {@code null} if this node is first (has no left neighbor)

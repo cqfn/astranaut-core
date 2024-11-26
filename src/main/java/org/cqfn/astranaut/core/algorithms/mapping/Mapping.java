@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.mapping;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.cqfn.astranaut.core.base.Insertion;
@@ -30,8 +31,7 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A mapping from one syntactic tree ('left') to another ('right'), i.e.,
- * set of correspondences between the nodes of one tree and the nodes of another tree.
- *
+ *  set of correspondences between the nodes of one tree and the nodes of another tree.
  * @since 1.1.0
  */
 public interface Mapping {
@@ -52,10 +52,11 @@ public interface Mapping {
     Node getLeft(Node right);
 
     /**
-     * Returns a collection of nodes that must be added to the 'left' tree to get the 'right' tree.
-     * @return The set of inserted nodes
+     * Returns an ordered list of nodes that must be added to the 'left' tree
+     *  to get the 'right' tree. Insertion should be performed in the order defined in the list.
+     * @return The list of inserted nodes
      */
-    Set<Insertion> getInserted();
+    List<Insertion> getInserted();
 
     /**
      * Returns relationship between the nodes of the 'left' tree that have been replaced
@@ -71,4 +72,13 @@ public interface Mapping {
      * @return The set of deleted nodes
      */
     Set<Node> getDeleted();
+
+    /**
+     * Returns the total number of actions to be done on the 'left' tree to transform it
+     *  to a 'right' tree.
+     * @return Total number of actions
+     */
+    default int getNumberOfActions() {
+        return this.getInserted().size() + this.getReplaced().size() + this.getDeleted().size();
+    }
 }

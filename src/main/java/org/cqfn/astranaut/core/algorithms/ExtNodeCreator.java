@@ -65,12 +65,15 @@ public final class ExtNodeCreator {
         final ExtNodeImpl ext = new ExtNodeImpl();
         ext.prototype = node;
         ext.parent = parent;
+        ext.index = -1;
         ext.hash = this.hashes.calculate(node);
         final int count = node.getChildCount();
         ext.children = new ExtNodeImpl[count];
         int index;
         for (index = 0; index < count; index = index + 1) {
-            ext.children[index] = this.create(node.getChild(index), ext);
+            final ExtNodeImpl child = this.create(node.getChild(index), ext);
+            child.index = index;
+            ext.children[index] = child;
         }
         for (index = 1; index < count; index = index + 1) {
             ext.children[index].left = ext.children[index - 1];
@@ -95,6 +98,11 @@ public final class ExtNodeCreator {
          * Parent node of this node, which is the node that has this node as on of its children.
          */
         private ExtNode parent;
+
+        /**
+         * Index (sequence number) of this node in the list of children of this node's parent.
+         */
+        private int index;
 
         /**
          * Left neighbor node of this node, which is the node whose index in the parent node
@@ -129,6 +137,11 @@ public final class ExtNodeCreator {
         }
 
         @Override
+        public int getIndex() {
+            return this.index;
+        }
+
+        @Override
         public ExtNode getLeft() {
             return this.left;
         }
@@ -159,13 +172,13 @@ public final class ExtNodeCreator {
         }
 
         @Override
-        public Node getChild(final int index) {
-            return this.children[index];
+        public Node getChild(final int idx) {
+            return this.children[idx];
         }
 
         @Override
-        public ExtNode getExtChild(final int index) {
-            return this.children[index];
+        public ExtNode getExtChild(final int idx) {
+            return this.children[idx];
         }
 
         @Override
