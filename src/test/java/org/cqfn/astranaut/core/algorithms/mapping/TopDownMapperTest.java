@@ -29,9 +29,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.base.DefaultFactory;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.utils.FilesReader;
+import org.cqfn.astranaut.core.utils.JsonDeserializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +47,11 @@ import org.junit.jupiter.api.Test;
  */
 @SuppressWarnings("PMD.TooManyMethods")
 class TopDownMapperTest {
+    /**
+     * The folder with test resources.
+     */
+    private static final String TESTS_PATH = "src/test/resources/heavy/";
+
     @Test
     void testIdenticalTrees() {
         final String description = "A(B(C, D))";
@@ -425,5 +436,47 @@ class TopDownMapperTest {
         Assertions.assertEquals(1, deleted.size());
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(1, replaced.size());
+    }
+
+    @Test
+    void firstTestOnRealSyntaxTree() {
+        final Tree first = this.readSyntaxTreeFormFile("real_tree_from_java_parser_1.json");
+        final Tree second = this.readSyntaxTreeFormFile("real_tree_from_java_parser_2.json");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder builder = new DiffTreeBuilder(first);
+        final boolean building = builder.build(second, mapper);
+        Assertions.assertTrue(building);
+        final DiffTree diff = builder.getDiffTree();
+        final Tree before = diff.getBefore();
+        Assertions.assertTrue(before.deepCompare(first));
+        final Tree after = diff.getAfter();
+        Assertions.assertTrue(after.deepCompare(second));
+    }
+
+    /**
+     * Returns content of the specified file.
+     * @param name The name of the file
+     * @return The file content
+     */
+    private String getFileContent(final String name) {
+        final String file = TopDownMapperTest.TESTS_PATH.concat(name);
+        final String source = new FilesReader(file).readAsStringNoExcept();
+        Assertions.assertFalse(source.isEmpty());
+        return source;
+    }
+
+    /**
+     * Reads syntax tree from a JSON file.
+     * @param name The name of the file
+     * @return Syntax tree
+     */
+    private Tree readSyntaxTreeFormFile(final String name) {
+        final JsonDeserializer deserializer = new JsonDeserializer(
+            this.getFileContent(name),
+            language -> DefaultFactory.EMPTY
+        );
+        final Tree tree = deserializer.convert();
+        Assertions.assertEquals("CompilationUnit", tree.getRoot().getTypeName());
+        return tree;
     }
 }

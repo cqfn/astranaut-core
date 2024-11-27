@@ -148,8 +148,8 @@ public final class DiffNode extends NodeAndType implements DiffTreeItem, Prototy
             final ListIterator<DiffTreeItem> iterator = this.children.listIterator();
             while (iterator.hasNext()) {
                 final Node child = iterator.next();
-                if (child instanceof DiffNode
-                    && ((DiffNode) child).getPrototype() == after) {
+                if (child instanceof DiffNode && ((DiffNode) child).getPrototype() == after
+                    || child instanceof Insert && ((Insert) child).getAfter() == after) {
                     iterator.add(new Insert(node));
                     result = true;
                     break;

@@ -76,7 +76,7 @@ public final class DiffTreeBuilder {
 
     /**
      * Builds a difference tree based on the original tree and the tree after changes.
-     * @param after Root node of tree before the changes
+     * @param after Root node of tree after the changes
      * @param mapper A mapper used for node mappings
      * @return Result of operation, {@code true} if difference tree was built
      */
@@ -93,6 +93,16 @@ public final class DiffTreeBuilder {
             result = result & this.deleteNode(deleted);
         }
         return result;
+    }
+
+    /**
+     * Builds a difference tree based on the original tree and the tree after changes.
+     * @param after Syntax tree after the changes
+     * @param mapper A mapper used for node mappings
+     * @return Result of operation, {@code true} if difference tree was built
+     */
+    public boolean build(final Tree after, final Mapper mapper) {
+        return this.build(after.getRoot(), mapper);
     }
 
     /**
