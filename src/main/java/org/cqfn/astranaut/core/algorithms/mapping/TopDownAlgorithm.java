@@ -214,11 +214,11 @@ final class TopDownAlgorithm {
             section = unprocessed.getFirstSection()) {
             final int lsize = section.getLeft().size();
             final int rsize = section.getRight().size();
-            if (lsize == 0 && rsize > 0) {
+            if (lsize == 0) {
                 this.insertAllNodes(unprocessed, left, section);
                 continue;
             }
-            if (lsize > 0 && rsize == 0) {
+            if (rsize == 0) {
                 this.deleteAllNodes(unprocessed, section);
                 continue;
             }
@@ -359,7 +359,7 @@ final class TopDownAlgorithm {
         final ExtNode node = list.get(index);
         result.add(node);
         final int hash = node.getLocalHash();
-        for (int leftidx = index - 1; leftidx >= 0; leftidx = index - 1) {
+        for (int leftidx = index - 1; leftidx >= 0; leftidx = leftidx - 1) {
             final ExtNode previous = list.get(leftidx);
             if (hash == previous.getLocalHash()) {
                 result.add(0, previous);

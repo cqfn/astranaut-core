@@ -383,9 +383,29 @@ class TopDownMapperTest {
         Assertions.assertEquals("E", inserted.get(0).getNode().toString());
         Assertions.assertEquals("X(Q)", inserted.get(1).getNode().toString());
         final Set<Node> deleted = mapping.getDeleted();
-        Assertions.assertEquals("D", deleted.iterator().next().toString());
         Assertions.assertEquals(1, deleted.size());
+        Assertions.assertEquals("D", deleted.iterator().next().toString());
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(2, replaced.size());
+    }
+
+    @Test
+    void secondTestComplexChanges() {
+        final Node first = DraftNode.create(
+            "A(В,   В,   B,   B,     X(C,D))"
+        );
+        final Node second = DraftNode.create(
+            "A(X(I),X(H),X(G),X(C,E),X(F)  )"
+        );
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        Assertions.assertSame(second.getChild(3), mapping.getRight(first.getChild(4)));
+        final List<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        Assertions.assertSame(second.getChild(4), inserted.get(0).getNode());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(4, replaced.size());
     }
 }
