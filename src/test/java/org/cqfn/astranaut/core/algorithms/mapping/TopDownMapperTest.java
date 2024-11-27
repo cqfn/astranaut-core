@@ -408,4 +408,22 @@ class TopDownMapperTest {
         final Map<Node, Node> replaced = mapping.getReplaced();
         Assertions.assertEquals(4, replaced.size());
     }
+
+    @Test
+    void thirdTestComplexChanges() {
+        final Node first = DraftNode.create(
+            "A(X(B,C),Y(B,C))"
+        );
+        final Node second = DraftNode.create(
+            "A(X(C,D),Y(B<'1'>,C))"
+        );
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final List<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(1, inserted.size());
+        final Set<Node> deleted = mapping.getDeleted();
+        Assertions.assertEquals(1, deleted.size());
+        final Map<Node, Node> replaced = mapping.getReplaced();
+        Assertions.assertEquals(1, replaced.size());
+    }
 }
