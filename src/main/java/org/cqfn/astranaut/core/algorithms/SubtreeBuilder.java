@@ -43,13 +43,14 @@ public class SubtreeBuilder {
     /**
      * Algorithm that composes a subtree only from the nodes that are specified in the set.
      */
-    public static final Algorithm INCLUDE = (node, set) -> set.contains(node);
+    public static final Algorithm INCLUDE = SubtreeBuilder::isPresentInSet;
 
     /**
      * Algorithm that composes a subtree from all nodes in the original tree,
      *  but excludes nodes specified in the set.
      */
-    public static final Algorithm EXCLUDE = (node, set) -> !set.contains(node);
+    public static final Algorithm EXCLUDE =
+        (node, set) -> !SubtreeBuilder.isPresentInSet(node, set);
 
     /**
      * The root node of the original tree.
@@ -116,6 +117,20 @@ public class SubtreeBuilder {
                 this.build(child, indexes, set);
             }
         }
+    }
+
+    /**
+     * Checks whether a node or its prototype is present in the node set.
+     * @param node Node to be checked
+     * @param set Set of nodes
+     * @return Checking result.
+     */
+    private static boolean isPresentInSet(final Node node, final Set<Node> set) {
+        boolean result = set.contains(node);
+        if (!result && node instanceof PrototypeBasedNode) {
+            result = SubtreeBuilder.isPresentInSet(((PrototypeBasedNode) node).getPrototype(), set);
+        }
+        return result;
     }
 
     /**
