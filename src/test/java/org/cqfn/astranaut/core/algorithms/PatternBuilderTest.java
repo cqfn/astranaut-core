@@ -35,6 +35,7 @@ import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Hole;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Pattern;
+import org.cqfn.astranaut.core.base.Replace;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.example.green.ExpressionStatement;
@@ -89,9 +90,9 @@ class PatternBuilderTest {
         final Node var = ctor.createNode();
         ctor = new IntegerLiteral.Constructor();
         ctor.setData("1");
-        final Node second = ctor.createNode();
+        final Node before = ctor.createNode();
         ctor = new Addition.Constructor();
-        ctor.setChildrenList(Arrays.asList(var, second));
+        ctor.setChildrenList(Arrays.asList(var, before));
         final Node addition = ctor.createNode();
         ctor = new Variable.Constructor();
         ctor.setData("x");
@@ -108,19 +109,23 @@ class PatternBuilderTest {
         ctor.setChildrenList(Arrays.asList(stmt, ret));
         final Node block = ctor.createNode();
         final Tree tree = new Tree(block);
+        ctor = new IntegerLiteral.Constructor();
+        ctor.setData("2");
+        final Node after = ctor.createNode();
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(tree);
+        diffbuilder.replaceNode(before, after);
+        final DiffTree diff = diffbuilder.getDiffTree();
         final Set<Node> exclude = new HashSet<>();
         exclude.add(ret);
         final Tree subtree = new Tree(
-            new SubtreeBuilder(tree, SubtreeBuilder.EXCLUDE).create(exclude)
+            new SubtreeBuilder(diff, SubtreeBuilder.EXCLUDE).create(exclude)
         );
-        final PatternBuilder builder = new PatternBuilder(subtree);
-        builder.makeHole(var, 1);
-        final Pattern pattern = builder.getPattern();
-        Assertions.assertNotNull(pattern);
+        final PatternBuilder ptbuilder = new PatternBuilder(subtree);
+        ptbuilder.makeHole(var, 1);
+        final Pattern pattern = ptbuilder.getPattern();
         final DepthFirstWalker traversal = new DepthFirstWalker(pattern.getRoot());
-        final Optional<Node> hole = traversal.findFirst(node -> node instanceof Hole);
-        Assertions.assertTrue(hole.isPresent());
-        Assertions.assertEquals("#1",  hole.get().getData());
+        Assertions.assertTrue(traversal.findFirst(node -> node instanceof Replace).isPresent());
+        Assertions.assertTrue(traversal.findFirst(node -> node instanceof Hole).isPresent());
     }
 
     @Test

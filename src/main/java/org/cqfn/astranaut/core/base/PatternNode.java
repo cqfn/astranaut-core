@@ -125,14 +125,11 @@ public final class PatternNode extends NodeAndType implements PatternItem, Proto
         final List<PatternItem> result = new ArrayList<>(count);
         for (int index = 0; index < count; index = index + 1) {
             final Node child = original.getChild(index);
-            if (child instanceof DiffNode) {
-                result.add(
-                    new PatternNode(((DiffNode) child).getPrototype())
-                );
-            } else if (child instanceof Action) {
-                result.add((PatternItem) child);
-            } else {
+            final Action action = Action.toAction(child);
+            if (action == null) {
                 result.add(new PatternNode(child));
+            } else {
+                result.add(action);
             }
         }
         return result;
