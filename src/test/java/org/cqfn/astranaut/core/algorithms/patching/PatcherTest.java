@@ -29,8 +29,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
+import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.algorithms.mapping.Mapper;
+import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DiffNode;
+import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
@@ -185,5 +189,27 @@ class PatcherTest {
         final Pattern third = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
         result = patcher.patch(tree, third);
         Assertions.assertTrue(tree.deepCompare(result));
+    }
+
+    @Test
+    void mineAndPatch() {
+        final Node before = DraftNode.create("X(A,C(D(F(G(H)))))");
+        final Node after = DraftNode.create("X(A,B,C(D(F(G(I)))))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(before);
+        diffbuilder.build(after, mapper);
+        final DiffTree diff = diffbuilder.getDiffTree();
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
+        final Pattern pattern = new PatternBuilder(diff).getPattern();
+        final Tree original = Tree.createDraft(
+            "Y(X(A,C(D(F(G(J,K))))),X(A,C(D(F(G(L))))),X(A,C(D(F(G(H))))))"
+        );
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(original, pattern);
+        final Tree expected = Tree.createDraft(
+            "Y(X(A,C(D(F(G(J,K))))),X(A,C(D(F(G(L))))),X(A,B,C(D(F(G(I))))))"
+        );
+        Assertions.assertEquals(expected.toString(), patched.toString());
     }
 }

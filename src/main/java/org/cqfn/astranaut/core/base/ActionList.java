@@ -23,8 +23,10 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -33,14 +35,13 @@ import org.cqfn.astranaut.core.utils.Promise;
 
 /**
  * List of actions to be added to the tree after deserialization to produce a difference tree.
- *
  * @since 1.1.0
  */
 public final class ActionList {
     /**
      * Collection of nodes to be inserted.
      */
-    private final Set<Insertion> insert;
+    private final List<Insertion> insert;
 
     /**
      * Collection of nodes to be replaced (node before changes -> node after changes).
@@ -56,7 +57,7 @@ public final class ActionList {
      * Constructor.
      */
     public ActionList() {
-        this.insert = new HashSet<>();
+        this.insert = new ArrayList<>(0);
         this.replace = new HashMap<>();
         this.delete = new HashSet<>();
     }
@@ -107,6 +108,16 @@ public final class ActionList {
      */
     public void deleteNode(final Node node) {
         this.delete.add(node);
+    }
+
+    /**
+     * Adds actions from another list to the current list.
+     * @param other Another action list
+     */
+    public void merge(final ActionList other) {
+        this.insert.addAll(other.insert);
+        this.replace.putAll(other.replace);
+        this.delete.addAll(other.delete);
     }
 
     /**

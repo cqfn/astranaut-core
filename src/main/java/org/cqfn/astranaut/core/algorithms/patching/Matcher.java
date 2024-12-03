@@ -86,9 +86,11 @@ class Matcher {
         );
         final Set<Node> set = new HashSet<>();
         for (final Node node : preset) {
-            final boolean matches = this.checkNode(node, null, head);
+            final ActionList applicants = new ActionList();
+            final boolean matches = Matcher.checkNode(node, head, applicants);
             if (matches) {
                 set.add(node);
+                this.actions.merge(applicants);
             }
         }
         return set;
@@ -97,12 +99,12 @@ class Matcher {
     /**
      * Checks if the node of the original tree matches the pattern node.
      * @param node Node of the original tree
-     * @param parent Parent node of the node being checked.
      * @param pattern Node of the difference tree (i.e. pattern)
+     * @param actions List of actions to be performed to apply the pattern
      * @return Matching result ({@code true} if matches)
      */
-    @SuppressWarnings("PMD.UnusedFormalParameter")
-    private boolean checkNode(final Node node, final Node parent, final Node pattern) {
+    private static boolean checkNode(
+        final Node node, final Node pattern, final ActionList actions) {
         final Node sample;
         final Action action = Action.toAction(pattern);
         if (action instanceof Replace || action instanceof Delete) {
@@ -113,12 +115,13 @@ class Matcher {
         boolean result = node.getTypeName().equals(sample.getTypeName());
         if (!(pattern instanceof Hole)) {
             result = result && node.getData().equals(sample.getData());
-            result = result && (node.getChildCount() == 0 || this.checkChildren(node, sample));
+            result = result && (node.getChildCount() == 0
+                || Matcher.checkChildren(node, sample, actions));
         }
         if (result && action instanceof Replace) {
-            this.actions.replaceNode(node, action.getAfter());
+            actions.replaceNode(node, action.getAfter());
         } else if (result & action instanceof Delete) {
-            this.actions.deleteNode(node);
+            actions.deleteNode(node);
         }
         return result;
     }
@@ -128,12 +131,15 @@ class Matcher {
      *  matches the children of the pattern node.
      * @param node Node of the original tree
      * @param sample Node of the difference tree (i.e. pattern)
+     * @param actions List of actions to be performed to apply the pattern
      * @return Matching result ({@code true} if matches)
      */
-    private boolean checkChildren(final Node node, final Node sample) {
+    private static boolean checkChildren(
+        final Node node, final Node sample, final ActionList actions) {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = false;
+        final ActionList applicants = new ActionList();
         for (int index = 0; !result && index < left; index = index + 1) {
             result = true;
             final Iterator<Node> iterator = sample.getIteratorOverChildren();
@@ -143,19 +149,22 @@ class Matcher {
                 final Node child = iterator.next();
                 final Action action = Action.toAction(child);
                 if (action instanceof Insert) {
-                    this.actions.insertNodeAfter(action.getAfter(), node, current);
+                    applicants.insertNodeAfter(action.getAfter(), node, current);
                 } else if (index + offset >= left) {
                     result = false;
                 } else {
                     current = node.getChild(index + offset);
-                    result = this.checkNode(
+                    result = Matcher.checkNode(
                         current,
-                        node,
-                        child
+                        child,
+                        applicants
                     );
                     offset = offset + 1;
                 }
             }
+        }
+        if (result) {
+            actions.merge(applicants);
         }
         return result;
     }
