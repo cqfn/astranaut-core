@@ -192,7 +192,7 @@ class PatcherTest {
     }
 
     @Test
-    void mineAndPatch() {
+    void mineAndPatchComplexCase() {
         final Node before = DraftNode.create("X(A,C(D(F(G(H)))))");
         final Node after = DraftNode.create("X(A,B,C(D(F(G(I)))))");
         final Mapper mapper = TopDownMapper.INSTANCE;
@@ -210,6 +210,24 @@ class PatcherTest {
         final Tree expected = Tree.createDraft(
             "Y(X(A,C(D(F(G(J,K))))),X(A,C(D(F(G(L))))),X(A,B,C(D(F(G(I))))))"
         );
+        Assertions.assertEquals(expected.toString(), patched.toString());
+    }
+
+    @Test
+    void mineAndPatchThreeInsertions() {
+        final Node before = DraftNode.create("X(D)");
+        final Node after = DraftNode.create("X(A,B,C,D)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(before);
+        diffbuilder.build(after, mapper);
+        final DiffTree diff = diffbuilder.getDiffTree();
+        Assertions.assertTrue(before.deepCompare(diff.getBefore().getRoot()));
+        Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
+        final Pattern pattern = new PatternBuilder(diff).getPattern();
+        final Tree original = Tree.createDraft("Y(X(D),E,F)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(original, pattern);
+        final Tree expected = Tree.createDraft("Y(X(A,B,C,D),E,F)");
         Assertions.assertEquals(expected.toString(), patched.toString());
     }
 }

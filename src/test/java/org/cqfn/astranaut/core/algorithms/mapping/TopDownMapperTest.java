@@ -453,6 +453,42 @@ class TopDownMapperTest {
         Assertions.assertTrue(after.deepCompare(second));
     }
 
+    @Test
+    void testOrderOfInsertions() {
+        final Node first = DraftNode.create("A(B,F)");
+        final Node second = DraftNode.create("A(B,C,D,E,F)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final List<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(3, inserted.size());
+        Assertions.assertEquals("C", inserted.get(0).getNode().getTypeName());
+        Assertions.assertEquals("D", inserted.get(1).getNode().getTypeName());
+        Assertions.assertEquals("E", inserted.get(2).getNode().getTypeName());
+        final DiffTreeBuilder builder = new DiffTreeBuilder(first);
+        builder.build(second, mapper);
+        final DiffTree diff = builder.getDiffTree();
+        final Node third = diff.getAfter().getRoot();
+        Assertions.assertTrue(third.deepCompare(second));
+    }
+
+    @Test
+    void testOrderOfInsertionsAtBeginning() {
+        final Node first = DraftNode.create("A(F)");
+        final Node second = DraftNode.create("A(C,D,E,F)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final Mapping mapping = mapper.map(first, second);
+        final List<Insertion> inserted = mapping.getInserted();
+        Assertions.assertEquals(3, inserted.size());
+        Assertions.assertEquals("C", inserted.get(0).getNode().getTypeName());
+        Assertions.assertEquals("D", inserted.get(1).getNode().getTypeName());
+        Assertions.assertEquals("E", inserted.get(2).getNode().getTypeName());
+        final DiffTreeBuilder builder = new DiffTreeBuilder(first);
+        builder.build(second, mapper);
+        final DiffTree diff = builder.getDiffTree();
+        final Node third = diff.getAfter().getRoot();
+        Assertions.assertTrue(third.deepCompare(second));
+    }
+
     /**
      * Returns content of the specified file.
      * @param name The name of the file

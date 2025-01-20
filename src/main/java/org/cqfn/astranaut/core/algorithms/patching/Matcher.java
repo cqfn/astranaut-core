@@ -144,21 +144,24 @@ class Matcher {
             result = true;
             final Iterator<Node> iterator = sample.getIteratorOverChildren();
             int offset = 0;
-            Node current = null;
+            Node previous = null;
             while (result && offset < right && iterator.hasNext()) {
                 final Node child = iterator.next();
                 final Action action = Action.toAction(child);
                 if (action instanceof Insert) {
-                    applicants.insertNodeAfter(action.getAfter(), node, current);
+                    final Node insertion = action.getAfter();
+                    applicants.insertNodeAfter(insertion, node, previous);
+                    previous = insertion;
                 } else if (index + offset >= left) {
                     result = false;
                 } else {
-                    current = node.getChild(index + offset);
+                    final Node current = node.getChild(index + offset);
                     result = Matcher.checkNode(
                         current,
                         child,
                         applicants
                     );
+                    previous = current;
                     offset = offset + 1;
                 }
             }
