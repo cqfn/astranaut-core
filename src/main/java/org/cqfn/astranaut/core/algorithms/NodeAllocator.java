@@ -81,7 +81,7 @@ public class NodeAllocator {
 
     /**
      * Maps the list of nodes by positions.
-     * The algorithm fills an array in which each node is placed at a suitable position for it.
+     *  The algorithm fills an array in which each node is placed at a suitable position for it.
      * @param destination The array in which each node is placed at a suitable position
      * @param source The source list of nodes
      * @return Mapping result, {@code true} if such a mapping is possible (array was filled)

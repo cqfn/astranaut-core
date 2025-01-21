@@ -25,10 +25,8 @@ package org.cqfn.astranaut.core.utils;
 
 /**
  * Simple pair in case someone needs to use (key, val) objects without creating a map.
- *
  * @param <K> The key type
  * @param <V> The value type
- *
  * @since 1.0
  */
 public final class Pair<K, V> {

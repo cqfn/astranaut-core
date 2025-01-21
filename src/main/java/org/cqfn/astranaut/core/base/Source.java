@@ -25,13 +25,11 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * Represents a source code file.
- *
  * @since 1.0
  */
 public interface Source {
     /**
      * Return a string for a source code fragment within the specified range.
-     *
      * @param start Start position
      * @param end End position
      * @return Text of the fragment

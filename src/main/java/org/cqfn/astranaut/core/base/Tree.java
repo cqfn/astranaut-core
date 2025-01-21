@@ -29,7 +29,6 @@ import java.util.Set;
 /**
  * A syntax tree, which represents the hierarchical structure of source code,
  *  depicting the syntactic structure and relationships between code elements.
- *
  * @since 2.0.0
  */
 public class Tree {

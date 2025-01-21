@@ -35,14 +35,13 @@ import java.util.function.Consumer;
 
 /**
  * The {@code Node} interface represents a node in an abstract syntax tree (AST).
- * This is our foundational interface on which the entire platform is built.
- * The interface contains a minimal number of non-default methods, making it
- * easy to create custom nodes by requiring the implementation of only a few methods.
- * Additionally, the interface is designed to allow for automatic generation
- * of classes based on it.
- * The interface is designed to be immutable, which ensures thread safety and
- * consistency, as well as simplifying the debugging process.
- *
+ *  This is our foundational interface on which the entire platform is built.
+ *  The interface contains a minimal number of non-default methods, making it
+ *  easy to create custom nodes by requiring the implementation of only a few methods.
+ *  Additionally, the interface is designed to allow for automatic generation
+ *  of classes based on it.
+ *  The interface is designed to be immutable, which ensures thread safety and
+ *  consistency, as well as simplifying the debugging process.
  * @since 1.0
  */
 @SuppressWarnings("PMD.ExcessivePublicCount")
@@ -217,7 +216,6 @@ public interface Node {
 
     /**
      * Iterator that enumerates the children of a node.
-     *
      * @since 1.1.5
      */
     class ChildrenIterator implements ListIterator<Node> {
@@ -303,7 +301,6 @@ public interface Node {
      *  minimal overhead and optimal performance for operations involving child
      *  nodes. Using the List interface for child nodes is frequent in our codebase
      *  due to its convenience and flexibility in handling node collections.
-     *
      * @since 2.0.0
      */
     @SuppressWarnings("PMD.TooManyMethods")

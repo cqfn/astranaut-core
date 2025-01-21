@@ -255,4 +255,3 @@ public final class NormalizedNode extends NodeAndType implements PrototypeBasedN
         }
     }
 }
-

@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link DepthFirstWalker} class.
- *
  * @since 1.1.5
  */
 class DepthFirstWalkerTest {

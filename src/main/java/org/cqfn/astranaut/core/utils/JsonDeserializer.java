@@ -32,7 +32,6 @@ import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
 /**
  * Converts a string that contains a JSON object to a tree.
- *
  * @since 1.0.2
  */
 public final class JsonDeserializer {

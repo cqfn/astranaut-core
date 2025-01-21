@@ -27,7 +27,6 @@ import java.util.Objects;
 
 /**
  * This class contains information about the node being inserted as a child of another node.
- *
  * @since 1.1.0
  */
 public final class Insertion {

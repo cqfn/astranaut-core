@@ -24,7 +24,6 @@
 
 /**
  * This package contains rules for "javascript" nodes transformation.
- *
  * @since 1.0
  */
 package org.cqfn.astranaut.core.example.javascript.rules;

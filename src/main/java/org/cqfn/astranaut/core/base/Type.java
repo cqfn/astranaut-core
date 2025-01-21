@@ -29,7 +29,6 @@ import java.util.Map;
 
 /**
  * A type of abstract syntax tree node.
- *
  * @since 1.0
  */
 public interface Type {

@@ -24,7 +24,6 @@
 
 /**
  * This package contains tests covering normalization algorithms.
- *
  * @since 2.0.0
  */
 package org.cqfn.astranaut.core.algorithms.normalization;

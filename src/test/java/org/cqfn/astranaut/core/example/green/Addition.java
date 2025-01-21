@@ -120,7 +120,6 @@ public final class Addition implements BinaryExpression {
 
     /**
      * Type descriptor of the 'Addition' node.
-     *
      * @since 1.0
      */
     private static class TypeImpl implements Type {
@@ -199,7 +198,6 @@ public final class Addition implements BinaryExpression {
 
     /**
      * Class for 'Addition' node construction.
-     *
      * @since 1.0
      */
     public static final class Constructor implements Builder {

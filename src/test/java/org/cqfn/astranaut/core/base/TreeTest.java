@@ -71,7 +71,6 @@ class TreeTest {
 
     /**
      * Node implementation for testing purposes.
-     *
      * @since 2.0.0
      */
     private static final class TestNode implements Node {
@@ -122,7 +121,6 @@ class TreeTest {
 
     /**
      * Type implementation for testing purposes.
-     *
      * @since 2.0.0
      */
     private static final class TestType implements Type {

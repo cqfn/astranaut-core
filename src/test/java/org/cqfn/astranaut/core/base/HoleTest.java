@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests covering {@link Hole} class.
- *
  * @since 1.1.5
  */
 class HoleTest {

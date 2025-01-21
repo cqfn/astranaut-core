@@ -52,7 +52,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link Patcher} class.
- *
  * @since 1.1.5
  */
 class PatcherTest {
@@ -228,6 +227,22 @@ class PatcherTest {
         final Patcher patcher = DefaultPatcher.INSTANCE;
         final Tree patched = patcher.patch(original, pattern);
         final Tree expected = Tree.createDraft("Y(X(A,B,C,D),E,F)");
+        Assertions.assertEquals(expected.toString(), patched.toString());
+    }
+
+    @Test
+    void mineAndPatchOneInsertionAndOneDeletion() {
+        final Node before = DraftNode.create("X(Y,Z,D)");
+        final Node after = DraftNode.create("X(Z,A,B,C,D)");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(before);
+        diffbuilder.build(after, mapper);
+        final DiffTree diff = diffbuilder.getDiffTree();
+        final Pattern pattern = new PatternBuilder(diff).getPattern();
+        final Tree original = Tree.createDraft("Y(X(Y,Z,D),E,F)");
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(original, pattern);
+        final Tree expected = Tree.createDraft("Y(X(Z,A,B,C,D),E,F)");
         Assertions.assertEquals(expected.toString(), patched.toString());
     }
 }

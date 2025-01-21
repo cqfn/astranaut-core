@@ -28,8 +28,7 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Interface to an algorithm that applies patches, i.e. makes some changes in the syntax tree
- * based on patterns describing such changes. Patterns are differential trees.
- *
+ *  based on patterns describing such changes. Patterns are differential trees.
  * @since 1.1.5
  */
 public interface Patcher {

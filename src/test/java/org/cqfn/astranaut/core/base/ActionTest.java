@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests covering actions, i.e. {@link Action} interface and inherited classes.
- *
  * @since 1.1.0
  */
 class ActionTest {
@@ -61,9 +60,6 @@ class ActionTest {
      */
     private static final String EXPECTED_COLOR = "blue";
 
-    /**
-     * Testing {@link Insert} action.
-     */
     @Test
     void testInsertAction() {
         final Node inserted = LittleTrees.createReturnStatement(null);
@@ -98,9 +94,6 @@ class ActionTest {
         Assertions.assertEquals(ActionTest.INSERT_TYPE, created.getTypeName());
     }
 
-    /**
-     * Testing {@link Replace} action.
-     */
     @Test
     void testReplaceAction() {
         final Node before = LittleTrees.createVariable("x");
@@ -138,9 +131,6 @@ class ActionTest {
         Assertions.assertEquals(ActionTest.REPLACE_TYPE, created.getTypeName());
     }
 
-    /**
-     * Testing {@link Delete} action.
-     */
     @Test
     void testDeleteAction() {
         final Node deleted = LittleTrees.createReturnStatement(null);

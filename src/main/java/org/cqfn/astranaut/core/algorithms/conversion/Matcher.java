@@ -29,8 +29,7 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Checks if the node matches some structure and extracts the data or (and) children
- * if the latter are used in the target [sub]tree.
- *
+ *  if the latter are used in the target [sub]tree.
  * @since 1.0
  */
 public interface Matcher {

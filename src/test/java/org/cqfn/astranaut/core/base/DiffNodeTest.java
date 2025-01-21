@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests covering difference node, i.e. {@link DiffNode} class.
- *
  * @since 1.1.0
  */
 @SuppressWarnings("PMD.TooManyMethods")

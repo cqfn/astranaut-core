@@ -27,7 +27,6 @@ package org.cqfn.astranaut.core.base;
  * {@code EmptyFragment} is an implementation of {@link Fragment} representing an empty fragment.
  *  It serves as a placeholder when a node does not have an associated fragment
  *  preventing the need to return a null pointer.
- *
  * @since 1.0
  */
 public final class EmptyFragment implements Fragment {

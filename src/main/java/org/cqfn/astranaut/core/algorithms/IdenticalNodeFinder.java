@@ -66,8 +66,7 @@ public class IdenticalNodeFinder {
 
     /**
      * Calculates hash recursively for all nodes with non-empty data and
-     * adds entries to the resulting map.
-     *
+     *  adds entries to the resulting map.
      * @param node The current node to process
      * @param result Where to put the result
      */

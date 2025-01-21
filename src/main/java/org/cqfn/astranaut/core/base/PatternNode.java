@@ -30,7 +30,6 @@ import java.util.Map;
 /**
  * A node that contains child nodes as well as actions on those nodes.
  * Child nodes can be replaced by holes.
- *
  * @since 1.1.5
  */
 public final class PatternNode extends NodeAndType implements PatternItem, PrototypeBasedNode {

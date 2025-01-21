@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.example.green;
 
 /**
  * Node that describes the 'BinaryExpression' type.
- *
  * @since 1.0
  */
 public interface BinaryExpression extends Expression {

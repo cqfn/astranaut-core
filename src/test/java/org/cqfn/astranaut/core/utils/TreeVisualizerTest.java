@@ -41,7 +41,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test for {@link TreeVisualizer} class.
- *
  * @since 1.0.2
  */
 class TreeVisualizerTest {

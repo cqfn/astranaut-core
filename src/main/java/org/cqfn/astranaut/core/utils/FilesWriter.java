@@ -32,7 +32,6 @@ import java.nio.file.Paths;
 
 /**
  * Class for writing files.
- *
  * @since 1.0.2
  */
 public final class FilesWriter {

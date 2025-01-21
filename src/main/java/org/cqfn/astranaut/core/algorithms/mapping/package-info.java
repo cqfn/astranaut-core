@@ -24,8 +24,7 @@
 
 /**
  * This package contains algorithms and data structures related to mapping
- * one syntax tree to another.
- *
+ *  one syntax tree to another.
  * @since 1.1.0
  */
 package org.cqfn.astranaut.core.algorithms.mapping;

@@ -49,7 +49,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link PatternBuilder} class.
- *
  * @since 1.1.0
  */
 class PatternBuilderTest {

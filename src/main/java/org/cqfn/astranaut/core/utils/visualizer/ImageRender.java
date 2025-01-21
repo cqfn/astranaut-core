@@ -34,7 +34,6 @@ import java.util.Optional;
 
 /**
  * Renders an image from a tree using the external Graphviz tool.
- *
  * @since 1.0.2
  */
 public class ImageRender {

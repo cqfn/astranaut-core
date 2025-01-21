@@ -29,7 +29,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Algorithm for measuring the depth of syntax trees.
- *
  * @since 1.1.0
  */
 public final class DepthCalculator {

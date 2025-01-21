@@ -40,7 +40,7 @@ import java.util.Set;
  *  the creation of any tree structure without validation, making it suitable for testing
  *  purposes and for displaying trees obtained from third-party parsers in the ASTranaut
  *  format.<br/>
- * DraftNode is designed to be immutable.
+ *  DraftNode is designed to be immutable.
  * @since 1.0
  */
 public final class DraftNode extends NodeAndType {

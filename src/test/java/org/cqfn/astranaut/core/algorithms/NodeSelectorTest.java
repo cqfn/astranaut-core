@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link NodeSelector}.
- *
  * @since 1.1.4
  */
 class NodeSelectorTest {

@@ -33,13 +33,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link NodeReplacer} class.
- *
  * @since 1.0
  */
 class NodeReplacerTest {
-    /**
-     * Testing tree recreation when a root is the node to be replaced.
-     */
     @Test
     void testReplacementOfRoot() {
         final Node root =
@@ -78,9 +74,6 @@ class NodeReplacerTest {
         Assertions.assertEquals(-1, result.getValue());
     }
 
-    /**
-     * Testing tree recreation when a root child is the node to be replaced.
-     */
     @Test
     void testReplacementOfRootChild() {
         final Node source =
@@ -121,9 +114,6 @@ class NodeReplacerTest {
         Assertions.assertEquals(2, result.getValue());
     }
 
-    /**
-     * Testing tree recreation when a child of a root child is the node to be replaced.
-     */
     @Test
     void testReplacementOfRootGrandChild() {
         final Node source = this.createNode("2300", "");
@@ -164,9 +154,6 @@ class NodeReplacerTest {
         Assertions.assertEquals(2, result.getValue());
     }
 
-    /**
-     * Testing tree recreation when a source subtree to be replaced is not found.
-     */
     @Test
     void testReplacementWithoutMatch() {
         final Node root =
@@ -183,10 +170,6 @@ class NodeReplacerTest {
         Assertions.assertEquals(-1, result.getValue());
     }
 
-    /**
-     * Creates a target tree for replacement.
-     * @return A new tree
-     */
     private Node createTargetTree() {
         return this.createNode(
             "2",

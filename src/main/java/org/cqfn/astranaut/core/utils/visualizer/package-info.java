@@ -24,7 +24,6 @@
 
 /**
  * This package contains helper classes for the tree visualizer.
- *
  * @since 1.1.0
  */
 package org.cqfn.astranaut.core.utils.visualizer;

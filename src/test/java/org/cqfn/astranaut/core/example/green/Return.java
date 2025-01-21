@@ -41,7 +41,6 @@ import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
  * Node that describes the 'Return' type.
- *
  * @since 1.1.0
  */
 public final class Return implements Statement {
@@ -111,7 +110,6 @@ public final class Return implements Statement {
 
     /**
      * Type descriptor of the 'Return' node.
-     *
      * @since 1.1.0
      */
     private static class TypeImpl implements Type {
@@ -197,7 +195,6 @@ public final class Return implements Statement {
 
     /**
      * Class for 'Return' node construction.
-     *
      * @since 1.1.0
      */
     public static final class Constructor implements Builder {

@@ -24,7 +24,6 @@
 
 /**
  * This package contains tests covering various algorithms.
- *
  * @since 1.1.0
  */
 package org.cqfn.astranaut.core.algorithms;

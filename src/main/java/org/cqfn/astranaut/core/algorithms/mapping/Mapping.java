@@ -68,7 +68,7 @@ public interface Mapping {
 
     /**
      * Returns the set of nodes of the 'left' tree that need to be removed
-     * to get the 'right' tree.
+     *  to get the 'right' tree.
      * @return The set of deleted nodes
      */
     Set<Node> getDeleted();

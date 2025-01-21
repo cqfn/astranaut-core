@@ -41,7 +41,6 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * The matcher matches syntax tree and patterns.
- *
  * @since 1.1.5
  */
 class Matcher {

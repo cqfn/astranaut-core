@@ -38,7 +38,6 @@ import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Node that describes the 'Variable' type.
- *
  * @since 1.0
  */
 public final class Variable implements AssignableExpression {
@@ -95,7 +94,6 @@ public final class Variable implements AssignableExpression {
 
     /**
      * Type descriptor of the 'Addition' node.
-     *
      * @since 1.0
      */
     private static class TypeImpl implements Type {
@@ -163,7 +161,6 @@ public final class Variable implements AssignableExpression {
 
     /**
      * Class for 'Variable' node construction.
-     *
      * @since 1.0
      */
     public static final class Constructor implements Builder {

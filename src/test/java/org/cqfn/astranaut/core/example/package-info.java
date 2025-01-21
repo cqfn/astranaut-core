@@ -24,7 +24,6 @@
 
 /**
  * This package contains example nodes.
- *
  * @since 1.0
  */
 package org.cqfn.astranaut.core.example;

@@ -34,7 +34,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Converter describing DSL conversion rule.
- *
  * @since 1.0
  */
 public final class Rule0 implements Converter {

@@ -24,7 +24,6 @@
 
 /**
  * This package contains tests for core classes.
- *
  * @since 1.0
  */
 package org.cqfn.astranaut.core;

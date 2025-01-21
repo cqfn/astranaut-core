@@ -454,7 +454,6 @@ class NodeAllocatorTest {
 
     /**
      * Node descriptor for testing.
-     *
      * @since 1.0
      */
     private static final class NodeDescriptor {

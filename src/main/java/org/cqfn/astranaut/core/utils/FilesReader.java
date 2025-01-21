@@ -31,7 +31,6 @@ import java.nio.file.Paths;
 
 /**
  * Class for reading files.
- *
  * @since 1.0.2
  */
 public final class FilesReader {

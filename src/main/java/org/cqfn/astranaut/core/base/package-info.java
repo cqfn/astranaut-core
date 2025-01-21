@@ -24,8 +24,7 @@
 
 /**
  * This package tests the basic structures describing syntax trees and their subtypes,
- * as well as some auxiliary classes that facilitate the construction of these basic structures.
- *
+ *  as well as some auxiliary classes that facilitate the construction of these basic structures.
  * @since 2.0.0
  */
 package org.cqfn.astranaut.core.base;

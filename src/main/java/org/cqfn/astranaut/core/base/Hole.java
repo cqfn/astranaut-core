@@ -28,7 +28,6 @@ import org.cqfn.astranaut.core.utils.MapUtils;
 
 /**
  * A special pattern node that can substitute for any node of a suitable type.
- *
  * @since 1.1.5
  */
 public final class Hole extends NodeAndType implements PatternItem, PrototypeBasedNode {

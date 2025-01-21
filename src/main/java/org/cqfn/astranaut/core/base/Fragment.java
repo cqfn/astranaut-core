@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * Describes a fragment of source code.
- *
  * @since 1.0
  */
 public interface Fragment {

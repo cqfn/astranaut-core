@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * An element of a pattern.
- *
  * @since 1.1.5
  */
 public interface PatternItem extends Node {

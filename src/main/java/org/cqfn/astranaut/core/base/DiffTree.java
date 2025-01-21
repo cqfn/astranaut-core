@@ -31,7 +31,6 @@ package org.cqfn.astranaut.core.base;
  * Thus, a DifferentialTree encapsulates both the original tree and the modified
  *  tree, detailing the differences and the changes needed to transition from one
  *  to the other.
- *
  * @since 2.0.0
  */
 public final class DiffTree extends Tree {

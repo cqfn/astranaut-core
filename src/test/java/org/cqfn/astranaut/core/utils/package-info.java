@@ -24,7 +24,6 @@
 
 /**
  * This package contains tests for helper classes.
- *
  * @since 1.0.2
  */
 package org.cqfn.astranaut.core.utils;

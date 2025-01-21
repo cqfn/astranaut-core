@@ -24,7 +24,6 @@
 
 /**
  * This package contains "green" nodes.
- *
  * @since 1.0
  */
 package org.cqfn.astranaut.core.example.green;

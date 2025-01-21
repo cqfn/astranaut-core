@@ -39,7 +39,6 @@ import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Node that describes the 'ExpressionList' type.
- *
  * @since 1.0
  */
 public final class ExpressionList implements Node {

@@ -24,7 +24,6 @@
 
 /**
  * This package contains tests covering patching algorithms.
- *
  * @since 1.1.5
  */
 package org.cqfn.astranaut.core.algorithms.patching;

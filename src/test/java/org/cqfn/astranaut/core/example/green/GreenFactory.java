@@ -34,7 +34,6 @@ import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Factory that creates 'green' nodes.
- *
  * @since 1.0
  */
 public final class GreenFactory extends DefaultFactory {

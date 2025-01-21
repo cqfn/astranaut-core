@@ -36,7 +36,6 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Tree descriptor represented as it is stored in the JSON file.
- *
  * @since 1.1.0
  */
 public class TreeDescriptor {

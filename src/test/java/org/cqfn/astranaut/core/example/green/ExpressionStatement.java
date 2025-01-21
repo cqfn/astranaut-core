@@ -41,7 +41,6 @@ import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
  * Node that describes the 'ExpressionStatement' type.
- *
  * @since 1.1.0
  */
 public final class ExpressionStatement implements Statement {

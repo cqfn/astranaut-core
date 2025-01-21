@@ -28,7 +28,6 @@ package org.cqfn.astranaut.core.base;
  *  It provides methods to retrieve the source, row, and column of the position.
  *  Positions are comparable based on their source, row, and column. If positions
  *  have different sources, they are considered incomparable.
- *
  * @since 1.0
  */
 public interface Position extends Comparable<Position> {

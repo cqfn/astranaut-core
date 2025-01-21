@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 
 /**
  * Action that replaces a child element.
- *
  * @since 1.1.0
  */
 public final class Replace implements Action {
@@ -116,7 +115,6 @@ public final class Replace implements Action {
 
     /**
      * Type of 'Replace' action.
-     *
      * @since 1.1.0
      */
     private static final class ReplaceType implements Type {
@@ -197,7 +195,6 @@ public final class Replace implements Action {
 
     /**
      * Class for 'Delete' action construction.
-     *
      * @since 1.1.0
      */
     public static final class Constructor implements Builder {

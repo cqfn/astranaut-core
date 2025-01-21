@@ -29,7 +29,6 @@ import java.util.List;
 
 /**
  * Mutable node whose children can be replaced during syntactic tree customization.
- *
  * @since 1.0
  */
 public final class MutableNode implements PrototypeBasedNode {

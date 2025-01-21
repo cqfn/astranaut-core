@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link SubtreeBuilder}.
- *
  * @since 1.1.4
  */
 class SubtreeBuilderTest {

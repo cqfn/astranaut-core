@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * An element of the difference tree.
- *
  * @since 1.1.0
  */
 public interface DiffTreeItem extends Node {

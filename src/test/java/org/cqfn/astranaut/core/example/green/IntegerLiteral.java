@@ -38,7 +38,6 @@ import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Node that describes the 'IntegerLiteral' type.
- *
  * @since 1.0
  */
 public final class IntegerLiteral implements Expression {

@@ -32,7 +32,6 @@ import org.cqfn.astranaut.core.utils.Pair;
 
 /**
  * Creator of a new tree with a modified subtree.
- *
  * @since 1.0
  */
 public class NodeReplacer {

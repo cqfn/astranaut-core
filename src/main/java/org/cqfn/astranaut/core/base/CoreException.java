@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * Helper class for custom exceptions in projects that use the core as a dependency.
- *
  * @since 1.0.2
  */
 public abstract class CoreException extends Exception {

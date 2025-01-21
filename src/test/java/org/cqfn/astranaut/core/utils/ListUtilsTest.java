@@ -31,14 +31,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link ListUtils} class.
- *
  * @since 1.0.2
  */
 class ListUtilsTest {
-    /**
-     * Test adding items to a list that may be null and
-     * creating an unmodifiable list from it.
-     */
     @Test
     void testAddingItems() {
         final ListUtils<Integer> list = new ListUtils<>();

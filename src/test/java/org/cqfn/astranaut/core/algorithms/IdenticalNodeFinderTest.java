@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link IdenticalNodeFinder} class.
- *
  * @since 1.1.5
  */
 class IdenticalNodeFinderTest {

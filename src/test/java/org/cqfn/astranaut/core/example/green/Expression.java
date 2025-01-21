@@ -27,7 +27,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Node that describes the 'Expression' type.
- *
  * @since 1.0
  */
 public interface Expression extends Node {

@@ -24,8 +24,7 @@
 
 /**
  * This package contains algorithms and data structures related to patching, i.e., changing
- * syntax trees using patterns (difference trees).
- *
+ *  syntax trees using patterns (difference trees).
  * @since 1.1.5
  */
 package org.cqfn.astranaut.core.algorithms.patching;

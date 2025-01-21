@@ -30,7 +30,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Matcher for the subtree returned by the 'js' language parser.
- *
  * @since 1.0
  */
 public final class Matcher1 implements Matcher {

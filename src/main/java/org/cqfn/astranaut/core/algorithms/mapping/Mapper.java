@@ -27,7 +27,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * A mapper that builds correspondences between two trees.
- *
  * @since 1.1.0
  */
 public interface Mapper {

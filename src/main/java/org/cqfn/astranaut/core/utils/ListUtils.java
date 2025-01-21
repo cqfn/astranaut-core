@@ -29,7 +29,6 @@ import java.util.List;
 
 /**
  * Helper class for building lists.
- *
  * @param <T> Item type
  * @since 1.0
  */

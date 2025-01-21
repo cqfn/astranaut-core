@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link DiffTreeBuilder} class.
- *
  * @since 1.1.0
  */
 class DiffTreeBuilderTest {
@@ -105,11 +104,6 @@ class DiffTreeBuilderTest {
         Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
-    /**
-     * Testing the construction of a difference tree with a deleted node.
-     * This node is just below the root, so that the number and type of children of the root
-     * do not change.
-     */
     @Test
     void testTreeWithDeletedNodeInDepth() {
         final Node before = LittleTrees.createStatementBlock(
