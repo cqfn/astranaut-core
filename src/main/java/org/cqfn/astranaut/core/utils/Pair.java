@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,8 @@ package org.cqfn.astranaut.core.utils;
 
 /**
  * Simple pair in case someone needs to use (key, val) objects without creating a map.
- *
  * @param <K> The key type
  * @param <V> The value type
- *
  * @since 1.0
  */
 public final class Pair<K, V> {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Builder of difference syntax tree, that is, one that stores changes between two trees.
- *
  * @since 1.1.5
  */
 public final class DiffTreeBuilder {
@@ -107,7 +106,7 @@ public final class DiffTreeBuilder {
 
     /**
      * Adds an action to the difference tree that inserts a node after another node.
-     * If no other node is specified, inserts at the beginning of the children's list.
+     *  If no other node is specified, inserts at the beginning of the children's list.
      * @param insertion Full information about the node being inserted
      * @return Result of operation, {@code true} if action was added
      */
@@ -208,7 +207,6 @@ public final class DiffTreeBuilder {
 
     /**
      * Some additional information about each node needed to insert, replace, or delete nodes.
-     *
      * @since 1.1.0
      */
     private static final class NodeInfo {

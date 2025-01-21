@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,7 @@
 
 /**
  * This package tests the basic structures describing syntax trees and their subtypes,
- * as well as some auxiliary classes that facilitate the construction of these basic structures.
- *
+ *  as well as some auxiliary classes that facilitate the construction of these basic structures.
  * @since 2.0.0
  */
 package org.cqfn.astranaut.core.base;

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,14 +28,12 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Interface for converters that check one rule described in DSL
- * and convert the initial AST built to the specified target format.
- *
+ *  and convert the initial AST built to the specified target format.
  * @since 1.0
  */
 public interface Converter {
     /**
      * Converts an initial AST to the target format.
-     *
      * @param node The root of the AST to be converted
      * @param factory The node factory
      * @return A new node

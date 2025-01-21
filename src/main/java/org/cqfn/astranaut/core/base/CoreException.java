@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.base;
 
 /**
  * Helper class for custom exceptions in projects that use the core as a dependency.
- *
  * @since 1.0.2
  */
 public abstract class CoreException extends Exception {

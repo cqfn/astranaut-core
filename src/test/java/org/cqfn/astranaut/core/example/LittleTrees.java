@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,6 @@ import org.junit.jupiter.api.Assertions;
 
 /**
  * Little trees for testing purposes.
- *
  * @since 1.1.0
  */
 @SuppressWarnings({"PMD.ProhibitPublicStaticMethods", "PMD.TooManyMethods"})

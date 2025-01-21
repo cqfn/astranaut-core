@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ import java.util.stream.Stream;
 
 /**
  * An action that inserts a child element.
- *
  * @since 1.1.0
  */
 public final class Insert implements Action {
@@ -102,7 +101,6 @@ public final class Insert implements Action {
 
     /**
      * Type of 'Insert' action.
-     *
      * @since 1.1.0
      */
     private static final class InsertType implements Type {
@@ -179,7 +177,6 @@ public final class Insert implements Action {
 
     /**
      * Class for 'Delete' action construction.
-     *
      * @since 1.1.0
      */
     public static final class Constructor implements Builder {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import java.util.Map;
 
 /**
  * Node containing child nodes, as well as actions on these nodes.
- *
  * @since 1.1.0
  */
 public final class DiffNode extends NodeAndType implements DiffTreeItem, PrototypeBasedNode {
@@ -134,7 +133,7 @@ public final class DiffNode extends NodeAndType implements DiffTreeItem, Prototy
 
     /**
      * Adds an action that inserts the node after another node.
-     * If no other node is specified, inserts at the beginning of the children's list.
+     *  If no other node is specified, inserts at the beginning of the children's list.
      * @param node Node to be inserted
      * @param after Node after which to insert
      * @return Result of operation, @return {@code true} if action was added
@@ -161,7 +160,7 @@ public final class DiffNode extends NodeAndType implements DiffTreeItem, Prototy
 
     /**
      * Adds an action that replaces a node.
-     * The position of the node is specified by the index.
+     *  The position of the node is specified by the index.
      * @param index Node index
      * @param replacement Child node to be replaced by
      * @return Result of operation, @return {@code true} if action was added
@@ -308,7 +307,6 @@ public final class DiffNode extends NodeAndType implements DiffTreeItem, Prototy
 
     /**
      * Selector that selects some branch from a difference tree item: before or after the changes.
-     *
      * @since 1.1.0
      */
     private interface BranchSelector {

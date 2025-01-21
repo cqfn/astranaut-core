@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@ import java.util.Map;
 /**
  * A node that contains child nodes as well as actions on those nodes.
  * Child nodes can be replaced by holes.
- *
  * @since 1.1.5
  */
 public final class PatternNode extends NodeAndType implements PatternItem, PrototypeBasedNode {

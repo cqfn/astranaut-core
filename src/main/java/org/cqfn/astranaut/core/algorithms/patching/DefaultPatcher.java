@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,7 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * Default algorithm that applies patches, i.e. makes some changes in the syntax tree
- * based on patterns describing such changes. Patterns are differential trees.
- *
+ *  based on patterns describing such changes. Patterns are differential trees.
  * @since 1.1.5
  */
 public final class DefaultPatcher implements Patcher {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ import org.cqfn.astranaut.core.base.Type;
 
 /**
  * Converts a tree to a string that contains JSON object.
- *
  * @since 1.0.2
  */
 public final class JsonSerializer {
@@ -119,7 +118,7 @@ public final class JsonSerializer {
 
     /**
      * Converts the tree to a string that contains a JSON object and
-     * writes the result to a file.
+     *  writes the result to a file.
      * @param filename The file name
      * @return The result, {@code true} if the file was successful written
      */

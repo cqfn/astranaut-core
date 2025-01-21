@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Converter describing DSL conversion rule.
- *
  * @since 1.0
  */
 public final class Rule0 implements Converter {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -84,7 +84,7 @@ public class Adapter {
 
     /**
      * Converts the [sub]tree to another applying the specified variant
-     * of conversion.
+     *  of conversion.
      * @param variant The variant index
      * @param root The root node of the subtree
      * @return A converted tree or empty tree if the conversion is impossible
@@ -111,7 +111,7 @@ public class Adapter {
 
     /**
      * Calculate an amount of possible conversions that one rule may conduct
-     * within the tree.
+     *  within the tree.
      * @param root The root node of the subtree
      * @return Amount of conversions
      */
@@ -151,8 +151,8 @@ public class Adapter {
 
     /**
      * Creates a list from nodes.
-     * The list is sorted in descending order of nodes depth in the tree.
-     * Leaf nodes are at the beginning of the list, and the last element is the root.
+     *  The list is sorted in descending order of nodes depth in the tree.
+     *  Leaf nodes are at the beginning of the list, and the last element is the root.
      * @since 0.2.2
      */
     private static class NodeListBuilder {

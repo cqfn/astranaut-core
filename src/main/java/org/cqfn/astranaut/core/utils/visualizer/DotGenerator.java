@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,6 @@ public class DotGenerator {
 
     /**
      * Renders data to a DOT format.
-     *
      * @return A rendered DOT text as string
      */
     public String generate() {
@@ -88,7 +87,6 @@ public class DotGenerator {
 
     /**
      * Processes a node with all its children.
-     *
      * @param node A node.
      */
     private void processNode(final Node node) {
@@ -165,7 +163,6 @@ public class DotGenerator {
 
     /**
      * Appends tree edge text.
-     *
      * @param parent A parent node index
      * @param child A child node index
      * @param label An edge label
@@ -185,8 +182,7 @@ public class DotGenerator {
 
     /**
      * Encodes text into an HTML-compatible format replacing characters,
-     * which are not accepted in HTML, with corresponding HTML escape symbols.
-     *
+     *  which are not accepted in HTML, with corresponding HTML escape symbols.
      * @param str Text to be encoded in HTML
      * @return An encoded text
      */

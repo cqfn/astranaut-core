@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,8 +66,7 @@ public class IdenticalNodeFinder {
 
     /**
      * Calculates hash recursively for all nodes with non-empty data and
-     * adds entries to the resulting map.
-     *
+     *  adds entries to the resulting map.
      * @param node The current node to process
      * @param result Where to put the result
      */

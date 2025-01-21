@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@ package org.cqfn.astranaut.core.base;
  * {@code EmptyFragment} is an implementation of {@link Fragment} representing an empty fragment.
  *  It serves as a placeholder when a node does not have an associated fragment
  *  preventing the need to return a null pointer.
- *
  * @since 1.0
  */
 public final class EmptyFragment implements Fragment {

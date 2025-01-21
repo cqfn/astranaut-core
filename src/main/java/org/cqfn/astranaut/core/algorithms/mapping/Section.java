@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -124,8 +124,8 @@ final class Section {
 
     /**
      * Creates a new section with the specified node removed from both left and right subsets.
-     * If the node is not present in either subset, the original section is returned.
-     * If this removal results in both subsets becoming empty, returns null.
+     *  If the node is not present in either subset, the original section is returned.
+     *  If this removal results in both subsets becoming empty, returns null.
      * @param node Node to be removed
      * @return A new section instance without the specified node, or {@code null} if the result
      *  is empty
@@ -287,7 +287,7 @@ final class Section {
 
     /**
      * Splits a list of nodes into two using the specified node as a delimiter.
-     * The delimiter is not included in either set.
+     *  The delimiter is not included in either set.
      * @param list List of nodes
      * @param node Delimiter node
      * @return Pair of resulting lists

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,7 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * An interface that calculates the hash of a node.
- * Hash is a number that uniquely identifies a node by some criteria.
- *
+ *  Hash is a number that uniquely identifies a node by some criteria.
  * @since 1.1.0
  */
 public interface Hash {

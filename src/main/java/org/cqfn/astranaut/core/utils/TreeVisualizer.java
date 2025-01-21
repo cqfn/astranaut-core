@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ public final class TreeVisualizer {
 
     /**
      * Renders a DOT text of the tree, renders an image from it and
-     * saves it to the specified file.
+     *  saves it to the specified file.
      * @param file A file of the AST visualization
      * @throws IOException If an error during input or output actions occurs
      * @throws WrongFileExtension If an error during visualization occurs

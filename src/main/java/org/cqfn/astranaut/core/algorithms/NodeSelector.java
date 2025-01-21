@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * An algorithm that selects nodes from a tree based on some criteria.
- *
  * @since 1.1.4
  */
 public final class NodeSelector {
@@ -77,7 +76,6 @@ public final class NodeSelector {
 
     /**
      * Walker that traverses the syntax tree and selects nodes.
-     *
      * @since 1.1.4
      */
     private static final class Walker {

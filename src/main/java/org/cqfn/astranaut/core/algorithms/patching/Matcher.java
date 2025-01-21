@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,6 @@ import org.cqfn.astranaut.core.base.Tree;
 
 /**
  * The matcher matches syntax tree and patterns.
- *
  * @since 1.1.5
  */
 class Matcher {
@@ -144,21 +143,24 @@ class Matcher {
             result = true;
             final Iterator<Node> iterator = sample.getIteratorOverChildren();
             int offset = 0;
-            Node current = null;
+            Node previous = null;
             while (result && offset < right && iterator.hasNext()) {
                 final Node child = iterator.next();
                 final Action action = Action.toAction(child);
                 if (action instanceof Insert) {
-                    applicants.insertNodeAfter(action.getAfter(), node, current);
+                    final Node insertion = action.getAfter();
+                    applicants.insertNodeAfter(insertion, node, previous);
+                    previous = insertion;
                 } else if (index + offset >= left) {
                     result = false;
                 } else {
-                    current = node.getChild(index + offset);
+                    final Node current = node.getChild(index + offset);
                     result = Matcher.checkNode(
                         current,
                         child,
                         applicants
                     );
+                    previous = current;
                     offset = offset + 1;
                 }
             }

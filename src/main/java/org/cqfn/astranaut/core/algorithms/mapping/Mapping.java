@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ public interface Mapping {
 
     /**
      * Returns the set of nodes of the 'left' tree that need to be removed
-     * to get the 'right' tree.
+     *  to get the 'right' tree.
      * @return The set of deleted nodes
      */
     Set<Node> getDeleted();

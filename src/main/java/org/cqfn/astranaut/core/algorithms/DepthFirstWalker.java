@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,6 @@ import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Performs a depth-first traversal of the syntax tree.
- *
  * @since 1.1.5
  */
 public class DepthFirstWalker {
@@ -49,11 +48,11 @@ public class DepthFirstWalker {
 
     /**
      * Processes nodes starting from the root. Processes a node first.
-     * If the stopping criterion is not reached, recursively processes all children of it,
-     * starting from the first one. Once a node is found that satisfies the criterion,
-     * stops traversal.<br/>
-     * And yes, you can use this algorithm not only to find nodes, but also just to traverse
-     * the tree in the specific order.
+     *  If the stopping criterion is not reached, recursively processes all children of it,
+     *  starting from the first one. Once a node is found that satisfies the criterion,
+     *  stops traversal.<br/>
+     *  And yes, you can use this algorithm not only to find nodes, but also just to traverse
+     *  the tree in the specific order.
      * @param visitor Visitor that processes nodes
      * @return Found node (optional)
      */
@@ -63,8 +62,8 @@ public class DepthFirstWalker {
 
     /**
      * Processes nodes starting from the root.
-     * If a node matches the criterion, adds it to the set and does not check
-     * the children of this node, otherwise it does.
+     *  If a node matches the criterion, adds it to the set and does not check
+     *  the children of this node, otherwise it does.
      * @param visitor Visitor that processes nodes
      * @return List of found nodes (can be empty, but not {@code null})
      */
@@ -137,7 +136,6 @@ public class DepthFirstWalker {
 
     /**
      * Payload interface for the traversal algorithm.
-     *
      * @since 1.1.5
      */
     public interface Visitor {

@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Testing {@link DiffTreeBuilder} class.
- *
  * @since 1.1.0
  */
 class DiffTreeBuilderTest {
@@ -105,11 +104,6 @@ class DiffTreeBuilderTest {
         Assertions.assertTrue(after.deepCompare(diff.getAfter().getRoot()));
     }
 
-    /**
-     * Testing the construction of a difference tree with a deleted node.
-     * This node is just below the root, so that the number and type of children of the root
-     * do not change.
-     */
     @Test
     void testTreeWithDeletedNodeInDepth() {
         final Node before = LittleTrees.createStatementBlock(

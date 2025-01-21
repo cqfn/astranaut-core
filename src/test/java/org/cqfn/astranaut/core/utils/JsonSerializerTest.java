@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test for {@link JsonSerializer} class.
- *
  * @since 1.0.2
  */
 class JsonSerializerTest {
@@ -60,9 +59,6 @@ class JsonSerializerTest {
      */
     private static final Node TEST_NODE_LANG = new TestNodeWithTypeWithLanguage();
 
-    /**
-     * Test for a tree serialization to a JSON string.
-     */
     @Test
     void testSerializationToString() {
         final Tree tree = Tree.createDraft("TestNode<\"value\">");
@@ -73,9 +69,6 @@ class JsonSerializerTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test for a tree serialization where language is specified.
-     */
     @Test
     void testSerializationWithLanguageSpecified() {
         final Tree tree = new Tree(JsonSerializerTest.TEST_NODE_LANG);
@@ -86,9 +79,6 @@ class JsonSerializerTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test for a tree serialization where language is specified.
-     */
     @Test
     void testSerializationNestedWithLanguageSpecified() {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
@@ -102,9 +92,6 @@ class JsonSerializerTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test for a tree serialization to a JSON string.
-     */
     @Test
     void testSerializationDiffTree() {
         final boolean result = this.serializeAndCompare(
@@ -114,9 +101,6 @@ class JsonSerializerTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test for a tree serialization to a JSON string.
-     */
     @Test
     void testSerializationPattern() {
         final boolean result = this.serializeAndCompare(
@@ -126,10 +110,6 @@ class JsonSerializerTest {
         Assertions.assertTrue(result);
     }
 
-    /**
-     * Test for a tree serialization to a JSON file.
-     * @param temp A temporary directory
-     */
     @Test
     void testSerializationToFile(@TempDir final Path temp) {
         final Tree tree = this.createSampleTree();
@@ -152,9 +132,6 @@ class JsonSerializerTest {
         Assertions.assertEquals(expected, result);
     }
 
-    /**
-     * Test for exception while writing to a JSON file.
-     */
     @Test
     void testFilesWriterException() {
         final Tree tree = EmptyTree.INSTANCE;

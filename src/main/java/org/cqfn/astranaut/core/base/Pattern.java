@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,6 @@ package org.cqfn.astranaut.core.base;
  *  (i.e., the source code from which this syntax tree was derived) to another, unrelated
  *  syntax tree. One possible application of such a mechanism is the detection and automatic
  *  correction of errors in source code.
- *
  * @since 2.0.0
  */
 public final class Pattern extends Tree {

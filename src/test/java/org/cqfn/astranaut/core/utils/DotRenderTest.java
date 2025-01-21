@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link DotGenerator} class.
- *
  * @since 1.0.2
  */
 class DotRenderTest {
@@ -45,11 +44,6 @@ class DotRenderTest {
      */
     private static final String DIR = "src/test/resources/visualizer/";
 
-    /**
-     * Test for a single node.
-     *
-     * @throws IOException If input stream cannot be read from a DOT file
-     */
     @Test
     void testSingleNode() throws IOException {
         final Node root = this.createNode("SingleNode");
@@ -58,11 +52,6 @@ class DotRenderTest {
         Assertions.assertEquals(expected, result);
     }
 
-    /**
-     * Test for a single node with data.
-     *
-     * @throws IOException If input stream cannot be read from a DOT file
-     */
     @Test
     void testSingleNodeWithData() throws IOException {
         final Node root = this.createNode("Node", "data");
@@ -73,12 +62,6 @@ class DotRenderTest {
         Assertions.assertEquals(expected, result);
     }
 
-    /**
-     * Test for a node with children.
-     * The tree depth is 2.
-     *
-     * @throws IOException If input stream cannot be read from a DOT file
-     */
     @Test
     void testNodeWithChildren() throws IOException {
         final List<Node> children = new LinkedList<>();
@@ -93,12 +76,6 @@ class DotRenderTest {
         Assertions.assertEquals(expected, result);
     }
 
-    /**
-     * Test for a node with children.
-     * The tree depth is 4.
-     *
-     * @throws IOException If input stream cannot be read from a DOT file
-     */
     @Test
     void testNodeWithNestedChildren() throws IOException {
         final List<Node> thirdl = new LinkedList<>();
@@ -119,11 +96,6 @@ class DotRenderTest {
         Assertions.assertEquals(expected, result);
     }
 
-    /**
-     * Test for a node that contain a null child node.
-     *
-     * @throws IOException If input stream cannot be read from a DOT file
-     */
     @Test
     void testNodeWithNullChild() throws IOException {
         final List<Node> children = new LinkedList<>();
@@ -139,7 +111,6 @@ class DotRenderTest {
 
     /**
      * Renders DOT text from a node.
-     *
      * @param node A tree to be converted
      */
     private String renderDot(final Node node) {

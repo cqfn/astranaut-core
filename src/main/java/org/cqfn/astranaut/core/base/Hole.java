@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2024 Ivan Kniazkov
+ * Copyright (c) 2025 Ivan Kniazkov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ import org.cqfn.astranaut.core.utils.MapUtils;
 
 /**
  * A special pattern node that can substitute for any node of a suitable type.
- *
  * @since 1.1.5
  */
 public final class Hole extends NodeAndType implements PatternItem, PrototypeBasedNode {
