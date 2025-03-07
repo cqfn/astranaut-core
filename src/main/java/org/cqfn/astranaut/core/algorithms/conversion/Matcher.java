@@ -23,22 +23,20 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
-import java.util.List;
-import java.util.Map;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Checks if the node matches some structure and extracts the data or (and) children
- *  if the latter are used in the target [sub]tree.
- * @since 1.0
+ * Checks if the node matches some structure and extracts the data and/or children
+ *  if they are used in the target [sub]tree.
+ * @since 2.0.0
  */
 public interface Matcher {
     /**
-     * Matches the node.
-     * @param node The node
-     * @param children Where to save children when matched
-     * @param data Where to save data when matched
-     * @return The result of matching, {@code true} if node matches and data was extracted
+     * Matches the node and extracts data into the provided {@code Extracted} object.
+     * @param node The node to be matched.
+     * @param extracted The {@code Extracted} object where extracted nodes and data will be stored.
+     * @return Matching result, {@code true} if the node matches and data was extracted,
+     *  otherwise {@code false}.
      */
-    boolean match(Node node, Map<Integer, List<Node>> children, Map<Integer, String> data);
+    boolean match(Node node, Extracted extracted);
 }
