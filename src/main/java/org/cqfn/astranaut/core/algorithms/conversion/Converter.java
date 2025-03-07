@@ -23,20 +23,27 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
+import java.util.Optional;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Interface for converters that check one rule described in DSL
- *  and convert the initial AST built to the specified target format.
- * @since 1.0
+ *  and convert a sequence of child nodes of a given parent node into a single target node.
+ * @since 2.0.0
  */
 public interface Converter {
     /**
-     * Converts an initial AST to the target format.
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * Converts a sequence of child nodes starting from the given index.
+     * If the conversion is successful, returns an {@code Optional} containing a
+     *  {@code ConversionResult}, which includes the new node, the starting index of consumed nodes,
+     *  and the number of nodes consumed. If the conversion fails, returns an empty
+     *  {@code Optional}, and no nodes are consumed.
+     * @param parent The parent node containing the child nodes to be converted
+     * @param index The index of the first child node to be converted
+     * @param factory The Factory for the creation of new nodes
+     * @return An {@code Optional} containing a {@code ConversionResult} if conversion
+     *  is successful, otherwise an empty {@code Optional}.
      */
-    Node convert(Node node, Factory factory);
+    Optional<ConversionResult> convert(Node parent, int index, Factory factory);
 }
