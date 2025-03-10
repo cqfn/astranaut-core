@@ -81,20 +81,29 @@ public final class Extracted {
     }
 
     /**
-     * Returns the list of nodes associated with the specified number.
-     * The returned list is immutable. If no nodes are associated with the number,
-     *  an empty list is returned.
-     * @param number The number for which nodes are requested.
-     * @return An unmodifiable list of nodes.
+     * Returns a combined list of nodes associated with the specified numbers.
+     * <p>
+     * The returned list is immutable. If no nodes are associated with the given numbers,
+     * an empty list is returned.
+     *
+     * @param numbers The numbers for which nodes are requested.
+     * @return An unmodifiable list of nodes combined from all specified numbers.
      */
-    public List<Node> getNodes(final int number) {
-        final List<Node> list;
-        if (this.children == null || !this.children.containsKey(number)) {
-            list = Collections.emptyList();
+    public List<Node> getNodes(final int... numbers) {
+        final List<Node> result;
+        if (this.children == null || numbers.length == 0) {
+            result = Collections.emptyList();
         } else {
-            list = Collections.unmodifiableList(this.children.get(number));
+            final List<Node> list = new ArrayList<>(numbers.length);
+            for (final int number : numbers) {
+                final List<Node> nodes = this.children.get(number);
+                if (nodes != null) {
+                    list.addAll(nodes);
+                }
+            }
+            result = Collections.unmodifiableList(list);
         }
-        return list;
+        return result;
     }
 
     /**

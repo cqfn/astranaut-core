@@ -30,7 +30,6 @@ import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
  * A converter that converts a sequence of nodes into an "Addition" node.
@@ -41,6 +40,8 @@ public final class AdditionConverter implements Converter {
      * The instance.
      */
     public static final Converter INSTANCE = new AdditionConverter();
+
+    private static final String NODE_NAME = "Addition";
 
     /**
      * Private constructor.
@@ -57,13 +58,8 @@ public final class AdditionConverter implements Converter {
             && ExpressionOneMatcher.INSTANCE.match(parent.getChild(0), extracted)
             && OperatorPlusMatcher.INSTANCE.match(parent.getChild(1), extracted)
             && ExpressionTwoMatcher.INSTANCE.match(parent.getChild(2), extracted)) {
-            final Builder builder = factory.createBuilder("Addition");
-            builder.setChildrenList(
-                new ListUtils<Node>()
-                    .merge(extracted.getNodes(1))
-                    .merge(extracted.getNodes(2))
-                    .make()
-            );
+            final Builder builder = factory.createBuilder(AdditionConverter.NODE_NAME);
+            builder.setChildrenList(extracted.getNodes(1, 2));
             result = Optional.of(new ConversionResult(builder.createNode(), index, 3));
         } else {
             result = Optional.empty();
