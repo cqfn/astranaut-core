@@ -135,13 +135,21 @@ public final class MutableNode implements PrototypeBasedNode {
     public boolean replaceChild(final Node before, final Node after) {
         boolean result = false;
         final int size = this.children.size();
-        for (int index = 0; !result && index < size; index = index + 1) {
+        int found = -1;
+        for (int index = 0; index < size; index = index + 1) {
             final Node child = this.children.get(index);
-            if (child.equals(before)
-                || child instanceof MutableNode && ((MutableNode) child).getPrototype() == before) {
-                this.children.set(index, after);
-                result = true;
+            if (child.equals(before)) {
+                found = index;
+                break;
             }
+            if (child instanceof MutableNode && ((MutableNode) child).getPrototype() == before) {
+                found = index;
+                break;
+            }
+        }
+        if (found >= 0) {
+            this.children.set(found, after);
+            result = true;
         }
         return result;
     }
