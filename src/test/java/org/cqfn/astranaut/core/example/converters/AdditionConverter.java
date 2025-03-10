@@ -27,9 +27,9 @@ import java.util.Optional;
 import org.cqfn.astranaut.core.algorithms.conversion.ConversionResult;
 import org.cqfn.astranaut.core.algorithms.conversion.Converter;
 import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
+import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.example.green.Addition;
 import org.cqfn.astranaut.core.utils.ListUtils;
 
 /**
@@ -57,14 +57,14 @@ public final class AdditionConverter implements Converter {
             && ExpressionOneMatcher.INSTANCE.match(parent.getChild(0), extracted)
             && OperatorPlusMatcher.INSTANCE.match(parent.getChild(1), extracted)
             && ExpressionTwoMatcher.INSTANCE.match(parent.getChild(2), extracted)) {
-            final Addition.Constructor ctor = new Addition.Constructor();
-            ctor.setChildrenList(
+            final Builder builder = factory.createBuilder("Addition");
+            builder.setChildrenList(
                 new ListUtils<Node>()
                     .merge(extracted.getNodes(1))
                     .merge(extracted.getNodes(2))
                     .make()
             );
-            result = Optional.of(new ConversionResult(ctor.createNode(), index, 3));
+            result = Optional.of(new ConversionResult(builder.createNode(), index, 3));
         } else {
             result = Optional.empty();
         }

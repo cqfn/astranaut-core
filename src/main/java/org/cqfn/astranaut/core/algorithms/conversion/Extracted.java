@@ -41,21 +41,13 @@ public final class Extracted {
      * A map storing the mapping of numbers to their associated nodes.
      * The key is the number, and the value is a list of nodes related to that number.
      */
-    private final Map<Integer, List<Node>> children;
+    private Map<Integer, List<Node>> children;
 
     /**
      * A map storing the mapping of numbers to their string data.
      * The key is the number, and the value is the associated string data.
      */
-    private final Map<Integer, String> data;
-
-    /**
-     * Creates a new empty {@code Extracted} object.
-     */
-    public Extracted() {
-        this.children = new TreeMap<>();
-        this.data = new TreeMap<>();
-    }
+    private Map<Integer, String> data;
 
     /**
      * Adds a node to the specified number.
@@ -63,7 +55,17 @@ public final class Extracted {
      * @param node The node to add.
      */
     public void addNode(final int number, final Node node) {
-        this.children.computeIfAbsent(number, k -> new ArrayList<>(1)).add(node);
+        final List<Node> list;
+        do {
+            if (this.children == null) {
+                this.children = new TreeMap<>();
+                list = new ArrayList<>(1);
+                this.children.put(number, list);
+                break;
+            }
+            list = this.children.computeIfAbsent(number, k -> new ArrayList<>(1));
+        } while (false);
+        list.add(node);
     }
 
     /**
@@ -72,6 +74,9 @@ public final class Extracted {
      * @param value The string data.
      */
     public void addData(final int number, final String value) {
+        if (this.data == null) {
+            this.data = new TreeMap<>();
+        }
         this.data.put(number, value);
     }
 
@@ -84,10 +89,10 @@ public final class Extracted {
      */
     public List<Node> getNodes(final int number) {
         final List<Node> list;
-        if (this.children.containsKey(number)) {
-            list = Collections.unmodifiableList(this.children.get(number));
-        } else {
+        if (this.children == null || !this.children.containsKey(number)) {
             list = Collections.emptyList();
+        } else {
+            list = Collections.unmodifiableList(this.children.get(number));
         }
         return list;
     }
@@ -99,14 +104,12 @@ public final class Extracted {
      * @return The associated string data (or an empty string if no data exists).
      */
     public String getData(final int number) {
-        return this.data.getOrDefault(number, "");
-    }
-
-    /**
-     * Checks whether the object is empty (contains no nodes or data).
-     * @return Checking result, {@code true} if the object is empty, otherwise {@code false}.
-     */
-    public boolean isEmpty() {
-        return this.children.isEmpty() && this.data.isEmpty();
+        final String result;
+        if (this.data == null) {
+            result = "";
+        } else {
+            result = this.data.getOrDefault(number, "");
+        }
+        return result;
     }
 }
