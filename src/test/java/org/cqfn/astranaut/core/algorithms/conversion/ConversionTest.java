@@ -24,11 +24,13 @@
 package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.converters.AdditionConverter;
+import org.cqfn.astranaut.core.example.converters.IntegerConverter;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,13 +40,18 @@ import org.junit.jupiter.api.Test;
  * @since 2.0.0
  */
 class ConversionTest {
+    /**
+     * Root node name (for test purposes).
+     */
+    private static final String ROOT_NODE_NAME = "Root";
+
     @Test
-    void addition() {
+    void extractingChildren() {
         final Node left = LittleTrees.createIntegerLiteral(2);
         final Node right = LittleTrees.createIntegerLiteral(3);
         final Node operator = DraftNode.create("Operator<'+'>");
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName("Root");
+        ctor.setName(ConversionTest.ROOT_NODE_NAME);
         ctor.setChildrenList(Arrays.asList(left, operator, right));
         final Node root = ctor.createNode();
         final Converter converter = AdditionConverter.INSTANCE;
@@ -55,5 +62,19 @@ class ConversionTest {
         Assertions.assertEquals(3, result.get().getConsumed());
         Assertions.assertEquals(3, result.get().getNextIndex());
         Assertions.assertEquals("2 + 3", result.get().getNode().toString());
+    }
+
+    @Test
+    void extractingData() {
+        final Node before = DraftNode.create("int<'7'>");
+        final DraftNode.Constructor ctor = new DraftNode.Constructor();
+        ctor.setName(ConversionTest.ROOT_NODE_NAME);
+        ctor.setChildrenList(Collections.singletonList(before));
+        final Node root = ctor.createNode();
+        final Converter converter = IntegerConverter.INSTANCE;
+        final Optional<ConversionResult> result =
+            converter.convert(root, 0, GreenFactory.INSTANCE);
+        Assertions.assertTrue(result.isPresent());
+        Assertions.assertEquals("7", result.get().getNode().toString());
     }
 }

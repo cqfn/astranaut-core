@@ -32,24 +32,24 @@ import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * A converter that converts a sequence of nodes into an "Addition" node.
+ * Converter that converts a node to an 'IntegerLiteral' node.
  * @since 2.0.0
  */
-public final class AdditionConverter implements Converter {
+public final class IntegerConverter implements Converter {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new AdditionConverter();
+    public static final Converter INSTANCE = new IntegerConverter();
 
     /**
      * The name of the type of node to be generated.
      */
-    private static final String NODE_NAME = "Addition";
+    private static final String NODE_NAME = "IntegerLiteral";
 
     /**
      * Private constructor.
      */
-    private AdditionConverter() {
+    private IntegerConverter() {
     }
 
     @Override
@@ -57,20 +57,18 @@ public final class AdditionConverter implements Converter {
         final Factory factory) {
         Optional<ConversionResult> result = Optional.empty();
         do {
-            if (index + 3 > parent.getChildCount()) {
+            if (index + 1 > parent.getChildCount()) {
                 break;
             }
             final Extracted extracted = new Extracted();
             final boolean matched =
-                ExpressionOneMatcher.INSTANCE.match(parent.getChild(0 + index), extracted)
-                && OperatorPlusMatcher.INSTANCE.match(parent.getChild(1 + index), extracted)
-                && ExpressionTwoMatcher.INSTANCE.match(parent.getChild(2 + index), extracted);
+                IntegerMatcher.INSTANCE.match(parent.getChild(index), extracted);
             if (!matched) {
                 break;
             }
-            final Builder builder = factory.createBuilder(AdditionConverter.NODE_NAME);
-            builder.setChildrenList(extracted.getNodes(1, 2));
-            result = Optional.of(new ConversionResult(builder.createNode(), index, 3));
+            final Builder builder = factory.createBuilder(IntegerConverter.NODE_NAME);
+            builder.setData(extracted.getData(1));
+            result = Optional.of(new ConversionResult(builder.createNode(), index, 1));
         } while (false);
         return result;
     }
