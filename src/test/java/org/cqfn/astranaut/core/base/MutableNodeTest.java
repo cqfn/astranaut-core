@@ -48,6 +48,7 @@ class MutableNodeTest {
         final Node first = LittleTrees.createIntegerLiteral(3);
         Assertions.assertTrue(mutable.replaceChild(right, first));
         final Node second = LittleTrees.createIntegerLiteral(4);
+        Assertions.assertFalse(mutable.replaceChild(LittleTrees.createIntegerLiteral(3), second));
         Assertions.assertTrue(mutable.replaceChild(first, second));
         final Node after = mutable.getMutableChild(1);
         Assertions.assertTrue(after.deepCompare(second));
