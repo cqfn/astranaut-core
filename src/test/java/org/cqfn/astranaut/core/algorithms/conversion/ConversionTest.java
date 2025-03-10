@@ -25,7 +25,6 @@ package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.Arrays;
 import java.util.Optional;
-import org.cqfn.astranaut.core.algorithms.hash.AbsoluteHash;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.example.LittleTrees;
@@ -48,7 +47,7 @@ class ConversionTest {
         ctor.setName("Root");
         ctor.setChildrenList(Arrays.asList(left, operator, right));
         final Node root = ctor.createNode();
-        Converter converter = AdditionConverter.INSTANCE;
+        final Converter converter = AdditionConverter.INSTANCE;
         final Optional<ConversionResult> result =
             converter.convert(root, 0, GreenFactory.INSTANCE);
         Assertions.assertTrue(result.isPresent());
