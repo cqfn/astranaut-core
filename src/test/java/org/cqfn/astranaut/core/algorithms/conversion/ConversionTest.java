@@ -23,8 +23,6 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Node;
@@ -50,10 +48,13 @@ class ConversionTest {
         final Node left = LittleTrees.createIntegerLiteral(2);
         final Node right = LittleTrees.createIntegerLiteral(3);
         final Node operator = DraftNode.create("Operator<'+'>");
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName(ConversionTest.ROOT_NODE_NAME);
-        ctor.setChildrenList(Arrays.asList(left, operator, right));
-        final Node root = ctor.createNode();
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            left,
+            operator,
+            right
+        );
         final Converter converter = AdditionConverter.INSTANCE;
         final Optional<ConversionResult> result =
             converter.convert(root, 0, GreenFactory.INSTANCE);
@@ -67,10 +68,7 @@ class ConversionTest {
     @Test
     void extractingData() {
         final Node before = DraftNode.create("int<'7'>");
-        final DraftNode.Constructor ctor = new DraftNode.Constructor();
-        ctor.setName(ConversionTest.ROOT_NODE_NAME);
-        ctor.setChildrenList(Collections.singletonList(before));
-        final Node root = ctor.createNode();
+        final Node root = DraftNode.create(ConversionTest.ROOT_NODE_NAME, "", before);
         final Converter converter = IntegerConverter.INSTANCE;
         final Optional<ConversionResult> result =
             converter.convert(root, 0, GreenFactory.INSTANCE);
