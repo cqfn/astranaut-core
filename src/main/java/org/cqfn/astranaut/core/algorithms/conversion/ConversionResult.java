@@ -30,7 +30,7 @@ import org.cqfn.astranaut.core.base.Node;
  *  of the first consumed node, the number of nodes consumed during the conversion.
  * @since 2.0.0
  */
-public class ConversionResult {
+public final class ConversionResult {
     /**
      * The newly created node as a result of the conversion.
      */
