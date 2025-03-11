@@ -72,4 +72,9 @@ public final class IntegerConverter implements Converter {
         } while (false);
         return result;
     }
+
+    @Override
+    public int getMinConsumed() {
+        return 1;
+    }
 }

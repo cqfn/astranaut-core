@@ -155,6 +155,30 @@ public final class MutableNode implements PrototypeBasedNode {
     }
 
     /**
+     * Replaces a range of child node in the children list with a single replacement element.
+     *  The method removes {@code count} elements starting from {@code index}
+     *  and replaces the first element in the range with {@code replacement}.
+     * @param index The index of the first element to be replaced.
+     * @param count The number of elements to replace.
+     * @param replacement The new element that will replace the range.
+     * @throws IndexOutOfBoundsException if {@code index} is out of bounds.
+     * @throws IllegalArgumentException if {@code count} is negative or extends beyond
+     *  the list size.
+     */
+    public void replaceRange(final int index, final int count, final Node replacement) {
+        if (count < 1 || index + count > this.children.size()) {
+            throw new IllegalArgumentException();
+        }
+        if (index < 0 || index >= this.children.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (count > 1) {
+            this.children.subList(index + 1, index + count).clear();
+        }
+        this.children.set(index, replacement);
+    }
+
+    /**
      * Builds a non-mutable subtree from this node.
      * @return The root of a non-mutable subtree
      */

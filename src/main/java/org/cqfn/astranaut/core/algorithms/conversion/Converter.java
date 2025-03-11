@@ -46,4 +46,21 @@ public interface Converter {
      *  is successful, otherwise an empty {@code Optional}.
      */
     Optional<ConversionResult> convert(Node parent, int index, Factory factory);
+
+    /**
+     * Returns the minimum number of child nodes required for conversion.
+     *  This number is always greater than zero.
+     * @return The minimum number of nodes that the converter consumes.
+     */
+    int getMinConsumed();
+
+    /**
+     * Returns whether the converter processes nodes from right to left.
+     *  By default, parsing direction is left to right ({@code false}).
+     * @return Parsing direction, {@code true} if parsing direction is right to left,
+     *  {@code false} if left to right.
+     */
+    default boolean isRightToLeft() {
+        return false;
+    }
 }

@@ -74,4 +74,9 @@ public final class AdditionConverter implements Converter {
         } while (false);
         return result;
     }
+
+    @Override
+    public int getMinConsumed() {
+        return 3;
+    }
 }
