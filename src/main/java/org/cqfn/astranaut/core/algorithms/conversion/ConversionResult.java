@@ -37,11 +37,6 @@ public final class ConversionResult {
     private final Node node;
 
     /**
-     * The index of the first node that was consumed during the conversion.
-     */
-    private final int index;
-
-    /**
      * The number of nodes that were consumed during the conversion.
      */
     private final int consumed;
@@ -49,12 +44,10 @@ public final class ConversionResult {
     /**
      * Creates a new conversion result.
      * @param node The newly created node
-     * @param index The index of the first consumed node
      * @param consumed The number of nodes that were consumed
      */
-    public ConversionResult(final Node node, final int index, final int consumed) {
+    public ConversionResult(final Node node, final int consumed) {
         this.node = node;
-        this.index = index;
         this.consumed = consumed;
     }
 
@@ -67,26 +60,10 @@ public final class ConversionResult {
     }
 
     /**
-     * Returns the index of the first consumed node.
-     * @return The starting index of the consumed nodes
-     */
-    public int getStartIndex() {
-        return this.index;
-    }
-
-    /**
      * Returns the number of nodes that were consumed during conversion.
      * @return The count of nodes consumed
      */
     public int getConsumed() {
         return this.consumed;
-    }
-
-    /**
-     * Returns the index of the next unprocessed node.
-     * @return The index of the next node to be processed
-     */
-    public int getNextIndex() {
-        return this.index + this.consumed;
     }
 }

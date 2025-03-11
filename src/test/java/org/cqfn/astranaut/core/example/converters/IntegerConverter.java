@@ -68,7 +68,7 @@ public final class IntegerConverter implements Converter {
             }
             final Builder builder = factory.createBuilder(IntegerConverter.NODE_NAME);
             builder.setData(extracted.getData(1));
-            result = Optional.of(new ConversionResult(builder.createNode(), index, 1));
+            result = Optional.of(new ConversionResult(builder.createNode(), 1));
         } while (false);
         return result;
     }

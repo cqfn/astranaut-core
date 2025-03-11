@@ -70,7 +70,7 @@ public final class AdditionConverter implements Converter {
             }
             final Builder builder = factory.createBuilder(AdditionConverter.NODE_NAME);
             builder.setChildrenList(extracted.getNodes(1, 2));
-            result = Optional.of(new ConversionResult(builder.createNode(), index, 3));
+            result = Optional.of(new ConversionResult(builder.createNode(), 3));
         } while (false);
         return result;
     }

@@ -86,7 +86,9 @@ public final class Transformer {
     private void transformNode(final MutableNode node) {
         final int count = node.getChildCount();
         for (int index = 0; index < count; index = index + 1) {
-            this.transformNode(node.getMutableChild(index));
+            final MutableNode child = node.getMutableChild(index);
+            this.transformNode(child);
+            node.replaceRange(index, 1, child.getPrototype());
         }
         boolean flag;
         do {
@@ -135,7 +137,7 @@ public final class Transformer {
         final int count = node.getChildCount();
         final int consumed = converter.getMinConsumed();
         int result = -1;
-        for (int index = Math.max(start, 0); index < count - consumed; index = index + 1) {
+        for (int index = Math.max(start, 0); index <= count - consumed; index = index + 1) {
             final Optional<ConversionResult> conversion =
                 converter.convert(node, index, this.factory);
             if (conversion.isPresent()) {
