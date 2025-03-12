@@ -150,4 +150,56 @@ class ConversionTest {
         Assertions.assertEquals(1, result.getRoot().getChildCount());
         Assertions.assertEquals("x = y = 0", result.getRoot().getChild(0).toString());
     }
+
+    @Test
+    void partialTransformation() {
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            LittleTrees.createVariable("a"),
+            LittleTrees.createVariable("x"),
+            ConversionTest.OPERATOR_ASSIGN,
+            LittleTrees.createVariable("y"),
+            LittleTrees.createVariable("b"),
+            LittleTrees.createVariable("q"),
+            ConversionTest.OPERATOR_ASSIGN,
+            LittleTrees.createVariable("r"),
+            LittleTrees.createVariable("c"),
+            LittleTrees.createVariable("d"),
+            LittleTrees.createVariable("e"),
+            LittleTrees.createVariable("f")
+        );
+        final Transformer transformer = new Transformer(
+            Collections.singletonList(AssignmentConverter.INSTANCE),
+            GreenFactory.INSTANCE
+        );
+        final Tree result = transformer.transform(new Tree(root));
+        Assertions.assertEquals(8, result.getRoot().getChildCount());
+        Assertions.assertEquals("x = y", result.getRoot().getChild(1).toString());
+        Assertions.assertEquals("q = r", result.getRoot().getChild(3).toString());
+    }
+
+    @Test
+    void differentDirections() {
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            LittleTrees.createVariable("x"),
+            ConversionTest.OPERATOR_ASSIGN,
+            LittleTrees.createVariable("y"),
+            ConversionTest.OPERATOR_PLUS,
+            DraftNode.create("int<'0'>")
+        );
+        final Transformer transformer = new Transformer(
+            Arrays.asList(
+                IntegerConverter.INSTANCE,
+                AdditionConverter.INSTANCE,
+                AssignmentConverter.INSTANCE
+            ),
+            GreenFactory.INSTANCE
+        );
+        final Tree result = transformer.transform(new Tree(root));
+        Assertions.assertEquals(1, result.getRoot().getChildCount());
+        Assertions.assertEquals("x = y + 0", result.getRoot().getChild(0).toString());
+    }
 }
