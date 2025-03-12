@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
+import java.util.List;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
@@ -39,13 +40,13 @@ public interface Converter {
      *  {@code ConversionResult}, which includes the new node, the starting index of consumed nodes,
      *  and the number of nodes consumed. If the conversion fails, returns an empty
      *  {@code Optional}, and no nodes are consumed.
-     * @param parent The parent node containing the child nodes to be converted
+     * @param nodes The list of nodes in which the conversion is performed
      * @param index The index of the first child node to be converted
      * @param factory The Factory for the creation of new nodes
      * @return An {@code Optional} containing a {@code ConversionResult} if conversion
      *  is successful, otherwise an empty {@code Optional}.
      */
-    Optional<ConversionResult> convert(Node parent, int index, Factory factory);
+    Optional<ConversionResult> convert(List<Node> nodes, int index, Factory factory);
 
     /**
      * Returns the minimum number of child nodes required for conversion.

@@ -23,10 +23,12 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
-import org.cqfn.astranaut.core.base.MutableNode;
 import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 
@@ -70,79 +72,84 @@ public final class Transformer {
      * @return A new tree, the result of a transformation
      */
     public Tree transform(final Node root) {
-        final MutableNode mutable = new MutableNode(root);
-        this.transformNode(mutable);
-        final Node result = mutable.rebuild();
-        return new Tree(result);
+        return new Tree(this.transformNode(root));
     }
 
     /**
-     * Transforms a mutable node by applying converters to it.
+     * Transforms a node by applying converters to it.
      *  Thus, some child nodes in this node can be modified.
      *  The procedure runs first recursively itself for all child nodes, so the leaf nodes of
      *  the tree are processed first.
-     * @param node Mutable node
+     * @param original Original node
+     * @return A new node, i.e., the result of the transformation
      */
-    private void transformNode(final MutableNode node) {
-        final int count = node.getChildCount();
+    private Node transformNode(final Node original) {
+        final List<Node> list = new ArrayList<>(original.getChildrenList());
+        final int count = list.size();
         for (int index = 0; index < count; index = index + 1) {
-            final MutableNode child = node.getMutableChild(index);
-            this.transformNode(child);
-            node.replaceRange(index, 1, child.getPrototype());
+            list.set(index, this.transformNode(list.get(index)));
         }
+        boolean changed = false;
         boolean flag;
         do {
             flag = false;
             for (final Converter converter : this.converters) {
                 int index = -1;
                 do {
-                    index = this.applyConverter(node, converter, index);
+                    index = this.applyConverter(list, converter, index);
                     flag = flag || index >= 0;
                 } while (index >= 0);
             }
+            changed = changed || flag;
         } while (flag);
-    }
-
-    /**
-     * Applies a converter to a node, attempting to match a sequence of child nodes to some rule.
-     * @param node Mutable node
-     * @param converter Converter
-     * @param start Starting index from which the matching begins
-     * @return Index of the new node or -1 if there are no changed nodes
-     */
-    private int applyConverter(final MutableNode node, final Converter converter,
-        final int start) {
-        final int result;
-        if (node.getChildCount() < converter.getMinConsumed()) {
-            result = -1;
-        } else if (converter.isRightToLeft()) {
-            result = this.applyConverterRightToLeft(node, converter, start);
+        final Node result;
+        if (changed) {
+            result = Transformer.buildNode(original, list);
         } else {
-            result = this.applyConverterLeftToRight(node, converter, start);
+            result = original;
         }
         return result;
     }
 
     /**
-     * Applies a converter to a node, attempting to match a sequence of child nodes to some rule.
-     *  Comparing nodes to patterns starts from the beginning of the sequence,
-     *  i.e., the search direction is from left to right.
-     * @param node Mutable node
+     * Applies a converter to a list of nodes node, attempting to match a subsequence to some rule.
+     * @param nodes The list of nodes in which the conversion is performed
      * @param converter Converter
      * @param start Starting index from which the matching begins
      * @return Index of the new node or -1 if there are no changed nodes
      */
-    private int applyConverterLeftToRight(final MutableNode node, final Converter converter,
+    private int applyConverter(final List<Node> nodes, final Converter converter,
         final int start) {
-        final int count = node.getChildCount();
+        final int result;
+        if (nodes.size() < converter.getMinConsumed()) {
+            result = -1;
+        } else if (converter.isRightToLeft()) {
+            result = this.applyConverterRightToLeft(nodes, converter, start);
+        } else {
+            result = this.applyConverterLeftToRight(nodes, converter, start);
+        }
+        return result;
+    }
+
+    /**
+     * Applies a converter to a list of nodes node, attempting to match a subsequence to some rule.
+     *  Comparing nodes to patterns starts from the beginning of the sequence,
+     *  i.e., the search direction is from left to right.
+     * @param nodes The list of nodes in which the conversion is performed
+     * @param converter Converter
+     * @param start Starting index from which the matching begins
+     * @return Index of the new node or -1 if there are no changed nodes
+     */
+    private int applyConverterLeftToRight(final List<Node> nodes, final Converter converter,
+        final int start) {
+        final int count = nodes.size();
         final int consumed = converter.getMinConsumed();
         int result = -1;
         for (int index = Math.max(start, 0); index <= count - consumed; index = index + 1) {
             final Optional<ConversionResult> conversion =
-                converter.convert(node, index, this.factory);
+                converter.convert(nodes, index, this.factory);
             if (conversion.isPresent()) {
-                final ConversionResult obj = conversion.get();
-                node.replaceRange(index, obj.getConsumed(), obj.getNode());
+                Transformer.replaceNodes(nodes, index, conversion.get());
                 result = index;
                 break;
             }
@@ -151,29 +158,68 @@ public final class Transformer {
     }
 
     /**
-     * Applies a converter to a node, attempting to match a sequence of child nodes to some rule.
+     * Applies a converter to a list of nodes node, attempting to match a subsequence to some rule.
      *  Comparing nodes to patterns starts at the end of the sequence,
      *  i.e., the search direction is from right to left.
-     * @param node Mutable node
+     * @param nodes The list of nodes in which the conversion is performed
      * @param converter Converter
      * @param start Starting index from which the matching begins
      * @return Index of the new node or -1 if there are no changed nodes
      */
-    private int applyConverterRightToLeft(final MutableNode node, final Converter converter,
+    private int applyConverterRightToLeft(final List<Node> nodes, final Converter converter,
         final int start) {
-        final int count = node.getChildCount();
+        final int count = nodes.size();
         final int consumed = converter.getMinConsumed();
         int result = -1;
         for (int index = Math.max(start, count - consumed); index >= 0; index = index - 1) {
             final Optional<ConversionResult> conversion =
-                converter.convert(node, index, this.factory);
+                converter.convert(nodes, index, this.factory);
             if (conversion.isPresent()) {
-                final ConversionResult obj = conversion.get();
-                node.replaceRange(index, obj.getConsumed(), obj.getNode());
+                Transformer.replaceNodes(nodes, index, conversion.get());
                 result = index;
                 break;
             }
         }
+        return result;
+    }
+
+    /**
+     * Replaces the nodes in the list with those resulting from conversion.
+     * @param list The list in which elements will be replaced
+     * @param index The index of the first element to be replaced
+     * @param conversion The result of the conversion from which the new node is taken
+     */
+    private static void replaceNodes(final List<Node> list, final int index,
+        final ConversionResult conversion) {
+        final int count = conversion.getConsumed();
+        if (count > 1) {
+            list.subList(index + 1, index + count).clear();
+        }
+        list.set(index, conversion.getNode());
+    }
+
+    /**
+     * Re-creates a node with other child nodes.
+     * @param original Original node
+     * @param children List of child nodes
+     * @return New node or dummy node if conversion is not possible
+     */
+    private static Node buildNode(final Node original, final List<Node> children) {
+        Node result = DummyNode.INSTANCE;
+        final Builder builder = original.getType().createBuilder();
+        builder.setFragment(original.getFragment());
+        do {
+            if (!builder.setData(original.getData())) {
+                break;
+            }
+            if (!builder.setChildrenList(children)) {
+                break;
+            }
+            if (!builder.isValid()) {
+                break;
+            }
+            result = builder.createNode();
+        } while (false);
         return result;
     }
 }

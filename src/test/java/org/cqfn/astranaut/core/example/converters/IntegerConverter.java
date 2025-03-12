@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.example.converters;
 
+import java.util.List;
 import java.util.Optional;
 import org.cqfn.astranaut.core.algorithms.conversion.ConversionResult;
 import org.cqfn.astranaut.core.algorithms.conversion.Converter;
@@ -53,16 +54,16 @@ public final class IntegerConverter implements Converter {
     }
 
     @Override
-    public Optional<ConversionResult> convert(final Node parent, final int index,
+    public Optional<ConversionResult> convert(final List<Node> nodes, final int index,
         final Factory factory) {
         Optional<ConversionResult> result = Optional.empty();
         do {
-            if (index + 1 > parent.getChildCount()) {
+            if (index + 1 > nodes.size()) {
                 break;
             }
             final Extracted extracted = new Extracted();
             final boolean matched =
-                IntegerMatcher.INSTANCE.match(parent.getChild(index), extracted);
+                IntegerMatcher.INSTANCE.match(nodes.get(index), extracted);
             if (!matched) {
                 break;
             }

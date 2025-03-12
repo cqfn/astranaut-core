@@ -61,7 +61,7 @@ class ConversionTest {
         );
         final Converter converter = AdditionConverter.INSTANCE;
         final Optional<ConversionResult> result =
-            converter.convert(root, 0, GreenFactory.INSTANCE);
+            converter.convert(root.getChildrenList(), 0, GreenFactory.INSTANCE);
         Assertions.assertTrue(result.isPresent());
         Assertions.assertEquals(3, result.get().getConsumed());
         Assertions.assertEquals("2 + 3", result.get().getNode().toString());
@@ -73,7 +73,7 @@ class ConversionTest {
         final Node root = DraftNode.create(ConversionTest.ROOT_NODE_NAME, "", before);
         final Converter converter = IntegerConverter.INSTANCE;
         final Optional<ConversionResult> result =
-            converter.convert(root, 0, GreenFactory.INSTANCE);
+            converter.convert(root.getChildrenList(), 0, GreenFactory.INSTANCE);
         Assertions.assertTrue(result.isPresent());
         Assertions.assertEquals("7", result.get().getNode().toString());
     }
