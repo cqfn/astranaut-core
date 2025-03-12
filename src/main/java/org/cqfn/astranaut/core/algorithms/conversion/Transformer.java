@@ -168,10 +168,13 @@ public final class Transformer {
      */
     private int applyConverterRightToLeft(final List<Node> nodes, final Converter converter,
         final int start) {
-        final int count = nodes.size();
-        final int consumed = converter.getMinConsumed();
+        final int max = nodes.size() - converter.getMinConsumed();
         int result = -1;
-        for (int index = Math.max(start, count - consumed); index >= 0; index = index - 1) {
+        int index = start;
+        if (index < 0 || index > max) {
+            index = max;
+        }
+        for (; index >= 0; index = index - 1) {
             final Optional<ConversionResult> conversion =
                 converter.convert(nodes, index, this.factory);
             if (conversion.isPresent()) {

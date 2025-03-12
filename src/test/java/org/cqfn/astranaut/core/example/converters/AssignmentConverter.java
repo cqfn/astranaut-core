@@ -31,7 +31,6 @@ import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.example.green.AssignableExpression;
 
 /**
  * A converter that converts a sequence of nodes into a "SimpleAssignment" node.
