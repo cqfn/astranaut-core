@@ -31,6 +31,7 @@ import org.cqfn.astranaut.core.base.Node;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.converters.AdditionConverter;
+import org.cqfn.astranaut.core.example.converters.AssignmentConverter;
 import org.cqfn.astranaut.core.example.converters.IntegerConverter;
 import org.cqfn.astranaut.core.example.converters.MultiplicationConverter;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
@@ -56,6 +57,11 @@ class ConversionTest {
      * Node representing the '*' operator.
      */
     private static final Node OPERATOR_MUL = DraftNode.create("Operator<'*'>");
+
+    /**
+     * Node representing the '=' operator.
+     */
+    private static final Node OPERATOR_ASSIGN = DraftNode.create("Operator<'='>");
 
     @Test
     void extractingChildren() {
@@ -123,5 +129,25 @@ class ConversionTest {
         final Tree result = transformer.transform(new Tree(root));
         Assertions.assertEquals(1, result.getRoot().getChildCount());
         Assertions.assertEquals("2 + 3 * 4", result.getRoot().getChild(0).toString());
+    }
+
+    @Test
+    void rightToLeft() {
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            LittleTrees.createVariable("x"),
+            ConversionTest.OPERATOR_ASSIGN,
+            LittleTrees.createVariable("y"),
+            ConversionTest.OPERATOR_ASSIGN,
+            LittleTrees.createIntegerLiteral(0)
+        );
+        final Transformer transformer = new Transformer(
+            Collections.singletonList(AssignmentConverter.INSTANCE),
+            GreenFactory.INSTANCE
+        );
+        final Tree result = transformer.transform(new Tree(root));
+        Assertions.assertEquals(1, result.getRoot().getChildCount());
+        Assertions.assertEquals("x = y = 0", result.getRoot().getChild(0).toString());
     }
 }
