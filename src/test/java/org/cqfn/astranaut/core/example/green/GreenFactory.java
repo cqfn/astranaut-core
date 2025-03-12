@@ -59,6 +59,7 @@ public final class GreenFactory extends DefaultFactory {
             ExpressionList.TYPE,
             ExpressionStatement.TYPE,
             IntegerLiteral.TYPE,
+            Multiplication.TYPE,
             Return.TYPE,
             SimpleAssignment.TYPE,
             StatementBlock.TYPE,

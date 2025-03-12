@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -31,6 +32,7 @@ import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.converters.AdditionConverter;
 import org.cqfn.astranaut.core.example.converters.IntegerConverter;
+import org.cqfn.astranaut.core.example.converters.MultiplicationConverter;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,6 +51,11 @@ class ConversionTest {
      * Node representing the '+' operator.
      */
     private static final Node OPERATOR_PLUS = DraftNode.create("Operator<'+'>");
+
+    /**
+     * Node representing the '*' operator.
+     */
+    private static final Node OPERATOR_MUL = DraftNode.create("Operator<'*'>");
 
     @Test
     void extractingChildren() {
@@ -95,5 +102,26 @@ class ConversionTest {
         );
         final Tree result = transformer.transform(new Tree(root));
         Assertions.assertEquals(1, result.getRoot().getChildCount());
+        Assertions.assertEquals("2 + 3 + 4", result.getRoot().getChild(0).toString());
+    }
+
+    @Test
+    void leftToRightTwoRules() {
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            LittleTrees.createIntegerLiteral(2),
+            ConversionTest.OPERATOR_PLUS,
+            LittleTrees.createIntegerLiteral(3),
+            ConversionTest.OPERATOR_MUL,
+            LittleTrees.createIntegerLiteral(4)
+        );
+        final Transformer transformer = new Transformer(
+            Arrays.asList(MultiplicationConverter.INSTANCE, AdditionConverter.INSTANCE),
+            GreenFactory.INSTANCE
+        );
+        final Tree result = transformer.transform(new Tree(root));
+        Assertions.assertEquals(1, result.getRoot().getChildCount());
+        Assertions.assertEquals("2 + 3 * 4", result.getRoot().getChild(0).toString());
     }
 }
