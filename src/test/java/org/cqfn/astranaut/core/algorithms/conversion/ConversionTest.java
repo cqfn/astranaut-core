@@ -26,8 +26,13 @@ package org.cqfn.astranaut.core.algorithms.conversion;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NodeAndType;
+import org.cqfn.astranaut.core.base.TestBuilder;
+import org.cqfn.astranaut.core.base.TestBuilderCase;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
 import org.cqfn.astranaut.core.example.converters.AdditionConverter;
@@ -201,5 +206,72 @@ class ConversionTest {
         final Tree result = transformer.transform(new Tree(root));
         Assertions.assertEquals(1, result.getRoot().getChildCount());
         Assertions.assertEquals("x = y + 0", result.getRoot().getChild(0).toString());
+    }
+
+    @Test
+    void badBuilder() {
+        final Transformer transformer = new Transformer(
+            Collections.singletonList(AdditionConverter.INSTANCE),
+            GreenFactory.INSTANCE
+        );
+        Tree result = transformer.transform(new TestNode(TestBuilderCase.BAD_DATA));
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+        result = transformer.transform(new TestNode(TestBuilderCase.BAD_CHILDREN));
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+        result = transformer.transform(new TestNode(TestBuilderCase.INVALID_BUILDER));
+        Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    /**
+     * Node that returns "bad" builder for testing purposes.
+     * @since 2.0.0
+     */
+    private static final class TestNode extends NodeAndType {
+        /**
+         * Predefined list of child nodes.
+         */
+        private static final Node[] CHILDREN = {
+            LittleTrees.createIntegerLiteral(2),
+            ConversionTest.OPERATOR_PLUS,
+            LittleTrees.createIntegerLiteral(3),
+        };
+
+        /**
+         * Test case.
+         */
+        private final TestBuilderCase test;
+
+        /**
+         * Constructor.
+         * @param test Test case
+         */
+        private TestNode(final TestBuilderCase test) {
+            this.test = test;
+        }
+
+        @Override
+        public String getData() {
+            return "";
+        }
+
+        @Override
+        public int getChildCount() {
+            return TestNode.CHILDREN.length;
+        }
+
+        @Override
+        public Node getChild(final int index) {
+            return TestNode.CHILDREN[index];
+        }
+
+        @Override
+        public String getName() {
+            return "Root";
+        }
+
+        @Override
+        public Builder createBuilder() {
+            return new TestBuilder(this.test);
+        }
     }
 }
