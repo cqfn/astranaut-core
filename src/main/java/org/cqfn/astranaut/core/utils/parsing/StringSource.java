@@ -24,15 +24,16 @@
 package org.cqfn.astranaut.core.utils.parsing;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import org.cqfn.astranaut.core.base.Char;
 import org.cqfn.astranaut.core.base.Position;
-import org.cqfn.astranaut.core.base.Source;
 
 /**
  * Implementation of the Source interface that stores source code as a set of strings.
  * @since 2.0.0
  */
-public final class StringSource implements Source {
+public final class StringSource implements CharParser {
     /**
      * Source code divided into lines.
      */
@@ -69,6 +70,34 @@ public final class StringSource implements Source {
             result = String.join("\n", list);
         } while (false);
         return result;
+    }
+
+    @Override
+    public Iterator<Char> iterator() {
+        return new StringSourceIterator(this);
+    }
+
+    /**
+     * Retrieves a character from the specified row and column in the source code.
+     * @param row The 1-based row index.
+     * @param column The 1-based column index.
+     * @return The character at the given position, {@code '\n'} if the column is out of bounds,
+     *  or {@code 0} if the row is invalid.
+     */
+    char getSymbol(final int row, final int column) {
+        char symbol = 0;
+        do {
+            if (row < 1 || column < 1 || row > this.lines.length) {
+                break;
+            }
+            final String line = this.lines[row - 1];
+            if (column > line.length()) {
+                symbol = '\n';
+                break;
+            }
+            symbol = line.charAt(column - 1);
+        } while (false);
+        return symbol;
     }
 
     /**
@@ -111,4 +140,5 @@ public final class StringSource implements Source {
         }
         return line.substring(begin, end);
     }
+
 }
