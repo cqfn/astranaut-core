@@ -37,6 +37,7 @@ class CharTest {
         final Char.Constructor ctor = new Char.Constructor();
         ctor.setFragment(EmptyFragment.INSTANCE);
         Assertions.assertFalse(ctor.isValid());
+        Assertions.assertThrows(IllegalStateException.class, ctor::createNode);
         ctor.setValue('a');
         Assertions.assertFalse(ctor.setData(""));
         Assertions.assertFalse(ctor.setData("abc"));
