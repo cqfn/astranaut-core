@@ -35,4 +35,13 @@ public interface Source {
      * @return Text of the fragment
      */
     String getFragmentAsString(Position start, Position end);
+
+    /**
+     * Returns the full name of the source file if available.
+     *  If the source is not associated with a file, this method returns an empty string.
+     * @return The full name of the source file, or an empty string if unavailable.
+     */
+    default String getFileName() {
+        return "";
+    }
 }

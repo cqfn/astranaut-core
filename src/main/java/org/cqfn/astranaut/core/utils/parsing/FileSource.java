@@ -37,6 +37,11 @@ import org.cqfn.astranaut.core.utils.FilesReader;
  */
 public final class FileSource implements CharParser {
     /**
+     * The path to the file containing source code.
+     */
+    private final String path;
+
+    /**
      * The underlying {@link StringSource} that stores the file content.
      */
     private final StringSource wrapped;
@@ -46,6 +51,7 @@ public final class FileSource implements CharParser {
      * @param path The path to the file to be read.
      */
     public FileSource(final String path) {
+        this.path = path;
         this.wrapped = new StringSource(new FilesReader(path).readAsStringNoExcept());
     }
 
@@ -57,5 +63,10 @@ public final class FileSource implements CharParser {
     @Override
     public String getFragmentAsString(final Position start, final Position end) {
         return this.wrapped.getFragmentAsString(start, end);
+    }
+
+    @Override
+    public String getFileName() {
+        return this.path;
     }
 }

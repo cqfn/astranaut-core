@@ -35,7 +35,7 @@ class EmptyFragmentTest {
     void testBaseInterface() {
         final Position begin = EmptyFragment.INSTANCE.getBegin();
         final Position end = EmptyFragment.INSTANCE.getEnd();
-        Assertions.assertEquals("", EmptyFragment.INSTANCE.asString());
+        Assertions.assertEquals("", EmptyFragment.INSTANCE.getCode());
         Assertions.assertEquals(0, begin.getRow());
         Assertions.assertEquals(0, begin.getColumn());
         Assertions.assertEquals(0, end.getRow());
