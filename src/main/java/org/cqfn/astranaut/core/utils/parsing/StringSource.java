@@ -84,7 +84,7 @@ public class StringSource implements CharParser {
      * @return The character at the given position, {@code '\n'} if the column is out of bounds,
      *  or {@code 0} if the row is invalid.
      */
-    char getSymbol(final int row, final int column) {
+    public char getSymbol(final int row, final int column) {
         char symbol = 0;
         do {
             if (row < 1 || column < 1 || row > this.lines.length) {

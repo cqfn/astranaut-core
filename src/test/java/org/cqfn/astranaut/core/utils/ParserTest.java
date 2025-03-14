@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.base.Char;
 import org.cqfn.astranaut.core.base.DefaultFragment;
+import org.cqfn.astranaut.core.base.DefaultPosition;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.parsing.FileSource;
@@ -141,5 +142,29 @@ class ParserTest {
             "1.1-1.1",
             tree.getRoot().getChild(0).getFragment().getPosition()
         );
+    }
+
+    @Test
+    void getSymbol() {
+        final StringSource source = new StringSource("ab\nc");
+        Assertions.assertEquals(0, source.getSymbol(0, 1));
+        Assertions.assertEquals(0, source.getSymbol(1, 0));
+        Assertions.assertEquals('a', source.getSymbol(1, 1));
+        Assertions.assertEquals('b', source.getSymbol(1, 2));
+        Assertions.assertEquals('\n', source.getSymbol(1, 3));
+        Assertions.assertEquals('\n', source.getSymbol(1, 4));
+        Assertions.assertEquals('c', source.getSymbol(2, 1));
+        Assertions.assertEquals(0, source.getSymbol(2, 2));
+        Assertions.assertEquals(0, source.getSymbol(3, 1));
+    }
+
+    @Test
+    void wrongColumnAndRow() {
+        final StringSource source = new StringSource("a\nb\nc");
+        final Fragment fragment = new DefaultFragment(
+            new DefaultPosition(source, -1, -1),
+            new DefaultPosition(source, 4, 4)
+        );
+        Assertions.assertEquals("\n\na\nb\nc\n", fragment.getCode());
     }
 }
