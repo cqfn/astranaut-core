@@ -63,8 +63,9 @@ public final class ListUtils<T> {
     /**
      * Merges another list with the result. Null items are skipped.
      * @param other Another list
+     * @return Itself
      */
-    public void merge(final List<T> other) {
+    public ListUtils<T> merge(final List<T> other) {
         if (other != null) {
             for (final T item : other) {
                 if (item != null) {
@@ -72,6 +73,7 @@ public final class ListUtils<T> {
                 }
             }
         }
+        return this;
     }
 
     /**

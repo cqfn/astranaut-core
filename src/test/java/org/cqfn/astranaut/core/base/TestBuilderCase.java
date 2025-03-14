@@ -21,9 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.base;
 
 /**
- * This package contains "javascript" nodes.
- * @since 1.0
+ * Various test cases for the test builder.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.javascript;
+public enum TestBuilderCase {
+    /**
+     * Case: node does not have a builder.
+     */
+    NULL_BUILDER,
+
+    /**
+     * Case: builder is not accepting data.
+     */
+    BAD_DATA,
+
+    /**
+     * Case: builder won't accept children.
+     */
+    BAD_CHILDREN,
+
+    /**
+     * Case: builder is not valid.
+     */
+    INVALID_BUILDER
+}

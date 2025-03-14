@@ -23,9 +23,7 @@
  */
 
 /**
- * This package contains typical nodes that can be generated from DSL code.
- *  "Green" nodes are usually applicable to describe some syntactic constructs
- *  from several programming languages.
- * @since 1.0
+ * This package contains matchers and converters that can be generated from DSL code.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.green;
+package org.cqfn.astranaut.core.example.converters;

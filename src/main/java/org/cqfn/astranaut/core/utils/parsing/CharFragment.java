@@ -21,11 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.utils.parsing;
+
+import org.cqfn.astranaut.core.base.Fragment;
+import org.cqfn.astranaut.core.base.Position;
 
 /**
- * This package contains typical nodes that can be generated from DSL code.
- *  "Green" nodes are usually applicable to describe some syntactic constructs
- *  from several programming languages.
- * @since 1.0
+ * Represents a fragment that consists of a single character in the source code.
+ *  Since this fragment corresponds to only one character, both the start and end positions
+ *  are the same.
+ *
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.green;
+class CharFragment implements Fragment {
+    /**
+     * The position of the single character in the source code.
+     */
+    private final Position position;
+
+    /**
+     * Constructs a {@code CharFragment} with the given position.
+     * @param position The position of the character in the source.
+     */
+    CharFragment(final Position position) {
+        this.position = position;
+    }
+
+    @Override
+    public Position getBegin() {
+        return this.position;
+    }
+
+    @Override
+    public Position getEnd() {
+        return this.position;
+    }
+}

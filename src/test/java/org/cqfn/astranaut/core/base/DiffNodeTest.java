@@ -23,7 +23,6 @@
  */
 package org.cqfn.astranaut.core.base;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -214,19 +213,19 @@ class DiffNodeTest {
     void getBranchFromBadNode() {
         Assertions.assertSame(
             DummyNode.INSTANCE,
-            new DiffNode(new TestNode(TestCase.NULL_BUILDER)).getBefore()
+            new DiffNode(new TestNode(TestBuilderCase.NULL_BUILDER)).getBefore()
         );
         Assertions.assertSame(
             DummyNode.INSTANCE,
-            new DiffNode(new TestNode(TestCase.BAD_DATA)).getBefore()
+            new DiffNode(new TestNode(TestBuilderCase.BAD_DATA)).getBefore()
         );
         Assertions.assertSame(
             DummyNode.INSTANCE,
-            new DiffNode(new TestNode(TestCase.BAD_CHILDREN)).getBefore()
+            new DiffNode(new TestNode(TestBuilderCase.BAD_CHILDREN)).getBefore()
         );
         Assertions.assertSame(
             DummyNode.INSTANCE,
-            new DiffNode(new TestNode(TestCase.INVALID_BUILDER)).getBefore()
+            new DiffNode(new TestNode(TestBuilderCase.INVALID_BUILDER)).getBefore()
         );
     }
 
@@ -290,32 +289,6 @@ class DiffNodeTest {
     }
 
     /**
-     * List of test cases.
-     * @since 2.0.0
-     */
-    private enum TestCase {
-        /**
-         * Case: node does not have a builder.
-         */
-        NULL_BUILDER,
-
-        /**
-         * Case: builder is not accepting data.
-         */
-        BAD_DATA,
-
-        /**
-         * Case: builder won't accept children.
-         */
-        BAD_CHILDREN,
-
-        /**
-         * Case: builder is not valid.
-         */
-        INVALID_BUILDER
-    }
-
-    /**
      * Custom node for test purposes.
      * @since 2.0.0
      */
@@ -323,13 +296,13 @@ class DiffNodeTest {
         /**
          * Test case.
          */
-        private final TestCase test;
+        private final TestBuilderCase test;
 
         /**
          * Constructor.
          * @param test Test case
          */
-        private TestNode(final TestCase test) {
+        private TestNode(final TestBuilderCase test) {
             this.test = test;
         }
 
@@ -356,56 +329,12 @@ class DiffNodeTest {
         @Override
         public Builder createBuilder() {
             final Builder builder;
-            if (this.test == TestCase.NULL_BUILDER) {
+            if (this.test == TestBuilderCase.NULL_BUILDER) {
                 builder = null;
             } else {
                 builder = new TestBuilder(this.test);
             }
             return builder;
-        }
-    }
-
-    /**
-     * Custom builder for test purposes.
-     * @since 2.0.0
-     */
-    private static final class TestBuilder implements Builder {
-        /**
-         * Test case.
-         */
-        private final TestCase test;
-
-        /**
-         * Constructor.
-         * @param test Test case
-         */
-        private TestBuilder(final TestCase test) {
-            this.test = test;
-        }
-
-        @Override
-        public void setFragment(final Fragment fragment) {
-            this.getClass();
-        }
-
-        @Override
-        public boolean setData(final String str) {
-            return this.test != TestCase.BAD_DATA;
-        }
-
-        @Override
-        public boolean setChildrenList(final List<Node> list) {
-            return this.test != TestCase.BAD_CHILDREN;
-        }
-
-        @Override
-        public boolean isValid() {
-            return this.test != TestCase.INVALID_BUILDER;
-        }
-
-        @Override
-        public Node createNode() {
-            throw new UnsupportedOperationException();
         }
     }
 }

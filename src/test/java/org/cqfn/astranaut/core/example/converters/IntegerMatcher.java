@@ -21,11 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.example.converters;
+
+import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
+import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
- * This package contains typical nodes that can be generated from DSL code.
- *  "Green" nodes are usually applicable to describe some syntactic constructs
- *  from several programming languages.
- * @since 1.0
+ * Matcher that matches nodes representing integer values and extracts the data.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.green;
+public final class IntegerMatcher implements Matcher {
+    /**
+     * The instance.
+     */
+    public static final Matcher INSTANCE = new IntegerMatcher();
+
+    /**
+     * Expected type name.
+     */
+    private static final String TYPE_NAME = "int";
+
+    /**
+     * Hole number where to save.
+     */
+    private static final int HOLE_NUMBER = 1;
+
+    /**
+     * Private constructor.
+     */
+    private IntegerMatcher() {
+    }
+
+    @Override
+    public boolean match(final Node node, final Extracted extracted) {
+        final boolean result = node.belongsToGroup(IntegerMatcher.TYPE_NAME);
+        if (result) {
+            extracted.addData(IntegerMatcher.HOLE_NUMBER, node.getData());
+        }
+        return result;
+    }
+}

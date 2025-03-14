@@ -23,22 +23,37 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests covering {@link EmptyFragment} class.
+ * Tests covering {@link Char} class.
  * @since 2.0.0
  */
-class EmptyFragmentTest {
+class CharTest {
     @Test
     void testBaseInterface() {
-        final Position begin = EmptyFragment.INSTANCE.getBegin();
-        final Position end = EmptyFragment.INSTANCE.getEnd();
-        Assertions.assertEquals("", EmptyFragment.INSTANCE.getCode());
-        Assertions.assertEquals(0, begin.getRow());
-        Assertions.assertEquals(0, begin.getColumn());
-        Assertions.assertEquals(0, end.getRow());
-        Assertions.assertEquals(0, end.getColumn());
+        final Char.Constructor ctor = new Char.Constructor();
+        ctor.setFragment(EmptyFragment.INSTANCE);
+        Assertions.assertFalse(ctor.isValid());
+        Assertions.assertThrows(IllegalStateException.class, ctor::createNode);
+        ctor.setValue('a');
+        Assertions.assertFalse(ctor.setData(""));
+        Assertions.assertFalse(ctor.setData("abc"));
+        Assertions.assertFalse(ctor.setData("\0"));
+        Assertions.assertTrue(ctor.setData("b"));
+        Assertions.assertFalse(ctor.setChildrenList(Collections.singletonList(DummyNode.INSTANCE)));
+        Assertions.assertTrue(ctor.setChildrenList(Collections.emptyList()));
+        Assertions.assertTrue(ctor.isValid());
+        final Char node = (Char) ctor.createNode();
+        Assertions.assertSame(EmptyFragment.INSTANCE, node.getFragment());
+        final Type type = node.getType();
+        Assertions.assertEquals("Char", type.getName());
+        Assertions.assertNotNull(type.createBuilder());
+        Assertions.assertEquals('b', node.getSymbol());
+        Assertions.assertEquals("b", node.getData());
+        Assertions.assertEquals(0, node.getChildCount());
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> node.getChild(0));
     }
 }

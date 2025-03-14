@@ -21,44 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
+package org.cqfn.astranaut.core.example.converters;
 
-import java.util.List;
-import java.util.Map;
+import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
 import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Matcher for the subtree returned by the 'js' language parser.
- * @since 1.0
+ * Matcher that checks for a match with an assignment operator.
+ * @since 2.0.0
  */
-public final class Matcher2 implements Matcher {
+public final class OperatorAssignMatcher implements Matcher {
     /**
      * The instance.
      */
-    public static final Matcher INSTANCE = new Matcher2();
+    public static final Matcher INSTANCE = new OperatorAssignMatcher();
 
     /**
-     * Expected number of child nodes.
+     * Expected type name.
      */
-    private static final String EXPECTED_TYPE = "singleExpression";
+    private static final String TYPE_NAME = "Operator";
 
     /**
-     * Expected number of child nodes.
+     * Expected data.
      */
-    private static final int EXPECTED_COUNT = 1;
+    private static final String DATA = "=";
 
     /**
-     * Constructor.
+     * Private constructor.
      */
-    private Matcher2() {
+    private OperatorAssignMatcher() {
     }
 
     @Override
-    public boolean match(final Node node, final Map<Integer, List<Node>> children,
-        final Map<Integer, String> data) {
-        return node.belongsToGroup(Matcher2.EXPECTED_TYPE)
-            && node.getChildCount() == Matcher2.EXPECTED_COUNT
-            && Matcher1.INSTANCE.match(node.getChild(0), children, data);
+    public boolean match(final Node node, final Extracted extracted) {
+        return node.belongsToGroup(OperatorAssignMatcher.TYPE_NAME)
+            && node.getData().equals(OperatorAssignMatcher.DATA);
     }
 }

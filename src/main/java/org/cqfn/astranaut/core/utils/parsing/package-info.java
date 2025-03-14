@@ -21,47 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
-
-import java.util.List;
-import java.util.Map;
-import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
-import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Matcher for the subtree returned by the 'js' language parser.
- * @since 1.0
+ * This package contains everything related to source code parsing.
+ *  It contains only basic classes, final parsers from specific languages are not here.
+ * @since 2.0.0
  */
-public final class Matcher0 implements Matcher {
-    /**
-     * The instance.
-     */
-    public static final Matcher INSTANCE = new Matcher0();
-
-    /**
-     * Expected number of child nodes.
-     */
-    private static final String EXPECTED_TYPE = "literal";
-
-    /**
-     * Expected number of child nodes.
-     */
-    private static final int EXPECTED_COUNT = 0;
-
-    /**
-     * Constructor.
-     */
-    private Matcher0() {
-    }
-
-    @Override
-    public boolean match(final Node node, final Map<Integer, List<Node>> children,
-        final Map<Integer, String> data) {
-        final boolean result = node.belongsToGroup(Matcher0.EXPECTED_TYPE)
-            && node.getChildCount() == Matcher0.EXPECTED_COUNT;
-        if (result) {
-            data.put(1, node.getData());
-        }
-        return result;
-    }
-}
+package org.cqfn.astranaut.core.utils.parsing;

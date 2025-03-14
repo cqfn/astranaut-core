@@ -21,48 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
+package org.cqfn.astranaut.core.example.converters;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import org.cqfn.astranaut.core.algorithms.conversion.Converter;
-import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.DummyNode;
-import org.cqfn.astranaut.core.base.Factory;
+import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
+import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Converter describing DSL conversion rule.
- * @since 1.0
+ * Matcher that checks for a match with an assignable expression.
+ *  If matched, saves the result to hole numbered 1.
+ * @since 2.0.0
  */
-public final class Rule0 implements Converter {
+public final class AssignableExpressionMatcher implements Matcher {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new Rule0();
+    public static final Matcher INSTANCE = new AssignableExpressionMatcher();
 
     /**
-     * The 'Variable' string.
+     * Expected type name.
      */
-    private static final String VARIABLE = "Variable";
+    private static final String TYPE_NAME = "AssignableExpression";
 
     /**
-     * Constructor.
+     * Hole number where to save.
      */
-    private Rule0() {
+    private static final int HOLE_NUMBER = 1;
+
+    /**
+     * Private constructor.
+     */
+    private AssignableExpressionMatcher() {
     }
 
     @Override
-    public Node convert(final Node node, final Factory factory) {
-        Node result = DummyNode.INSTANCE;
-        final Map<Integer, List<Node>> children = new TreeMap<>();
-        final Map<Integer, String> data = new TreeMap<>();
-        final boolean matched = Matcher2.INSTANCE.match(node, children, data);
-        if (matched) {
-            final Builder builder = factory.createBuilder(Rule0.VARIABLE);
-            builder.setData(data.get(1));
-            result = builder.createNode();
+    public boolean match(final Node node, final Extracted extracted) {
+        final boolean result = node.belongsToGroup(AssignableExpressionMatcher.TYPE_NAME);
+        if (result) {
+            extracted.addNode(AssignableExpressionMatcher.HOLE_NUMBER, node);
         }
         return result;
     }

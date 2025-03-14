@@ -23,20 +23,45 @@
  */
 package org.cqfn.astranaut.core.algorithms.conversion;
 
+import java.util.List;
+import java.util.Optional;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
  * Interface for converters that check one rule described in DSL
- *  and convert the initial AST built to the specified target format.
- * @since 1.0
+ *  and convert a sequence of child nodes of a given parent node into a single target node.
+ * @since 2.0.0
  */
 public interface Converter {
     /**
-     * Converts an initial AST to the target format.
-     * @param node The root of the AST to be converted
-     * @param factory The node factory
-     * @return A new node
+     * Converts a sequence of child nodes starting from the given index.
+     * If the conversion is successful, returns an {@code Optional} containing a
+     *  {@code ConversionResult}, which includes the new node, the starting index of consumed nodes,
+     *  and the number of nodes consumed. If the conversion fails, returns an empty
+     *  {@code Optional}, and no nodes are consumed.
+     * @param nodes The list of nodes in which the conversion is performed
+     * @param index The index of the first child node to be converted
+     * @param factory The Factory for the creation of new nodes
+     * @return An {@code Optional} containing a {@code ConversionResult} if conversion
+     *  is successful, otherwise an empty {@code Optional}.
      */
-    Node convert(Node node, Factory factory);
+    Optional<ConversionResult> convert(List<Node> nodes, int index, Factory factory);
+
+    /**
+     * Returns the minimum number of child nodes required for conversion.
+     *  This number is always greater than zero.
+     * @return The minimum number of nodes that the converter consumes.
+     */
+    int getMinConsumed();
+
+    /**
+     * Returns whether the converter processes nodes from right to left.
+     *  By default, parsing direction is left to right ({@code false}).
+     * @return Parsing direction, {@code true} if parsing direction is right to left,
+     *  {@code false} if left to right.
+     */
+    default boolean isRightToLeft() {
+        return false;
+    }
 }

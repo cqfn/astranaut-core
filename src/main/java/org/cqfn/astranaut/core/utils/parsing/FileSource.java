@@ -21,11 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.utils.parsing;
+
+import org.cqfn.astranaut.core.utils.FilesReader;
 
 /**
- * This package contains typical nodes that can be generated from DSL code.
- *  "Green" nodes are usually applicable to describe some syntactic constructs
- *  from several programming languages.
- * @since 1.0
+ * A {@link CharParser} implementation that reads characters from a file.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.green;
+public final class FileSource extends StringSource {
+    /**
+     * The path to the file containing source code.
+     */
+    private final String path;
+
+    /**
+     * Constructs a {@code FileSource} by reading the content of the specified file.
+     * @param path The path to the file to be read.
+     */
+    public FileSource(final String path) {
+        super(new FilesReader(path).readAsStringNoExcept());
+        this.path = path;
+    }
+
+    @Override
+    public String getFileName() {
+        return this.path;
+    }
+}

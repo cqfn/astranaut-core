@@ -21,44 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
+package org.cqfn.astranaut.core.algorithms.conversion;
 
-import java.util.List;
-import java.util.Map;
-import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Matcher for the subtree returned by the 'js' language parser.
- * @since 1.0
+ * Represents the result of a conversion operation, containing the converted node, the index
+ *  of the first consumed node, the number of nodes consumed during the conversion.
+ * @since 2.0.0
  */
-public final class Matcher1 implements Matcher {
+public final class ConversionResult {
     /**
-     * The instance.
+     * The newly created node as a result of the conversion.
      */
-    public static final Matcher INSTANCE = new Matcher1();
+    private final Node node;
 
     /**
-     * Expected number of child nodes.
+     * The number of nodes that were consumed during the conversion.
      */
-    private static final String EXPECTED_TYPE = "identifier";
+    private final int consumed;
 
     /**
-     * Expected number of child nodes.
+     * Creates a new conversion result.
+     * @param node The newly created node
+     * @param consumed The number of nodes that were consumed
      */
-    private static final int EXPECTED_COUNT = 1;
-
-    /**
-     * Constructor.
-     */
-    private Matcher1() {
+    public ConversionResult(final Node node, final int consumed) {
+        this.node = node;
+        this.consumed = consumed;
     }
 
-    @Override
-    public boolean match(final Node node, final Map<Integer, List<Node>> children,
-        final Map<Integer, String> data) {
-        return node.belongsToGroup(Matcher1.EXPECTED_TYPE)
-            && node.getChildCount() == Matcher1.EXPECTED_COUNT
-            && Matcher0.INSTANCE.match(node.getChild(0), children, data);
+    /**
+     * Returns the converted node.
+     * @return The node created as a result of the conversion
+     */
+    public Node getNode() {
+        return this.node;
+    }
+
+    /**
+     * Returns the number of nodes that were consumed during conversion.
+     * @return The count of nodes consumed
+     */
+    public int getConsumed() {
+        return this.consumed;
     }
 }

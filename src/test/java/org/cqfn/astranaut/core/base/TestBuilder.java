@@ -21,9 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.cqfn.astranaut.core.base;
+
+import java.util.List;
 
 /**
- * This package contains rules for "javascript" nodes transformation.
- * @since 1.0
+ * Custom builder for test purposes.
+ *  This returns errors of different types, allowing you to test different test cases.
+ * @since 2.0.0
  */
-package org.cqfn.astranaut.core.example.javascript.rules;
+public final class TestBuilder implements Builder {
+    /**
+     * Test case.
+     */
+    private final TestBuilderCase test;
+
+    /**
+     * Constructor.
+     * @param test Test case
+     */
+    public TestBuilder(final TestBuilderCase test) {
+        this.test = test;
+    }
+
+    @Override
+    public void setFragment(final Fragment fragment) {
+        this.getClass();
+    }
+
+    @Override
+    public boolean setData(final String str) {
+        return this.test != TestBuilderCase.BAD_DATA;
+    }
+
+    @Override
+    public boolean setChildrenList(final List<Node> list) {
+        return this.test != TestBuilderCase.BAD_CHILDREN;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.test != TestBuilderCase.INVALID_BUILDER;
+    }
+
+    @Override
+    public Node createNode() {
+        return DummyNode.INSTANCE;
+    }
+}

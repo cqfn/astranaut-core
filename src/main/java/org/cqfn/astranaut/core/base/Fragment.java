@@ -44,7 +44,37 @@ public interface Fragment {
      * Returns a string representation of the fragment.
      * @return String representation of the fragment
      */
-    default String asString() {
+    default String getCode() {
         return this.getBegin().getSource().getFragmentAsString(this.getBegin(), this.getEnd());
+    }
+
+    /**
+     * Returns a formatted string representing the position of the fragment.
+     * @return A formatted string describing the position of the fragment
+     */
+    default String getPosition() {
+        final String result;
+        final Position begin = this.getBegin();
+        final Position end = this.getEnd();
+        final String path = begin.getSource().getFileName();
+        if (path.isEmpty()) {
+            result = String.format(
+                "%d.%d-%d.%d",
+                begin.getRow(),
+                begin.getColumn(),
+                end.getRow(),
+                end.getColumn()
+            );
+        } else {
+            result = String.format(
+                "%s, %d.%d-%d.%d",
+                path,
+                begin.getRow(),
+                begin.getColumn(),
+                end.getRow(),
+                end.getColumn()
+            );
+        }
+        return result;
     }
 }
