@@ -33,7 +33,7 @@ import org.cqfn.astranaut.core.base.Position;
  * Implementation of the Source interface that stores source code as a set of strings.
  * @since 2.0.0
  */
-public final class StringSource implements CharParser {
+public class StringSource implements CharParser {
     /**
      * Source code divided into lines.
      */
@@ -48,7 +48,7 @@ public final class StringSource implements CharParser {
     }
 
     @Override
-    public String getFragmentAsString(final Position start, final Position end) {
+    public final String getFragmentAsString(final Position start, final Position end) {
         final String result;
         do {
             if (start.compareTo(end) > 0) {
@@ -66,14 +66,14 @@ public final class StringSource implements CharParser {
             for (int offset = 1; offset < count - 1; offset = offset + 1) {
                 list.add(this.getLineByRow(row + offset));
             }
-            list.add(this.getLineByRow(row + count, 0, end.getColumn()));
+            list.add(this.getLineByRow(end.getRow(), 1, end.getColumn()));
             result = String.join("\n", list);
         } while (false);
         return result;
     }
 
     @Override
-    public Iterator<Char> iterator() {
+    public final Iterator<Char> iterator() {
         return new StringSourceIterator(this);
     }
 
@@ -91,7 +91,11 @@ public final class StringSource implements CharParser {
                 break;
             }
             final String line = this.lines[row - 1];
-            if (column > line.length()) {
+            final boolean exceeds = column > line.length();
+            if (exceeds && row == this.lines.length) {
+                break;
+            }
+            if (exceeds) {
                 symbol = '\n';
                 break;
             }

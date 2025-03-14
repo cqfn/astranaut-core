@@ -23,46 +23,25 @@
  */
 package org.cqfn.astranaut.core.utils.parsing;
 
-import java.util.Iterator;
-import org.cqfn.astranaut.core.base.Char;
-import org.cqfn.astranaut.core.base.Position;
 import org.cqfn.astranaut.core.utils.FilesReader;
 
 /**
  * A {@link CharParser} implementation that reads characters from a file.
- *  This class wraps a {@link StringSource}, which holds the file content as a sequence
- *  of characters. It allows iteration over characters and provides functionality
- *  for extracting fragments.
  * @since 2.0.0
  */
-public final class FileSource implements CharParser {
+public final class FileSource extends StringSource {
     /**
      * The path to the file containing source code.
      */
     private final String path;
 
     /**
-     * The underlying {@link StringSource} that stores the file content.
-     */
-    private final StringSource wrapped;
-
-    /**
      * Constructs a {@code FileSource} by reading the content of the specified file.
      * @param path The path to the file to be read.
      */
     public FileSource(final String path) {
+        super(new FilesReader(path).readAsStringNoExcept());
         this.path = path;
-        this.wrapped = new StringSource(new FilesReader(path).readAsStringNoExcept());
-    }
-
-    @Override
-    public Iterator<Char> iterator() {
-        return this.wrapped.iterator();
-    }
-
-    @Override
-    public String getFragmentAsString(final Position start, final Position end) {
-        return this.wrapped.getFragmentAsString(start, end);
     }
 
     @Override

@@ -56,10 +56,10 @@ public interface Fragment {
         final String result;
         final Position begin = this.getBegin();
         final Position end = this.getEnd();
-        final String path = this.getBegin().getSource().getFileName();
+        final String path = begin.getSource().getFileName();
         if (path.isEmpty()) {
             result = String.format(
-                "%d.%d - %d.%d",
+                "%d.%d-%d.%d",
                 begin.getRow(),
                 begin.getColumn(),
                 end.getRow(),
@@ -67,7 +67,7 @@ public interface Fragment {
             );
         } else {
             result = String.format(
-                "%s, %d.%d - %d.%d",
+                "%s, %d.%d-%d.%d",
                 path,
                 begin.getRow(),
                 begin.getColumn(),
