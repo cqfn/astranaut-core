@@ -23,8 +23,10 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import org.cqfn.astranaut.core.utils.Pair;
+
 /**
- * Default implementation of the {@link Position} interface that fits in most cases.
+ * Default implementation of the {@link Fragment} interface that fits in most cases.
  * @since 2.0.0
  */
 public final class DefaultFragment implements Fragment {
@@ -46,6 +48,22 @@ public final class DefaultFragment implements Fragment {
     public DefaultFragment(final Position begin, final Position end) {
         this.begin = begin;
         this.end = end;
+    }
+
+    /**
+     * Constructor.
+     * @param pair Pair of positions (begin, end)
+     */
+    public DefaultFragment(final Pair<Position, Position> pair) {
+        this(pair.getKey(), pair.getValue());
+    }
+
+    /**
+     * Constructor.
+     * @param positions Positions to calculate bounds from
+     */
+    public DefaultFragment(final Position... positions) {
+        this(Position.bounds(positions));
     }
 
     @Override

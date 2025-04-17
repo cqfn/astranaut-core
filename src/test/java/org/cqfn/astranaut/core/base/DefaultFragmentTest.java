@@ -40,4 +40,21 @@ class DefaultFragmentTest {
         Assertions.assertSame(begin, fragment.getBegin());
         Assertions.assertSame(end, fragment.getEnd());
     }
+
+    @Test
+    void testAlternativeConstructors() {
+        final Source source = (start, end) -> "";
+        final Position[] positions = {
+            new DefaultPosition(source, 4, 7),
+            new DefaultPosition(source, 1, 2),
+            new DefaultPosition(source, 3, 14),
+            new DefaultPosition(source, 2, 1),
+        };
+        Fragment fragment = new DefaultFragment(positions);
+        Assertions.assertEquals(1, fragment.getBegin().getRow());
+        Assertions.assertEquals(4, fragment.getEnd().getRow());
+        fragment = new DefaultFragment(new DefaultPosition(source, 13, 13));
+        Assertions.assertEquals(13, fragment.getBegin().getRow());
+        Assertions.assertEquals(13, fragment.getEnd().getRow());
+    }
 }
