@@ -115,15 +115,69 @@ class Matcher {
             sample = pattern;
         }
         boolean result = node.getTypeName().equals(sample.getTypeName());
-        if (!(pattern instanceof Hole)) {
-            result = result && node.getData().equals(sample.getData());
-            result = result && (node.getChildCount() == 0
-                || Matcher.checkChildren(node, sample, matched));
+        do {
+            if (!result) {
+                break;
+            }
+            if (pattern instanceof Hole) {
+                result = matched.checkHole(((Hole) pattern).getNumber(), node.getData());
+            } else {
+                result = node.getData().equals(sample.getData())
+                    && Matcher.matchNodeAndSample(node, sample, matched);
+            }
+            if (!result) {
+                break;
+            }
+            if (action instanceof Replace) {
+                matched.replaceNode(node, action.getAfter());
+            } else if (action instanceof Delete) {
+                matched.deleteNode(node);
+            }
+        } while (false);
+        return result;
+    }
+
+    /**
+     * Matches a node and a sample provided the types are equal, the data is equal,
+     *  and the sample is not an action.
+     * @param node Node of the original tree
+     * @param sample Sample to match
+     * @param matched Intermediate data obtained by matching subtrees
+     * @return Matching result ({@code true} if matches)
+     */
+    private static boolean matchNodeAndSample(final Node node, final Node sample,
+        final Matched matched) {
+        final boolean result;
+        if (node.getChildCount() == 0) {
+            result = Matcher.mathEmptyNodeAndSample(node, sample, matched);
+        } else {
+            result = Matcher.checkChildren(node, sample, matched);
         }
-        if (result && action instanceof Replace) {
-            matched.replaceNode(node, action.getAfter());
-        } else if (result & action instanceof Delete) {
-            matched.deleteNode(node);
+        return result;
+    }
+
+    /**
+     * Matches a node without children and a sample.
+     * @param node Node of the original tree
+     * @param sample Sample to match
+     * @param matched Intermediate data obtained by matching subtrees
+     * @return Matching result ({@code true} if matches)
+     */
+    private static boolean mathEmptyNodeAndSample(final Node node, final Node sample,
+        final Matched matched) {
+        boolean result = true;
+        final int count = sample.getChildCount();
+        Node previous = null;
+        for (int index = 0; index < count; index = index + 1) {
+            final Action action = Action.toAction(sample.getChild(index));
+            if (action instanceof Insert) {
+                final Node insertion = action.getAfter();
+                matched.insertNodeAfter(insertion, node, previous);
+                previous = insertion;
+            } else {
+                result = false;
+                break;
+            }
         }
         return result;
     }

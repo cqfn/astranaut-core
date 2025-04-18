@@ -48,7 +48,6 @@ import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.cqfn.astranaut.core.example.green.SimpleAssignment;
 import org.cqfn.astranaut.core.example.green.Variable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -248,7 +247,6 @@ class PatcherTest {
     }
 
     @Test
-    @Disabled
     void mineAndPatchInsertionToEmpty() {
         final Tree before = Tree.createDraft("X(Y())");
         final Tree after = Tree.createDraft("X(Y(Z))");
