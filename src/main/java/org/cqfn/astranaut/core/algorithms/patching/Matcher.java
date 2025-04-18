@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.algorithms.patching;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,9 +51,9 @@ class Matcher {
     private final Node root;
 
     /**
-     * List of actions to be performed on the original tree to apply the pattern.
+     * Set of nodes mapped to the root of the pattern.
      */
-    private final Matched actions;
+    private final Set<Node> found;
 
     /**
      * Constructor.
@@ -60,50 +61,52 @@ class Matcher {
      */
     Matcher(final Tree tree) {
         this.root = tree.getRoot();
-        this.actions = new Matched();
-    }
-
-    /**
-     * Returns the list of actions that were compiled when the pattern was matched.
-     * @return Action list
-     */
-    public ActionList getActionList() {
-        return this.actions;
+        this.found = new HashSet<>();
     }
 
     /**
      * Matches the tree and the pattern.
      * @param pattern Root node of the pattern
-     * @return Nodes that match the root node of the pattern
+     * @return Actions extracted from the pattern, applicable as a result of matching
+     *  to the nodes of the tree
      */
-    Set<Node> match(final Pattern pattern) {
+    ActionList match(final Pattern pattern) {
         final DepthFirstWalker deep = new DepthFirstWalker(this.root);
         final PatternNode head = pattern.getRoot();
         final List<Node> preset = deep.findAll(
             node -> node.getTypeName().equals(head.getTypeName())
                 && node.getData().equals(head.getData())
         );
-        final Set<Node> set = new HashSet<>();
+        final Matched matched = new Matched();
         for (final Node node : preset) {
             final Matched applicants = new Matched();
             final boolean matches = Matcher.checkNode(node, head, applicants);
             if (matches) {
-                set.add(node);
-                this.actions.merge(applicants);
+                this.found.add(node);
+                matched.merge(applicants);
             }
         }
-        return set;
+        return matched;
+    }
+
+    /**
+     * Returns the set of nodes mapped to the root of the pattern.
+     * @return The set of nodes found.
+     *  The size of this set essentially means how many times the pattern has been applied
+     */
+    Set<Node> getFoundNodes() {
+        return Collections.unmodifiableSet(this.found);
     }
 
     /**
      * Checks if the node of the original tree matches the pattern node.
      * @param node Node of the original tree
      * @param pattern Node of the difference tree (i.e. pattern)
-     * @param actions List of actions to be performed to apply the pattern
+     * @param matched Intermediate data obtained by matching subtrees
      * @return Matching result ({@code true} if matches)
      */
     private static boolean checkNode(
-        final Node node, final Node pattern, final Matched actions) {
+        final Node node, final Node pattern, final Matched matched) {
         final Node sample;
         final Action action = Action.toAction(pattern);
         if (action instanceof Replace || action instanceof Delete) {
@@ -115,12 +118,12 @@ class Matcher {
         if (!(pattern instanceof Hole)) {
             result = result && node.getData().equals(sample.getData());
             result = result && (node.getChildCount() == 0
-                || Matcher.checkChildren(node, sample, actions));
+                || Matcher.checkChildren(node, sample, matched));
         }
         if (result && action instanceof Replace) {
-            actions.replaceNode(node, action.getAfter());
+            matched.replaceNode(node, action.getAfter());
         } else if (result & action instanceof Delete) {
-            actions.deleteNode(node);
+            matched.deleteNode(node);
         }
         return result;
     }
@@ -130,11 +133,11 @@ class Matcher {
      *  matches the children of the pattern node.
      * @param node Node of the original tree
      * @param sample Node of the difference tree (i.e. pattern)
-     * @param actions List of actions to be performed to apply the pattern
+     * @param matched Intermediate data obtained by matching subtrees
      * @return Matching result ({@code true} if matches)
      */
     private static boolean checkChildren(
-        final Node node, final Node sample, final Matched actions) {
+        final Node node, final Node sample, final Matched matched) {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = false;
@@ -166,7 +169,7 @@ class Matcher {
             }
         }
         if (result) {
-            actions.merge(applicants);
+            matched.merge(applicants);
         }
         return result;
     }
