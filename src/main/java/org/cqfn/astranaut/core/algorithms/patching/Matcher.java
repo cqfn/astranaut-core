@@ -52,7 +52,7 @@ class Matcher {
     /**
      * List of actions to be performed on the original tree to apply the pattern.
      */
-    private final ActionList actions;
+    private final Matched actions;
 
     /**
      * Constructor.
@@ -60,7 +60,7 @@ class Matcher {
      */
     Matcher(final Tree tree) {
         this.root = tree.getRoot();
-        this.actions = new ActionList();
+        this.actions = new Matched();
     }
 
     /**
@@ -85,7 +85,7 @@ class Matcher {
         );
         final Set<Node> set = new HashSet<>();
         for (final Node node : preset) {
-            final ActionList applicants = new ActionList();
+            final Matched applicants = new Matched();
             final boolean matches = Matcher.checkNode(node, head, applicants);
             if (matches) {
                 set.add(node);
@@ -103,7 +103,7 @@ class Matcher {
      * @return Matching result ({@code true} if matches)
      */
     private static boolean checkNode(
-        final Node node, final Node pattern, final ActionList actions) {
+        final Node node, final Node pattern, final Matched actions) {
         final Node sample;
         final Action action = Action.toAction(pattern);
         if (action instanceof Replace || action instanceof Delete) {
@@ -134,11 +134,11 @@ class Matcher {
      * @return Matching result ({@code true} if matches)
      */
     private static boolean checkChildren(
-        final Node node, final Node sample, final ActionList actions) {
+        final Node node, final Node sample, final Matched actions) {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = false;
-        final ActionList applicants = new ActionList();
+        final Matched applicants = new Matched();
         for (int index = 0; !result && index < left; index = index + 1) {
             result = true;
             final Iterator<Node> iterator = sample.getIteratorOverChildren();

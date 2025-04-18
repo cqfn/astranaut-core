@@ -48,6 +48,7 @@ import org.cqfn.astranaut.core.example.green.IntegerLiteral;
 import org.cqfn.astranaut.core.example.green.SimpleAssignment;
 import org.cqfn.astranaut.core.example.green.Variable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -244,5 +245,20 @@ class PatcherTest {
         final Tree patched = patcher.patch(original, pattern);
         final Tree expected = Tree.createDraft("Y(X(Z,A,B,C,D),E,F)");
         Assertions.assertEquals(expected.toString(), patched.toString());
+    }
+
+    @Test
+    @Disabled
+    void mineAndPatchInsertionToEmpty() {
+        final Tree before = Tree.createDraft("X(Y())");
+        final Tree after = Tree.createDraft("X(Y(Z))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
+        builder.build(after, mapper);
+        final DiffTree diff = builder.getDiffTree();
+        final Pattern pattern = new PatternBuilder(diff).getPattern();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(before, pattern);
+        Assertions.assertTrue(after.deepCompare(patched));
     }
 }
