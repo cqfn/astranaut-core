@@ -54,6 +54,7 @@ import org.junit.jupiter.api.Test;
  * Testing {@link Patcher} class.
  * @since 1.1.5
  */
+@SuppressWarnings("PMD.TooManyMethods")
 class PatcherTest {
     @Test
     void patchingByPatternThatDoesNotMatch() {
@@ -250,6 +251,20 @@ class PatcherTest {
     void mineAndPatchInsertionToEmpty() {
         final Tree before = Tree.createDraft("X(Y())");
         final Tree after = Tree.createDraft("X(Y(Z))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
+        builder.build(after, mapper);
+        final DiffTree diff = builder.getDiffTree();
+        final Pattern pattern = new PatternBuilder(diff).getPattern();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(before, pattern);
+        Assertions.assertTrue(after.deepCompare(patched));
+    }
+
+    @Test
+    void mineAndPatchSixActions() {
+        final Tree before = Tree.createDraft("X(Y(B,A,C,A),Z(B,A,C,A))");
+        final Tree after = Tree.createDraft("X(Y(A,E,A,D),Z(A,E,A,D))");
         final Mapper mapper = TopDownMapper.INSTANCE;
         final DiffTreeBuilder builder = new DiffTreeBuilder(before);
         builder.build(after, mapper);
