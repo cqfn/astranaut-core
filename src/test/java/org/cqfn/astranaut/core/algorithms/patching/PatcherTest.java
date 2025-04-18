@@ -262,12 +262,12 @@ class PatcherTest {
     }
 
     @Test
-    void mineAndPatchEightActions() {
+    void mineAndPatchTenActions() {
         final Tree before = Tree.createDraft(
-            "X(Y(B,A,C,A),Z(B,A,C,A),W(A,B),V(A,B))"
+            "X(Y(B,A,C,A),Z(B,A,C,A),W(A,B),V(A,B),U(A,B))"
         );
         final Tree after = Tree.createDraft(
-            "X(Y(A,E,A,D),Z(A,E,A,D),W(C,D),V(A,B)"
+            "X(Y(A,E,A,D),Z(A,E,A,D),W(C,D),V(A,B),U()"
         );
         final Mapper mapper = TopDownMapper.INSTANCE;
         final DiffTreeBuilder builder = new DiffTreeBuilder(before);
