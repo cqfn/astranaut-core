@@ -66,7 +66,7 @@ class ParserTest {
         Assertions.assertEquals("x", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 4.13-4.13"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
         );
     }
 
@@ -117,7 +117,11 @@ class ParserTest {
         Assertions.assertEquals("printf(\"x\");", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 4.5-4.16"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
+        );
+        Assertions.assertEquals(
+            ParserTest.TEST_FILE.concat(", 4.5-4.16"),
+            fragment.toString()
         );
         fragment = new DefaultFragment(
             first.getFragment().getBegin(),
@@ -126,7 +130,7 @@ class ParserTest {
         Assertions.assertEquals("{\n    printf(\"x\");\n}", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 3.13-5.1"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
         );
         fragment = new DefaultFragment(
             last.getFragment().getEnd(),
@@ -143,8 +147,20 @@ class ParserTest {
         Assertions.assertEquals(3, tree.getRoot().getChildCount());
         Assertions.assertEquals(
             "1.1-1.1",
-            tree.getRoot().getChild(0).getFragment().getPosition()
+            tree.getRoot().getChild(0).getFragment().getPositionAsString()
         );
+    }
+
+    @Test
+    void fragmentAsString() {
+        final FileSource source = new FileSource(ParserTest.TEST_FILE);
+        Iterator<Char> iterator = source.iterator();
+        final Fragment first = iterator.next().getFragment();
+        Assertions.assertEquals(first.toString(), ParserTest.TEST_FILE.concat(", 1.1"));
+        final StringSource other = new StringSource("qwe");
+        iterator = other.iterator();
+        final Fragment second = iterator.next().getFragment();
+        Assertions.assertEquals(second.toString(), "1.1");
     }
 
     @Test

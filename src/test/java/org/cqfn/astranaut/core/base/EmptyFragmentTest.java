@@ -45,5 +45,6 @@ class EmptyFragmentTest {
         Assertions.assertNotEquals(begin, other);
         Assertions.assertNotEquals(end, other);
         Assertions.assertNotEquals(0, EmptyFragment.INSTANCE.hashCode());
+        Assertions.assertEquals("\u2205", EmptyFragment.INSTANCE.toString());
     }
 }

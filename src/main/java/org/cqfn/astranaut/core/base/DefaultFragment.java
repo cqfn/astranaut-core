@@ -88,4 +88,9 @@ public final class DefaultFragment implements Fragment {
     public int hashCode() {
         return Objects.hash(this.begin, this.end);
     }
+
+    @Override
+    public String toString() {
+        return this.getPositionAsString();
+    }
 }

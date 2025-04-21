@@ -56,7 +56,7 @@ public interface Fragment {
      * Returns a formatted string representing the position of the fragment.
      * @return A formatted string describing the position of the fragment
      */
-    default String getPosition() {
+    default String getPositionAsString() {
         final String result;
         final Position begin = this.getBegin();
         final Position end = this.getEnd();

@@ -77,4 +77,25 @@ class CharFragment implements Fragment {
     public int hashCode() {
         return Objects.hash(this.position, this.position);
     }
+
+    @Override
+    public String toString() {
+        final String result;
+        final String path = this.position.getSource().getFileName();
+        if (path.isEmpty()) {
+            result = String.format(
+                "%d.%d",
+                this.position.getRow(),
+                this.position.getColumn()
+            );
+        } else {
+            result = String.format(
+                "%s, %d.%d",
+                path,
+                this.position.getRow(),
+                this.position.getColumn()
+            );
+        }
+        return result;
+    }
 }

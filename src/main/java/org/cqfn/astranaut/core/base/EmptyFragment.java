@@ -86,6 +86,11 @@ public final class EmptyFragment implements Fragment {
         return EmptyFragment.HASH_CODE;
     }
 
+    @Override
+    public String toString() {
+        return "\u2205";
+    }
+
     /**
      * Position that points nowhere.
      * @since 2.0.0
