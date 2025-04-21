@@ -115,6 +115,7 @@ class DefaultFragmentTest {
         final Fragment third = Fragment.fromNodes(
             Arrays.asList(
                 new FakeNode(3),
+                new FakeNode(0),
                 new FakeNode(2),
                 new FakeNode(1)
             )
@@ -143,9 +144,13 @@ class DefaultFragmentTest {
 
         @Override
         public Fragment getFragment() {
-            return Fragment.fromPositions(
-                new DefaultPosition(DefaultFragmentTest.SOURCE, this.row, 1)
-            );
+            Fragment fragment = EmptyFragment.INSTANCE;
+            if (this.row != 0) {
+                fragment = Fragment.fromPositions(
+                    new DefaultPosition(DefaultFragmentTest.SOURCE, this.row, 1)
+                );
+            }
+            return fragment;
         }
 
         @Override
