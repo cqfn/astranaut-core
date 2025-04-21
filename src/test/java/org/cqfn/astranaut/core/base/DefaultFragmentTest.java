@@ -50,10 +50,10 @@ class DefaultFragmentTest {
             new DefaultPosition(source, 3, 14),
             new DefaultPosition(source, 2, 1),
         };
-        Fragment fragment = new DefaultFragment(positions);
+        Fragment fragment = Fragment.fromPositions(positions);
         Assertions.assertEquals(1, fragment.getBegin().getRow());
         Assertions.assertEquals(4, fragment.getEnd().getRow());
-        fragment = new DefaultFragment(new DefaultPosition(source, 13, 13));
+        fragment = Fragment.fromPositions(new DefaultPosition(source, 13, 13));
         Assertions.assertEquals(13, fragment.getBegin().getRow());
         Assertions.assertEquals(13, fragment.getEnd().getRow());
     }

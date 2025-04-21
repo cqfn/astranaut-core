@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Objects;
 import org.cqfn.astranaut.core.utils.Pair;
 
 /**
@@ -58,14 +59,6 @@ public final class DefaultFragment implements Fragment {
         this(pair.getKey(), pair.getValue());
     }
 
-    /**
-     * Constructor.
-     * @param positions Positions to calculate bounds from
-     */
-    public DefaultFragment(final Position... positions) {
-        this(Position.bounds(positions));
-    }
-
     @Override
     public Position getBegin() {
         return this.begin;
@@ -74,5 +67,25 @@ public final class DefaultFragment implements Fragment {
     @Override
     public Position getEnd() {
         return this.end;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean result;
+        if (this == obj) {
+            result = true;
+        } else if (obj instanceof Fragment) {
+            final Fragment other = (Fragment) obj;
+            result = this.begin.equals(other.getBegin())
+                && this.end.equals(other.getEnd());
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.begin, this.end);
     }
 }

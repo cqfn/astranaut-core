@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Objects;
+
 /**
  * {@code EmptyFragment} is an implementation of {@link Fragment} representing an empty fragment.
  *  It serves as a placeholder when a node does not have an associated fragment
@@ -46,24 +48,17 @@ public final class EmptyFragment implements Fragment {
     };
 
     /**
-     * The position.
+     * Position of the empty fragment.
      */
-    private static final Position POSITION = new Position() {
-        @Override
-        public Source getSource() {
-            return EmptyFragment.SOURCE;
-        }
+    private static final Position POSITION = new EmptyPosition();
 
-        @Override
-        public int getRow() {
-            return 0;
-        }
-
-        @Override
-        public int getColumn() {
-            return 0;
-        }
-    };
+    /**
+     * Hash code of the empty fragment.
+     */
+    private static final int HASH_CODE = Objects.hash(
+        EmptyFragment.POSITION,
+        EmptyFragment.POSITION
+    );
 
     /**
      * Constructor.
@@ -79,5 +74,51 @@ public final class EmptyFragment implements Fragment {
     @Override
     public Position getEnd() {
         return EmptyFragment.POSITION;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public int hashCode() {
+        return EmptyFragment.HASH_CODE;
+    }
+
+    /**
+     * Position that points nowhere.
+     * @since 2.0.0
+     */
+    private static final class EmptyPosition implements Position {
+        /**
+         * Hash code of the empty position.
+         */
+        private static final int HASH_CODE = Objects.hash(EmptyFragment.SOURCE, 0, 0);
+
+        @Override
+        public Source getSource() {
+            return EmptyFragment.SOURCE;
+        }
+
+        @Override
+        public int getRow() {
+            return 0;
+        }
+
+        @Override
+        public int getColumn() {
+            return 0;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return this == obj;
+        }
+
+        @Override
+        public int hashCode() {
+            return EmptyPosition.HASH_CODE;
+        }
     }
 }
