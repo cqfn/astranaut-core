@@ -29,6 +29,8 @@ import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.base.Char;
 import org.cqfn.astranaut.core.base.DefaultFragment;
 import org.cqfn.astranaut.core.base.DefaultPosition;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.EmptyFragment;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.parsing.FileSource;
@@ -166,5 +168,21 @@ class ParserTest {
             new DefaultPosition(source, 4, 4)
         );
         Assertions.assertEquals("\n\na\nb\nc\n", fragment.getCode());
+    }
+
+    @Test
+    void charFragmentComparison() {
+        final StringSource source = new StringSource("qwerty");
+        final Iterator<Char> iterator = source.iterator();
+        final Char node = iterator.next();
+        final Fragment first = node.getFragment();
+        Assertions.assertTrue(first.equals(first));
+        Assertions.assertFalse(first.equals(EmptyFragment.INSTANCE));
+        Assertions.assertFalse(first.equals(DummyNode.INSTANCE));
+        Assertions.assertNotEquals(0, first.hashCode());
+        final Fragment second = source.iterator().next().getFragment();
+        Assertions.assertEquals(first, second);
+        final Fragment third = iterator.next().getFragment();
+        Assertions.assertNotEquals(first, third);
     }
 }
