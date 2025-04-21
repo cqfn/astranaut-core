@@ -33,11 +33,14 @@ import org.junit.jupiter.api.Test;
 class DefaultPositionTest {
     @Test
     void testBaseInterface() {
-        final Source source = (start, end) -> "";
-        final Position position = new DefaultPosition(source, 1, 2);
-        Assertions.assertSame(source, position.getSource());
+        final Source alpha = (start, end) -> "";
+        final Position position = new DefaultPosition(alpha, 1, 2);
+        Assertions.assertSame(alpha, position.getSource());
         Assertions.assertEquals(1, position.getRow());
         Assertions.assertEquals(2, position.getColumn());
         Assertions.assertNotEquals(position, DummyNode.INSTANCE);
+        final Source beta = (start, end) -> "abc";
+        final Position other = new DefaultPosition(beta, 1, 2);
+        Assertions.assertNotEquals(position, other);
     }
 }

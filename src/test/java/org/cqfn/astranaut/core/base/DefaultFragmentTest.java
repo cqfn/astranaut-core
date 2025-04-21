@@ -107,6 +107,20 @@ class DefaultFragmentTest {
         );
         Assertions.assertEquals(1, third.getBegin().getRow());
         Assertions.assertEquals(2, third.getEnd().getRow());
+        final Fragment fourth = Fragment.fromPositions(
+            Arrays.asList(
+                new DefaultPosition(DefaultFragmentTest.SOURCE, 1, 1),
+                new DefaultPosition(DefaultFragmentTest.SOURCE, 2, 1)
+            )
+        );
+        Assertions.assertEquals(fourth, third);
+        final Fragment other = Fragment.fromPositions(
+            Arrays.asList(
+                new DefaultPosition(DefaultFragmentTest.SOURCE, 3, 1),
+                new DefaultPosition(DefaultFragmentTest.SOURCE, 1, 1)
+            )
+        );
+        Assertions.assertNotEquals(other, third);
     }
 
     @Test
