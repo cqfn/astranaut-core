@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.utils;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -174,15 +175,18 @@ class ParserTest {
     void charFragmentComparison() {
         final StringSource source = new StringSource("qwerty");
         final Iterator<Char> iterator = source.iterator();
-        final Char node = iterator.next();
-        final Fragment first = node.getFragment();
+        final Char alpha = iterator.next();
+        final Fragment first = alpha.getFragment();
         Assertions.assertTrue(first.equals(first));
         Assertions.assertFalse(first.equals(EmptyFragment.INSTANCE));
         Assertions.assertFalse(first.equals(DummyNode.INSTANCE));
         Assertions.assertNotEquals(0, first.hashCode());
         final Fragment second = source.iterator().next().getFragment();
         Assertions.assertEquals(first, second);
-        final Fragment third = iterator.next().getFragment();
+        final Char beta = iterator.next();
+        final Fragment third = beta.getFragment();
+        final Fragment compose = Fragment.fromNodes(Arrays.asList(alpha, beta));
+        Assertions.assertNotEquals(first, compose);
         Assertions.assertNotEquals(first, third);
     }
 }
