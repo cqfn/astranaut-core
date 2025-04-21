@@ -35,10 +35,15 @@ class EmptyFragmentTest {
     void testBaseInterface() {
         final Position begin = EmptyFragment.INSTANCE.getBegin();
         final Position end = EmptyFragment.INSTANCE.getEnd();
+        Assertions.assertEquals(begin, end);
         Assertions.assertEquals("", EmptyFragment.INSTANCE.getCode());
         Assertions.assertEquals(0, begin.getRow());
         Assertions.assertEquals(0, begin.getColumn());
         Assertions.assertEquals(0, end.getRow());
         Assertions.assertEquals(0, end.getColumn());
+        final Position other = new DefaultPosition((first, second) -> "", 1, 1);
+        Assertions.assertNotEquals(begin, other);
+        Assertions.assertNotEquals(end, other);
+        Assertions.assertNotEquals(0, EmptyFragment.INSTANCE.hashCode());
     }
 }

@@ -38,5 +38,6 @@ class DefaultPositionTest {
         Assertions.assertSame(source, position.getSource());
         Assertions.assertEquals(1, position.getRow());
         Assertions.assertEquals(2, position.getColumn());
+        Assertions.assertNotEquals(position, DummyNode.INSTANCE);
     }
 }

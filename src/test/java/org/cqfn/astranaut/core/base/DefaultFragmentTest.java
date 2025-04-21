@@ -45,6 +45,11 @@ class DefaultFragmentTest {
         final Fragment fragment = new DefaultFragment(begin, end);
         Assertions.assertSame(begin, fragment.getBegin());
         Assertions.assertSame(end, fragment.getEnd());
+        Assertions.assertTrue(fragment.equals(fragment));
+        Assertions.assertNotEquals(0, fragment.hashCode());
+        final Fragment other = new DefaultFragment(begin, end);
+        Assertions.assertEquals(fragment, other);
+        Assertions.assertNotEquals(fragment, DummyNode.INSTANCE);
     }
 
     @Test
@@ -72,6 +77,7 @@ class DefaultFragmentTest {
         final Fragment second = Fragment.fromPositions(
             new DefaultPosition(DefaultFragmentTest.SOURCE, 1, 1)
         );
+        Assertions.assertNotEquals(EmptyFragment.INSTANCE, second);
         Assertions.assertEquals(1, second.getBegin().getRow());
         Assertions.assertEquals(1, second.getEnd().getRow());
         final Fragment third = Fragment.fromPositions(
