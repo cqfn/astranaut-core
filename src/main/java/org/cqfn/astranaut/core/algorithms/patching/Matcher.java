@@ -77,16 +77,16 @@ class Matcher {
             node -> node.getTypeName().equals(head.getTypeName())
                 && node.getData().equals(head.getData())
         );
-        final Matched matched = new Matched();
+        final ActionList list = new ActionList();
         for (final Node node : preset) {
             final Matched applicants = new Matched();
             final boolean matches = Matcher.checkNode(node, head, applicants);
             if (matches) {
                 this.found.add(node);
-                matched.merge(applicants);
+                list.merge(applicants);
             }
         }
-        return matched;
+        return list;
     }
 
     /**
@@ -195,7 +195,7 @@ class Matcher {
         final int left = node.getChildCount();
         final int right = sample.getChildCount();
         boolean result = false;
-        final Matched applicants = new Matched();
+        final Matched applicants = matched.fork();
         for (int index = 0; !result && index < left; index = index + 1) {
             result = true;
             final Iterator<Node> iterator = sample.getIteratorOverChildren();

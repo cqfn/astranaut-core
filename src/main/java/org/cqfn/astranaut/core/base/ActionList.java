@@ -139,7 +139,7 @@ public class ActionList {
      * Adds actions from another list to the current list.
      * @param other Another action list
      */
-    protected void mergeActions(final ActionList other) {
+    public void merge(final ActionList other) {
         if (this.insert == null) {
             this.insert = other.insert;
         } else if (other.insert != null) {

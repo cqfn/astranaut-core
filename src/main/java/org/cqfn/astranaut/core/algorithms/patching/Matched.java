@@ -38,11 +38,24 @@ final class Matched extends ActionList {
     private Map<Integer, String> holes;
 
     /**
+     * Partially clones this object. The new instance will contain only information
+     * about previously extracted holes, without extracted nodes or data.
+     * @return A new Matched object with copied hole data
+     */
+    Matched fork() {
+        final Matched obj = new Matched();
+        if (this.holes != null) {
+            obj.holes = new TreeMap<>(this.holes);
+        }
+        return obj;
+    }
+
+    /**
      * Combines data obtained through the matching process.
      * @param other Other data
      */
     void merge(final Matched other) {
-        this.mergeActions(other);
+        super.merge(other);
         if (this.holes == null) {
             this.holes = other.holes;
         } else {

@@ -278,4 +278,52 @@ class PatcherTest {
         final Tree patched = patcher.patch(before, pattern);
         Assertions.assertTrue(after.deepCompare(patched));
     }
+
+    @Test
+    void mineAndPatchWithHoles() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Tree before = Tree.createDraft(
+            "X(Y(A<'a'>,B,C),Z(A<'a'>,B,C))",
+            nodes
+        );
+        final Tree after = Tree.createDraft("X(Y(A<'a'>,B,D),Z(A<'a'>,B))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(before);
+        diffbuilder.build(after, mapper);
+        final DiffTree diff = diffbuilder.getDiffTree();
+        final PatternBuilder patbuilder = new PatternBuilder(diff);
+        for (final Node node : nodes.get("A")) {
+            patbuilder.makeHole(node, 1);
+        }
+        for (final Node node : nodes.get("B")) {
+            patbuilder.makeHole(node, 2);
+        }
+        final Pattern pattern = patbuilder.getPattern();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(before, pattern);
+        Assertions.assertTrue(after.deepCompare(patched));
+    }
+
+    @Test
+    void mineAndPatchWithMismatchedHoles() {
+        final Map<String, Set<Node>> nodes = new TreeMap<>();
+        final Tree before = Tree.createDraft(
+            "X(Y(A<'a'>,B,C),Z(A<'q'>,B,C))",
+            nodes
+        );
+        final Tree after = Tree.createDraft("X(Y(A<'a'>,B,D),Z(A<'q'>,B))");
+        final Mapper mapper = TopDownMapper.INSTANCE;
+        final DiffTreeBuilder diffbuilder = new DiffTreeBuilder(before);
+        diffbuilder.build(after, mapper);
+        final DiffTree diff = diffbuilder.getDiffTree();
+        final PatternBuilder patbuilder = new PatternBuilder(diff);
+        for (final Node node : nodes.get("A")) {
+            patbuilder.makeHole(node, 1);
+        }
+        final Pattern pattern = patbuilder.getPattern();
+        final Patcher patcher = DefaultPatcher.INSTANCE;
+        final Tree patched = patcher.patch(before, pattern);
+        Assertions.assertFalse(after.deepCompare(patched));
+        Assertions.assertTrue(before.deepCompare(patched));
+    }
 }
