@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Arrays;
+import java.util.Collections;
 import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,10 @@ class PositionTest {
     @Test
     void testBounds() {
         Assertions.assertThrows(IllegalArgumentException.class, Position::bounds);
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> Position.bounds(Collections.emptyList())
+        );
         final Source source = (start, end) -> "";
         final Position[] list = {
             new DefaultPosition(source, 2, 2),
@@ -55,7 +61,10 @@ class PositionTest {
             new DefaultPosition(source, 4, 4),
             new DefaultPosition(source, 3, 3),
         };
-        final Pair<Position, Position> pair = Position.bounds(list);
+        Pair<Position, Position> pair = Position.bounds(list);
+        Assertions.assertEquals(1, pair.getKey().getRow());
+        Assertions.assertEquals(4, pair.getValue().getRow());
+        pair = Position.bounds(Arrays.asList(list));
         Assertions.assertEquals(1, pair.getKey().getRow());
         Assertions.assertEquals(4, pair.getValue().getRow());
     }
