@@ -23,6 +23,9 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.List;
+import org.cqfn.astranaut.core.utils.Pair;
+
 /**
  * Represents a position in source code.
  *  It provides methods to retrieve the source, row, and column of the position.
@@ -30,22 +33,26 @@ package org.cqfn.astranaut.core.base;
  *  have different sources, they are considered incomparable.
  * @since 1.0
  */
+@SuppressWarnings("PMD.ProhibitPublicStaticMethods")
 public interface Position extends Comparable<Position> {
 
     /**
      * Returns an object representing the source code that has this position.
+     *
      * @return Object representing the source code
      */
     Source getSource();
 
     /**
      * Returns the row (line) number of this position.
+     *
      * @return The row number
      */
     int getRow();
 
     /**
      * Returns the column number of this position.
+     *
      * @return The column number
      */
     int getColumn();
@@ -60,5 +67,53 @@ public interface Position extends Comparable<Position> {
             result = Integer.compare(this.getColumn(), other.getColumn());
         }
         return result;
+    }
+
+    /**
+     * Returns the first and last position from the given list of positions.
+     * @param positions Vararg of Position objects
+     * @return Pair of first and last position (by order)
+     * @throws IllegalArgumentException If no positions are provided or sources differ
+     */
+    static Pair<Position, Position> bounds(final Position... positions) {
+        if (positions.length == 0) {
+            throw new IllegalArgumentException();
+        }
+        Position first = positions[0];
+        Position last = positions[0];
+        for (int index = 1; index < positions.length; index = index + 1) {
+            final Position position = positions[index];
+            if (position.compareTo(first) < 0) {
+                first = position;
+            }
+            if (position.compareTo(last) > 0) {
+                last = position;
+            }
+        }
+        return new Pair<>(first, last);
+    }
+
+    /**
+     * Returns the first and last position from the given list of positions.
+     * @param positions List of Position objects
+     * @return Pair of first and last position (by order)
+     * @throws IllegalArgumentException If list is empty or sources differ
+     */
+    static Pair<Position, Position> bounds(final List<Position> positions) {
+        if (positions.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        Position first = positions.get(0);
+        Position last = positions.get(0);
+        for (int index = 1; index < positions.size(); index = index + 1) {
+            final Position position = positions.get(index);
+            if (position.compareTo(first) < 0) {
+                first = position;
+            }
+            if (position.compareTo(last) > 0) {
+                last = position;
+            }
+        }
+        return new Pair<>(first, last);
     }
 }

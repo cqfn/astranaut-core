@@ -23,8 +23,11 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Objects;
+import org.cqfn.astranaut.core.utils.Pair;
+
 /**
- * Default implementation of the {@link Position} interface that fits in most cases.
+ * Default implementation of the {@link Fragment} interface that fits in most cases.
  * @since 2.0.0
  */
 public final class DefaultFragment implements Fragment {
@@ -48,6 +51,14 @@ public final class DefaultFragment implements Fragment {
         this.end = end;
     }
 
+    /**
+     * Constructor.
+     * @param pair Pair of positions (begin, end)
+     */
+    public DefaultFragment(final Pair<Position, Position> pair) {
+        this(pair.getKey(), pair.getValue());
+    }
+
     @Override
     public Position getBegin() {
         return this.begin;
@@ -56,5 +67,30 @@ public final class DefaultFragment implements Fragment {
     @Override
     public Position getEnd() {
         return this.end;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean result;
+        if (this == obj) {
+            result = true;
+        } else if (obj instanceof Fragment) {
+            final Fragment other = (Fragment) obj;
+            result = this.begin.equals(other.getBegin())
+                && this.end.equals(other.getEnd());
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.begin, this.end);
+    }
+
+    @Override
+    public String toString() {
+        return this.getPositionAsString();
     }
 }

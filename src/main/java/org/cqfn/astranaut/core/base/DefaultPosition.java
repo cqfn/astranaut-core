@@ -23,6 +23,8 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Objects;
+
 /**
  * Default implementation of the {@link Position} interface that fits in most cases.
  * @since 2.0.0
@@ -68,5 +70,26 @@ public final class DefaultPosition implements Position {
     @Override
     public int getColumn() {
         return this.column;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean result;
+        if (this == obj) {
+            result = true;
+        } else if (obj instanceof Position) {
+            final Position other = (Position) obj;
+            result = this.row == other.getRow()
+                && this.column == other.getColumn()
+                && this.source.equals(other.getSource());
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.source, this.row, this.column);
     }
 }

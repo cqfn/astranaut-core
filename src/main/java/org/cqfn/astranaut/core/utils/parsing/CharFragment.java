@@ -23,6 +23,7 @@
  */
 package org.cqfn.astranaut.core.utils.parsing;
 
+import java.util.Objects;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Position;
 
@@ -55,5 +56,46 @@ class CharFragment implements Fragment {
     @Override
     public Position getEnd() {
         return this.position;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        final boolean result;
+        if (this == obj) {
+            result = true;
+        } else if (obj instanceof Fragment) {
+            final Fragment other = (Fragment) obj;
+            result = this.position.equals(other.getBegin())
+                && this.position.equals(other.getEnd());
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.position, this.position);
+    }
+
+    @Override
+    public String toString() {
+        final String result;
+        final String path = this.position.getSource().getFileName();
+        if (path.isEmpty()) {
+            result = String.format(
+                "%d.%d",
+                this.position.getRow(),
+                this.position.getColumn()
+            );
+        } else {
+            result = String.format(
+                "%s, %d.%d",
+                path,
+                this.position.getRow(),
+                this.position.getColumn()
+            );
+        }
+        return result;
     }
 }

@@ -23,6 +23,9 @@
  */
 package org.cqfn.astranaut.core.base;
 
+import java.util.Arrays;
+import java.util.Collections;
+import org.cqfn.astranaut.core.utils.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,5 +45,27 @@ class PositionTest {
         Assertions.assertTrue(third.compareTo(first) > 0);
         final Position alien = new DefaultPosition(another, 1, 1);
         Assertions.assertThrows(IllegalArgumentException.class, () -> first.compareTo(alien));
+    }
+
+    @Test
+    void testBounds() {
+        Assertions.assertThrows(IllegalArgumentException.class, Position::bounds);
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> Position.bounds(Collections.emptyList())
+        );
+        final Source source = (start, end) -> "";
+        final Position[] list = {
+            new DefaultPosition(source, 2, 2),
+            new DefaultPosition(source, 1, 1),
+            new DefaultPosition(source, 4, 4),
+            new DefaultPosition(source, 3, 3),
+        };
+        Pair<Position, Position> pair = Position.bounds(list);
+        Assertions.assertEquals(1, pair.getKey().getRow());
+        Assertions.assertEquals(4, pair.getValue().getRow());
+        pair = Position.bounds(Arrays.asList(list));
+        Assertions.assertEquals(1, pair.getKey().getRow());
+        Assertions.assertEquals(4, pair.getValue().getRow());
     }
 }

@@ -34,40 +34,31 @@ import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.utils.Promise;
 
 /**
- * List of actions to be added to the tree after deserialization to produce a difference tree.
+ * List of actions to be added to the tree to produce a difference tree.
  * @since 1.1.0
  */
-public final class ActionList {
+public class ActionList {
     /**
      * Collection of nodes to be inserted.
      */
-    private final List<Insertion> insert;
+    private List<Insertion> insert;
 
     /**
      * Collection of nodes to be replaced (node before changes -> node after changes).
      */
-    private final Map<Node, Node> replace;
+    private Map<Node, Node> replace;
 
     /**
      * Set of nodes to be deleted.
      */
-    private final Set<Node> delete;
-
-    /**
-     * Constructor.
-     */
-    public ActionList() {
-        this.insert = new ArrayList<>(0);
-        this.replace = new HashMap<>();
-        this.delete = new HashSet<>();
-    }
+    private Set<Node> delete;
 
     /**
      * Checks if an action is in any list.
      * @return Checking result
      */
     public boolean hasActions() {
-        return !this.insert.isEmpty() || !this.replace.isEmpty() || !this.delete.isEmpty();
+        return this.insert != null || this.replace != null || this.delete != null;
     }
 
     /**
@@ -79,7 +70,7 @@ public final class ActionList {
     @SuppressWarnings("PMD.UselessQualifiedThis")
     public Promise<Node> insertNodeAfter(final Node node, final Node after) {
         return new Promise<>(
-            into -> ActionList.this.insert.add(new Insertion(node, into, after))
+            into -> ActionList.this.insertNodeAfter(node, into, after)
         );
     }
 
@@ -90,6 +81,9 @@ public final class ActionList {
      * @param after Node after which to insert
      */
     public void insertNodeAfter(final Node node, final Node into, final Node after) {
+        if (this.insert == null) {
+            this.insert = new ArrayList<>(1);
+        }
         this.insert.add(new Insertion(node, Objects.requireNonNull(into), after));
     }
 
@@ -99,6 +93,9 @@ public final class ActionList {
      * @param replacement Node to be replaced by
      */
     public void replaceNode(final Node node, final Node replacement) {
+        if (this.replace == null) {
+            this.replace = new HashMap<>();
+        }
         this.replace.put(node, replacement);
     }
 
@@ -107,17 +104,10 @@ public final class ActionList {
      * @param node The node
      */
     public void deleteNode(final Node node) {
+        if (this.delete == null) {
+            this.delete = new HashSet<>();
+        }
         this.delete.add(node);
-    }
-
-    /**
-     * Adds actions from another list to the current list.
-     * @param other Another action list
-     */
-    public void merge(final ActionList other) {
-        this.insert.addAll(other.insert);
-        this.replace.putAll(other.replace);
-        this.delete.addAll(other.delete);
     }
 
     /**
@@ -127,15 +117,43 @@ public final class ActionList {
      */
     public DiffTree convertTreeToDiffTree(final Tree tree) {
         final DiffTreeBuilder builder = new DiffTreeBuilder(tree.getRoot());
-        for (final Insertion insertion : this.insert) {
-            builder.insertNode(insertion);
+        if (this.insert != null) {
+            for (final Insertion insertion : this.insert) {
+                builder.insertNode(insertion);
+            }
         }
-        for (final Map.Entry<Node, Node> pair : this.replace.entrySet()) {
-            builder.replaceNode(pair.getKey(), pair.getValue());
+        if (this.replace != null) {
+            for (final Map.Entry<Node, Node> pair : this.replace.entrySet()) {
+                builder.replaceNode(pair.getKey(), pair.getValue());
+            }
         }
-        for (final Node node : this.delete) {
-            builder.deleteNode(node);
+        if (this.delete != null) {
+            for (final Node node : this.delete) {
+                builder.deleteNode(node);
+            }
         }
         return builder.getDiffTree();
+    }
+
+    /**
+     * Adds actions from another list to the current list.
+     * @param other Another action list
+     */
+    public void merge(final ActionList other) {
+        if (this.insert == null) {
+            this.insert = other.insert;
+        } else if (other.insert != null) {
+            this.insert.addAll(other.insert);
+        }
+        if (this.replace == null) {
+            this.replace = other.replace;
+        } else if (other.replace != null) {
+            this.replace.putAll(other.replace);
+        }
+        if (this.delete == null) {
+            this.delete = other.delete;
+        } else if (other.delete != null) {
+            this.delete.addAll(other.delete);
+        }
     }
 }

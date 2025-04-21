@@ -23,12 +23,15 @@
  */
 package org.cqfn.astranaut.core.utils;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.cqfn.astranaut.core.base.Char;
 import org.cqfn.astranaut.core.base.DefaultFragment;
 import org.cqfn.astranaut.core.base.DefaultPosition;
+import org.cqfn.astranaut.core.base.DummyNode;
+import org.cqfn.astranaut.core.base.EmptyFragment;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.parsing.FileSource;
@@ -63,7 +66,7 @@ class ParserTest {
         Assertions.assertEquals("x", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 4.13-4.13"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
         );
     }
 
@@ -114,7 +117,11 @@ class ParserTest {
         Assertions.assertEquals("printf(\"x\");", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 4.5-4.16"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
+        );
+        Assertions.assertEquals(
+            ParserTest.TEST_FILE.concat(", 4.5-4.16"),
+            fragment.toString()
         );
         fragment = new DefaultFragment(
             first.getFragment().getBegin(),
@@ -123,7 +130,7 @@ class ParserTest {
         Assertions.assertEquals("{\n    printf(\"x\");\n}", fragment.getCode());
         Assertions.assertEquals(
             ParserTest.TEST_FILE.concat(", 3.13-5.1"),
-            fragment.getPosition()
+            fragment.getPositionAsString()
         );
         fragment = new DefaultFragment(
             last.getFragment().getEnd(),
@@ -140,8 +147,20 @@ class ParserTest {
         Assertions.assertEquals(3, tree.getRoot().getChildCount());
         Assertions.assertEquals(
             "1.1-1.1",
-            tree.getRoot().getChild(0).getFragment().getPosition()
+            tree.getRoot().getChild(0).getFragment().getPositionAsString()
         );
+    }
+
+    @Test
+    void fragmentAsString() {
+        final FileSource source = new FileSource(ParserTest.TEST_FILE);
+        Iterator<Char> iterator = source.iterator();
+        final Fragment first = iterator.next().getFragment();
+        Assertions.assertEquals(first.toString(), ParserTest.TEST_FILE.concat(", 1.1"));
+        final StringSource other = new StringSource("qwe");
+        iterator = other.iterator();
+        final Fragment second = iterator.next().getFragment();
+        Assertions.assertEquals(second.toString(), "1.1");
     }
 
     @Test
@@ -166,5 +185,24 @@ class ParserTest {
             new DefaultPosition(source, 4, 4)
         );
         Assertions.assertEquals("\n\na\nb\nc\n", fragment.getCode());
+    }
+
+    @Test
+    void charFragmentComparison() {
+        final StringSource source = new StringSource("qwerty");
+        final Iterator<Char> iterator = source.iterator();
+        final Char alpha = iterator.next();
+        final Fragment first = alpha.getFragment();
+        Assertions.assertTrue(first.equals(first));
+        Assertions.assertFalse(first.equals(EmptyFragment.INSTANCE));
+        Assertions.assertFalse(first.equals(DummyNode.INSTANCE));
+        Assertions.assertNotEquals(0, first.hashCode());
+        final Fragment second = source.iterator().next().getFragment();
+        Assertions.assertEquals(first, second);
+        final Char beta = iterator.next();
+        final Fragment third = beta.getFragment();
+        final Fragment compose = Fragment.fromNodes(Arrays.asList(alpha, beta));
+        Assertions.assertNotEquals(first, compose);
+        Assertions.assertNotEquals(first, third);
     }
 }
