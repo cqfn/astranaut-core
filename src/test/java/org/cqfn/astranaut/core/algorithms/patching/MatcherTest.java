@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.algorithms.PatternBuilder;
+import org.cqfn.astranaut.core.algorithms.mapping.TopDownMapper;
+import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.DiffNode;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.Insertion;
@@ -176,5 +178,29 @@ class MatcherTest {
         matcher.match(pattern);
         final Set<Node> found = matcher.getFoundNodes();
         Assertions.assertEquals(0, found.size());
+    }
+
+    @Test
+    void mathEmptyNodeAndPatternWithReplacement() {
+        final Tree before = Tree.createDraft("X(A(B))");
+        final Tree after = Tree.createDraft("X(A(C,D))");
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
+        builder.build(after, TopDownMapper.INSTANCE);
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        final Matcher matcher = new Matcher(Tree.createDraft("X(A())"));
+        final ActionList list = matcher.match(pattern);
+        Assertions.assertFalse(list.hasActions());
+    }
+
+    @Test
+    void mathEmptyNodeAndPatternWithThreeInsertions() {
+        final Tree before = Tree.createDraft("X(Y())");
+        final Tree after = Tree.createDraft("X(Y(A,B,C))");
+        final DiffTreeBuilder builder = new DiffTreeBuilder(before);
+        builder.build(after, TopDownMapper.INSTANCE);
+        final Pattern pattern = new Pattern(new PatternNode(builder.getDiffTree().getRoot()));
+        final Matcher matcher = new Matcher(Tree.createDraft("X(Y())"));
+        final ActionList list = matcher.match(pattern);
+        Assertions.assertTrue(list.hasActions());
     }
 }
