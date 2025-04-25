@@ -107,7 +107,7 @@ class ConversionTest {
             ConversionTest.OPERATOR_PLUS,
             LittleTrees.createIntegerLiteral(4)
         );
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Collections.singletonList(AdditionConverter.INSTANCE),
             GreenFactory.INSTANCE
         );
@@ -127,7 +127,7 @@ class ConversionTest {
             ConversionTest.OPERATOR_MUL,
             LittleTrees.createIntegerLiteral(4)
         );
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Arrays.asList(MultiplicationConverter.INSTANCE, AdditionConverter.INSTANCE),
             GreenFactory.INSTANCE
         );
@@ -147,7 +147,7 @@ class ConversionTest {
             ConversionTest.OPERATOR_ASSIGN,
             LittleTrees.createIntegerLiteral(0)
         );
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Collections.singletonList(AssignmentConverter.INSTANCE),
             GreenFactory.INSTANCE
         );
@@ -174,7 +174,7 @@ class ConversionTest {
             LittleTrees.createVariable("e"),
             LittleTrees.createVariable("f")
         );
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Collections.singletonList(AssignmentConverter.INSTANCE),
             GreenFactory.INSTANCE
         );
@@ -195,7 +195,7 @@ class ConversionTest {
             ConversionTest.OPERATOR_PLUS,
             DraftNode.create("int<'0'>")
         );
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Arrays.asList(
                 IntegerConverter.INSTANCE,
                 AdditionConverter.INSTANCE,
@@ -210,15 +210,15 @@ class ConversionTest {
 
     @Test
     void badBuilder() {
-        final Transformer transformer = new Transformer(
+        final DefaultTransformer transformer = new DefaultTransformer(
             Collections.singletonList(AdditionConverter.INSTANCE),
             GreenFactory.INSTANCE
         );
-        Tree result = transformer.transform(new TestNode(TestBuilderCase.BAD_DATA));
+        Tree result = transformer.transform(new Tree(new TestNode(TestBuilderCase.BAD_DATA)));
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
-        result = transformer.transform(new TestNode(TestBuilderCase.BAD_CHILDREN));
+        result = transformer.transform(new Tree(new TestNode(TestBuilderCase.BAD_CHILDREN)));
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
-        result = transformer.transform(new TestNode(TestBuilderCase.INVALID_BUILDER));
+        result = transformer.transform(new Tree(new TestNode(TestBuilderCase.INVALID_BUILDER)));
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
     }
 

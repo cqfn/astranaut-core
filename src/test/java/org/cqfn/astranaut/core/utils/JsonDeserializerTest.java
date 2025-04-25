@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.cqfn.astranaut.core.base.Builder;
-import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Fragment;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Provider;
+import org.cqfn.astranaut.core.base.Transformer;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.base.Type;
 import org.cqfn.astranaut.core.example.LittleTrees;
@@ -74,6 +75,16 @@ class JsonDeserializerTest {
      */
     private static final String SIMPLE_TREE_NAME = "test_deserialization.json";
 
+    /**
+     * Provider for test purposes.
+     */
+    private static final Provider PROVIDER = new TestProvider() {
+        @Override
+        public Factory getFactory(final String language) {
+            return GreenFactory.INSTANCE;
+        }
+    };
+
     @Test
     void testDeserialization() {
         final String source = this.getFileContent(JsonDeserializerTest.SIMPLE_TREE_NAME);
@@ -82,7 +93,7 @@ class JsonDeserializerTest {
         types.put(JsonDeserializerTest.INT_LITERAL, IntegerLiteral.TYPE);
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> new DefaultFactory(types)
+            JsonDeserializerTest.PROVIDER
         );
         final Tree result = deserializer.convert();
         final Node root = result.getRoot();
@@ -103,7 +114,7 @@ class JsonDeserializerTest {
     void loadIntoDraftNode() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             JsonDeserializerTest.SMALL_TREE,
-            language -> DefaultFactory.EMPTY
+            JsonDeserializerTest.PROVIDER
         );
         final Tree tree = deserializer.convert();
         Assertions.assertNotNull(tree);
@@ -115,7 +126,7 @@ class JsonDeserializerTest {
         final String source = this.getFileContent("tree_containing_insert_action.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> GreenFactory.INSTANCE
+            JsonDeserializerTest.PROVIDER
         );
         final Tree actual = deserializer.convert();
         final Tree expected = LittleTrees.createTreeWithInsertAction();
@@ -127,7 +138,7 @@ class JsonDeserializerTest {
         final String source = this.getFileContent("tree_containing_insert_first_action.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> GreenFactory.INSTANCE
+            JsonDeserializerTest.PROVIDER
         );
         final Tree actual = deserializer.convert();
         final Tree expected = LittleTrees.createTreeWithInsertFirstAction();
@@ -139,7 +150,7 @@ class JsonDeserializerTest {
         final String source = this.getFileContent("tree_containing_delete_action.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> GreenFactory.INSTANCE
+            JsonDeserializerTest.PROVIDER
         );
         final Tree actual = deserializer.convert();
         final Tree expected = LittleTrees.createTreeWithDeleteAction();
@@ -151,7 +162,7 @@ class JsonDeserializerTest {
         final String source = this.getFileContent("pattern_with_hole.json");
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> GreenFactory.INSTANCE
+            JsonDeserializerTest.PROVIDER
         );
         final Tree actual = deserializer.convert();
         final Tree expected = LittleTrees.createPatternWithHole();
@@ -162,7 +173,7 @@ class JsonDeserializerTest {
     void deserializeInvalidJson() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             ".[]test",
-            language -> DefaultFactory.EMPTY
+            JsonDeserializerTest.PROVIDER
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(EmptyTree.INSTANCE, result);
@@ -172,7 +183,7 @@ class JsonDeserializerTest {
     void deserializeJsonWithWrongFormat() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             "null",
-            language -> DefaultFactory.EMPTY
+            JsonDeserializerTest.PROVIDER
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(EmptyTree.INSTANCE, result);
@@ -182,7 +193,12 @@ class JsonDeserializerTest {
     void deserializeWithNullFactory() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             JsonDeserializerTest.SMALL_TREE,
-            language -> null
+            new TestProvider() {
+                @Override
+                public Factory getFactory(final String language) {
+                    return null;
+                }
+            }
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(EmptyTree.INSTANCE, result);
@@ -192,15 +208,20 @@ class JsonDeserializerTest {
     void deserializeWithFactoryThatProducesNullBuilder() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             JsonDeserializerTest.SMALL_TREE,
-            language -> new Factory() {
+            new TestProvider() {
                 @Override
-                public Type getType(final String name) {
-                    return null;
-                }
+                public Factory getFactory(final String language) {
+                    return new Factory() {
+                        @Override
+                        public Type getType(final String name) {
+                            return null;
+                        }
 
-                @Override
-                public Builder createBuilder(final String name) {
-                    return null;
+                        @Override
+                        public Builder createBuilder(final String name) {
+                            return null;
+                        }
+                    };
                 }
             }
         );
@@ -212,15 +233,20 @@ class JsonDeserializerTest {
     void deserializeWithFactoryThatProducesInvalidBuilder() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             JsonDeserializerTest.SMALL_TREE,
-            language -> new Factory() {
+            new TestProvider() {
                 @Override
-                public Type getType(final String name) {
-                    return null;
-                }
+                public Factory getFactory(final String language) {
+                    return new Factory() {
+                        @Override
+                        public Type getType(final String name) {
+                            return null;
+                        }
 
-                @Override
-                public Builder createBuilder(final String name) {
-                    return new InvalidBuilder();
+                        @Override
+                        public Builder createBuilder(final String name) {
+                            return new InvalidBuilder();
+                        }
+                    };
                 }
             }
         );
@@ -233,15 +259,20 @@ class JsonDeserializerTest {
         final String source = this.getFileContent(JsonDeserializerTest.SIMPLE_TREE_NAME);
         final JsonDeserializer deserializer = new JsonDeserializer(
             source,
-            language -> new Factory() {
+            new TestProvider() {
                 @Override
-                public Type getType(final String name) {
-                    return null;
-                }
+                public Factory getFactory(final String language) {
+                    return new Factory() {
+                        @Override
+                        public Type getType(final String name) {
+                            return null;
+                        }
 
-                @Override
-                public Builder createBuilder(final String name) {
-                    return new BuilderDoesNotAcceptChildren(name);
+                        @Override
+                        public Builder createBuilder(final String name) {
+                            return new BuilderDoesNotAcceptChildren(name);
+                        }
+                    };
                 }
             }
         );
@@ -253,7 +284,7 @@ class JsonDeserializerTest {
     void deserializeInvalidHoleWithoutNumber() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             "{ \"root\": { \"type\": \"Hole\", \"prototype\": { \"type\": \"Node\" } } }",
-            language -> DefaultFactory.EMPTY
+            JsonDeserializerTest.PROVIDER
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
@@ -263,7 +294,7 @@ class JsonDeserializerTest {
     void deserializeInvalidHoleWithoutPrototype() {
         final JsonDeserializer deserializer = new JsonDeserializer(
             "{ \"root\": { \"type\": \"Hole\", \"number\": 19 } } }",
-            language -> DefaultFactory.EMPTY
+            JsonDeserializerTest.PROVIDER
         );
         final Tree result = deserializer.convert();
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
@@ -353,6 +384,17 @@ class JsonDeserializerTest {
         @Override
         public Node createNode() {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Provider for test purposes.
+     * @since 2.0.0
+     */
+    private abstract static class TestProvider implements Provider {
+        @Override
+        public Transformer getTransformer(final String language) {
+            return node -> node;
         }
     }
 }

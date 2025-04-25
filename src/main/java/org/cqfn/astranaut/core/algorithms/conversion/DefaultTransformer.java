@@ -30,13 +30,13 @@ import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
-import org.cqfn.astranaut.core.base.Tree;
+import org.cqfn.astranaut.core.base.Transformer;
 
 /**
  * Transforms a tree to another tree using a list of converters.
  * @since 2.0.0
  */
-public final class Transformer {
+public class DefaultTransformer implements Transformer {
     /**
      * List of converters that are used in the conversion.
      */
@@ -52,27 +52,9 @@ public final class Transformer {
      * @param converters List of converters that are used in the conversion
      * @param factory Factory that is used to create the nodes of the resulting trees
      */
-    public Transformer(final List<Converter> converters, final Factory factory) {
+    public DefaultTransformer(final List<Converter> converters, final Factory factory) {
         this.converters = converters;
         this.factory = factory;
-    }
-
-    /**
-     * Transforms a syntax tree into another tree.
-     * @param tree The tree to be transformed
-     * @return A new tree, the result of a transformation
-     */
-    public Tree transform(final Tree tree) {
-        return this.transform(tree.getRoot());
-    }
-
-    /**
-     * Transforms a syntax tree into another tree.
-     * @param root The root node of the tree to be transformed
-     * @return A new tree, the result of a transformation
-     */
-    public Tree transform(final Node root) {
-        return new Tree(this.transformNode(root));
     }
 
     /**
@@ -83,11 +65,11 @@ public final class Transformer {
      * @param original Original node
      * @return A new node, i.e., the result of the transformation
      */
-    private Node transformNode(final Node original) {
+    public Node transform(final Node original) {
         final List<Node> list = new ArrayList<>(original.getChildrenList());
         final int count = list.size();
         for (int index = 0; index < count; index = index + 1) {
-            list.set(index, this.transformNode(list.get(index)));
+            list.set(index, this.transform(list.get(index)));
         }
         boolean changed = false;
         boolean flag;
@@ -104,7 +86,7 @@ public final class Transformer {
         } while (flag);
         final Node result;
         if (changed) {
-            result = Transformer.buildNode(original, list);
+            result = DefaultTransformer.buildNode(original, list);
         } else {
             result = original;
         }
@@ -149,7 +131,7 @@ public final class Transformer {
             final Optional<ConversionResult> conversion =
                 converter.convert(nodes, index, this.factory);
             if (conversion.isPresent()) {
-                Transformer.replaceNodes(nodes, index, conversion.get());
+                DefaultTransformer.replaceNodes(nodes, index, conversion.get());
                 result = index;
                 break;
             }
@@ -178,7 +160,7 @@ public final class Transformer {
             final Optional<ConversionResult> conversion =
                 converter.convert(nodes, index, this.factory);
             if (conversion.isPresent()) {
-                Transformer.replaceNodes(nodes, index, conversion.get());
+                DefaultTransformer.replaceNodes(nodes, index, conversion.get());
                 result = index;
                 break;
             }

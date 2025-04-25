@@ -30,8 +30,8 @@ import org.cqfn.astranaut.core.base.ActionList;
 import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.EmptyTree;
 import org.cqfn.astranaut.core.base.Factory;
-import org.cqfn.astranaut.core.base.FactoryProvider;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Provider;
 import org.cqfn.astranaut.core.base.Tree;
 
 /**
@@ -54,7 +54,7 @@ public class TreeDescriptor {
      * @param provider The node factory provider
      * @return A root node
      */
-    public Tree convert(final FactoryProvider provider) {
+    public Tree convert(final Provider provider) {
         Tree result = EmptyTree.INSTANCE;
         final Factory factory = provider.getFactory(this.language);
         do {

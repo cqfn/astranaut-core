@@ -24,16 +24,30 @@
 package org.cqfn.astranaut.core.base;
 
 /**
- * Provider interface for obtaining {@link Factory} instances based on specific criteria.
+ * Provider interface for obtaining {@link Factory} and {@link Transformer} instances
+ *  based on the target programming language.
+ *  Language names are case-insensitive (e.g., "Java", "java", "JAVA" are treated the same).
+ *  If no specific implementation is found, default fallbacks are returned.
  * @since 2.0.0
  */
-public interface FactoryProvider {
+public interface Provider {
     /**
      * Retrieves a {@link Factory} instance associated with the specified language.
+     *  Language names are case-insensitive. If no matching factory is found,
+     *  a default factory is returned that produces only {@link DraftNode}-based structures.
      * @param language The name of the language for which a {@link Factory} is requested,
-     *  e.g., "Java", "Python", "JavaScript". It should be a non-null and non-empty string.
-     * @return The {@link Factory} instance associated with the specified language,
-     *  or {@code null} if no matching factory is found
+     *  must not be {@code null} or empty
+     * @return A {@link Factory} instance, never {@code null}
      */
     Factory getFactory(String language);
+
+    /**
+     * Retrieves a {@link Transformer} that transforms an abstract syntax tree
+     *  into a tree suitable for the specified target language.
+     *  Language names are case-insensitive. If no matching transformer is found,
+     *  a no-op transformer is returned that returns the input node as-is.
+     * @param language The name of the target language, must not be {@code null} or empty
+     * @return A {@link Transformer} instance, never {@code null}
+     */
+    Transformer getTransformer(String language);
 }
