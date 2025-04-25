@@ -24,63 +24,40 @@
 package org.cqfn.astranaut.core.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import org.cqfn.astranaut.core.algorithms.conversion.Converter;
+import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * Helper class for building lists.
- * @param <T> Item type
- * @since 1.0
+ * Test for {@link ObjectsLoader} class.
+ * @since 2.0.0
  */
-public final class ListUtils<T> {
-    /**
-     * List being built.
-     */
-    private final List<T> list;
-
-    /**
-     * Constructor.
-     */
-    public ListUtils() {
-        this.list = new ArrayList<>(0);
+class ObjectsLoaderTest {
+    @Test
+    void loadSingleton() {
+        final ObjectsLoader loader = new ObjectsLoader(
+            "org.cqfn.astranaut.core.example.converters.AdditionConverter"
+        );
+        final Object obj = loader.loadSingleton(-1);
+        Assertions.assertTrue(obj instanceof Converter);
     }
 
-    /**
-     * Adds non-null items to the list. Null items are skipped.
-     * @param items Items
-     * @return Itself
-     */
-    @SafeVarargs
-    public final ListUtils<T> add(final T... items) {
-        for (final T item : items) {
-            if (item != null) {
-                this.list.add(item);
+    @Test
+    void loadSingletonByIndex() {
+        final ObjectsLoader loader = new ObjectsLoader(
+            "org.cqfn.astranaut.core.example.converters.OperatorMatcher"
+        );
+        final List<Matcher> list = new ArrayList<>(3);
+        for (int index = 0; index < 4; index = index + 1) {
+            final Object obj = loader.loadSingleton(index);
+            if (obj == null) {
+                break;
             }
+            Assertions.assertTrue(obj instanceof Matcher);
+            list.add((Matcher) obj);
         }
-        return this;
-    }
-
-    /**
-     * Merges another list with the result. Null items are skipped.
-     * @param other Another list
-     * @return Itself
-     */
-    public ListUtils<T> add(final List<T> other) {
-        if (other != null) {
-            for (final T item : other) {
-                if (item != null) {
-                    this.list.add(item);
-                }
-            }
-        }
-        return this;
-    }
-
-    /**
-     * Builds an unmodifiable list.
-     * @return A list
-     */
-    public List<T> make() {
-        return Collections.unmodifiableList(this.list);
+        Assertions.assertEquals(3, list.size());
     }
 }

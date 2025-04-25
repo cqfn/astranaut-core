@@ -33,8 +33,11 @@ import org.cqfn.astranaut.core.algorithms.DiffTreeBuilder;
 import org.cqfn.astranaut.core.base.DefaultFactory;
 import org.cqfn.astranaut.core.base.DiffTree;
 import org.cqfn.astranaut.core.base.DraftNode;
+import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Insertion;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.Provider;
+import org.cqfn.astranaut.core.base.Transformer;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.FilesReader;
 import org.cqfn.astranaut.core.utils.JsonDeserializer;
@@ -509,7 +512,17 @@ class TopDownMapperTest {
     private Tree readSyntaxTreeFormFile(final String name) {
         final JsonDeserializer deserializer = new JsonDeserializer(
             this.getFileContent(name),
-            language -> DefaultFactory.EMPTY
+            new Provider() {
+                @Override
+                public Factory getFactory(final String language) {
+                    return DefaultFactory.EMPTY;
+                }
+
+                @Override
+                public Transformer getTransformer(final String language) {
+                    return node -> node;
+                }
+            }
         );
         final Tree tree = deserializer.convert();
         Assertions.assertEquals("CompilationUnit", tree.getRoot().getTypeName());

@@ -21,42 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.utils;
+package org.cqfn.astranaut.core.example.converters;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
+import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
+import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Test for {@link ListUtils} class.
- * @since 1.0.2
+ * Matcher that checks for a match with a plus operator.
+ * @since 2.0.0
  */
-class ListUtilsTest {
-    @Test
-    void testAddingItems() {
-        final ListUtils<Integer> list = new ListUtils<>();
-        list.add(1, null, 2, null);
-        final List<Integer> result = list.make();
-        final List<Integer> expected = Arrays.asList(1, 2);
-        Assertions.assertEquals(expected, result);
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->  result.add(3));
+public final class OperatorMatcher2 implements Matcher {
+    /**
+     * The instance.
+     */
+    public static final Matcher INSTANCE = new OperatorMatcher2();
+
+    /**
+     * Expected type name.
+     */
+    private static final String TYPE_NAME = "Operator";
+
+    /**
+     * Expected data.
+     */
+    private static final String DATA = "+";
+
+    /**
+     * Private constructor.
+     */
+    private OperatorMatcher2() {
     }
 
-    @Test
-    void testMergingLists() {
-        final ListUtils<Integer> list = new ListUtils<>();
-        list.add(1, 2);
-        final List<Integer> second = Collections.unmodifiableList(
-            Arrays.asList(3, null, 4)
-        );
-        list.add((List<Integer>) null);
-        list.add(second);
-        final List<Integer> result = list.make();
-        final List<Integer> expected = Arrays.asList(
-            1, 2, 3, 4
-        );
-        Assertions.assertEquals(expected, result);
+    @Override
+    public boolean match(final Node node, final Extracted extracted) {
+        return node.belongsToGroup(OperatorMatcher2.TYPE_NAME)
+            && node.getData().equals(OperatorMatcher2.DATA);
     }
 }

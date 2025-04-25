@@ -21,41 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.converters;
-
-import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
-import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
-import org.cqfn.astranaut.core.base.Node;
+package org.cqfn.astranaut.core.base;
 
 /**
- * Matcher that checks for a match with a plus operator.
+ * Transforms a tree to another tree using some strategy.
  * @since 2.0.0
  */
-public final class OperatorPlusMatcher implements Matcher {
+public interface Transformer {
     /**
-     * The instance.
+     * Transforms the given syntax tree into another tree.
+     *  The input tree remains unchanged. Implementations must ensure that the returned
+     *  {@link Tree} is either a modified copy or the original if no transformation was needed.
+     * @param tree The tree to be transformed, must not be {@code null}
+     * @return A new {@link Tree} representing the result of the transformation,
+     *  never {@code null}
      */
-    public static final Matcher INSTANCE = new OperatorPlusMatcher();
-
-    /**
-     * Expected type name.
-     */
-    private static final String TYPE_NAME = "Operator";
-
-    /**
-     * Expected data.
-     */
-    private static final String DATA = "+";
-
-    /**
-     * Private constructor.
-     */
-    private OperatorPlusMatcher() {
+    default Tree transform(Tree tree) {
+        return new Tree(this.transform(tree.getRoot()));
     }
 
-    @Override
-    public boolean match(final Node node, final Extracted extracted) {
-        return node.belongsToGroup(OperatorPlusMatcher.TYPE_NAME)
-            && node.getData().equals(OperatorPlusMatcher.DATA);
-    }
+    /**
+     * Transforms a single node, potentially recursively modifying its children.
+     *  This method defines the core logic of the transformation. It is typically
+     *  called on the root node of the tree and is responsible for transforming
+     *  the entire subtree rooted at that node.
+     * @param node The root node of the subtree to transform, must not be {@code null}
+     * @return The transformed {@link Node}, never {@code null}
+     */
+    Node transform(Node node);
 }

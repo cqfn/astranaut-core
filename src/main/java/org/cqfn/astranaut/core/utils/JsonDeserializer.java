@@ -26,7 +26,7 @@ package org.cqfn.astranaut.core.utils;
 import com.kniazkov.json.Json;
 import com.kniazkov.json.JsonException;
 import org.cqfn.astranaut.core.base.EmptyTree;
-import org.cqfn.astranaut.core.base.FactoryProvider;
+import org.cqfn.astranaut.core.base.Provider;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.utils.deserializer.TreeDescriptor;
 
@@ -43,14 +43,14 @@ public final class JsonDeserializer {
     /**
      * The factory provider.
      */
-    private final FactoryProvider provider;
+    private final Provider provider;
 
     /**
      * Constructor.
      * @param source String that contains JSON object
      * @param provider The factory provider
      */
-    public JsonDeserializer(final String source, final FactoryProvider provider) {
+    public JsonDeserializer(final String source, final Provider provider) {
         this.source = source;
         this.provider = provider;
     }

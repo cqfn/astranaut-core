@@ -49,6 +49,11 @@ public class DotGenerator {
     private static final String PROP_BGCOLOR = "bgcolor";
 
     /**
+     * Maximum length of the displayed data.
+     */
+    private static final int MAX_DATA_LENGTH = 64;
+
+    /**
      * Stores the generated DOT text.
      */
     @SuppressWarnings("PMD.AvoidStringBufferField")
@@ -137,7 +142,7 @@ public class DotGenerator {
         this.builder.append("label=<").append(type);
         if (!data.isEmpty()) {
             this.builder.append("<br/><font color=\"blue\">");
-            this.builder.append(encodeHtml(data));
+            this.builder.append(DotGenerator.encodeHtml(DotGenerator.truncate(data)));
             this.builder.append("</font>");
         }
         this.builder.append('>');
@@ -178,6 +183,32 @@ public class DotGenerator {
             .append(label)
             .append("\"]")
             .append(";\n");
+    }
+
+    /**
+     * Truncates the given text to a maximum of {@code MAX_DATA_LENGTH} characters.
+     *  If the text exceeds {@code MAX_DATA_LENGTH}  characters, it is cut at the last space
+     *  character within the first {@code MAX_DATA_LENGTH}  characters. If no space is found,
+     *  it is cut strictly at the {@code MAX_DATA_LENGTH}  character. An ellipsis ("...")
+     *  is appended to indicate truncation.
+     * @param text The input string to truncate, must not be {@code null}
+     * @return The truncated string with an ellipsis if needed,
+     *  or the original string if it's {@code MAX_DATA_LENGTH}  characters or less
+     */
+    private static String truncate(final String text) {
+        String result = text;
+        do {
+            if (text.length() <= DotGenerator.MAX_DATA_LENGTH) {
+                break;
+            }
+            final int space = text.lastIndexOf(' ', DotGenerator.MAX_DATA_LENGTH);
+            int cut = space;
+            if (space < 0) {
+                cut = DotGenerator.MAX_DATA_LENGTH;
+            }
+            result = text.substring(0, cut).concat("...");
+        } while (false);
+        return result;
     }
 
     /**
