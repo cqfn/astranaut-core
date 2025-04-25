@@ -64,7 +64,7 @@ public final class AdditionConverter implements Converter {
             final Extracted extracted = new Extracted();
             final boolean matched =
                 ExpressionOneMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
-                && OperatorPlusMatcher.INSTANCE.match(nodes.get(1 + index), extracted)
+                && OperatorMatcher2.INSTANCE.match(nodes.get(1 + index), extracted)
                 && ExpressionTwoMatcher.INSTANCE.match(nodes.get(2 + index), extracted);
             if (!matched) {
                 break;

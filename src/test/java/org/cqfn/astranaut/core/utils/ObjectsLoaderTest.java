@@ -21,41 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.cqfn.astranaut.core.example.converters;
+package org.cqfn.astranaut.core.utils;
 
-import org.cqfn.astranaut.core.algorithms.conversion.Extracted;
+import java.util.ArrayList;
+import java.util.List;
+import org.cqfn.astranaut.core.algorithms.conversion.Converter;
 import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
-import org.cqfn.astranaut.core.base.Node;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * Matcher that checks for a match with a plus operator.
+ * Test for {@link ObjectsLoader} class.
  * @since 2.0.0
  */
-public final class OperatorPlusMatcher implements Matcher {
-    /**
-     * The instance.
-     */
-    public static final Matcher INSTANCE = new OperatorPlusMatcher();
-
-    /**
-     * Expected type name.
-     */
-    private static final String TYPE_NAME = "Operator";
-
-    /**
-     * Expected data.
-     */
-    private static final String DATA = "+";
-
-    /**
-     * Private constructor.
-     */
-    private OperatorPlusMatcher() {
+class ObjectsLoaderTest {
+    @Test
+    void loadSingleton() {
+        final ObjectsLoader loader = new ObjectsLoader(
+            "org.cqfn.astranaut.core.example.converters.AdditionConverter"
+        );
+        final Object obj = loader.loadSingleton(-1);
+        Assertions.assertTrue(obj instanceof Converter);
     }
 
-    @Override
-    public boolean match(final Node node, final Extracted extracted) {
-        return node.belongsToGroup(OperatorPlusMatcher.TYPE_NAME)
-            && node.getData().equals(OperatorPlusMatcher.DATA);
+    @Test
+    void loadSingletonByIndex() {
+        final ObjectsLoader loader = new ObjectsLoader(
+            "org.cqfn.astranaut.core.example.converters.OperatorMatcher"
+        );
+        final List<Matcher> list = new ArrayList<>(3);
+        for (int index = 0; index < 4; index = index + 1) {
+            final Object obj = loader.loadSingleton(index);
+            if (obj == null) {
+                break;
+            }
+            Assertions.assertTrue(obj instanceof Matcher);
+            list.add((Matcher) obj);
+        }
+        Assertions.assertEquals(3, list.size());
     }
 }

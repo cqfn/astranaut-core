@@ -28,14 +28,14 @@ import org.cqfn.astranaut.core.algorithms.conversion.Matcher;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Matcher that checks for a match with an assignment operator.
+ * Matcher that checks for a match with a multiply operator.
  * @since 2.0.0
  */
-public final class OperatorAssignMatcher implements Matcher {
+public final class OperatorMatcher1 implements Matcher {
     /**
      * The instance.
      */
-    public static final Matcher INSTANCE = new OperatorAssignMatcher();
+    public static final Matcher INSTANCE = new OperatorMatcher1();
 
     /**
      * Expected type name.
@@ -45,17 +45,17 @@ public final class OperatorAssignMatcher implements Matcher {
     /**
      * Expected data.
      */
-    private static final String DATA = "=";
+    private static final String DATA = "*";
 
     /**
      * Private constructor.
      */
-    private OperatorAssignMatcher() {
+    private OperatorMatcher1() {
     }
 
     @Override
     public boolean match(final Node node, final Extracted extracted) {
-        return node.belongsToGroup(OperatorAssignMatcher.TYPE_NAME)
-            && node.getData().equals(OperatorAssignMatcher.DATA);
+        return node.belongsToGroup(OperatorMatcher1.TYPE_NAME)
+            && node.getData().equals(OperatorMatcher1.DATA);
     }
 }

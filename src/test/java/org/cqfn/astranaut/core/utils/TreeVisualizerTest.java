@@ -44,10 +44,6 @@ import org.junit.jupiter.api.io.TempDir;
  * @since 1.0.2
  */
 class TreeVisualizerTest {
-    /**
-     * Test for a single node visualization.
-     * @param temp A temporary directory
-     */
     @Test
     void testSingleNodeVisualization(@TempDir final Path temp) {
         final Tree tree = Tree.createDraft("TestNode<\"value\">");
@@ -60,10 +56,6 @@ class TreeVisualizerTest {
         );
     }
 
-    /**
-     * Test for a null node visualization.
-     * @param temp A temporary directory
-     */
     @Test
     void testNullNodeVisualization(@TempDir final Path temp) {
         final Tree tree = EmptyTree.INSTANCE;
@@ -76,10 +68,6 @@ class TreeVisualizerTest {
         );
     }
 
-    /**
-     * Test for a node visualization with data encoding.
-     * @param temp A temporary directory
-     */
     @Test
     void testNodeVisualizationWithEncoding(@TempDir final Path temp) {
         final DraftNode.Constructor ctor = new DraftNode.Constructor();
@@ -95,10 +83,6 @@ class TreeVisualizerTest {
         );
     }
 
-    /**
-     * Test for a tree visualization.
-     * @param temp A temporary directory
-     */
     @Test
     void testTreeVisualization(@TempDir final Path temp) {
         final DraftNode.Constructor addition = new DraftNode.Constructor();
@@ -120,10 +104,6 @@ class TreeVisualizerTest {
         );
     }
 
-    /**
-     * Test for a wrong extension of a file to be generated.
-     * @param temp A temporary directory
-     */
     @Test
     void testWrongExtension(@TempDir final Path temp) {
         final Tree tree = Tree.createDraft("Exception");
@@ -149,10 +129,6 @@ class TreeVisualizerTest {
         Assertions.assertTrue(oops);
     }
 
-    /**
-     * Test for a single node visualization.
-     * @param temp A temporary directory
-     */
     @Test
     void testColoredNodeVisualization(@TempDir final Path temp) {
         final Tree tree = new Tree(new ColoredNode());
@@ -167,6 +143,48 @@ class TreeVisualizerTest {
         final String content = reader.readAsStringNoExcept();
         Assertions.assertTrue(content.contains("fill=\"yellow\""));
         Assertions.assertTrue(content.contains("stroke=\"red\""));
+    }
+
+    @Test
+    void testNodeWithLongDataVisualization(@TempDir final Path temp) {
+        final Tree tree = Tree.createDraft(
+            "XXX<'q123456789 123456789 123456789 123456789 123456789 123456789 123456789'>"
+        );
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
+        final Path img = temp.resolve("node.svg");
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
+        final FilesReader reader = new FilesReader(img.toString());
+        final String content = reader.readAsStringNoExcept();
+        Assertions.assertTrue(
+            content.contains(
+                "q123456789 123456789 123456789 123456789 123456789 123456789..."
+            )
+        );
+    }
+
+    @Test
+    void testNodeWithContinuousDataVisualization(@TempDir final Path temp) {
+        final Tree tree = Tree.createDraft(
+            "XXX<'q123456789012345678901234567890123456789012345678901234567890123456789'>"
+        );
+        final TreeVisualizer visualizer = new TreeVisualizer(tree);
+        final Path img = temp.resolve("node.svg");
+        Assertions.assertDoesNotThrow(
+            () -> {
+                visualizer.visualize(new File(img.toString()));
+            }
+        );
+        final FilesReader reader = new FilesReader(img.toString());
+        final String content = reader.readAsStringNoExcept();
+        Assertions.assertTrue(
+            content.contains(
+                "q123456789012345678901234567890123456789012345678901234567890123..."
+            )
+        );
     }
 
     /**

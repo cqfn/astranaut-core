@@ -51,7 +51,7 @@ public class DotGenerator {
     /**
      * Maximum length of the displayed data.
      */
-    private static final int MAX_DATA_LENGTH = 100;
+    private static final int MAX_DATA_LENGTH = 64;
 
     /**
      * Stores the generated DOT text.
@@ -186,13 +186,14 @@ public class DotGenerator {
     }
 
     /**
-     * Truncates the given text to a maximum of 100 characters.
-     *  If the text exceeds 100 characters, it is cut at the last space character
-     *  within the first 100 characters. If no space is found, it is cut strictly at the 100th
-     *  character. An ellipsis ("...") is appended to indicate truncation.
+     * Truncates the given text to a maximum of {@code MAX_DATA_LENGTH} characters.
+     *  If the text exceeds {@code MAX_DATA_LENGTH}  characters, it is cut at the last space
+     *  character within the first {@code MAX_DATA_LENGTH}  characters. If no space is found,
+     *  it is cut strictly at the {@code MAX_DATA_LENGTH}  character. An ellipsis ("...")
+     *  is appended to indicate truncation.
      * @param text The input string to truncate, must not be {@code null}
      * @return The truncated string with an ellipsis if needed,
-     *  or the original string if it's 100 characters or less
+     *  or the original string if it's {@code MAX_DATA_LENGTH}  characters or less
      */
     private static String truncate(final String text) {
         String result = text;
