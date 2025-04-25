@@ -51,8 +51,8 @@ class ListUtilsTest {
         final List<Integer> second = Collections.unmodifiableList(
             Arrays.asList(3, null, 4)
         );
-        list.merge(null);
-        list.merge(second);
+        list.add((List<Integer>) null);
+        list.add(second);
         final List<Integer> result = list.make();
         final List<Integer> expected = Arrays.asList(
             1, 2, 3, 4

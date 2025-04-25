@@ -65,7 +65,7 @@ public final class ListUtils<T> {
      * @param other Another list
      * @return Itself
      */
-    public ListUtils<T> merge(final List<T> other) {
+    public ListUtils<T> add(final List<T> other) {
         if (other != null) {
             for (final T item : other) {
                 if (item != null) {
