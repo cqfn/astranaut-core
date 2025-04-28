@@ -33,24 +33,24 @@ import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * A converter that converts a sequence of nodes into an "Addition" node.
+ * A converter that converts a sequence of nodes into a "SimpleAssignment" node.
  * @since 2.0.0
  */
-public final class AdditionConverter implements Converter {
+public final class Converter1 implements Converter {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new AdditionConverter();
+    public static final Converter INSTANCE = new Converter1();
 
     /**
      * The name of the type of node to be generated.
      */
-    private static final String NODE_NAME = "Addition";
+    private static final String NODE_NAME = "SimpleAssignment";
 
     /**
      * Private constructor.
      */
-    private AdditionConverter() {
+    private Converter1() {
     }
 
     @Override
@@ -63,13 +63,13 @@ public final class AdditionConverter implements Converter {
             }
             final Extracted extracted = new Extracted();
             final boolean matched =
-                ExpressionOneMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
-                && OperatorMatcher2.INSTANCE.match(nodes.get(1 + index), extracted)
+                AssignableExpressionMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
+                && OperatorMatcher0.INSTANCE.match(nodes.get(1 + index), extracted)
                 && ExpressionTwoMatcher.INSTANCE.match(nodes.get(2 + index), extracted);
             if (!matched) {
                 break;
             }
-            final Builder builder = factory.createBuilder(AdditionConverter.NODE_NAME);
+            final Builder builder = factory.createBuilder(Converter1.NODE_NAME);
             builder.setChildrenList(extracted.getNodes(1, 2));
             result = Optional.of(new ConversionResult(builder.createNode(), 3));
         } while (false);
@@ -79,5 +79,10 @@ public final class AdditionConverter implements Converter {
     @Override
     public int getMinConsumed() {
         return 3;
+    }
+
+    @Override
+    public boolean isRightToLeft() {
+        return true;
     }
 }

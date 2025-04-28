@@ -38,7 +38,7 @@ class ObjectsLoaderTest {
     @Test
     void loadSingleton() {
         final ObjectsLoader loader = new ObjectsLoader(
-            "org.cqfn.astranaut.core.example.converters.AdditionConverter"
+            "org.cqfn.astranaut.core.example.converters.Converter0"
         );
         final Object obj = loader.loadSingleton(-1);
         Assertions.assertTrue(obj instanceof Converter);

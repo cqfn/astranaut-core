@@ -33,24 +33,24 @@ import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * A converter that converts a sequence of nodes into a "SimpleAssignment" node.
+ * Converter that converts a node to an 'IntegerLiteral' node.
  * @since 2.0.0
  */
-public final class AssignmentConverter implements Converter {
+public final class Converter2 implements Converter {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new AssignmentConverter();
+    public static final Converter INSTANCE = new Converter2();
 
     /**
      * The name of the type of node to be generated.
      */
-    private static final String NODE_NAME = "SimpleAssignment";
+    private static final String NODE_NAME = "IntegerLiteral";
 
     /**
      * Private constructor.
      */
-    private AssignmentConverter() {
+    private Converter2() {
     }
 
     @Override
@@ -58,31 +58,24 @@ public final class AssignmentConverter implements Converter {
         final Factory factory) {
         Optional<ConversionResult> result = Optional.empty();
         do {
-            if (index + 3 > nodes.size()) {
+            if (index + 1 > nodes.size()) {
                 break;
             }
             final Extracted extracted = new Extracted();
             final boolean matched =
-                AssignableExpressionMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
-                && OperatorMatcher0.INSTANCE.match(nodes.get(1 + index), extracted)
-                && ExpressionTwoMatcher.INSTANCE.match(nodes.get(2 + index), extracted);
+                IntegerMatcher.INSTANCE.match(nodes.get(index), extracted);
             if (!matched) {
                 break;
             }
-            final Builder builder = factory.createBuilder(AssignmentConverter.NODE_NAME);
-            builder.setChildrenList(extracted.getNodes(1, 2));
-            result = Optional.of(new ConversionResult(builder.createNode(), 3));
+            final Builder builder = factory.createBuilder(Converter2.NODE_NAME);
+            builder.setData(extracted.getData(1));
+            result = Optional.of(new ConversionResult(builder.createNode(), 1));
         } while (false);
         return result;
     }
 
     @Override
     public int getMinConsumed() {
-        return 3;
-    }
-
-    @Override
-    public boolean isRightToLeft() {
-        return true;
+        return 1;
     }
 }
