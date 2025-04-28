@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.utils.ObjectsLoader;
 
 /**
  * Interface for converters that check one rule described in DSL
@@ -63,5 +64,25 @@ public interface Converter {
      */
     default boolean isRightToLeft() {
         return false;
+    }
+
+    /**
+     * Collects converter objects from the specified package.
+     * @param pkg Package name
+     * @param list Resulting list of converters
+     */
+    @SuppressWarnings("PMD.ProhibitPublicStaticMethods")
+    static void collectConverters(final String pkg, final List<Converter> list) {
+        final String prefix = String.format("%s.Converter", pkg);
+        final ObjectsLoader loader = new ObjectsLoader(prefix);
+        int index = 0;
+        while (true) {
+            final Object object = loader.loadSingleton(index);
+            if (!(object instanceof Converter)) {
+                break;
+            }
+            list.add((Converter) object);
+            index = index + 1;
+        }
     }
 }

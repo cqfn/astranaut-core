@@ -25,6 +25,8 @@ package org.cqfn.astranaut.core.algorithms.conversion;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DraftNode;
@@ -35,10 +37,10 @@ import org.cqfn.astranaut.core.base.TestBuilder;
 import org.cqfn.astranaut.core.base.TestBuilderCase;
 import org.cqfn.astranaut.core.base.Tree;
 import org.cqfn.astranaut.core.example.LittleTrees;
-import org.cqfn.astranaut.core.example.converters.AdditionConverter;
-import org.cqfn.astranaut.core.example.converters.AssignmentConverter;
-import org.cqfn.astranaut.core.example.converters.IntegerConverter;
-import org.cqfn.astranaut.core.example.converters.MultiplicationConverter;
+import org.cqfn.astranaut.core.example.converters.Converter0;
+import org.cqfn.astranaut.core.example.converters.Converter1;
+import org.cqfn.astranaut.core.example.converters.Converter2;
+import org.cqfn.astranaut.core.example.converters.Converter3;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -69,6 +71,13 @@ class ConversionTest {
     private static final Node OPERATOR_ASSIGN = DraftNode.create("Operator<'='>");
 
     @Test
+    void collectingConverters() {
+        final List<Converter> list = new LinkedList<>();
+        Converter.collectConverters("org.cqfn.astranaut.core.example.converters", list);
+        Assertions.assertEquals(4, list.size());
+    }
+
+    @Test
     void extractingChildren() {
         final Node root = DraftNode.create(
             ConversionTest.ROOT_NODE_NAME,
@@ -77,7 +86,7 @@ class ConversionTest {
             ConversionTest.OPERATOR_PLUS,
             LittleTrees.createIntegerLiteral(3)
         );
-        final Converter converter = AdditionConverter.INSTANCE;
+        final Converter converter = Converter0.INSTANCE;
         final Optional<ConversionResult> result =
             converter.convert(root.getChildrenList(), 0, GreenFactory.INSTANCE);
         Assertions.assertTrue(result.isPresent());
@@ -89,7 +98,7 @@ class ConversionTest {
     void extractingData() {
         final Node before = DraftNode.create("int<'7'>");
         final Node root = DraftNode.create(ConversionTest.ROOT_NODE_NAME, "", before);
-        final Converter converter = IntegerConverter.INSTANCE;
+        final Converter converter = Converter2.INSTANCE;
         final Optional<ConversionResult> result =
             converter.convert(root.getChildrenList(), 0, GreenFactory.INSTANCE);
         Assertions.assertTrue(result.isPresent());
@@ -108,7 +117,7 @@ class ConversionTest {
             LittleTrees.createIntegerLiteral(4)
         );
         final DefaultTransformer transformer = new DefaultTransformer(
-            Collections.singletonList(AdditionConverter.INSTANCE),
+            Collections.singletonList(Converter0.INSTANCE),
             GreenFactory.INSTANCE
         );
         final Tree result = transformer.transform(new Tree(root));
@@ -128,7 +137,7 @@ class ConversionTest {
             LittleTrees.createIntegerLiteral(4)
         );
         final DefaultTransformer transformer = new DefaultTransformer(
-            Arrays.asList(MultiplicationConverter.INSTANCE, AdditionConverter.INSTANCE),
+            Arrays.asList(Converter3.INSTANCE, Converter0.INSTANCE),
             GreenFactory.INSTANCE
         );
         final Tree result = transformer.transform(new Tree(root));
@@ -148,7 +157,7 @@ class ConversionTest {
             LittleTrees.createIntegerLiteral(0)
         );
         final DefaultTransformer transformer = new DefaultTransformer(
-            Collections.singletonList(AssignmentConverter.INSTANCE),
+            Collections.singletonList(Converter1.INSTANCE),
             GreenFactory.INSTANCE
         );
         final Tree result = transformer.transform(new Tree(root));
@@ -175,7 +184,7 @@ class ConversionTest {
             LittleTrees.createVariable("f")
         );
         final DefaultTransformer transformer = new DefaultTransformer(
-            Collections.singletonList(AssignmentConverter.INSTANCE),
+            Collections.singletonList(Converter1.INSTANCE),
             GreenFactory.INSTANCE
         );
         final Tree result = transformer.transform(new Tree(root));
@@ -197,9 +206,9 @@ class ConversionTest {
         );
         final DefaultTransformer transformer = new DefaultTransformer(
             Arrays.asList(
-                IntegerConverter.INSTANCE,
-                AdditionConverter.INSTANCE,
-                AssignmentConverter.INSTANCE
+                Converter2.INSTANCE,
+                Converter0.INSTANCE,
+                Converter1.INSTANCE
             ),
             GreenFactory.INSTANCE
         );
@@ -211,7 +220,7 @@ class ConversionTest {
     @Test
     void badBuilder() {
         final DefaultTransformer transformer = new DefaultTransformer(
-            Collections.singletonList(AdditionConverter.INSTANCE),
+            Collections.singletonList(Converter0.INSTANCE),
             GreenFactory.INSTANCE
         );
         Tree result = transformer.transform(new Tree(new TestNode(TestBuilderCase.BAD_DATA)));

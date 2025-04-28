@@ -33,24 +33,24 @@ import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * Converter that converts a node to an 'IntegerLiteral' node.
+ * A converter that converts a sequence of nodes into a "Multiplication" node.
  * @since 2.0.0
  */
-public final class IntegerConverter implements Converter {
+public final class Converter3 implements Converter {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new IntegerConverter();
+    public static final Converter INSTANCE = new Converter3();
 
     /**
      * The name of the type of node to be generated.
      */
-    private static final String NODE_NAME = "IntegerLiteral";
+    private static final String NODE_NAME = "Multiplication";
 
     /**
      * Private constructor.
      */
-    private IntegerConverter() {
+    private Converter3() {
     }
 
     @Override
@@ -58,24 +58,26 @@ public final class IntegerConverter implements Converter {
         final Factory factory) {
         Optional<ConversionResult> result = Optional.empty();
         do {
-            if (index + 1 > nodes.size()) {
+            if (index + 3 > nodes.size()) {
                 break;
             }
             final Extracted extracted = new Extracted();
             final boolean matched =
-                IntegerMatcher.INSTANCE.match(nodes.get(index), extracted);
+                ExpressionOneMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
+                && OperatorMatcher1.INSTANCE.match(nodes.get(1 + index), extracted)
+                && ExpressionTwoMatcher.INSTANCE.match(nodes.get(2 + index), extracted);
             if (!matched) {
                 break;
             }
-            final Builder builder = factory.createBuilder(IntegerConverter.NODE_NAME);
-            builder.setData(extracted.getData(1));
-            result = Optional.of(new ConversionResult(builder.createNode(), 1));
+            final Builder builder = factory.createBuilder(Converter3.NODE_NAME);
+            builder.setChildrenList(extracted.getNodes(1, 2));
+            result = Optional.of(new ConversionResult(builder.createNode(), 3));
         } while (false);
         return result;
     }
 
     @Override
     public int getMinConsumed() {
-        return 1;
+        return 3;
     }
 }

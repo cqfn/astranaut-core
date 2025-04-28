@@ -33,24 +33,24 @@ import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
 
 /**
- * A converter that converts a sequence of nodes into a "Multiplication" node.
+ * A converter that converts a sequence of nodes into an "Addition" node.
  * @since 2.0.0
  */
-public final class MultiplicationConverter implements Converter {
+public final class Converter0 implements Converter {
     /**
      * The instance.
      */
-    public static final Converter INSTANCE = new MultiplicationConverter();
+    public static final Converter INSTANCE = new Converter0();
 
     /**
      * The name of the type of node to be generated.
      */
-    private static final String NODE_NAME = "Multiplication";
+    private static final String NODE_NAME = "Addition";
 
     /**
      * Private constructor.
      */
-    private MultiplicationConverter() {
+    private Converter0() {
     }
 
     @Override
@@ -64,12 +64,12 @@ public final class MultiplicationConverter implements Converter {
             final Extracted extracted = new Extracted();
             final boolean matched =
                 ExpressionOneMatcher.INSTANCE.match(nodes.get(0 + index), extracted)
-                && OperatorMatcher1.INSTANCE.match(nodes.get(1 + index), extracted)
+                && OperatorMatcher2.INSTANCE.match(nodes.get(1 + index), extracted)
                 && ExpressionTwoMatcher.INSTANCE.match(nodes.get(2 + index), extracted);
             if (!matched) {
                 break;
             }
-            final Builder builder = factory.createBuilder(MultiplicationConverter.NODE_NAME);
+            final Builder builder = factory.createBuilder(Converter0.NODE_NAME);
             builder.setChildrenList(extracted.getNodes(1, 2));
             result = Optional.of(new ConversionResult(builder.createNode(), 3));
         } while (false);
