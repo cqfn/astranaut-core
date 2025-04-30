@@ -51,7 +51,9 @@ class ExtractedTest {
         Assertions.assertTrue(extracted.getData(0).isEmpty());
         extracted.addData(0, "aaa");
         extracted.addData(1, "bbb");
+        extracted.addData(1, "ccc");
         Assertions.assertEquals("aaa", extracted.getData(0));
+        Assertions.assertEquals("bbbccc", extracted.getData(1));
         Assertions.assertTrue(extracted.getData(2).isEmpty());
     }
 }

@@ -76,8 +76,10 @@ public final class Extracted {
     public void addData(final int number, final String value) {
         if (this.data == null) {
             this.data = new TreeMap<>();
+            this.data.put(number, value);
+        } else {
+            this.data.merge(number, value, String::concat);
         }
-        this.data.put(number, value);
     }
 
     /**
