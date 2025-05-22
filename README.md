@@ -154,11 +154,12 @@ Meet **`DummyNode`**—the singleton stand-in for *"I’d return `null`, but tha
 - **Still a `Node`**: Fits anywhere a real node would, without blowing up your code.  
 
 ### **Key Difference vs. `null`**  
-|                | `DummyNode`       | `null`            |  
-|----------------|------------------|------------------|  
-| **Safe to call methods?** | ✅ (no-op) | 💥 `NullPointerException` |  
-| **Children?**            | ❌ (but reports `0`) | 💥 Crash |  
-| **Type?**               | ❌ (but won’t complain) | 💥 Crash |  
+
+|                           | `DummyNode`            | `null`                     |  
+|---------------------------|------------------------|----------------------------|  
+| **Safe to call methods?** | ✅ (no-op)              | 💥 `NullPointerException`  |  
+| **Children?**             | ❌ (but reports `0`)    | 💥 Crash                   |  
+| **Type?**                 | ❌ (but won’t complain) | 💥 Crash                   |  
 
 ## **EmptyTree – The Polite Way to Say "Nothing Here"**  
 
@@ -259,7 +260,327 @@ The **final generated piece** that ties everything together — a central regist
 - **No magic**: All heavy lifting is done during codegen.  
 - **Extensible**: Add custom providers for non-DSL use cases.  
 
+# **Algorithms & Extensions – Your Tree-Toolbox**  
 
+**What’s here:**  
+Various utilities to **analyze, modify, and traverse** syntax trees.  
+Think of them as **power-ups** for working with Astranaut’s core.  
+
+## **ExtNode & ExtNodeCreator – Turbocharged Tree Navigation**  
+
+### **What Problem They Solve** 
+
+Sometimes, vanilla `Node` is *too minimal*—you need:
+
+- **Parent/left/right sibling access** (for complex traversals).  
+- **Structural hashing** (to compare entire subtrees in O(1)).  
+
+Enter **`ExtNode`** (extended node) and **`ExtNodeCreator`** (its builder).  
+
+### **ExtNode: Supercharged Node**  
+Adds these **key methods** to `Node`:  
+- **`getParent()`** → Who’s your daddy?
+- **`getIndex()`** → Where are you?
+- **`getLeft()`** / **`getRight()`** → Nodes beside you.  
+- **`getAbsoluteHash()`** → **Unique fingerprint** of the *entire subtree*.  
+  - Computed from:  
+    - Node **type**  
+    - Node **data**  
+    - **Hashes of all children** (recursively)  
+  - **Two identical subtrees = same hash**.  
+
+**Why hashing rocks:**  
+- **Find duplicate subtrees** instantly (e.g., for code deduplication).  
+- **Memoization** – Cache transformations by hash.  
+
+### **ExtNodeCreator: Wrapper Factory**  
+
+Wraps a plain `Node` to **auto-compute** all the extras.  
+
+### **When to Use**  
+- **Complex algorithms** needing **backward/left/right walks** (e.g., refactoring tools).  
+- **Optimizations** (hash-based deduplication, caching).  
+- **Debugging** (visualizing node relationships).  
+
+*"Because sometimes you need a GPS for your syntax tree."* 🗺️🌳
+
+## **SubtreeBuilder – The Surgical Tree Pruner**  
+
+**What it does:**  
+
+Lets you **cut out or keep** specific nodes from a tree **without mutating the original**.
+Think of it like a *"tree cookie cutter"*:  
+- **`INCLUDE` mode**: *"Only keep these nodes (and their parents)."*  
+- **`EXCLUDE` mode**: *"Remove these nodes (but keep the rest)."*  
+
+## **LabeledTreeBuilder – Your Syntax Tree’s Sticker Kit**  
+
+**What it does:**  
+Lets you **tag nodes with custom properties** (key-value pairs) *without* mutating the original tree.  
+Think of it as **post-it notes for your AST** — except some notes (`color`, `bgcolor`) actually change how the tree
+looks when visualized.  
+
+### **Key Features**  
+- **Add any property**: `"debug": "true"`, `"optimize": "skip"`, etc.  
+- **Built-in CSS styling**:  
+  - `color` → Border color (e.g., `"red"`, `"#00ff00"`).  
+  - `bgcolor` → Background (e.g., `"lightgray"`).  
+- **Non-destructive**: Generates a **new tree** with decorated nodes.  
+
+## **TreeVisualizer – Your Syntax Tree as Art**  
+
+**What it does:**  
+
+Takes a `Tree` and **spits out a picture** (PNG/SVG). Perfect for:  
+- Debugging ("*Why does my AST look like spaghetti?*")  
+- Documentation ("*See slide 42 for the parse flow*")  
+- Impressing your cat.  
+
+Example:
+
+![SIMPLE AST](src/main/documents/simple_ast.png)
+
+## **JsonSerializer & JsonDeserializer – JSON ↔ Tree Superpowers**  
+
+**What they do:**  
+- **`JsonSerializer`**: Flattens your `Tree` into **human-readable JSON**.  
+- **`JsonDeserializer`**: Rebuilds a `Tree` from that JSON **(requires a `Provider`!)**.
+
+### **JSON Format**  
+```json  
+{
+  "root": {
+    "language": "java",       // Optional (for multi-language trees)
+    "type": "Root",           // Node type
+    "data": "optional_data",  // Only if node has data
+    "children": [             // Array of child nodes
+      {
+        "type": "IfStatement",
+        "children": [
+          {"type": "Condition", "data": "x > 0"},
+          {"type": "ThenBranch", "children": [...]}
+        ]
+      }
+    ]
+  }
+}
+```  
+
+### **JSON Example**
+```json
+{
+  "root": {
+    "language": "java",
+    "type": "Root",
+    "children": [
+      {
+        "type": "Addition",
+        "children": [
+          {
+            "type": "Addition",
+            "children": [
+              {
+                "type": "Identifier",
+                "data": "text"
+              },
+              {
+                "type": "IntegerLiteral",
+                "data": "123"
+              }
+            ]
+          },
+          {
+            "type": "IntegerLiteral",
+            "data": "456"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+# **Diff Trees And Their Friends - Patterns**  
+
+This section is all about **spotting, storing, and applying changes** between syntax trees.
+Think `git diff` for your ASTs:  
+
+- **Diff Trees**: Structures that capture **the differences** between two trees.  
+- **Patterns**: Reusable change templates extracted from diffs—like "find all `x + 0` → replace with `x`".  
+- **Patching algorithms**: Apply patterns to *other* trees (e.g., bulk-refactor similar code).  
+
+## **Action, DiffTree & DiffTreeBuilder – The "Before-and-After" Crew**  
+
+### **Core Idea**  
+A **`DiffTree`** is a *special syntax tree* that captures **changes between two versions** of code
+(or any tree-structured data). Unlike a regular `Tree`, it:  
+- **Stores both states**: Original ("before") and modified ("after").  
+- **Marks edits explicitly** with `Action` nodes (inserts/replaces/deletes).  
+
+### **Key Components**  
+
+1. **`Action` Nodes (The Edit Markers)**
+
+| Type       | Meaning                                                                 | Example (Pseudocode)            |  
+|------------|-------------------------------------------------------------------------|----------------------------------|  
+| **Insert** | *"This node is NEW in the ‘after’ tree."*                               | `Insert(addedNode)` → Was `null` |  
+| **Replace**| *"This node CHANGED from X to Y."*                                      | `Replace(oldNode, newNode)`     |  
+| **Delete** | *"This node was REMOVED in the ‘after’ tree."*                         | `Delete(removedNode)` → Now `null` |  
+
+2. **`DiffTree`**
+
+- **Subclass of `Tree`**, so it works with all standard algorithms.  
+- **Extra methods**:  
+  - `getOriginalTree()` → Returns the pre-change state.  
+  - `getModifiedTree()` → Returns the post-change state.  
+
+#### 3. **`DiffTreeBuilder`**  
+
+How you **construct** a `DiffTree`:  
+```java  
+// Start with an original tree  
+DiffTreeBuilder builder = new DiffTreeBuilder(originalNode);  
+
+// Record edits  
+builder.insertNode(new Insertion(insertedNode, parentNode, afterNode));  
+builder.replaceNode(oldNode, newNode);  
+builder.deleteNode(nodeToRemove);  
+
+// Finalize  
+DiffTree diffTree = builder.getDiffTree();  
+```  
+
+**TL;DR**  
+- **`DiffTree`** = `Tree` + *time travel*.  
+- **`Action`** nodes = *"Here’s what changed."*  
+- **`DiffTreeBuilder`** = *"Let me record those edits."*  
+
+*"Git diff for your AST, minus the command-line angst."* 🔄🌳
+
+## **Mapping, Mapper & TopDownMapper – The Tree Correspondence Crew**
+
+### **Core Concept**
+A **`Mapping`** is essentially a *Rosetta Stone* between two syntax trees - it defines how nodes in a "left"
+tree relate to nodes in a "right" tree. Think of it as:
+
+1. **A bilingual dictionary** for AST nodes
+2. **A change manifest** showing what was inserted/replaced/deleted
+3. **A transformation blueprint** to turn Left Tree → Right Tree
+
+### **Key Players**
+
+**`Mapping` Interface (The Contract):**
+```java
+// Two-way node correspondence
+Node rightNode = mapping.getLeft(leftNode); // What does leftNode become?
+Node leftNode = mapping.getRight(rightNode); // Where did rightNode come from?
+
+// Change inventory
+List<Insertion> addedNodes = mapping.getInserted(); // New nodes in right tree
+Map<Node, Node> replaced = mapping.getReplaced();   // Old→New node pairs
+Set<Node> deleted = mapping.getDeleted();           // Nodes removed from left
+```
+
+**`Mapper` (The Matchmaker):**
+- Builds these mappings between trees
+- Current implementation: **`TopDownMapper`** (works root→leaves)
+
+**`DiffTreeBuilder` Integration:**
+```java
+DiffTreeBuilder builder = new DiffTreeBuilder(oldTree);
+bulder.build(newTree, TopDownMapper.INSTANCE);
+DiffTree diffTree = builder.getDiffTree();
+```
+
+### **Why This Matters**
+- **Change Analysis**: Understand exactly how trees differ
+- **Selective Updates**: Apply only specific transformations
+- **Custom Diffs**: Implement your own mapping logic
+
+### **TopDownMapper's Approach**
+1. Starts at roots, works downward
+2. Matches nodes by:
+   - Type equality
+   - Structural similarity
+   - Position in tree
+3. Automatically classifies changes as inserts/replaces/deletes
+
+## **Pattern, Hole & PatternBuilder – The "Mad Libs" of Tree Transformations**  
+
+### **Core Idea**  
+A **`Pattern`** is a **template tree with placeholders** (`Hole` nodes) that can:  
+- **Match** against existing trees (filling holes with real nodes).  
+- **Generate** new trees (replacing holes with specified nodes).  
+
+Think of it like a **regex for syntax trees**, where `Hole` is your wildcard.  
+
+### **Key Components**  
+1. **`Hole` (The Wildcard Node)**  
+- **Matches any node** during pattern application.  
+- **Numbered** (e.g., `Hole(1)`, `Hole(2)`) for reference.  
+- **Optional constraints**: Can restrict by node type/data.  
+
+2. **`Pattern`**  
+- A **`Tree` subclass** with `Hole` nodes.  
+
+3. **`PatternBuilder`**  
+Manually converts nodes → holes:  
+```java  
+// Start with a DiffTree or regular Tree  
+PatternBuilder builder = new PatternBuilder(tree);  
+
+// Replace specific nodes with holes  
+builder.makeHole(nodeToReplace, 1); // Hole #1  
+builder.makeHole(anotherNode, 2);   // Hole #2  
+
+Pattern pattern = builder.build();  
+```  
+
+**TL;DR**  
+- **`Hole`** = *"Match anything here."*  
+- **`Pattern`** = *"Tree with missing pieces."*  
+- **`PatternBuilder`** = *"Let me pick where the holes go."*  
+
+*"Because sometimes you need to say ‘insert awesome here’."* 🕳️🌳
+
+## **Patcher & DefaultPatcher – The Tree Surgeons**  
+
+### **Core Idea**  
+A **`Patcher`** is the *executioner* of your patterns—it **applies** a `Pattern` (diff tree with holes)
+to a target tree, producing a **modified version**.  
+
+The **`DefaultPatcher`** is the standard implementation:  
+- Takes a **source tree** + **pattern** (diff tree with `Hole`s).  
+- **Matches holes** → **applies changes** → **returns new tree**.  
+
+### **How It Works**  
+1. **Input**:  
+   - `source`: The original tree to modify.  
+   - `pattern`: A `Pattern` (usually built from a `DiffTree`).  
+
+2. **Process**:  
+   - **Matches** `Hole`s in the pattern to nodes in `source`.  
+   - **Applies** the diff operations (insert/replace/delete).  
+
+3. **Output**: A **new tree** with changes applied.  
+
+### **Key Features**  
+- **Non-destructive**: Original tree remains unchanged.  
+- **Precise**: Only modifies matched subtrees.  
+
+### **When to Use**  
+- **Bulk refactoring**: Apply the same fix across many files.  
+- **Code generation**: Use patterns as templates.  
+
+### **Why Only `DefaultPatcher`?**  
+The interface exists so **you can implement custom patch logic** if needed.
+Most use cases are covered by the default impl.  
+
+**TL;DR**  
+- **`Patcher`** = *"Apply this pattern here."*  
+- **`DefaultPatcher`** = *"Works out of the box."*  
+
+*"Like `sed` for your syntax trees."* 🔧🌳
 
 # Contributors
 
