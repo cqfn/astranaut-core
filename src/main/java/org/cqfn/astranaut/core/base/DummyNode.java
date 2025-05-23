@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Dummy node, a placeholder for non-existent nodes.
+ * Special placeholder node that represents a problematic or default node instance.
  * @since 1.0
  */
 public final class DummyNode implements Node {

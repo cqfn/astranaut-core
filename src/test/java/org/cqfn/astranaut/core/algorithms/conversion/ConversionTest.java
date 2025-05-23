@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import org.cqfn.astranaut.core.base.Builder;
+import org.cqfn.astranaut.core.base.Char;
 import org.cqfn.astranaut.core.base.DraftNode;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Node;
@@ -41,6 +42,7 @@ import org.cqfn.astranaut.core.example.converters.Converter0;
 import org.cqfn.astranaut.core.example.converters.Converter1;
 import org.cqfn.astranaut.core.example.converters.Converter2;
 import org.cqfn.astranaut.core.example.converters.Converter3;
+import org.cqfn.astranaut.core.example.converters.WhitespaceConverter;
 import org.cqfn.astranaut.core.example.green.GreenFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -229,6 +231,39 @@ class ConversionTest {
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
         result = transformer.transform(new Tree(new TestNode(TestBuilderCase.INVALID_BUILDER)));
         Assertions.assertSame(DummyNode.INSTANCE, result.getRoot());
+    }
+
+    @Test
+    void nullNode() {
+        final Char.Constructor ctor = new Char.Constructor();
+        ctor.setValue('a');
+        final Node first = ctor.createNode();
+        ctor.setValue('b');
+        final Node second = ctor.createNode();
+        ctor.setValue('c');
+        final Node third = ctor.createNode();
+        ctor.setValue(' ');
+        final Node space = ctor.createNode();
+        final Node root = DraftNode.create(
+            ConversionTest.ROOT_NODE_NAME,
+            "",
+            first,
+            space,
+            second,
+            space,
+            space,
+            third
+        );
+        final DefaultTransformer transformer = new DefaultTransformer(
+            Collections.singletonList(WhitespaceConverter.INSTANCE),
+            GreenFactory.INSTANCE
+        );
+        final Tree result = transformer.transform(new Tree(root));
+        final List<Node> list = result.getRoot().getChildrenList();
+        Assertions.assertEquals(3, list.size());
+        Assertions.assertEquals("a", list.get(0).getData());
+        Assertions.assertEquals("b", list.get(1).getData());
+        Assertions.assertEquals("c", list.get(2).getData());
     }
 
     /**

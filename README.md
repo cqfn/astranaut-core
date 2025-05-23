@@ -188,18 +188,38 @@ That’s it. No magic, no overengineering—just a clean way to mark *"this node
 - **`Node`**: A piece of the tree.  
 - **`Tree`**: The *official* container for the root + helpers.  
 
-## **DummyNode – The Polite Null Alternative**  
+## **Node Null-Objects: DummyNode vs NullNode**
 
-Meet **`DummyNode`**—the singleton stand-in for *"I’d return `null`, but that’s rude."*  
+Meet Our Polite Non-Null Alternatives:
 
-### **Why It Exists**  
-- **`null` is messy**: Forces null checks everywhere.  
-- **But sometimes you need *nothing***: Like empty list elements or placeholder nodes.  
+### **DummyNode** - The Forgiving Placeholder
+> *"I'll pretend to be a real node so your code doesn't break"*
 
-### **What It Is**  
-- A **singleton fake node** (only one exists globally).  
-- **No type, no data, no children** (truly empty—but in a *valid* way).  
-- **Still a `Node`**: Fits anywhere a real node would, without blowing up your code.  
+- **Why It Exists**:
+  - Avoids `null` checks while maintaining node interfaces
+  - Acts as temporary placeholder in incomplete structures
+  - Supports cloning/building pattern (returns same instance)
+
+- **Behavior**:
+  ```java
+  node.getData() // → "" (empty string)
+  node.getChild(0) // → throws IndexOutOfBoundsException
+  node.getType().createBuilder() // → returns builder (but always reconstructs THE SAME instance)
+  ```
+
+### **NullNode** - The Intentional Void
+> *"I represent the conscious absence of value"*
+
+- **Why It Exists**:
+  - Marks explicitly invalid states (vs missing data)
+  - Fails fast on mutation attempts
+
+- **Behavior**:
+  ```java
+  node.getData() // → "" (empty string) 
+  node.getChild(0) // → throws IndexOutOfBoundsException
+  node.getType().createBuilder() // → throws UnsupportedOperationException
+  ```
 
 ### **Key Difference vs. `null`**  
 

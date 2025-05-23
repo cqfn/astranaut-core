@@ -30,6 +30,7 @@ import org.cqfn.astranaut.core.base.Builder;
 import org.cqfn.astranaut.core.base.DummyNode;
 import org.cqfn.astranaut.core.base.Factory;
 import org.cqfn.astranaut.core.base.Node;
+import org.cqfn.astranaut.core.base.NullNode;
 import org.cqfn.astranaut.core.base.Transformer;
 
 /**
@@ -176,7 +177,12 @@ public class DefaultTransformer implements Transformer {
      */
     private static void replaceNodes(final List<Node> list, final int index,
         final ConversionResult conversion) {
+        final Node node = conversion.getNode();
         final int count = conversion.getConsumed();
+        if (node == NullNode.INSTANCE) {
+            list.subList(index, index + count).clear();
+            return;
+        }
         if (count > 1) {
             list.subList(index + 1, index + count).clear();
         }
