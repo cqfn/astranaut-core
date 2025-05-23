@@ -304,6 +304,78 @@ Wraps a plain `Node` to **auto-compute** all the extras.
 
 *"Because sometimes you need a GPS for your syntax tree."* 🗺️🌳
 
+## **DraftNode – The "Sketchpad" Node**  
+
+### **What It Is**  
+A **minimal, validation-free `Node` implementation** designed for:  
+- **Quick tree construction** (e.g., tests, prototyping).  
+- **Interoperability** (importing trees from external parsers).  
+- **Debugging** (manual AST inspection).  
+
+**Key Traits:**  
+- **No validation**: Lets you build *any* tree structure, valid or not.  
+- **Immutable**: Safe to share between threads.  
+- **String-based API**: Create trees via simple text descriptions.  
+
+### **How To Use It**  
+**1. From Text Descriptions**  
+```java  
+// Syntax: TypeName(Child1<"data">, Child2, ...)  
+Node tree = DraftNode.create('Add(Left<'x'>, Right<\"1\">)");  
+// → Creates a tree for "x + 1"  
+```  
+
+**2. Programmatic Construction**  
+```java  
+Node x = DraftNode.create("Variable", "x");  
+Node one = DraftNode.create("Literal", "1");  
+Node add = DraftNode.create("Add", "", x, one);  
+```  
+
+**3. Builder API**  
+```java  
+DraftNode.Constructor builder = new DraftNode.Constructor();  
+builder.setName("IfStatement");  
+builder.setData("condition");  
+builder.addChild(conditionNode);  
+builder.addChild(thenBranchNode);  
+
+Node ifNode = builder.createNode();  
+```  
+
+### **Why It Exists**  
+- **Testing**: Mock trees without complex setup.  
+- **Tooling**: Visualize malformed trees during parser development.  
+- **Adaptation**: Convert third-party ASTs into Astranaut’s format.  
+
+### **Key Methods**  
+
+| Method | Purpose |  
+|--------|---------|  
+| `create(String description)` | Parses a tree from text (e.g., `"A(B,C)"`). |  
+| `create(String type, String data, Node... children)` | Manual node creation. |  
+| `Constructor` (Builder) | Flexible node assembly. |  
+
+### **Example: Importing External ASTs**  
+```java  
+// Say SomeParser gives you: {type: "binop", op: "+", left: "x", right: "1"}  
+ExternalNode externalNode = SomeParser.parse("x + 1");  
+
+// Convert to DraftNode  
+Node left = DraftNode.create("Variable", externalNode.left());  
+Node right = DraftNode.create("Literal", externalNode.right());  
+Node ast = DraftNode.create(externalNode.type(), externalNode.op(), left, right);  
+```  
+
+### **Limitations**  
+- **No safety nets**: Can create nonsensical trees (e.g., operators with 3+ children).  
+- **Not for production**: Use generated nodes for real code.  
+
+**TL;DR**  
+- **`DraftNode`** = *"Sketch trees freely, worry about rules later."*  
+- **Textual DSL** → Fast prototyping.  
+- **Zero-validation** → Ultimate flexibility.  
+
 ## **SubtreeBuilder – The Surgical Tree Pruner**  
 
 **What it does:**  
