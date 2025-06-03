@@ -238,6 +238,15 @@ public class DotGenerator {
                 case '&':
                     result.append("&amp;");
                     break;
+                case '\n':
+                    result.append("\\n");
+                    break;
+                case '\r':
+                    result.append("\\r");
+                    break;
+                case '\t':
+                    result.append("\\t");
+                    break;
                 default:
                     result.append(symbol);
                     break;

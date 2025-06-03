@@ -63,6 +63,16 @@ class DotRenderTest {
     }
 
     @Test
+    void testSingleNodeWithEscapedData() throws IOException {
+        final Node root = this.createNode("Node", "abc\r\n\tdef");
+        final String expected = new FilesReader(
+            DotRenderTest.DIR.concat("testSingleNodeWithEscapedData.dot")
+        ).readAsString();
+        final String result = this.renderDot(root);
+        Assertions.assertEquals(expected, result);
+    }
+
+    @Test
     void testNodeWithChildren() throws IOException {
         final List<Node> children = new LinkedList<>();
         children.add(this.createNode("ChildNode0"));
