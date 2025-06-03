@@ -31,13 +31,17 @@ Astranaut Core is published as a regular Maven dependency.
 
 Just add this to your `pom.xml`:
 
-```xml
-<dependency>
-  <groupId>org.cqfn</groupId>
-  <artifactId>astranaut-core</artifactId>
-  <version><!-- latest version here --></version>
-</dependency>
-```
+~~~xml
+<dependencies>
+  <dependency>
+    <groupId>org.cqfn</groupId>
+    <artifactId>astranaut-core</artifactId>
+    <version><!-- latest version here --></version>
+  </dependency>
+</dependencies>
+~~~
+
+You can find the latest release number [here](https://github.com/cqfn/astranaut-core/tags). 
 
 # The Basics: Interfaces & Classes  
 This is where the tree magic starts.  
